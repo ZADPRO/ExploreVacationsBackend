@@ -27,6 +27,7 @@ const generateUniqueFilename = (originalName: string): string => {
   return uniqueName + extension; // Append the original extension to the unique name
 };
 
+
 // Function to store a file
 export const storeFile = async (
   file: HapiFile,
@@ -35,12 +36,12 @@ export const storeFile = async (
   let uploadDir: string;
 
   // Determine the directory based on the uploadType value
-  if (uploadType === 4) {
+  if (uploadType === 1) {
     console.log('uploadType', uploadType)
 
-    uploadDir = path.join(process.cwd(), "./src/assets/vendorDocs");
-  } else if (uploadType === 3) {
-    uploadDir = path.join(process.cwd(), "./src/assets/vendorDocs");
+    uploadDir = path.join(process.cwd(), "./src/assets/gallery");
+  } else if (uploadType === 2) {
+    uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   }
   
   else {
@@ -50,7 +51,7 @@ export const storeFile = async (
     );
   }
 
-  uploadDir = path.join(process.cwd(), "./src/assets/vendorDocs");
+  uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   
   const uniqueFilename = generateUniqueFilename(file.hapi.filename);
   const uploadPath = path.join(uploadDir, uniqueFilename);

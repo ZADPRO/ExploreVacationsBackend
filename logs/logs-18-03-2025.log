@@ -1,0 +1,329 @@
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:29:31.947Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:31:40.390Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:31:40.852Z"}
+{"level":"info","message":"Router-----add Destination'","timestamp":"2025-03-18T04:31:52.274Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:31:52.439Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:31:58.938Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:31:58.948Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:32:52.864Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:32:53.068Z"}
+{"level":"info","message":"Router-----update packages'","timestamp":"2025-03-18T04:33:09.855Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:33:29.577Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:33:29.881Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:34:09.401Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:37:26.321Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:37:46.743Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:38:18.490Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:39:18.437Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:40:06.310Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:47:14.604Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:47:14.798Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:48:38.044Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:48:38.392Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:48:42.137Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:48:42.159Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:48:46.950Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:48:46.987Z"}
+{"level":"info","message":"Router-----addCategories","timestamp":"2025-03-18T04:49:08.279Z"}
+{"level":"info","message":"Router-----addCategories","timestamp":"2025-03-18T04:49:36.226Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:50:11.323Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:50:11.503Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:50:39.387Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:50:39.693Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:51:34.893Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:51:35.083Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:55:29.579Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T04:55:29.660Z"}
+{"level":"info","message":"Router-----addCategories","timestamp":"2025-03-18T04:58:11.892Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:59:38.779Z"}
+{"level":"info","message":"Router-----gallery Upload","timestamp":"2025-03-18T04:59:42.017Z"}
+{"level":"error","message":"Error in upload gallery   this.resolver.galleryUploadv1 is not a function","stack":"TypeError: this.resolver.galleryUploadv1 is not a function\n    at packageController.<anonymous> (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:87:36)\n    at Generator.next (<anonymous>)\n    at C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:4:12)\n    at galleryUpload (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:82:21)\n    at exports.Manager.execute (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\toolkit.js:57:29)\n    at Object.internals.handler (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\handler.js:46:48)\n    at exports.execute (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\handler.js:31:36)\n    at Request._lifecycle (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\request.js:370:68)","timestamp":"2025-03-18T04:59:42.028Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T04:59:52.573Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:00:34.721Z"}
+{"level":"info","message":"Router-----gallery Upload","timestamp":"2025-03-18T05:00:34.867Z"}
+{"level":"error","message":"Error in upload gallery   this.resolver.galleryUploadv1 is not a function","stack":"TypeError: this.resolver.galleryUploadv1 is not a function\n    at packageController.<anonymous> (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:87:36)\n    at Generator.next (<anonymous>)\n    at C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:4:12)\n    at galleryUpload (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:82:21)\n    at exports.Manager.execute (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\toolkit.js:57:29)\n    at Object.internals.handler (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\handler.js:46:48)\n    at exports.execute (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\handler.js:31:36)\n    at Request._lifecycle (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\request.js:370:68)","timestamp":"2025-03-18T05:00:34.884Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:00:45.150Z"}
+{"level":"info","message":"Router-----addCategories","timestamp":"2025-03-18T05:01:12.989Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:01:13.266Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:01:27.418Z"}
+{"level":"info","message":"Router-----gallery Upload","timestamp":"2025-03-18T05:01:30.109Z"}
+{"level":"error","message":"Error in upload gallery   this.resolver.galleryUploadv1 is not a function","stack":"TypeError: this.resolver.galleryUploadv1 is not a function\n    at packageController.<anonymous> (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:87:36)\n    at Generator.next (<anonymous>)\n    at C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:4:12)\n    at galleryUpload (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\controller.ts:82:21)\n    at exports.Manager.execute (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\toolkit.js:57:29)\n    at Object.internals.handler (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\handler.js:46:48)\n    at exports.execute (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\handler.js:31:36)\n    at Request._lifecycle (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\request.js:370:68)","timestamp":"2025-03-18T05:01:30.121Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:01:44.470Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:01:44.588Z"}
+{"level":"info","message":"Router-----add Destination'","timestamp":"2025-03-18T05:01:48.851Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:01:48.881Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:02:03.107Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:02:03.221Z"}
+{"level":"info","message":"Router-----addCategories","timestamp":"2025-03-18T05:02:08.429Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:02:08.559Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:02:25.026Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:02:25.120Z"}
+{"level":"info","message":"Router-----add Destination'","timestamp":"2025-03-18T05:02:30.141Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:02:30.174Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:02:38.334Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:02:38.353Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:03:08.886Z"}
+{"level":"info","message":"Router-----addCategories","timestamp":"2025-03-18T05:03:11.013Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:03:11.202Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:03:17.500Z"}
+{"level":"info","message":"Router-----gallery Upload","timestamp":"2025-03-18T05:03:21.078Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:04:05.298Z"}
+{"level":"info","message":"Router-----gallery Upload","timestamp":"2025-03-18T05:04:40.715Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:04:53.510Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:04:58.853Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:04:59.005Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:05:12.656Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:05:12.869Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:07:10.493Z"}
+{"level":"info","message":"Router-----gallery Upload","timestamp":"2025-03-18T05:08:05.933Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:08:22.910Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:09:04.137Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:09:27.754Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:09:42.531Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:09:42.629Z"}
+{"level":"info","message":"Router-----gallery Upload","timestamp":"2025-03-18T05:10:05.914Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:11:28.150Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:13:15.684Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:13:34.942Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:13:35.103Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:34:04.192Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:34:29.448Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:34:29.758Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:34:45.464Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:34:54.484Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:35:03.055Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:35:35.306Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:35:43.121Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:35:51.242Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:43:24.238Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:43:24.405Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:47:02.208Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:47:32.293Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T05:47:37.840Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:47:37.873Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T05:48:32.282Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:48:32.395Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T05:48:36.775Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:48:36.827Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:49:08.295Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:49:08.506Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T05:49:16.923Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:49:16.974Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T05:49:24.096Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T05:49:24.155Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T05:51:21.643Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:55:46.979Z"}
+{"level":"info","message":"Router-----list Categories","timestamp":"2025-03-18T05:55:47.101Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T05:56:20.219Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T05:56:20.368Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T05:57:49.224Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T05:59:58.863Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T05:59:59.047Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:00:08.099Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:00:17.706Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:00:17.886Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:00:19.406Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:00:19.428Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:00:26.381Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:00:50.880Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:00:51.009Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:00:54.972Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:02:47.209Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:02:51.811Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:03:01.850Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:03:01.982Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:05:45.090Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:05:55.722Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:05:55.892Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:06:03.099Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:07:51.091Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:07:51.215Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:07:54.297Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:08:21.745Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:08:50.296Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:09:52.171Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:10:39.473Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:10:39.642Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:10:47.358Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:10:47.421Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:10:51.685Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:11:04.383Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:11:04.619Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:11:07.268Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:11:07.286Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:11:19.911Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:11:20.675Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:11:57.845Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:11:58.451Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:11:58.678Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:13:30.177Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:13:30.426Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:13:41.219Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:13:41.479Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:13:50.305Z"}
+{"level":"info","message":"Router-----adminLogin","timestamp":"2025-03-18T06:14:08.496Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:15:56.305Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:15:56.548Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:16:00.494Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:16:49.875Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:16:50.010Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:18:29.696Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:18:43.620Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:18:43.731Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:18:46.792Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:19:47.446Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:19:48.358Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:19:48.643Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:19:48.649Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:19:48.672Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:19:48.796Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:19:48.812Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:20:02.565Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:20:02.647Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:20:05.595Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:20:07.087Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:20:07.337Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:20:09.116Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:20:09.131Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:20:26.193Z"}
+{"level":"info","message":"Router-----adminLogin","timestamp":"2025-03-18T06:20:45.609Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:21:23.096Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:21:26.754Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:21:27.038Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:21:33.389Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:21:33.409Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:21:36.147Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:21:36.179Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:21:37.574Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:21:37.585Z"}
+{"level":"info","message":"Router-----adminLogin","timestamp":"2025-03-18T06:21:37.917Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:22:55.217Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:22:57.258Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:22:57.976Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:23:08.837Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:23:08.983Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:23:19.193Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:23:28.289Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:23:32.382Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:23:32.441Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:23:47.645Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:23:47.793Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:23:58.805Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:23:58.955Z"}
+{"level":"info","message":"Router-----adminLogin","timestamp":"2025-03-18T06:25:43.022Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:26:08.742Z"}
+{"level":"info","message":"Router-----adminLogin","timestamp":"2025-03-18T06:26:21.081Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:27:35.271Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:28:28.207Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:28:28.347Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:29:29.921Z"}
+{"level":"info","message":"Router-----adminLogin","timestamp":"2025-03-18T06:29:34.879Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:30:24.543Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:30:32.750Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:30:32.876Z"}
+{"level":"info","message":"Router-----adminLogin","timestamp":"2025-03-18T06:30:40.486Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:31:04.784Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:31:04.880Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:31:11.610Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:31:53.421Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:32:18.165Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:32:18.205Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:32:18.310Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:32:33.562Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:32:33.911Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:32:35.412Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:32:38.922Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:32:41.994Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:34:06.347Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:34:06.506Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:34:54.266Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:34:54.374Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:35:24.500Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:36:26.510Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:37:57.228Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:38:59.088Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:39:40.583Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:39:40.604Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:39:48.774Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:39:48.814Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:40:11.308Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:40:25.038Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:40:25.063Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:41:49.088Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:41:49.186Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:41:51.951Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:41:51.974Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:42:09.950Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:42:09.976Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:43:52.584Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:43:52.611Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:44:09.561Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:44:11.327Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:44:11.352Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:44:46.639Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:46:32.953Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:46:33.136Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:46:35.608Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:46:35.668Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:46:56.279Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:46:56.398Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:47:18.960Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:47:19.026Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:47:19.058Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:47:36.416Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:47:36.439Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:48:48.253Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:50:57.568Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:51:31.131Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:51:31.287Z"}
+{"level":"info","message":"Router-----add Activities","timestamp":"2025-03-18T06:51:38.921Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T06:51:38.966Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:51:54.215Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:51:54.349Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:52:31.928Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:52:53.819Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:52:53.878Z"}
+{"level":"info","message":"Router-----add Loaction","timestamp":"2025-03-18T06:55:20.969Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:55:21.141Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:55:31.295Z"}
+{"level":"info","message":"Router-----update Destination'","timestamp":"2025-03-18T06:55:31.476Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:55:36.877Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T06:59:21.994Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:03:01.455Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:03:36.516Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:08:25.202Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:09:11.476Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:10:50.720Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:14:59.216Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T07:17:16.059Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:17:43.724Z"}
+{"level":"info","message":"Router-----list Activities","timestamp":"2025-03-18T07:17:47.736Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T07:18:06.904Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T08:03:12.882Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T08:04:29.103Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T08:04:41.131Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T08:04:45.687Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T08:05:02.626Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T09:18:57.885Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T09:19:09.316Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T09:19:37.425Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T09:20:05.923Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T09:20:14.189Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:05:16.172Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:05:36.884Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:05:45.489Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:06:28.524Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:07:20.680Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:15:17.084Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:17:46.763Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:18:39.131Z"}
+{"level":"error","message":"Server not running ---  New route /api/v1/packageRoutes/listPackage conflicts with existing /api/v1/packageRoutes/listPackage","name":"AssertError","stack":"AssertError: New route /api/v1/packageRoutes/listPackage conflicts with existing /api/v1/packageRoutes/listPackage\n    at module.exports.internals.Segment.internals.Segment.add (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\call\\lib\\segment.js:47:14)\n    at exports.Router.internals.Router.internals.Router.add (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\call\\lib\\index.js:65:16)\n    at internals.Server._addRoute (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\server.js:529:46)\n    at internals.Server.route (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\node_modules\\@hapi\\hapi\\lib\\server.js:518:22)\n    at C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\routes.ts:12:14\n    at new Promise (<anonymous>)\n    at packageRoutes.<anonymous> (C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\routes.ts:10:12)\n    at Generator.next (<anonymous>)\n    at C:\\Users\\INDHU\\Desktop\\projects\\explore vecation\\src\\api\\package\\routes.ts:8:71\n    at new Promise (<anonymous>)","timestamp":"2025-03-18T10:19:10.036Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:19:14.196Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:19:23.103Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:21:18.142Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:21:25.652Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:22:00.123Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:22:06.593Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:22:20.723Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:23:40.270Z"}
+{"level":"info","message":"Server running --- from server.ts","timestamp":"2025-03-18T10:27:41.632Z"}
