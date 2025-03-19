@@ -36,7 +36,7 @@ export class packageRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/packageRoutes/galleryUpload",
           config: {
-            pre: [{ method: validateToken, assign: "token" }],
+            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.galleryUpload,
             description: "Upload gallery",
             tags: ["api", "Users"],
@@ -50,7 +50,7 @@ export class packageRoutes implements IRoute {
           },
         },
         {
-          method: "POST",
+          method: "GET",
           path: "/api/v1/packageRoutes/listPackage",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -71,7 +71,6 @@ export class packageRoutes implements IRoute {
             auth: false,
           },
         },
-        
       ]);
       resolve(true);
     });

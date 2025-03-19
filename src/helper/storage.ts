@@ -41,7 +41,7 @@ export const storeFile = async (
 
     uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   } else if (uploadType === 2) {
-    uploadDir = path.join(process.cwd(), "./src/assets/gallery");
+    uploadDir = path.join(process.cwd(), "./src/assets/cars");
   }
   
   else {
@@ -51,7 +51,7 @@ export const storeFile = async (
     );
   }
 
-  uploadDir = path.join(process.cwd(), "./src/assets/gallery");
+  // uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   
   const uniqueFilename = generateUniqueFilename(file.hapi.filename);
   const uploadPath = path.join(uploadDir, uniqueFilename);
@@ -105,6 +105,60 @@ export const deleteFile = async (filePath: string): Promise<void> => {
       }
       console.log("Old file deleted successfully");
       resolve();
+    });
+  });
+};
+
+
+
+export const convertToBase64 = async (filePath: string): Promise<string> => {
+  // Read the image file and convert it to base64
+  const imageBuffer = await fs.promises.readFile(filePath);
+  return imageBuffer.toString('base64');
+};
+
+export const storetheFile = async (
+  file: any, // Change this to a more flexible type
+  uploadType: number
+): Promise<string> => {
+  if (!file) {
+    throw new Error("File is required");
+  }
+
+  let uploadDir: string;
+  if (uploadType === 1) {
+    uploadDir = path.join(process.cwd(), "./src/assets/gallery");
+  } else if (uploadType === 2) {
+    uploadDir = path.join(process.cwd(), "./src/assets/cars");
+  } else if (uploadType === 3) {
+    uploadDir = path.join(process.cwd(), "./src/assets/certificate");
+  } else {
+    uploadDir = path.join(process.cwd(), "./src/assets/DOC");
+  }
+
+  uploadDir = path.join(process.cwd(), "./src/assets/gallery");
+
+  const uniqueFilename = file.hapi ? generateUniqueFilename(file.hapi.filename) : generateUniqueFilename(file.name);
+  const uploadPath = path.join(uploadDir, uniqueFilename);
+
+  // Create the directory if it doesn't exist
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+  const fileStream = fs.createWriteStream(uploadPath);
+
+  return new Promise((resolve, reject) => {
+    const readableFileStream: Readable = file as unknown as Readable;
+
+    readableFileStream.pipe(fileStream);
+
+    readableFileStream.on("end", () => {
+      resolve(uploadPath); // Resolve the promise with the path of the uploaded file
+    });
+
+    readableFileStream.on("error", (err: Error) => {
+      reject(err); // Reject the promise if there's an error
     });
   });
 };

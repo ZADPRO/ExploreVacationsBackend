@@ -44,6 +44,17 @@ export class settingRoutes implements IRoute {
           },
         },
         {
+          method: "DELETE",
+          path: "/api/v1/settingRoutes/DeleteDestination",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.DeleteDestination,
+            description: "Delete Destination",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
           method: "POST",
           path: "/api/v1/settingRoutes/addLocation",
           config: {

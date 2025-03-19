@@ -1,4 +1,18 @@
-//loan
+//update Transaction 
+export const updateHistoryQuery = `INSERT INTO
+  public."refTxnHistory" (
+    "refTransactionHistoryId",
+    "refUserId",
+    "transData",
+    "updatedAt",
+    "updatedBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5)
+RETURNING
+  *;
+`;
+
 export const addDestinationQuery = `INSERT INTO public."refDestination" (
     "refDestinationName",
     "createdAt",
@@ -19,6 +33,20 @@ WHERE
 `;
 
 export const checkQuery = `SELECT COUNT(*) AS count FROM public."refDestination" WHERE "refDestinationId" = $1;`;
+
+
+export const getDestinationQuery = `SELECT
+  *
+FROM
+  public."refDestination"
+WHERE
+  "refDestinationId" = $1;
+`;
+
+export const deleteDestinationQuery = ` DELETE FROM public."refDestination" rd 
+WHERE rd."refDestinationId" = $1;
+`;
+
 
 // location
 export const checkLocationQuery =`SELECT COUNT(*) AS count FROM public."refLocation" WHERE "refLocationId" = $1;
@@ -89,7 +117,8 @@ export const addActivitiesQuery = `INSERT INTO public."refActivities" (
   RETURNING *;
 `;
 
-export const checkActivitiesQuery = `SELECT COUNT(*) AS count FROM public."refActivities" WHERE "refActivitiesId" = $1;
+export const checkActivitiesQuery = `SELECT COUNT(*) AS count 
+FROM public."refActivities" WHERE "refActivitiesId" = $1;
 `;
 
 export const updateActivityQuery = `UPDATE

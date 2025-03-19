@@ -94,3 +94,27 @@ LEFT JOIN public."refActivities" ra
 GROUP BY rp."refPackageId";
 
 `;
+
+
+export const getImageRecordQuery = `SELECT *
+    FROM public."refGallery" rg
+    WHERE rg."refGalleryId" = $1;
+`;
+
+export const deleteImageRecordQuery =`DELETE FROM public."refGallery" rg 
+WHERE rg."refGalleryId" = $1;
+`;
+
+export const updateHistoryQuery = `INSERT INTO
+  public."refTxnHistory" (
+    "refTransactionHistoryId",
+    "refUserId",
+    "transData",
+    "updatedAt",
+    "updatedBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5)
+RETURNING
+  *;
+`;

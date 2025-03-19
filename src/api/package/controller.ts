@@ -53,10 +53,12 @@ export class packageController {
       const decodedToken ={
         id:request.plugins.token.id
       }
+      console.log('decodedToken', decodedToken)
      
       let entity;
 
       entity = await this.resolver.UpdatePackageV1(request.payload, decodedToken);
+      console.log('entity', entity)
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -64,7 +66,7 @@ export class packageController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in update package", error);
+      logger.error("Error in update package controller", error);
       return response
         .response({
           success: false,
@@ -83,8 +85,11 @@ export class packageController {
     logger.info("Router-----gallery Upload");
   
     try {
+      // const decodedToken ={
+      //   id:request.plugins.token.id
+      // }
       const decodedToken ={
-        id:request.plugins.token.id
+        id:1
       }
       let entity;
       entity = await this.resolver.galleryUploadV1(

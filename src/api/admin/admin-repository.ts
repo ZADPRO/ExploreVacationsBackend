@@ -10,7 +10,8 @@ import {
   generateTokenWithExpire,
   generateTokenWithoutExpire,
 } from "../../helper/token";
-import { selectUserByLogin } from "./query";
+import { selectUserByLogin, updateHistoryQuery } from "./query";
+import { CurrentTime } from "../../helper/common";
 
 export class adminRepository {
   public async adminLoginV1(user_data: any, domain_code?: any): Promise<any> {
@@ -47,6 +48,17 @@ export class adminRepository {
         console.log("validPassword", validPassword);
         if (validPassword) {
           const tokenData = { id: user.refUserId };
+          console.log('tokenData', tokenData)
+
+           const history = [
+            1,
+            user.refUserId,
+            "logIn",
+            CurrentTime(),
+            "Admin",
+          ];
+    
+          const updateHistory = await client.query(updateHistoryQuery, history);
 
           return encrypt(
             {
@@ -73,7 +85,7 @@ export class adminRepository {
           success: false,
           message: "Internal server error",
         },
-        false
+        true
       );
     } finally {
       client.release();

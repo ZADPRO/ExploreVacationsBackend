@@ -1,0 +1,329 @@
+export const addVehicleQuery = `INSERT INTO
+  public."refVehicleType" (
+    "refVehicleTypeName",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3)
+RETURNING
+  *;
+`;
+export const checkVehiclesQuery = `SELECT COUNT(*) AS count 
+FROM public."refVehicleType" WHERE "refVehicleTypeId" = $1
+`;
+
+export const updateVehicleQuery = `UPDATE
+  public."refVehicleType" 
+SET
+  "refVehicleTypeName" = $2,
+  "updatedAt" = $3,
+  "updatedBy" = $4
+WHERE
+  "refVehicleTypeId" = $1;
+`;
+
+export const listVehicleQuery = `SELECT * FROM public."refVehicleType"
+`;
+
+export const addBenifitsQuery = `INSERT INTO public."refBenifits"  (
+    "refBenifitsName",
+    "createdAt",
+    "createdBy"
+  )
+  VALUES ($1, $2, $3)
+  RETURNING *;
+`;
+
+export const checkBenifitsQuery = `SELECT COUNT(*) AS count 
+FROM public."refBenifits" WHERE "refBenifitsId" = $1
+`;
+
+export const updateBenifitsQuery = `UPDATE
+public."refBenifits" 
+SET
+"refBenifitsName" = $2,
+"updatedAt" = $3,
+"updatedBy" = $4
+WHERE
+"refBenifitsId" = $1;`;
+
+export const listBenifitsQuery = `SELECT * FROM public."refBenifits"
+`;
+
+export const addIncludeQuery = `INSERT INTO public."refInclude"(
+    "refIncludeName",
+    "createdAt",
+    "createdBy"
+  )
+  VALUES ($1, $2, $3)
+  RETURNING *;
+`;
+
+export const checkIncludeQuery = `SELECT COUNT(*) AS count 
+FROM public."refInclude" WHERE "refIncludeId" = $1;
+`;
+
+export const updateIncludeQuery = `UPDATE
+public."refInclude"
+SET
+"refIncludeName" = $2,
+"updatedAt" = $3,
+"updatedBy" = $4
+WHERE
+"refIncludeId" = $1;
+`;
+
+export const listIncludeQuery = `SELECT * FROM public."refInclude"
+`;
+
+export const addExcludeQuery = `INSERT INTO public."refExclude"(
+    "refExcludeName",
+    "createdAt",
+    "createdBy"
+  )
+  VALUES ($1, $2, $3)
+  RETURNING *;
+`;
+
+export const checkExcludeQuery = `SELECT COUNT(*) AS count 
+FROM public."refExclude" WHERE "refExcludeId" = $1
+`;
+
+export const updateExcludeQuery = `UPDATE
+public."refExclude"
+SET
+"refExcludeName" = $2,
+"updatedAt" = $3,
+"updatedBy" = $4
+WHERE
+"refExcludeId" = $1;
+`;
+
+export const listExcludeQuery = `SELECT * FROM public."refExclude"
+`;
+
+export const addDriverDetailsQuery = `INSERT INTO
+  public."refDriverDetails" (
+    "refDriverName",
+    "refDriverAge",
+    "refDriverMail",
+    "refDriverMobile",
+    "refDriverLocation",
+    "isVerified",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING
+  *;
+`;
+
+export const checkDriverDetailsQuery = `SELECT COUNT(*) AS count 
+FROM public."refDriverDetails" WHERE "refDriverDetailsId" = $1;
+`;
+
+export const updateDriverDetailsQuery = `UPDATE
+public."refDriverDetails"
+SET
+"refDriverName" = $2,
+"refDriverAge" = $3,
+"refDriverMail" = $4,
+"refDriverMobile" = $5,
+"refDriverLocation" = $6,
+"isVerified" = $7,
+"updatedAt" = $8,
+"updatedBy" = $9
+WHERE
+"refDriverDetailsId" = $1;`;
+
+export const listDriverDetailsQuery = `SELECT * FROM public."refDriverDetails"
+`;
+
+export const addTermsAndConditionsQuery = `UPDATE public."refTermsAndConditions"
+SET "refAnswer" = $1,
+"updatedAt" = $3,
+"updatedBy" = $4
+WHERE "refTermsAndConditionsId" = $2;
+`;
+
+export const updateHistoryQuery = `INSERT INTO
+  public."refTxnHistory" (
+    "refTransactionHistoryId",
+    "refUserId",
+    "transData",
+    "updatedAt",
+    "updatedBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5)
+RETURNING
+  *;
+`;
+
+export const addFormDetailsQuery = `INSERT INTO public."refFormDetails"(
+    "refFormDetails",
+    "createdAt",
+    "createdBy"
+  )
+  VALUES ($1, $2, $3)
+  RETURNING *;
+`;
+
+export const checkFormDetailsQuery = `SELECT COUNT(*) AS count 
+FROM public."refFormDetails" WHERE "refFormDetailsId" = $1;
+`;
+
+export const updateFormDetailsQuery = `UPDATE
+  public."refFormDetails"
+SET
+  "refFormDetails" = $2,
+  "updatedAt" = $3,
+  "updatedBy" = $4
+WHERE
+  "refFormDetailsId" = $1;
+`;
+
+export const listFormDetailsQuery = `SELECT * FROM public."refFormDetails"
+`;
+
+
+
+
+export const addCarsQuery = `INSERT INTO
+  public."refCarsTable" (
+    "refVehicleTypeId",
+    "refPersonCount",
+    "refBagCount",
+    "refFuelType",
+    "refcarManufactureYear",
+    "refMileage",
+    "refTrasmissionType",
+    "refFuleLimit",
+    "refBenifits",
+    "refInclude",
+    "refExclude",
+    "refDriverDetailsId",
+    "refTermsAndConditionsId",
+    "refFormDetails",
+    "refOtherRequirements",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+RETURNING
+  *;
+`;
+
+export const updateCarsQuery = `
+        UPDATE public."refCarsTable"
+        SET 
+          "refVehicleTypeId" = $1,
+          "refPersonCount" = $2,
+          "refBagCount" = $3,
+          "refFuelType" = $4,
+          "refcarManufactureYear" = $5,
+          "refMileage" = $6,
+          "refTrasmissionType" = $7,
+          "refFuleLimit" = $8,
+          "refBenifits" = $9,
+          "refInclude" = $10,
+          "refExclude" = $11,
+          "refDriverDetailsId" = $12,
+          "refTermsAndConditionsId" = $13,
+          "refFormDetailsId" = $14,
+          "refOtherRequirements" = $15,
+          "refCarPath" = $16,
+          "updatedAt" = $17,
+          "updatedBy" = $18
+        WHERE "refCarsId" = $19
+        RETURNING *;
+      `;
+
+export const listCarsQuery = `SELECT
+  rvt."refVehicleTypeName",
+  rc."refPersonCount",
+  rc."refBagCount",
+  rc."refFuelType",
+  rc."refcarManufactureYear",
+  rc."refMileage",
+  rc."refTrasmissionType",
+  rc."refFuleLimit"
+FROM
+  public."refCarsTable" rc
+  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+
+      `;
+
+export const getCarsByIdQuery = `SELECT
+  rc."refCarsId",
+  rvt."refVehicleTypeName",
+  rc."refPersonCount",
+  rc."refBagCount",
+  rc."refFuelType",
+  rc."refcarManufactureYear",
+  rc."refMileage",
+  rc."refTrasmissionType",
+  rc."refFuleLimit",
+  STRING_AGG(DISTINCT rb."refBenifitsName", ', ') AS "benifits",
+  STRING_AGG(DISTINCT ri."refIncludeName", ', ') AS "Include",
+  STRING_AGG(DISTINCT re."refExcludeName", ', ') AS "Exclude",
+  rdd."refDriverName",
+  rdd."refDriverAge",
+  rdd."refDriverMail",
+  rdd."refDriverMobile",
+  rdd."refDriverLocation",
+  rdd."isVerified",
+  rtc."refQuestion",
+  rtc."refAnswer",
+  STRING_AGG(DISTINCT rfd."refFormDetails", ', ') AS "refFormDetails",
+  rc."refOtherRequirements"
+FROM
+  public."refCarsTable" rc
+  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+  LEFT JOIN public."refBenifits" rb ON CAST(rb."refBenifitsId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(rc."refBenifits", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+  LEFT JOIN public."refInclude" ri ON CAST(ri."refIncludeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(rc."refInclude", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+  LEFT JOIN public."refExclude" re ON CAST(re."refExcludeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(rc."refExclude", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+  LEFT JOIN public."refDriverDetails" rdd ON CAST(rdd."refDriverDetailsId" AS INTEGER) = rc."refDriverDetailsId"
+  LEFT JOIN public."refTermsAndConditions" rtc ON CAST(rtc."refTermsAndConditionsId" AS INTEGER) = rc."refTermsAndConditionsId"
+  LEFT JOIN public."refFormDetails" rfd ON CAST(rfd."refFormDetailsId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(rc."refFormDetails", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+  WHERE rc."refCarsId" = $1 
+GROUP BY
+  rc."refCarsId",
+  rvt."refVehicleTypeName",
+  rc."refPersonCount",
+  rc."refBagCount",
+  rc."refFuelType",
+  rc."refcarManufactureYear",
+  rc."refMileage",
+  rc."refTrasmissionType",
+  rc."refFuleLimit",
+  rdd."refDriverName",
+  rtc."refQuestion",
+  rtc."refAnswer",
+  rc."refOtherRequirements",
+  rdd."refDriverDetailsId"
+
+      `;

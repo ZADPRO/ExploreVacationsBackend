@@ -15,6 +15,9 @@ export class settingsResolver {
   public async listDestinationV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.settingsRepository.listDestinationV1(user_data, token_data, domain_code);
   }
+  public async DeleteDestinationV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.settingsRepository.DeleteDestinationV1(user_data, token_data, domain_code);
+  }
 
   public async addLocationV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.settingsRepository.addLocationV1(user_data, token_data, domain_code);
