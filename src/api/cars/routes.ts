@@ -43,6 +43,17 @@ export class carsRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/carsRoutes/deleteVehicle",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteVehicle,
+            description: "deleteVehicle",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
 
         {
           method: "POST",
@@ -73,6 +84,17 @@ export class carsRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.listBenifits,
             description: "list Benifits",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/carsRoutes/deleteBenifits",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteBenifits,
+            description: "delete Benifits",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -112,6 +134,17 @@ export class carsRoutes implements IRoute {
         },
         {
           method: "POST",
+          path: "/api/v1/carsRoutes/deleteInclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteInclude,
+            description: "deleteInclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
           path: "/api/v1/carsRoutes/addExclude",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -145,6 +178,17 @@ export class carsRoutes implements IRoute {
         },
         {
           method: "POST",
+          path: "/api/v1/carsRoutes/deleteExclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteExclude,
+            description: "delete Exclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
           path: "/api/v1/carsRoutes/addDriverDetails",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -172,6 +216,17 @@ export class carsRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.listDriverDetails,
             description: "list Driver Details",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/carsRoutes/deleteDriverDetails",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteDriverDetails,
+            description: "delete Driver Details",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -222,13 +277,47 @@ export class carsRoutes implements IRoute {
         },
         {
           method: "POST",
+          path: "/api/v1/carsRoutes/deleteFormDetails",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteFormDetails,
+            description: "delete Form Details",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+       {
+          method: "POST",
           path: "/api/v1/carsRoutes/addCars",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addCars,
-            description: "add addCars",
+            description: "add Cars ",
             tags: ["api", "Users"],
             auth: false,
+            // payload: {
+            //   maxBytes: 10485760,
+            //   output: "stream",
+            //   parse: true,
+            //   multipart: true,
+            // },
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/carsRoutes/uploadCars",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.uploadCars,
+            description: "upload Cars",
+            tags: ["api", "Users"],
+            auth: false,
+            payload: {
+              maxBytes: 10485760,
+              output: "stream",
+              parse: true,
+              multipart: true,
+            },
           },
         },
         {

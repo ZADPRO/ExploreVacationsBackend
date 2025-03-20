@@ -1,4 +1,4 @@
-//update Transaction 
+//update Transaction
 export const updateHistoryQuery = `INSERT INTO
   public."refTxnHistory" (
     "refTransactionHistoryId",
@@ -16,13 +16,14 @@ RETURNING
 export const addDestinationQuery = `INSERT INTO public."refDestination" (
     "refDestinationName",
     "createdAt",
-    "createdBy"
+    "createdBy",
+  "isDelete"
   )
-  VALUES ($1, $2, $3)
+  VALUES ($1, $2, $3, false)
   RETURNING *;
 `;
 
-export const updateDestinationQuery =`UPDATE
+export const updateDestinationQuery = `UPDATE
   public."refDestination"
 SET
   "refDestinationName" = $2,
@@ -32,40 +33,44 @@ WHERE
   "refDestinationId" = $1;
 `;
 
-export const checkQuery = `SELECT COUNT(*) AS count FROM public."refDestination" WHERE "refDestinationId" = $1;`;
+export const checkQuery = `SELECT COUNT(*) AS count FROM public."refDestination" WHERE "refDestinationId" = $1  AND "isDelete" = false;`;
 
-
-export const getDestinationQuery = `SELECT
-  *
-FROM
+export const deleteDestinationQuery = `
+            UPDATE
   public."refDestination"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+  
 WHERE
-  "refDestinationId" = $1;
-`;
+  "refDestinationId" = $1
+RETURNING
+  *;
+        `;
 
-export const deleteDestinationQuery = ` DELETE FROM public."refDestination" rd 
-WHERE rd."refDestinationId" = $1;
-`;
-
+export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" = false
+        `;
 
 // location
-export const checkLocationQuery =`SELECT COUNT(*) AS count FROM public."refLocation" WHERE "refLocationId" = $1;
+export const checkLocationQuery = `SELECT COUNT(*) AS count FROM public."refLocation" WHERE "refLocationId" = $1  AND "isDelete" = false;
 `;
 
-export const listDestinationQuery =`SELECT * FROM public."refDestination";
-`;
-
-export const addLocationQuery =`INSERT INTO public."refLocation" (
+export const addLocationQuery = `INSERT INTO
+  public."refLocation" (
     "refLocationName",
     "refDestinationId",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"  
   )
-  VALUES ($1, $2, $3, $4)
-  RETURNING *;
+VALUES
+  ($1, $2, $3, $4, false)
+RETURNING
+  *;
 `;
 
-export const updateLocationQuery =`UPDATE
+export const updateLocationQuery = `UPDATE
   public."refLocation"
 SET
   "refLocationName" = $2,
@@ -77,24 +82,41 @@ WHERE
 
 `;
 
-export const listLoacationQuery =`SELECT * FROM public."refLocation";
+export const listLoacationQuery = `SELECT * FROM public."refLocation" WHERE "isDelete" = false;
+`;
+
+export const deletelocationQuery = `UPDATE
+  public."refLocation"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refLocationId" = $1
+RETURNING
+  *;
+
 `;
 
 // category
 
-export const addCategoryQuery =`INSERT INTO public."refCategory" (
+export const addCategoryQuery = `INSERT INTO public."refCategory" (
     "refCategoryName",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"
   )
-  VALUES ($1, $2, $3)
+  VALUES ($1, $2, $3, false)
   RETURNING *;
 `;
 
-export const checkCategoryQuery =`SELECT COUNT(*) AS count FROM public."refCategory" WHERE "refCategoryId" = $1
+// export const checkCategoryQuery = `SELECT COUNT(*) AS count FROM public."refCategory" WHERE "refCategoryId" = $1
+// `;
+
+export const checkCategoryQuery = `SELECT COUNT(*) AS count FROM public."refCategory" WHERE "refCategoryId" = $1 AND "isDelete" = false
 `;
 
-export const updateCategoryQuery=`UPDATE
+export const updateCategoryQuery = `UPDATE
   public."refCategory"
 SET
   "refCategoryName" = $2,
@@ -104,21 +126,42 @@ WHERE
   "refCategoryId" = $1;
 `;
 
-export const listCategoryQuery =`SELECT * FROM public."refCategory";
+export const listCategoryQuery = `SELECT * FROM public."refCategory" WHERE "isDelete" = false
 `;
 
+export const deletecategoryQuery = `UPDATE
+  public."refCategory"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refCategoryId" = $1
+RETURNING
+  *;
+
+`;
 // activity
-export const addActivitiesQuery = `INSERT INTO public."refActivities" (
+export const addActivitiesQuery = `INSERT INTO
+  public."refActivities" (
     "refActivitiesName",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"
   )
-  VALUES ($1, $2, $3)
-  RETURNING *;
+VALUES
+  ($1, $2, $3, false)
+RETURNING
+  *;
 `;
 
-export const checkActivitiesQuery = `SELECT COUNT(*) AS count 
-FROM public."refActivities" WHERE "refActivitiesId" = $1;
+export const checkActivitiesQuery = `SELECT
+  COUNT(*) AS count
+FROM
+  public."refActivities"
+WHERE
+  "refActivitiesId" = $1
+  AND "isDelete" = false;
 `;
 
 export const updateActivityQuery = `UPDATE
@@ -131,5 +174,18 @@ WHERE
   "refActivitiesId" = $1;
 `;
 
-export const listActivitiesQuery =`SELECT * FROM public."refActivities";
+export const listActivitiesQuery = `SELECT * FROM public."refActivities" WHERE "isDelete" = false;
+`;
+
+export const deleteActivityQuery = `UPDATE
+  public."refActivities"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refActivitiesId" = $1
+RETURNING
+  *;
+
 `;

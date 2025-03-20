@@ -21,8 +21,10 @@ import {
   checkCategoryQuery,
   checkLocationQuery,
   checkQuery,
+  deleteActivityQuery,
+  deletecategoryQuery,
   deleteDestinationQuery,
-  getDestinationQuery,
+  deletelocationQuery,
   listActivitiesQuery,
   listCategoryQuery,
   listDestinationQuery,
@@ -48,7 +50,7 @@ export class settingsRepository {
       const userResult = await executeQuery(addDestinationQuery, [
         refDestination,
         CurrentTime(),
-        "Admin",
+        "Admin"
       ]);
 
       const history = [
@@ -185,46 +187,72 @@ export class settingsRepository {
       );
     }
   }
-  public async DeleteDestinationV1(userData: any): Promise<any> {
-      try {
-  
-        if (userData.refDestinationId) {
-          console.log('userData.refDestinationId', userData.refDestinationId)
+  public async DeleteDestinationV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    const client: PoolClient = await getClient();
 
-          const imageRecord = await executeQuery(getDestinationQuery, [
-            userData.refDestinationId,
-          ]);
-          console.log('imageRecord', imageRecord)
-          if (imageRecord.length === 0) {
+    try {
+        await client.query("BEGIN"); // Start transaction
+
+        const { refDestinationId } = userData
+        const result = await client.query(deleteDestinationQuery, [
+          refDestinationId,
+          CurrentTime(),
+          "Admin"
+        ]);
+
+        if (result.rowCount === 0) {
+            await client.query("ROLLBACK");
             return encrypt(
-              {
-                success: false,
-                message: "destination record not found",
-              },
-              true
+                {
+                    success: false,
+                    message: "Destination not found or already deleted",
+                    tokens:tokens
+                },
+                true
             );
-          }
-  
-          await executeQuery(deleteDestinationQuery, [userData.refDestinationId]);
-        } 
+        }
+
+        // Insert delete action into history
+        const history = [
+            30, // Unique ID for delete action
+            tokendata.id,
+            "delete destination",
+            CurrentTime(),
+            "admin",
+        ];
+
+        await client.query(updateHistoryQuery, history);
+        await client.query("COMMIT"); // Commit transaction
+
         return encrypt(
-          {
-            success: true,
-            message: " destination Deleted Successfully",
-          },
-          true
+            {
+                success: true,
+                message: "Destination deleted successfully",
+                tokens:tokens,
+                deletedData: result.rows[0], // Return deleted record for reference
+            },
+            true
         );
-      } catch (error) {
-        console.error("Error in deleting file:", (error as Error).message); // Log the error for debugging
+    } catch (error: unknown) {
+        await client.query("ROLLBACK"); // Rollback on error
+        console.error("Error deleting destination:", error);
+
         return encrypt(
-          {
-            success: false,
-            message: `Error In Deleting Image: ${(error as Error).message}`,
-          },
-          true
+            {
+                success: false,
+                message: "An error occurred while deleting the destination",
+                tokens:tokens,
+                error: String(error),
+            },
+            true
         );
-      }
+    } finally {
+        client.release();
+    }
   }
+
 
   public async addLocationV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
@@ -399,6 +427,73 @@ export class settingsRepository {
       );
     }
   }
+  public async deleteLocationV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+        await client.query("BEGIN"); // Start transaction
+
+        const { refLocationId } = userData
+        const result = await client.query(deletelocationQuery, [
+          refLocationId,
+          CurrentTime(),
+          "Admin"
+          
+        ]);
+
+        if (result.rowCount === 0) {
+            await client.query("ROLLBACK");
+            return encrypt(
+                {
+                    success: false,
+                    message: "location not found or already deleted",
+                    token:tokens
+                },
+                true
+            );
+        }
+
+        // Insert delete action into history
+        const history = [
+            31, 
+            tokendata.id,
+            "delete location",
+            CurrentTime(),
+            "admin",
+        ];
+
+        await client.query(updateHistoryQuery, history);
+        await client.query("COMMIT"); // Commit transaction
+
+        return encrypt(
+            {
+                success: true,
+                message: "location deleted successfully",
+                token:tokens,
+                deletedData: result.rows[0], // Return deleted record for reference
+            },
+            true
+        );
+    } catch (error: unknown) {
+        await client.query("ROLLBACK"); // Rollback on error
+        console.error("Error deleting location:", error);
+
+        return encrypt(
+            {
+                success: false,
+                message: "An error occurred while deleting the location",
+                token:tokens,
+                error: String(error),
+            },
+            true
+        );
+    } finally {
+        client.release();
+    }
+  }
+
 
   public async addCategoriesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
@@ -533,6 +628,71 @@ export class settingsRepository {
       );
     }
   }
+  public async deleteCategoriesV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+        await client.query("BEGIN"); // Start transaction
+
+        const { refCategoryId } = userData
+        const result = await client.query(deletecategoryQuery, [
+          refCategoryId,
+          CurrentTime(),
+          "Admin"
+        ]);
+
+        if (result.rowCount === 0) {
+            await client.query("ROLLBACK");
+            return encrypt(
+                {
+                    success: false,
+                    message: "category not found or already deleted",
+                    token:tokens
+                },
+                true
+            );
+        }
+
+        // Insert delete action into history
+        const history = [
+            32, 
+            tokendata.id,
+            "delete category",
+            CurrentTime(),
+            "admin",
+        ];
+
+        await client.query(updateHistoryQuery, history);
+        await client.query("COMMIT"); // Commit transaction
+
+        return encrypt(
+            {
+                success: true,
+                message: "category deleted successfully",
+                token:tokens,
+                deletedData: result.rows[0], // Return deleted record for reference
+            },
+            true
+        );
+    } catch (error: unknown) {
+        await client.query("ROLLBACK"); // Rollback on error
+        console.error("Error deleting category:", error);
+
+        return encrypt(
+            {
+                success: false,
+                message: "An error occurred while deleting the category",
+                token:tokens,
+                error: String(error),
+            },
+            true
+        );
+    } finally {
+        client.release();
+    }
+  }
 
   public async addActivitiesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
@@ -567,7 +727,7 @@ export class settingsRepository {
           token: tokens,
           data: userResult,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       console.log("error", error);
@@ -579,7 +739,7 @@ export class settingsRepository {
           token: tokens,
           error: String(error),
         },
-        false
+        true
       );
     }
   }
@@ -674,6 +834,71 @@ export class settingsRepository {
         },
         true
       );
+    }
+  }
+  public async deleteActivitiesV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+        await client.query("BEGIN"); // Start transaction
+
+        const { refActivitiesId } = userData
+        const result = await client.query(deleteActivityQuery, [
+          refActivitiesId,
+          CurrentTime(),
+          "Admin"
+        ]);
+
+        if (result.rowCount === 0) {
+            await client.query("ROLLBACK");
+            return encrypt(
+                {
+                    success: false,
+                    message: "activity not found or already deleted",
+                    token:tokens
+                },
+                true
+            );
+        }
+
+        // Insert delete action into history
+        const history = [
+            33, 
+            tokendata.id,
+            "delete activity",
+            CurrentTime(),
+            "admin",
+        ];
+
+        await client.query(updateHistoryQuery, history);
+        await client.query("COMMIT"); // Commit transaction
+
+        return encrypt(
+            {
+                success: true,
+                message: "activity deleted successfully",
+                token:tokens,
+                deletedData: result.rows[0], // Return deleted record for reference
+            },
+            true
+        );
+    } catch (error: unknown) {
+        await client.query("ROLLBACK"); // Rollback on error
+        console.error("Error deleting activity:", error);
+
+        return encrypt(
+            {
+                success: false,
+                message: "An error occurred while deleting the activity",
+                token:tokens,
+                error: String(error),
+            },
+            true
+        );
+    } finally {
+        client.release();
     }
   }
 }

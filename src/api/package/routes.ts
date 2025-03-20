@@ -71,6 +71,94 @@ export class packageRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/addTravalInclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.addTravalInclude,
+            description: "add TravalInclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/updateTravalInclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.updateTravalInclude,
+            description: "update TravalInclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/deleteTravalInclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteTravalInclude,
+            description: "delete TravalInclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/packageRoutes/listTravalInclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listTravalInclude,
+            description: "get TravalInclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/addTravalExclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.addTravalExclude,
+            description: "add TravalExclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/updateTravalExclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.updateTravalExclude,
+            description: "update TravalExclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/deleteTravalExclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteTravalExclude,
+            description: "delete Traval Exclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/packageRoutes/listTravalExclude",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listTravalExclude,
+            description: "get Traval Exclude",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

@@ -74,9 +74,11 @@ SELECT
   rp."refGroupSize",
   rp."refTourPrice",
   rp."refSeasonalPrice",
-    STRING_AGG(DISTINCT rl."refLocationName", ', ') AS refLocationLabel,
-    STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS refActivityLabel
+    STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
+    STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
+    rg."refGallery"
 FROM public."refPackage" rp
+LEFT JOIN public."refGallery" rg ON CAST (rg."refPackageId" AS INTEGER ) = rp."refPackageId"
 LEFT JOIN public."refLocation" rl 
     ON CAST(rl."refLocationId" AS INTEGER) = ANY (
         string_to_array(
@@ -91,9 +93,10 @@ LEFT JOIN public."refActivities" ra
             ','
         )::INTEGER[]
     )
-GROUP BY rp."refPackageId";
+GROUP BY rp."refPackageId", rg."refGalleryId";
 
 `;
+
 
 
 export const getImageRecordQuery = `SELECT *
@@ -117,4 +120,101 @@ VALUES
   ($1, $2, $3, $4, $5)
 RETURNING
   *;
+`;
+
+
+export const addTravalIncludeQuery = `INSERT INTO public."refTravalInclude"(
+    "refTravalInclude",
+    "createdAt",
+    "createdBy",
+  "isDelete"
+  )
+  VALUES ($1, $2, $3, false)
+  RETURNING *;
+`;
+
+export const checkTravalIncludeQuery = `SELECT
+  COUNT(*) AS count
+FROM
+  public."refTravalInclude"
+WHERE
+  "refTravalIncludeId" = $1
+  AND "isDelete" = false
+`;
+
+export const updateTravalIncludeQuery = `UPDATE
+public."refTravalInclude"
+SET
+"refTravalInclude" = $2,
+"updatedAt" = $3,
+"updatedBy" = $4
+WHERE
+"refTravalIncludeId" = $1;
+`;
+
+export const deleteTravalIncludeQuery = `UPDATE
+  public."refTravalInclude"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refTravalIncludeId" = $1
+RETURNING
+  *;
+`;
+
+export const listTravalIncludeQuery = `SELECT * FROM public."refTravalInclude"
+WHERE
+  "isDelete" = false;
+`;
+
+
+export const addTravalExcludeQuery = `INSERT INTO
+  public."refTravalExclude" (
+    "refTravalExclude",
+    "createdAt",
+    "createdBy",
+    "isDelete"
+  )
+VALUES
+  ($1, $2, $3, false)
+RETURNING
+  *;
+`;
+
+export const checkTravalExcludeQuery = `SELECT
+  COUNT(*) AS count
+FROM
+  public."refTravalExclude"
+WHERE
+  "refTravalExcludeId" = $1
+  AND "isDelete" = false
+`;
+
+export const updateTravalExcludeQuery = `UPDATE
+public."refTravalExclude"
+SET
+"refTravalExclude" = $2,
+"updatedAt" = $3,
+"updatedBy" = $4
+WHERE
+"refTravalExcludeId" = $1;
+`;
+
+export const deleteTravalExcludeQuery = `UPDATE
+  public."refTravalExclude"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refTravalExcludeId" = $1
+RETURNING
+  *;
+`;
+
+export const listTravalExcludeQuery = `SELECT * FROM public."refTravalExclude"
+WHERE
+  "isDelete" = false;
 `;

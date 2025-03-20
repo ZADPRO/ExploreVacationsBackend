@@ -22,6 +22,39 @@ export class adminRoutes implements IRoute {
           },
         },
        
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/listTourBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listTourBookings,
+            description: "list Tour Bookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/listCarBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listCarBookings,
+            description: "list Car Bookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/listCustomizeTourBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listCustomizeTourBookings,
+            description: "lis tCustomize Tour Bookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
         
       ]);
       resolve(true);

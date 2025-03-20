@@ -14,6 +14,9 @@ export class carsResolver {
   public async listVehicleV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.listVehicleV1(user_data, token_data, domain_code);
   }
+  public async deleteVehicleV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteVehicleV1(user_data, token_data, domain_code);
+  }
 
   public async addBenifitsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.addBenifitsV1(user_data, token_data, domain_code);
@@ -23,6 +26,9 @@ export class carsResolver {
   }
   public async listBenifitsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.listBenifitsV1(user_data, token_data, domain_code);
+  }
+  public async deleteBenifitsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteBenifitsV1(user_data, token_data, domain_code);
   }
 
   public async addIncludeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
@@ -34,6 +40,9 @@ export class carsResolver {
   public async listIncludeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.listIncludeV1(user_data, token_data, domain_code);
   }
+  public async deleteIncludeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteIncludeV1(user_data, token_data, domain_code);
+  }
 
   public async addExcludeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.addExcludeV1(user_data, token_data, domain_code);
@@ -43,6 +52,9 @@ export class carsResolver {
   }
   public async listExcludeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.listExcludeV1(user_data, token_data, domain_code);
+  }
+  public async deleteExcludeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteExcludeV1(user_data, token_data, domain_code);
   }
 
   public async addDriverDetailsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
@@ -54,6 +66,11 @@ export class carsResolver {
   public async listDriverDetailsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.listDriverDetailsV1(user_data, token_data, domain_code);
   }
+  public async deleteDriverDetailsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteDriverDetailsV1(user_data, token_data, domain_code);
+  }
+
+
   public async addTermsAndConditionsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.addTermsAndConditionsV1(user_data, token_data, domain_code);
   }
@@ -66,9 +83,15 @@ export class carsResolver {
   public async listFormDetailsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.listFormDetailsV1(user_data, token_data, domain_code);
   }
+  public async deleteFormDetailsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteFormDetailsV1(user_data, token_data, domain_code);
+  }
 
   public async addCarsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.addCarsV1(user_data, token_data, domain_code);
+  }
+  public async uploadCarsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.uploadCarsV1(user_data, token_data, domain_code);
   }
   public async updateCarsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.updateCarsV1(user_data, token_data, domain_code);

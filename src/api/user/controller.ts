@@ -76,5 +76,218 @@ export class userController {
         .code(500);
     }
   };
-  
+  public uploadCertificate = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----upload Certificate");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+      entity = await this.resolver.uploadCertificateV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in upload Certificate", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public userCarBooking = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----car Booking");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+     
+      let entity;
+
+      entity = await this.resolver.userCarBookingV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in car Booking", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  // public listTour = async (
+  //   request: any,
+  //   response: Hapi.ResponseToolkit
+  // ): Promise<any> => {
+  //   logger.info("Router-----list Tour");
+  //   try {
+  //     const decodedToken ={
+  //       id:request.plugins.token.id
+  //     }
+     
+  //     let entity;
+
+  //     entity = await this.resolver.listTourV1(request.payload, decodedToken);
+
+  //     if (entity.success) {
+  //       return response.response(entity).code(201); // Created
+  //     }
+  //     return response.response(entity).code(200); // Bad Request if failed
+
+  //   } catch (error) {
+  //     logger.error("Error in list Tour", error);
+  //     return response
+  //       .response({
+  //         success: false,
+  //         message:
+  //           error instanceof Error
+  //             ? error.message
+  //             : "An unknown error occurred",
+  //       })
+  //       .code(500);
+  //   }
+  // };
+  public listTour = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list Tour");
+    try {
+      
+      let entity;
+
+      entity = await this.resolver.listTourV1(request.payload);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list Tour", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public getAllTour = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list Tour");
+    try {
+      
+      let entity;
+
+      entity = await this.resolver.getAllTourV1(request.payload);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list Tour", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public addTravalData = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list Tour");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.addTravalDataV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list Tour", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public uploadMap = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list Tour");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.uploadMapV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list Tour", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 }

@@ -44,7 +44,7 @@ export class settingRoutes implements IRoute {
           },
         },
         {
-          method: "DELETE",
+          method: "POST",
           path: "/api/v1/settingRoutes/DeleteDestination",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -89,6 +89,17 @@ export class settingRoutes implements IRoute {
         },
         {
           method: "POST",
+          path: "/api/v1/settingRoutes/deleteLocation",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteLocation,
+            description: "delete Location",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
           path: "/api/v1/settingRoutes/addCategories",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -116,6 +127,17 @@ export class settingRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.listCategories,
             description: "add Categories",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/settingRoutes/deleteCategories",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCategories,
+            description: "delete Categories",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -153,6 +175,19 @@ export class settingRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/settingRoutes/deleteActivities",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteActivities,
+            description: "delete Activities",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        
+
         
       ]);
       resolve(true);

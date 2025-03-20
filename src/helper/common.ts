@@ -165,3 +165,23 @@ export function generateFileName(): string {
   return `${randomChars}${datePart}`;
 }
 
+
+export function base64ToFile(base64String: string, fileName: string): { file: File; fileType: string } {
+  const matches = base64String.match(/^data:(.+);base64,(.*)$/);
+  if (!matches || matches.length !== 3) {
+      throw new Error("Invalid base64 string");
+  }
+
+  const fileType = matches[1];
+  const byteCharacters = atob(matches[2]);
+  const byteNumbers = new Array(byteCharacters.length);
+  
+  for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+
+  const byteArray = new Uint8Array(byteNumbers);
+  const file = new File([byteArray], fileName, { type: fileType });
+
+  return { file, fileType };
+}

@@ -108,6 +108,38 @@ export class carsController {
         .code(500);
     }
   };
+  public deleteVehicle = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----delete Vehicle");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+     
+      let entity;
+
+      entity = await this.resolver.deleteVehicleV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in delete Vehicle", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 
   public addBenifits = async (
     request: any,
@@ -204,6 +236,38 @@ export class carsController {
         .code(500);
     }
   };
+  public deleteBenifits = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----delete benifits");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+     
+      let entity;
+
+      entity = await this.resolver.deleteBenifitsV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in delete benifits", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 
   public addInclude = async (
     request: any,
@@ -286,6 +350,38 @@ export class carsController {
 
     } catch (error) {
       logger.error("Error in list include", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public deleteInclude = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----delete Include");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+     
+      let entity;
+
+      entity = await this.resolver.deleteIncludeV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in delete include", error);
       return response
         .response({
           success: false,
@@ -393,6 +489,38 @@ export class carsController {
         .code(500);
     }
   };
+  public deleteExclude = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----delete Exclude");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+     
+      let entity;
+
+      entity = await this.resolver.deleteExcludeV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in delete Exclude", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 
   public addDriverDetails = async (
     request: any,
@@ -473,6 +601,36 @@ export class carsController {
 
     } catch (error) {
       logger.error("Error in list Driver Details", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public deleteDriverDetails = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router----delete Driver Details");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+      entity = await this.resolver.deleteDriverDetailsV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in delete Driver Details", error);
       return response
         .response({
           success: false,
@@ -610,6 +768,38 @@ export class carsController {
         .code(500);
     }
   };
+  public deleteFormDetails = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----delete form data");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+     
+      let entity;
+
+      entity = await this.resolver.deleteFormDetailsV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in delete form data", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 
   public addCars = async (
     request: any,
@@ -622,6 +812,36 @@ export class carsController {
       }
       let entity;
       entity = await this.resolver.addCarsV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in add cars", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public uploadCars = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----upload cars'");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+      entity = await this.resolver.uploadCarsV1(request.payload, decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created

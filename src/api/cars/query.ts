@@ -2,15 +2,21 @@ export const addVehicleQuery = `INSERT INTO
   public."refVehicleType" (
     "refVehicleTypeName",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"
   )
 VALUES
-  ($1, $2, $3)
+  ($1, $2, $3, false)
 RETURNING
   *;
 `;
-export const checkVehiclesQuery = `SELECT COUNT(*) AS count 
-FROM public."refVehicleType" WHERE "refVehicleTypeId" = $1
+export const checkVehiclesQuery = `SELECT
+  COUNT(*) AS count
+FROM
+  public."refVehicleType"
+WHERE
+  "refVehicleTypeId" = $1
+  AND "isDelete" = false
 `;
 
 export const updateVehicleQuery = `UPDATE
@@ -23,20 +29,40 @@ WHERE
   "refVehicleTypeId" = $1;
 `;
 
-export const listVehicleQuery = `SELECT * FROM public."refVehicleType"
+export const listVehicleQuery = `SELECT
+  *
+FROM
+  public."refVehicleType"
+WHERE
+  "isDelete" = false;
 `;
 
+export const deleteVehicleQuery = `UPDATE
+  public."refVehicleType"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refVehicleTypeId" = $1
+RETURNING
+  *;
+`;
+
+// benifits
 export const addBenifitsQuery = `INSERT INTO public."refBenifits"  (
     "refBenifitsName",
     "createdAt",
-    "createdBy"
+    "createdBy",
+  "isDelete"
   )
-  VALUES ($1, $2, $3)
+  VALUES ($1, $2, $3 , false)
   RETURNING *;
 `;
 
 export const checkBenifitsQuery = `SELECT COUNT(*) AS count 
 FROM public."refBenifits" WHERE "refBenifitsId" = $1
+  AND "isDelete" = false;
 `;
 
 export const updateBenifitsQuery = `UPDATE
@@ -49,19 +75,40 @@ WHERE
 "refBenifitsId" = $1;`;
 
 export const listBenifitsQuery = `SELECT * FROM public."refBenifits"
+WHERE
+  "isDelete" = false;
 `;
 
+export const deletebenifitsQuery = `UPDATE
+  public."refBenifits"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refBenifitsId" = $1
+RETURNING
+  *;
+`;
+
+//include
 export const addIncludeQuery = `INSERT INTO public."refInclude"(
     "refIncludeName",
     "createdAt",
-    "createdBy"
+    "createdBy",
+  "isDelete",
   )
-  VALUES ($1, $2, $3)
+  VALUES ($1, $2, $3, false)
   RETURNING *;
 `;
 
-export const checkIncludeQuery = `SELECT COUNT(*) AS count 
-FROM public."refInclude" WHERE "refIncludeId" = $1;
+export const checkIncludeQuery = `SELECT
+  COUNT(*) AS count
+FROM
+  public."refInclude"
+WHERE
+  "refIncludeId" = $1
+  AND "isDelete" = false
 `;
 
 export const updateIncludeQuery = `UPDATE
@@ -75,19 +122,39 @@ WHERE
 `;
 
 export const listIncludeQuery = `SELECT * FROM public."refInclude"
+WHERE
+  "isDelete" = false;
 `;
 
-export const addExcludeQuery = `INSERT INTO public."refExclude"(
+export const deleteIncludeQuery = `UPDATE
+  public."refInclude"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refIncludeId" = $1
+RETURNING
+  *;
+`;
+
+// exclude
+export const addExcludeQuery = `INSERT INTO
+  public."refExclude" (
     "refExcludeName",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"
   )
-  VALUES ($1, $2, $3)
-  RETURNING *;
+VALUES
+  ($1, $2, $3, false)
+RETURNING
+  *;
 `;
 
 export const checkExcludeQuery = `SELECT COUNT(*) AS count 
 FROM public."refExclude" WHERE "refExcludeId" = $1
+  AND "isDelete" = false
 `;
 
 export const updateExcludeQuery = `UPDATE
@@ -103,6 +170,19 @@ WHERE
 export const listExcludeQuery = `SELECT * FROM public."refExclude"
 `;
 
+export const deleteExcludeQuery = `UPDATE
+  public."refExclude"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refExcludeId" = $1
+RETURNING
+  *;
+`;
+
+// DriverDetails
 export const addDriverDetailsQuery = `INSERT INTO
   public."refDriverDetails" (
     "refDriverName",
@@ -112,16 +192,18 @@ export const addDriverDetailsQuery = `INSERT INTO
     "refDriverLocation",
     "isVerified",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8)
+  ($1, $2, $3, $4, $5, $6, $7, $8, false)
 RETURNING
   *;
 `;
 
 export const checkDriverDetailsQuery = `SELECT COUNT(*) AS count 
-FROM public."refDriverDetails" WHERE "refDriverDetailsId" = $1;
+FROM public."refDriverDetails" WHERE "refDriverDetailsId" = $1
+  AND "isDelete" = false
 `;
 
 export const updateDriverDetailsQuery = `UPDATE
@@ -138,15 +220,37 @@ SET
 WHERE
 "refDriverDetailsId" = $1;`;
 
-export const listDriverDetailsQuery = `SELECT * FROM public."refDriverDetails"
+export const listDriverDetailsQuery = `SELECT
+  *
+FROM
+  public."refDriverDetails"
+WHERE
+  "isDelete" = false;
 `;
 
+export const deleteDriverDetailsQuery = `UPDATE
+  public."refDriverDetails"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refDriverDetailsId" = $1
+RETURNING
+  *;
+`;
+
+// TermsAndConditions
 export const addTermsAndConditionsQuery = `UPDATE public."refTermsAndConditions"
 SET "refAnswer" = $1,
+"refCarsId" = $5,
 "updatedAt" = $3,
 "updatedBy" = $4
 WHERE "refTermsAndConditionsId" = $2;
 `;
+
+
+// INSERT INTO public."refTermsAndConditions"  ("refQuestion", "refAnswer") VALUES ($1, $2, $3, $4)
 
 export const updateHistoryQuery = `INSERT INTO
   public."refTxnHistory" (
@@ -162,17 +266,28 @@ RETURNING
   *;
 `;
 
-export const addFormDetailsQuery = `INSERT INTO public."refFormDetails"(
+// FormDetails
+
+export const addFormDetailsQuery = `INSERT INTO
+  public."refFormDetails" (
     "refFormDetails",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"
   )
-  VALUES ($1, $2, $3)
-  RETURNING *;
+VALUES
+  ($1, $2, $3, false)
+RETURNING
+  *;
 `;
 
-export const checkFormDetailsQuery = `SELECT COUNT(*) AS count 
-FROM public."refFormDetails" WHERE "refFormDetailsId" = $1;
+export const checkFormDetailsQuery = `SELECT
+  COUNT(*) AS count
+FROM
+  public."refFormDetails"
+WHERE
+  "refFormDetailsId" = $1
+  AND "isDelete" = false;
 `;
 
 export const updateFormDetailsQuery = `UPDATE
@@ -185,11 +300,27 @@ WHERE
   "refFormDetailsId" = $1;
 `;
 
-export const listFormDetailsQuery = `SELECT * FROM public."refFormDetails"
+export const listFormDetailsQuery = `SELECT
+  *
+FROM
+  public."refFormDetails"
+WHERE
+  "isDelete" = false;
 `;
 
+export const deleteFormDetailsQuery = `UPDATE
+  public."refFormDetails"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refFormDetailsId" = $1
+RETURNING
+  *;
+`;
 
-
+// cars
 
 export const addCarsQuery = `INSERT INTO
   public."refCarsTable" (
@@ -208,14 +339,45 @@ export const addCarsQuery = `INSERT INTO
     "refTermsAndConditionsId",
     "refFormDetails",
     "refOtherRequirements",
+    "refCarPath",
     "createdAt",
     "createdBy"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
 RETURNING
   *;
 `;
+
+export const addCondation = `INSERT INTO
+  public."refTermsAndConditions"(
+    "refCarsId",
+    "refRentalAgreement",
+    "refFuelPolicy",
+    "refDriverRequirements",
+    "refPaymentTerms",
+    "createdAt",
+    "createdBy"
+  )
+values
+  ($1, $2, $3, $4, $5, $6, $7)
+  `;
+
+
+  export const updateCondation = `UPDATE
+  public."refTermsAndConditions"
+SET
+  "refRentalAgreement" = $2,
+  "refFuelPolicy" = $3,
+  "refDriverRequirements" = $4,
+  "refPaymentTerms" = $5,
+  "updatedAt" = $6,
+  "createdBy" = $7
+WHERE
+  "refCarsId" = $1
+RETURNING
+  *;
+  `;
 
 export const updateCarsQuery = `
         UPDATE public."refCarsTable"
@@ -250,11 +412,11 @@ export const listCarsQuery = `SELECT
   rc."refcarManufactureYear",
   rc."refMileage",
   rc."refTrasmissionType",
-  rc."refFuleLimit"
+  rc."refFuleLimit",
+  rc."refCarPath"
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
-
       `;
 
 export const getCarsByIdQuery = `SELECT

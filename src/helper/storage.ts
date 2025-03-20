@@ -42,7 +42,12 @@ export const storeFile = async (
     uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   } else if (uploadType === 2) {
     uploadDir = path.join(process.cwd(), "./src/assets/cars");
+  }else if (uploadType === 3) {
+    uploadDir = path.join(process.cwd(), "./src/assets/certificate");
+  }else if (uploadType === 4) {
+    uploadDir = path.join(process.cwd(), "./src/assets/map");
   }
+
   
   else {
     uploadDir = path.join(

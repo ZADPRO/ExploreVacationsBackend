@@ -28,6 +28,9 @@ export class settingsResolver {
   public async listLocationV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.settingsRepository.listLocationV1(user_data, token_data, domain_code);
   }
+  public async deleteLocationV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.settingsRepository.deleteLocationV1(user_data, token_data, domain_code);
+  }
 
   public async addCategoriesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.settingsRepository.addCategoriesV1(user_data, token_data, domain_code);
@@ -37,6 +40,9 @@ export class settingsResolver {
   }
   public async listCategoriesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.settingsRepository.listCategoriesV1(user_data, token_data, domain_code);
+  }
+  public async deleteCategoriesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.settingsRepository.deleteCategoriesV1(user_data, token_data, domain_code);
   }
 
   public async addActivitiesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
@@ -48,4 +54,8 @@ export class settingsResolver {
   public async listActivitiesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.settingsRepository.listActivitiesV1(user_data, token_data, domain_code);
   }
+  public async deleteActivitiesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.settingsRepository.deleteActivitiesV1(user_data, token_data, domain_code);
+  }
+  
 }

@@ -1,9 +1,15 @@
 import { executeQuery, getClient } from "../../helper/db";
 import { PoolClient } from "pg";
-import { storeFile, viewFile, deleteFile, convertToBase64, storetheFile } from "../../helper/storage";
+import {
+  storeFile,
+  viewFile,
+  convertToBase64,
+  storetheFile,
+} from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
 import { formatDate } from "../../helper/common";
+import fs from "fs";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -37,6 +43,7 @@ import {
   checkDriverDetailsQuery,
   updateDriverDetailsQuery,
   addCarsQuery,
+  addCondation,
   addFormDetailsQuery,
   checkFormDetailsQuery,
   updateFormDetailsQuery,
@@ -45,9 +52,17 @@ import {
   listCarsQuery,
   getCarsByIdQuery,
   listDriverDetailsQuery,
+  deleteVehicleQuery,
+  deletebenifitsQuery,
+  deleteIncludeQuery,
+  deleteExcludeQuery,
+  deleteDriverDetailsQuery,
+  deleteFormDetailsQuery,
+  updateCondation,
 } from "./query";
 import { any } from "@hapi/joi";
 import { HeapInfo } from "v8";
+import { failedDependency } from "@hapi/boom";
 
 export class carsRepository {
   public async addVehicleV1(userData: any, tokendata: any): Promise<any> {
@@ -183,6 +198,71 @@ export class carsRepository {
         },
         true
       );
+    }
+  }
+  public async deleteVehicleV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refVehicleTypeId } = userData;
+      const result = await client.query(deleteVehicleQuery, [
+        refVehicleTypeId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "Vehicle not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      const history = [
+        34, // Unique ID for delete action
+        tokendata.id,
+        "delete Vehicle",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "Vehicle deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting Vehicle:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Vehicle",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
     }
   }
 
@@ -369,6 +449,71 @@ export class carsRepository {
       );
     }
   }
+  public async deleteBenifitsV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refBenifitsId } = userData;
+      const result = await client.query(deletebenifitsQuery, [
+        refBenifitsId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "benifits not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      const history = [
+        35, // Unique ID for delete action
+        tokendata.id,
+        "delete benifits ",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "benifits deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting benifits:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the benifits",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
 
   public async addIncludeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
@@ -545,6 +690,71 @@ export class carsRepository {
       );
     }
   }
+  public async deleteIncludeV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refIncludeId } = userData;
+      const result = await client.query(deleteIncludeQuery, [
+        refIncludeId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "Include not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      const history = [
+        36, // Unique ID for delete action
+        tokendata.id,
+        "delete Include",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "Include deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting Include:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Include",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
 
   public async addExcludeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
@@ -654,7 +864,7 @@ export class carsRepository {
             message: "include ID not found",
             token: tokens,
           },
-          false
+          true
         );
       }
 
@@ -679,7 +889,7 @@ export class carsRepository {
           token: tokens,
           update: update,
         },
-        false
+        true
       );
     } catch (error) {
       const errorMessage =
@@ -692,7 +902,7 @@ export class carsRepository {
           token: tokens,
           error: errorMessage,
         },
-        false
+        true
       );
     }
   }
@@ -721,6 +931,71 @@ export class carsRepository {
         },
         true
       );
+    }
+  }
+  public async deleteExcludeV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refExcludeId } = userData;
+      const result = await client.query(deleteExcludeQuery, [
+        refExcludeId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "Exclude not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      const history = [
+        37, // Unique ID for delete action
+        tokendata.id,
+        "delete Exclude",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "Exclude deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting Exclude:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Exclude",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
     }
   }
 
@@ -858,7 +1133,10 @@ export class carsRepository {
       );
     }
   }
-  public async listDriverDetailsV1(userData: any, tokendata: any): Promise<any> {
+  public async listDriverDetailsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -885,7 +1163,74 @@ export class carsRepository {
       );
     }
   }
+  public async deleteDriverDetailsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
 
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refDriverDetailsId } = userData;
+      const result = await client.query(deleteDriverDetailsQuery, [
+        refDriverDetailsId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "DriverDetails not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      const history = [
+        38, // Unique ID for delete action
+        tokendata.id,
+        "delete Driver Details",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "DriverDetails deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting DriverDetails:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the DriverDetails",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
   public async addTermsAndConditionsV1(
     userData: any,
     tokendata: any
@@ -895,11 +1240,11 @@ export class carsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const { refAnswer, refTermsAndConditionsId } = userData;
+      const { refCarsId, refAnswer } = userData;
 
       const userResult = await executeQuery(addTermsAndConditionsQuery, [
+        refCarsId,
         refAnswer,
-        refTermsAndConditionsId,
         CurrentTime(),
         "Admin",
       ]);
@@ -957,7 +1302,7 @@ export class carsRepository {
             message: "No FormDetails provided",
             token: tokens,
           },
-          false
+          true
         );
       }
 
@@ -1004,7 +1349,7 @@ export class carsRepository {
           token: tokens,
           result: resultArray,
         },
-        false
+        true
       );
     } catch (error) {
       // Rollback transaction in case of error
@@ -1023,7 +1368,7 @@ export class carsRepository {
           error: String(error),
           token: tokens,
         },
-        false
+        true
       );
     }
   }
@@ -1119,91 +1464,220 @@ export class carsRepository {
       );
     }
   }
+  public async deleteFormDetailsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
 
-  // public async addCarsV1(userData: any, tokendata: any): Promise<any> {
-  //     const client: PoolClient = await getClient();
-  //     const token = { id: tokendata.id };
-  //     const tokens = generateTokenWithExpire(token, true);
-  //     try {
-  //       await client.query("BEGIN"); // Start transaction
-  //       const {
-  //         refVehicleTypeId,
-  //         refPersonCount,
-  //         refBag,
-  //         refFuelType,
-  //         refcarManufactureYear,
-  //         refMileage,
-  //         refTrasmissionType,
-  //         refFuleLimit,
-  //         refBenifits,
-  //         refInclude,
-  //         refExclude,
-  //         refDriverDetailsId,
-  //         refTermsAndConditionsId,
-  //         refFormDetailsId,
-  //         refOtherRequirements
+    try {
+      await client.query("BEGIN"); // Start transaction
 
-  //       } = userData;
+      const { refFormDetailsId } = userData;
+      const result = await client.query(deleteFormDetailsQuery, [
+        refFormDetailsId,
+        CurrentTime(),
+        "Admin",
+      ]);
 
-  //       // Insert package details and get refPackageId
-  //       const carsResult = await client.query(addCarsQuery, [
-  //         refVehicleTypeId,
-  //         refPersonCount,
-  //         refBag,
-  //         refFuelType,
-  //         refcarManufactureYear,
-  //         refMileage,
-  //         refTrasmissionType,
-  //         refFuleLimit,
-  //         refBenifits,
-  //         refInclude,
-  //         refExclude,
-  //         refDriverDetailsId,
-  //         refTermsAndConditionsId,
-  //         refFormDetailsId,
-  //         refOtherRequirements,
-  //         CurrentTime(),
-  //         "Admin"
-  //       ]);
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "form Details not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
 
-  //       const refCarsId = carsResult.rows[0].refCarsId;
-  //       console.log("Inserted cars ID:", refCarsId);
+      // Insert delete action into history
+      const history = [
+        39, // Unique ID for delete action
+        tokendata.id,
+        "delete form Details",
+        CurrentTime(),
+        "admin",
+      ];
 
-  //       const history = [
-  //         24,
-  //         tokendata.id,
-  //         "add cars",
-  //         CurrentTime(),
-  //         "Admin",
-  //       ];
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
 
-  //       const updateHistory = await client.query(updateHistoryQuery, history);
-  //       await client.query("COMMIT"); // Commit transaction
+      return encrypt(
+        {
+          success: true,
+          message: "form Details deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting form Details:", error);
 
-  //       return encrypt(
-  //         {
-  //           success: true,
-  //           message: "Package and gallery images added successfully",
-  //           token: token,
-  //           carsResult: carsResult.rows[0],
-  //         },
-  //         true
-  //       );
-  //     } catch (error: unknown) {
-  //       await client.query("ROLLBACK"); // Rollback transaction in case of failure
-  //       console.error("Error adding package:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the form Details",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
 
-  //       return encrypt(
-  //         {
-  //           success: false,
-  //           message: "An error occurred while adding the package",
-  //           error: String(error),
-  //         },
-  //         true
-  //       );
-  //     } finally {
-  //       client.release();
-  //     }
+  // public async addCarsV1(
+  //   userData: any,
+  //   tokendata: any,
+  //   carImage: any
+  // ): Promise<any> {
+  //   const client: PoolClient = await getClient();
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   try {
+  //     await client.query("BEGIN"); // Start transaction
+
+  //     const {
+  //       refVehicleTypeId,
+  //       refPersonCount,
+  //       refBag,
+  //       refFuelType,
+  //       refcarManufactureYear,
+  //       refMileage,
+  //       refTrasmissionType,
+  //       refFuleLimit,
+  //       refDriverDetailsId,
+  //       refTermsAndConditionsId,
+  //       refOtherRequirements,
+  //       refrefRentalAgreement,
+  //       refFuelPolicy,
+  //       refDriverRequirements,
+  //       refPaymentTerms,
+  //       carImagePath
+  //     } = userData;
+  //     console.log("userData", userData);
+
+  //     const refBenifits = Array.isArray(userData.refBenifits)
+  //       ? `{${userData.refBenifits.join(",")}}`
+  //       : "{}";
+  //     const refInclude = Array.isArray(userData.refInclude)
+  //       ? `{${userData.refInclude.join(",")}}`
+  //       : "{}";
+  //     const refExclude = Array.isArray(userData.refExclude)
+  //       ? `{${userData.refExclude.join(",")}}`
+  //       : "{}";
+  //     const refFormDetails = Array.isArray(userData.refFormDetails)
+  //       ? `{${userData.refFormDetails.join(",")}}`
+  //       : "{}";
+
+  //     // let carImagePath = ""; // Initialize as empty string
+  //     // const ImageFile = userData.file; // Expecting a single PDF file
+  //     // console.log("Received file:", ImageFile);
+
+  //     // if (ImageFile && typeof ImageFile !== "string") {
+  //     //     const filename = ImageFile.hapi?.filename;
+  //     //     if (filename && filename.endsWith(".png")) {
+  //     //         // Store file and get path
+  //     //         const uploadType = 3; // Upload type for PDFs
+  //     //         carImagePath = await storeFile(ImageFile, uploadType);
+  //     //         console.log(`Stored PDF Path: ${carImagePath}`);
+
+  //     //         // Convert PDF to Base64 for verification
+  //     //         const fileBuffer = await viewFile(carImagePath);
+  //     //         const fileBase64 = fileBuffer.toString("base64");
+  //     //         console.log("File stored successfully in Base64 format.");
+  //     //     } else {
+  //     //         return encrypt(
+  //     //             {
+  //     //                 success: false,
+  //     //                 message: "Invalid file type. Only PDFs are allowed.",
+  //     //                 token: tokens,
+  //     //             },
+  //     //             false
+  //     //         );
+  //     //     }
+  //     // }
+
+  //     // const carImagePath = await storetheFile(carImage, 2); // 2 for car images
+  //     // console.log('carImagePath', carImagePath)
+
+  //     // const carImageBase64 = await convertToBase64(carImagePath);
+  //     // console.log('carImageBase64', carImageBase64)
+
+  //     const carsResult = await client.query(addCarsQuery, [
+  //       refVehicleTypeId,
+  //       refPersonCount,
+  //       refBag,
+  //       refFuelType,
+  //       refcarManufactureYear,
+  //       refMileage,
+  //       refTrasmissionType,
+  //       refFuleLimit,
+  //       refBenifits,
+  //       refInclude,
+  //       refExclude,
+  //       refDriverDetailsId,
+  //       refTermsAndConditionsId,
+  //       refFormDetails,
+  //       refOtherRequirements,
+  //       carImagePath, // Store the image path
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
+  //     console.log("carsResult linre ---- 1697", carsResult.rows[0].refCarsId);
+  //     const termsPrams = [carsResult.rows[0].refCarsId,
+  //     refrefRentalAgreement,
+  //     refFuelPolicy,
+  //     refDriverRequirements,
+  //     refPaymentTerms,
+  //     CurrentTime(),
+  //     "Admin"
+  //   ]
+
+  //     console.log('termsPrams line------- 1728', termsPrams)
+  //     await client.query(addCondation,termsPrams );
+
+  //     const refCarsId = carsResult.rows[0].refCarsId;
+  //     console.log("Inserted cars ID:", refCarsId);
+
+  //     // Log history of the action
+  //     const history = [24, tokendata.id, "add cars", CurrentTime(), "Admin"];
+
+  //     const updateHistory = await client.query(updateHistoryQuery, history);
+  //     await client.query("COMMIT"); // Commit transaction
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Car added successfully with image",
+  //         token: tokens,
+  //         carsResult: carsResult.rows[0],
+  //         // imageBase64: fileBase,
+  //       },
+  //       false
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error adding car:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while adding the car",
+  //         error: String(error),
+  //       },
+  //       false
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
   // }
 
   public async addCarsV1(
@@ -1229,20 +1703,26 @@ export class carsRepository {
         refDriverDetailsId,
         refTermsAndConditionsId,
         refOtherRequirements,
+        refrefRentalAgreement,
+        refFuelPolicy,
+        refDriverRequirements,
+        refPaymentTerms,
+        carImagePath,
       } = userData;
-      console.log('userData', userData)
+      console.log("userData", userData);
 
-      const refBenifits = Array.isArray(userData.refBenifits) ? `{${userData.refBenifits.join(",")}}` : "{}";
-      const refInclude = Array.isArray(userData.refInclude) ? `{${userData.refInclude.join(",")}}` : "{}";
-      const refExclude = Array.isArray(userData.refExclude) ? `{${userData.refExclude.join(",")}}` : "{}";
-      const refFormDetails = Array.isArray(userData.refFormDetails) ? `{${userData.refFormDetails.join(",")}}` : "{}";
-
-      const carImagePath = await storetheFile(carImage, 2); // 2 for car images
-      console.log('carImagePath', carImagePath)
-
-      const carImageBase64 = await convertToBase64(carImagePath);
-      console.log('carImageBase64', carImageBase64)
-
+      const refBenifits = Array.isArray(userData.refBenifits)
+        ? `{${userData.refBenifits.join(",")}}`
+        : "{}";
+      const refInclude = Array.isArray(userData.refInclude)
+        ? `{${userData.refInclude.join(",")}}`
+        : "{}";
+      const refExclude = Array.isArray(userData.refExclude)
+        ? `{${userData.refExclude.join(",")}}`
+        : "{}";
+      const refFormDetails = Array.isArray(userData.refFormDetails)
+        ? `{${userData.refFormDetails.join(",")}}`
+        : "{}";
       const carsResult = await client.query(addCarsQuery, [
         refVehicleTypeId,
         refPersonCount,
@@ -1259,23 +1739,29 @@ export class carsRepository {
         refTermsAndConditionsId,
         refFormDetails,
         refOtherRequirements,
-        carImagePath, // Store the image path
+        carImagePath,
         CurrentTime(),
         "Admin",
       ]);
-      console.log('carsResult', carsResult)
+      console.log("carsResult linre ---- 1697", carsResult.rows[0].refCarsId);
+      const termsPrams = [
+        carsResult.rows[0].refCarsId,
+        refrefRentalAgreement,
+        refFuelPolicy,
+        refDriverRequirements,
+        refPaymentTerms,
+        CurrentTime(),
+        "Admin",
+      ];
+
+      console.log("termsPrams line------- 1728", termsPrams);
+      await client.query(addCondation, termsPrams);
 
       const refCarsId = carsResult.rows[0].refCarsId;
       console.log("Inserted cars ID:", refCarsId);
 
       // Log history of the action
-      const history = [
-        24, 
-        tokendata.id,
-        "add cars", 
-        CurrentTime(), 
-        "Admin"
-      ];
+      const history = [24, tokendata.id, "add cars", CurrentTime(), "Admin"];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -1286,7 +1772,6 @@ export class carsRepository {
           message: "Car added successfully with image",
           token: tokens,
           carsResult: carsResult.rows[0],
-          imageBase64: carImageBase64, 
         },
         true
       );
@@ -1306,6 +1791,58 @@ export class carsRepository {
       client.release();
     }
   }
+  public async uploadCarsV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the image from userData
+      const image = userData.Image;
+
+      // Ensure that only one image is provided
+      if (!image) {
+        throw new Error("Please provide an image.");
+      }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the image
+      console.log("Storing image...");
+      filePath = await storeFile(image, 2);
+
+      // Read the file buffer and convert it to Base64
+      const imageBuffer = await viewFile(filePath);
+      const imageBase64 = imageBuffer.toString("base64");
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: imageBase64,
+        contentType: "image/jpeg", // Assuming the image is in JPEG format
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Image Stored Successfully",
+          token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the Image",
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
   public async updateCarsV1(
     userData: any,
     tokendata: any,
@@ -1315,8 +1852,8 @@ export class carsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      await client.query("BEGIN"); 
-  
+      await client.query("BEGIN");
+
       const {
         refCarsId, // to identify the car you want to update
         refVehicleTypeId,
@@ -1330,17 +1867,21 @@ export class carsRepository {
         refDriverDetailsId,
         refTermsAndConditionsId,
         refOtherRequirements,
+        refrefRentalAgreement,
+        refFuelPolicy,
+        refDriverRequirements,
+        refPaymentTerms,
       } = userData;
-      console.log('userData', userData)
-  
+      console.log("userData", userData);
+
       const refBenifits = `{${userData.refBenifits.join(",")}}`;
       const refInclude = `{${userData.refInclude.join(",")}}`;
       const refExclude = `{${userData.refExclude.join(",")}}`;
       const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
-  
+
       let carImagePath = null;
       let carImageBase64 = null;
-  
+
       if (carImage) {
         // If there's an image to upload, store it and convert it to base64
         carImagePath = await storetheFile(carImage, 2); // 2 for car images
@@ -1367,39 +1908,44 @@ export class carsRepository {
         "Admin",
         refCarsId, // Specify the car to be updated by `refCarsId`
       ];
-  
+
       const updateResult = await client.query(updateCarsQuery, params);
-      console.log('updateResult', updateResult)
-  
-      const updatedCar = updateResult.rows[0];
-      console.log("Updated car ID:", updatedCar.refCarsId);
-  
-      // Log history of the action
-      const history = [
-        26,
-        tokendata.id,
-        "update cars",
+      console.log("updateResult", updateResult);
+
+      const termsPrams = [
+        refCarsId,
+        refrefRentalAgreement,
+        refFuelPolicy,
+        refDriverRequirements,
+        refPaymentTerms,
         CurrentTime(),
         "Admin",
       ];
-  
+
+      await client.query(updateCondation, termsPrams);
+
+      const updatedCar = updateResult.rows[0];
+      console.log("Updated car ID:", updatedCar.refCarsId);
+
+      // Log history of the action
+      const history = [26, tokendata.id, "update cars", CurrentTime(), "Admin"];
+
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
-  
+
       return encrypt(
         {
           success: true,
           message: "Car updated successfully",
           token: tokens,
           carsResult: updatedCar,
-          imageBase64: carImageBase64, // Return image in base64 format (if updated)
         },
         true
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback transaction in case of failure
       console.error("Error updating car:", error);
-  
+
       return encrypt(
         {
           success: false,
@@ -1413,39 +1959,54 @@ export class carsRepository {
     }
   }
   public async listCarsV1(userData: any, tokendata: any): Promise<any> {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-      try {
-        const result = await executeQuery(listCarsQuery);
-  
-        return encrypt(
-          {
-            success: true,
-            message: "listed packege successfully",
-            token: tokens,
-            result: result,
-          },
-          true
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery(listCarsQuery);
 
-        );
-      } catch (error: unknown) {
-        return encrypt(
-          {
-            success: false,
-            message: "An unknown error occurred during listed packege",
-            token: tokens,
-            error: String(error),
-          },
-          true
-        );
+       // Convert images to Base64 format
+       for (const image of result) {
+        if (image.refCarPath) {
+          try {
+            const fileBuffer = await fs.promises.readFile(image.refCarPath);
+            image.refCarPath = {
+              filename: path.basename(image.refCarPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Change based on actual file type if necessary
+            };
+          } catch (error) {
+            console.error("Error reading image file for product ,err");
+            image.refCarPath = null; // Handle missing or unreadable files gracefully
+          }
+        }
       }
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed packege successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed packege",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
   }
   public async getCarsV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-
-      const {refCarsId} = userData;
+      const { refCarsId } = userData;
 
       const result = await executeQuery(getCarsByIdQuery, [refCarsId]);
 
@@ -1456,7 +2017,7 @@ export class carsRepository {
           token: tokens,
           result: result,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       return encrypt(
@@ -1466,10 +2027,8 @@ export class carsRepository {
           token: tokens,
           error: String(error),
         },
-        false
+        true
       );
     }
   }
-  
-
 }
