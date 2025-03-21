@@ -176,3 +176,41 @@ WHERE
 RETURNING
   *;
 `;
+
+
+export const listCarsQuery = `SELECT
+  rvt."refVehicleTypeName",
+  rc."refPersonCount",
+  rc."refBagCount",
+  rc."refFuelType",
+  rc."refcarManufactureYear",
+  rc."refMileage",
+  rc."refTrasmissionType",
+  rc."refFuleLimit",
+  rc."refCarPath"
+FROM
+  public."refCarsTable" rc
+  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+      `;
+
+
+export const getCarsByIdQuery = `SELECT
+  rvt."refVehicleTypeName",
+  rc."refPersonCount",
+  rc."refBagCount",
+  rc."refFuelType",
+  rc."refcarManufactureYear",
+  rc."refMileage",
+  rc."refTrasmissionType",
+  rc."refFuleLimit",
+  rc."refCarPath"
+FROM
+  public."refCarsTable" rc
+  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+  WHERE rc."refCarsId" = $1;
+`;
+
+export const getOtherCarsQuery = `SELECT *
+FROM public."refCarsTable"
+WHERE "refCarsId" NOT IN ($1);
+`;

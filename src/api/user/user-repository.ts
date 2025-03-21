@@ -19,7 +19,10 @@ import {
   addcustomizeBookingQuery,
   addTourBookingQuery,
   addTravalDataQuery,
+  getCarsByIdQuery,
+  getOtherCarsQuery,
   listallTourQuery,
+  listCarsQuery,
   listOtherTourQuery,
   listTourQuery,
   updateHistoryQuery,
@@ -457,6 +460,7 @@ export class userRepository {
       client.release();
     }
   }
+
   // public async listTourV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);
@@ -491,6 +495,7 @@ export class userRepository {
   //     );
   //   }
   // }
+
   public async listTourV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refPackageId } = userData;
@@ -543,7 +548,6 @@ export class userRepository {
                 }
               }
             }
-
 
       return encrypt(
         {
@@ -750,6 +754,96 @@ export class userRepository {
           true
         );
       }
+  }
+
+  public async getAllCarV1(userData: any, tokendata: any): Promise<any> {
+    try {
+
+      const result = await executeQuery(listCarsQuery);
+
+      for (const image of result) {
+        if (image.refCarPath) {
+          try {
+            const fileBuffer = await fs.promises.readFile(image.refCarPath);
+            image.refCarPath = {
+              filename: path.basename(image.refCarPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Adjust if needed
+            };
+          } catch (error) {
+            console.error("Error reading image file:", error);
+            image.refCarPath = null; // Handle missing/unreadable files
+          }
+        }
+      }
+      return encrypt(
+        {
+          success: true,
+          message: "listed car successfully",
+          Details: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed  car ",
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async getCarByIdV1(userData: any, tokendata: any): Promise<any> {
+    try {
+      const { refCarsId } = userData;
+
+      const result1 = await executeQuery(getCarsByIdQuery, [refCarsId]);
+      console.log("result1", result1);
+
+      const result2 = await executeQuery(getOtherCarsQuery, [refCarsId]);
+      console.log("result2", result2);
+
+
+      for (const image of result1) {
+        if (image.refCarPath) {
+          try {
+            const fileBuffer = await fs.promises.readFile(image.refCarPath);
+            image.refCarPath = {
+              filename: path.basename(image.refCarPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Adjust if needed
+            };
+          } catch (error) {
+            console.error("Error reading image file:", error);
+            image.refCarPath = null; // Handle missing/unreadable files
+          }
+        }
+      }
+
+
+
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed Tour successfully",
+          tourDetails: result1,
+          othertourDetails: result2,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed  Tour ",
+          error: String(error),
+        },
+        true
+      );
+    }
   }
 
 }

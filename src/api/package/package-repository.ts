@@ -120,10 +120,16 @@ export class packageRepository {
         refTravalOverView,
       } = userData;
 
-      const refLocation = `{${userData.refLocation.join(",")}}`;
-      const refActivity = `{${userData.refActivity.join(",")}}`;
-      const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
-      const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
+      // const refLocation = `{${userData.refLocation.join(",")}}`;
+      const refLocation = Array.isArray(userData.refLocation)? `{${userData.refLocation.join(",")}}` : `{${userData.refLocation.split(",").join(",")}}`;
+      const refActivity = Array.isArray(userData.refActivity)? `{${userData.refActivity.join(",")}}` : `{${userData.refActivity.split(",").join(",")}}`;
+      const refTravalInclude = Array.isArray(userData.refTravalInclude)? `{${userData.refTravalInclude.join(",")}}` : `{${userData.refTravalInclude.split(",").join(",")}}`;
+      const refTravalExclude = Array.isArray(userData.refTravalExclude)? `{${userData.refTravalExclude.join(",")}}` : `{${userData.refTravalExclude.split(",").join(",")}}`;
+
+      
+      // const refActivity = `{${userData.refActivity.join(",")}}`;
+      // const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
+      // const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
 
       // Insert package details and get refPackageId
       const packageResult = await client.query(addPackageQuery, [
@@ -141,9 +147,9 @@ export class packageRepository {
         CurrentTime(),
         "Admin",
       ]);
+      
 
       const refPackageId = packageResult.rows[0].refPackageId;
-      console.log("Inserted Package ID:", refPackageId);
 
       // Store image paths and convert to base64
       // let storedImages: any[] = [];
@@ -164,26 +170,30 @@ export class packageRepository {
       //     const imagePath = await storeFile(image, uploadType);
       //     console.log(`Stored Image Path: ${imagePath}`);
 
-          // // Convert image to Base64
-          // const imageBuffer = await viewFile(imagePath);
-          // const imageBase64 = imageBuffer.toString("base64");
+      // // Convert image to Base64
+      // const imageBuffer = await viewFile(imagePath);
+      // const imageBase64 = imageBuffer.toString("base64");
 
       // Store image path in the database
-      await client.query(insertGalleryQuery, [
+      const image = await client.query(insertGalleryQuery, [
         refPackageId,
         images,
         CurrentTime(),
         "Admin",
       ]);
-
+      // console.log('image', image)
+      
       //     storedImages.push({
-      //       filename: filename,
-      //       path: imagePath,
-      //       content: imageBase64,
-      //       contentType: "image/jpeg", // Adjust based on file type
-      //     });
-      //   }
-      // }
+        //       filename: filename,
+        //       path: imagePath,
+        //       content: imageBase64,
+        //       contentType: "image/jpeg", // Adjust based on file type
+        //     });
+        //   }
+        // }
+        
+        console.log('image------------------------------------------------195', image)
+
 
       const Result = await client.query(addTravalDataQuery, [
         refPackageId,
@@ -194,10 +204,17 @@ export class packageRepository {
         refTravalExclude,
         refSpecialNotes,
         CurrentTime(),
-        "Admin",
+        "Admin"
       ]);
+      console.log("Result--------------------------------------------------------------------------------------", Result);
 
-      const history = [10, tokendata.id, "add package", CurrentTime(), "Admin"];
+      const history = [
+        10, 
+        tokendata.id,
+         "add package", 
+         CurrentTime(),
+          "Admin"
+        ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -510,118 +527,154 @@ export class packageRepository {
       );
     }
   }
+
+  // public async galleryUploadV1(userData: any, tokendata: any): Promise<any> {
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   try {
+  //     // Extract images from userData
+  //     const images = userData.images; // Expecting an array of images
+
+  //     // Ensure that at least one image is provided
+  //     if (!images || !Array.isArray(images) || images.length === 0) {
+  //       throw new Error("Please provide at least one image.");
+  //     }
+
+  //     let storedFiles: any[] = [];
+
+  //     // Process each image
+  //     for (const image of images) {
+  //       console.log("Storing image...");
+  //       const filePath = await storeFile(image, 1);
+
+  //       // Read the file buffer and convert it to Base64
+  //       const imageBuffer = await viewFile(filePath);
+  //       const imageBase64 = imageBuffer.toString("base64");
+
+  //       storedFiles.push({
+  //         filename: path.basename(filePath),
+  //         content: imageBase64,
+  //         contentType: "image/jpeg", // Assuming JPEG format
+  //       });
+  //     }
+
+  //     // Return success response
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Images Stored Successfully",
+  //         token: tokens,
+  //         files: storedFiles,
+  //       },
+  //       true
+  //     );
+  //   } catch (error) {
+  //     console.error("Error occurred:", error);
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "Error in Storing the Images",
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
+
   // public async galleryUploadV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);
 
   //   try {
-  //       // Extract images from userData (assuming an array)
-  //       const images = userData.Images; // Expecting an array of images
+  //     // Extract the images from userData
+  //     const images = userData.images;
+  //     console.log('userData', userData)
 
-  //       // Ensure that at least one image is provided
-  //       if (!images || !Array.isArray(images) || images.length === 0) {
-  //           throw new Error("Please provide at least one image.");
-  //       }
+  //     // Ensure that at least one image is provided
+  //     if (!images || images.length === 0) {
+  //       throw new Error("Please provide at least one image.");
+  //     }
 
-  //       let storedFiles: any[] = [];
-  //       let filePaths: string[] = [];
+  //     let filePaths: string[] = [];
+  //     let storedFiles: any[] = [];
 
-  //       // Process each image
-  //       for (const image of images) {
-  //           console.log("Storing image...");
-  //           const filePath = await storeFile(image, 2);
-  //           filePaths.push(filePath);
+  //     // Store each image
+  //     console.log("Storing images...");
+  //     for (const image of images) {
+  //       const filePath = await storeFile(image, 1);
+  //       filePaths.push(filePath);
 
-  //           // Read file buffer and convert to Base64
-  //           const imageBuffer = await viewFile(filePath);
-  //           const imageBase64 = imageBuffer.toString("base64");
+  //       // Read the file buffer and convert it to Base64
+  //       const imageBuffer = await viewFile(filePath);
+  //       const imageBase64 = imageBuffer.toString("base64");
 
-  //           storedFiles.push({
-  //               filename: path.basename(filePath),
-  //               content: imageBase64,
-  //               contentType: "image/jpeg", // Assuming JPEG format
-  //           });
-  //       }
+  //       storedFiles.push({
+  //         filename: path.basename(filePath),
+  //         content: imageBase64,
+  //         contentType: "image/jpeg", // Assuming all images are in JPEG format
+  //       });
+  //     }
 
-  //       // Return success response
-  //       return encrypt(
-  //           {
-  //               success: true,
-  //               message: "Images stored successfully",
-  //               token: tokens,
-  //               filePaths: filePaths, // List of stored file paths
-  //               files: storedFiles, // Array containing filenames and Base64 content
-  //           },
-  //           true
-  //       );
+  //     // Return success response
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Images Stored Successfully",
+  //         token: tokens,
+  //         filePaths: filePaths,
+  //         files: storedFiles,
+  //       },
+  //       true
+  //     );
   //   } catch (error) {
-  //       console.error("Error occurred:", error);
-  //       return encrypt(
-  //           {
-  //               success: false,
-  //               message: "Error in storing the images",
-  //               token: tokens,
-  //           },
-  //           true
-  //       );
+  //     console.error("Error occurred:", error);
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "Error in Storing the Images",
+  //         token: tokens,
+  //       },
+  //       false
+  //     );
   //   }
   // }
+
   public async galleryUploadV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const images = userData.images || []; // Expecting an array of images
-      console.log("Received images:", images);
+      // Extract the image from userData
+      const image = userData.images;
 
-      if (!Array.isArray(images) || images.length === 0) {
-        return encrypt(
-          {
-            success: false,
-            message: "No images provided for upload.",
-            tokens: tokens,
-          },
-          true
-        );
+      // Ensure that only one image is provided
+      if (!image) {
+        throw new Error("Please provide an image.");
       }
 
-      let filePaths: string[] = [];
+      let filePath: string = "";
       let storedFiles: any[] = [];
 
-      for (const image of images) {
-        if (!image || typeof image === "string") continue; // Skip invalid entries
+      // Store the image
+      console.log("Storing image...");
+      filePath = await storeFile(image, 1);
 
-        const filename = image.hapi?.filename;
-        if (!filename) {
-          console.error("Invalid image: Missing filename");
-          continue;
-        }
+      // Read the file buffer and convert it to Base64
+      const imageBuffer = await viewFile(filePath);
+      const imageBase64 = imageBuffer.toString("base64");
 
-        // Set uploadType to 2 for all images
-        const uploadType = 2;
-
-        // Store file and get path
-        const imagePath = await storeFile(image, uploadType);
-        console.log(`Stored Image Path: ${imagePath}`);
-        filePaths.push(imagePath);
-
-        // Convert image to Base64 for verification
-        const imageBuffer = await viewFile(imagePath);
-        const imageBase64 = imageBuffer.toString("base64");
-
-        storedFiles.push({
-          filename: filename,
-          content: imageBase64,
-          contentType: "image/jpeg", // Adjust based on file type
-        });
-      }
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: imageBase64,
+        contentType: "image/jpeg", // Assuming the image is in JPEG format
+      });
 
       // Return success response
       return encrypt(
         {
           success: true,
-          message: "Images uploaded successfully",
+          message: "Image Stored Successfully",
           token: tokens,
-          filePaths: filePaths,
+          filePath: filePath,
           files: storedFiles,
         },
         true
@@ -631,57 +684,13 @@ export class packageRepository {
       return encrypt(
         {
           success: false,
-          message: "Error in uploading images",
+          message: "Error in Storing the Image",
           token: tokens,
         },
         true
       );
     }
   }
-  // public async listPackageV1(userData: any, tokendata: any): Promise<any> {
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
-  //     const result = await executeQuery(listPackageQuery);
-
-  //      // Convert images to Base64 format
-  //            for (const image of result) {
-  //             if (image.refGallery) {
-  //               try {
-  //                 const fileBuffer = await fs.promises.readFile(image.refGallery);
-  //                 image.refGallery = {
-  //                   filename: path.basename(image.refGallery),
-  //                   content: fileBuffer.toString("base64"),
-  //                   contentType: "image/jpeg", // Change based on actual file type if necessary
-  //                 };
-  //               } catch (error) {
-  //                 console.error("Error reading image file for product ,err");
-  //                 image.refGallery = null; // Handle missing or unreadable files gracefully
-  //               }
-  //             }
-  //           }
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "listed packege successfully",
-  //         token: tokens,
-  //         result: result,
-  //       },
-  //       false
-  //     );
-  //   } catch (error: unknown) {
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An unknown error occurred during listed packege",
-  //         token: tokens,
-  //         error: String(error),
-  //       },
-  //       false
-  //     );
-  //   }
-  // }
 
   public async listPackageV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };

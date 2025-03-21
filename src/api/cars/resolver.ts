@@ -102,6 +102,9 @@ export class carsResolver {
   public async getCarsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.getCarsV1(user_data, token_data, domain_code);
   }
+  public async deleteCarsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteCarsV1(user_data, token_data, domain_code);
+  }
  
   
 }

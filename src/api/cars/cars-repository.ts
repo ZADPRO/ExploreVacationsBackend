@@ -59,6 +59,7 @@ import {
   deleteDriverDetailsQuery,
   deleteFormDetailsQuery,
   updateCondation,
+  deleteCarsQuery,
 } from "./query";
 import { any } from "@hapi/joi";
 import { HeapInfo } from "v8";
@@ -154,7 +155,7 @@ export class carsRepository {
         {
           success: true,
           message: "vehicle updated successfully",
-          updatevehicle:updatevehicle,
+          updatevehicle: updatevehicle,
           token: tokens,
         },
         true
@@ -598,7 +599,7 @@ export class carsRepository {
           success: false,
           message: errorMessage,
           error: String(error),
-          token: tokens
+          token: tokens,
         },
         true
       );
@@ -1845,6 +1846,7 @@ export class carsRepository {
       );
     }
   }
+
   public async updateCarsV1(
     userData: any,
     tokendata: any,
@@ -1867,7 +1869,6 @@ export class carsRepository {
         refTrasmissionType,
         refFuleLimit,
         refDriverDetailsId,
-        refTermsAndConditionsId,
         refOtherRequirements,
         refrefRentalAgreement,
         refFuelPolicy,
@@ -1884,10 +1885,10 @@ export class carsRepository {
       let carImagePath = null;
       let carImageBase64 = null;
 
-      if (carImage) {
-        carImagePath = await storetheFile(carImage, 2); // 2 for car images
-        carImageBase64 = await convertToBase64(carImagePath);
-      }
+      // if (carImage) {
+      //   carImagePath = await storetheFile(carImage, 2); // 2 for car images
+      //   carImageBase64 = await convertToBase64(carImagePath);
+      // }
       const params = [
         refVehicleTypeId,
         refPersonCount,
@@ -1901,7 +1902,6 @@ export class carsRepository {
         refInclude,
         refExclude,
         refDriverDetailsId,
-        refTermsAndConditionsId,
         refFormDetails,
         refOtherRequirements,
         carImagePath, // Updated image path (if provided)
@@ -1959,14 +1959,129 @@ export class carsRepository {
       client.release();
     }
   }
+
+  // public async updateCarsV1(
+  //   userData: any,
+  //   tokendata: any,
+  //   carImage: any
+  // ): Promise<any> {
+  //   const client: PoolClient = await getClient();
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+
+  //   try {
+  //     await client.query("BEGIN");
+
+  //     const {
+  //       refCarsId,
+  //       refVehicleTypeId,
+  //       refPersonCount,
+  //       refBag,
+  //       refFuelType,
+  //       refcarManufactureYear,
+  //       refMileage,
+  //       refTrasmissionType,
+  //       refFuleLimit,
+  //       refDriverDetailsId,
+  //       carImagePath,
+  //       refOtherRequirements,
+  //       refrefRentalAgreement,
+  //       refFuelPolicy,
+  //       refDriverRequirements,
+  //       refPaymentTerms,
+  //       refBenifits,
+  //       refInclude,
+  //       refExclude,
+  //       refFormDetails,
+  //     } = userData;
+
+  //     // Optional fields
+  //     const refBenifitsStr = refBenifits ? `{${refBenifits.join(",")}}` : null;
+  //     const refIncludeStr = refInclude ? `{${refInclude.join(",")}}` : null;
+  //     const refExcludeStr = refExclude ? `{${refExclude.join(",")}}` : null;
+  //     const refFormDetailsStr = refFormDetails ? `{${refFormDetails.join(",")}}` : null;
+
+  //     const params: any[] = [
+  //       refVehicleTypeId,
+  //       refPersonCount,
+  //       refBag,
+  //       refFuelType,
+  //       refcarManufactureYear,
+  //       refMileage,
+  //       refTrasmissionType,
+  //       refFuleLimit,
+  //       refBenifitsStr,
+  //       refIncludeStr,
+  //       refExcludeStr,
+  //       refDriverDetailsId,
+        
+  //       refFormDetailsStr,
+  //       refOtherRequirements,
+  //       carImagePath,
+  //       CurrentTime(),
+  //       "Admin",
+  //       refCarsId,
+  //     ];
+
+  //     // Update car details
+  //     const updateResult = await client.query(updateCarsQuery, params);
+
+  //     // Update terms if provided
+  //     const termsParams: any[] = [
+  //       refrefRentalAgreement,
+  //       refFuelPolicy,
+  //       refDriverRequirements,
+  //       refPaymentTerms,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ].filter(Boolean); // Remove empty values
+
+  //     if (termsParams.length > 0) {
+  //       await client.query(updateCondation, termsParams);
+  //     }
+
+  //     const updatedCar = updateResult.rows[0];
+
+  //     // Log history of the update
+  //     const history = [26, tokendata.id, "update cars", CurrentTime(), "Admin"];
+  //     await client.query(updateHistoryQuery, history);
+
+  //     await client.query("COMMIT");
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Car updated successfully",
+  //         token: tokens,
+  //         carsResult: updatedCar,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK");
+  //     console.error("Error updating car:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while updating the car",
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+
   public async listCarsV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCarsQuery);
 
-       // Convert images to Base64 format
-       for (const image of result) {
+      // Convert images to Base64 format
+      for (const image of result) {
         if (image.refCarPath) {
           try {
             const fileBuffer = await fs.promises.readFile(image.refCarPath);
@@ -2032,8 +2147,73 @@ export class carsRepository {
       );
     }
   }
+  public async deleteCarsV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refCarsId } = userData;
+      const result = await client.query(deleteCarsQuery, [
+        refCarsId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      // if (result.rowCount === 0) {
+      //   await client.query("ROLLBACK");
+      //   return encrypt(
+      //     {
+      //       success: false,
+      //       message: "car not found or already deleted",
+      //       token: tokens,
+      //     },
+      //     true
+      //   );
+      // }
+
+      // Insert delete action into history
+      const history = [
+        48, // Unique ID for delete action
+        tokendata.id,
+        "delete car",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "car deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting car:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Vehicle",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
+
+
+
 }
-
-
-
-

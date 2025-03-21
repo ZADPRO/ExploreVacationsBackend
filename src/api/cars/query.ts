@@ -342,10 +342,11 @@ export const addCarsQuery = `INSERT INTO
     "refOtherRequirements",
     "refCarPath",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "isDelete"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, false) 
 RETURNING
   *;
 `;
@@ -395,15 +396,30 @@ export const updateCarsQuery = `
           "refInclude" = $10,
           "refExclude" = $11,
           "refDriverDetailsId" = $12,
-          "refTermsAndConditionsId" = $13,
-          "refFormDetailsId" = $14,
-          "refOtherRequirements" = $15,
-          "refCarPath" = $16,
-          "updatedAt" = $17,
-          "updatedBy" = $18
-        WHERE "refCarsId" = $19
+          "refFormDetailsId" = $13,
+          "refOtherRequirements" = $14,
+          "refCarPath" = $15,
+          "updatedAt" = $16,
+          "updatedBy" = $17
+        WHERE "refCarsId" = $18
         RETURNING *;
       `;
+
+export const deleteCarsQuery =`UPDATE
+  public."refCarsTable"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refCarsId" = $1
+RETURNING
+  *;
+`;
+
+
+
+
 
 export const listCarsQuery = `SELECT
   rvt."refVehicleTypeName",
@@ -419,6 +435,80 @@ FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
       `;
+
+// export const getCarsByIdQuery = `SELECT
+//   rc."refCarsId",
+//   rvt."refVehicleTypeName",
+//   rc."refPersonCount",
+//   rc."refBagCount",
+//   rc."refFuelType",
+//   rc."refcarManufactureYear",
+//   rc."refMileage",
+//   rc."refTrasmissionType",
+//   rc."refFuleLimit",
+//   STRING_AGG(DISTINCT rb."refBenifitsName", ', ') AS "benifits",
+//   STRING_AGG(DISTINCT ri."refIncludeName", ', ') AS "Include",
+//   STRING_AGG(DISTINCT re."refExcludeName", ', ') AS "Exclude",
+//   rdd."refDriverName",
+//   rdd."refDriverAge",
+//   rdd."refDriverMail",
+//   rdd."refDriverMobile",
+//   rdd."refDriverLocation",
+//   rdd."isVerified",
+//   rtc."refQuestion",
+//   rtc."refAnswer",
+//   STRING_AGG(DISTINCT rfd."refFormDetails", ', ') AS "refFormDetails",
+//   rc."refOtherRequirements"
+// FROM
+//   public."refCarsTable" rc
+//   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+//   LEFT JOIN public."refBenifits" rb ON CAST(rb."refBenifitsId" AS INTEGER) = ANY (
+//     string_to_array(
+//       regexp_replace(rc."refBenifits", '[{}]', '', 'g'),
+//       ','
+//     )::INTEGER[]
+//   )
+//   LEFT JOIN public."refInclude" ri ON CAST(ri."refIncludeId" AS INTEGER) = ANY (
+//     string_to_array(
+//       regexp_replace(rc."refInclude", '[{}]', '', 'g'),
+//       ','
+//     )::INTEGER[]
+//   )
+//   LEFT JOIN public."refExclude" re ON CAST(re."refExcludeId" AS INTEGER) = ANY (
+//     string_to_array(
+//       regexp_replace(rc."refExclude", '[{}]', '', 'g'),
+//       ','
+//     )::INTEGER[]
+//   )
+//   LEFT JOIN public."refDriverDetails" rdd ON CAST(rdd."refDriverDetailsId" AS INTEGER) = rc."refDriverDetailsId"
+//   LEFT JOIN public."refTermsAndConditions" rtc ON CAST(rtc."refTermsAndConditionsId" AS INTEGER) = rc."refTermsAndConditionsId"
+//   LEFT JOIN public."refFormDetails" rfd ON CAST(rfd."refFormDetailsId" AS INTEGER) = ANY (
+//     string_to_array(
+//       regexp_replace(rc."refFormDetails", '[{}]', '', 'g'),
+//       ','
+//     )::INTEGER[]
+//   )
+//   WHERE rc."refCarsId" = $1 
+// GROUP BY
+//   rc."refCarsId",
+//   rvt."refVehicleTypeName",
+//   rc."refPersonCount",
+//   rc."refBagCount",
+//   rc."refFuelType",
+//   rc."refcarManufactureYear",
+//   rc."refMileage",
+//   rc."refTrasmissionType",
+//   rc."refFuleLimit",
+//   rdd."refDriverName",
+//   rtc."refQuestion",
+//   rtc."refAnswer",
+//   rc."refOtherRequirements",
+//   rdd."refDriverDetailsId"
+// ;
+//       `;
+
+
+
 
 export const getCarsByIdQuery = `SELECT
   rc."refCarsId",
@@ -439,8 +529,10 @@ export const getCarsByIdQuery = `SELECT
   rdd."refDriverMobile",
   rdd."refDriverLocation",
   rdd."isVerified",
-  rtc."refQuestion",
-  rtc."refAnswer",
+  rtc."refRentalAgreement",
+  rtc."refFuelPolicy",
+  rtc."refDriverRequirements",
+  rtc."refPaymentTerms",
   STRING_AGG(DISTINCT rfd."refFormDetails", ', ') AS "refFormDetails",
   rc."refOtherRequirements"
 FROM
@@ -465,7 +557,7 @@ FROM
     )::INTEGER[]
   )
   LEFT JOIN public."refDriverDetails" rdd ON CAST(rdd."refDriverDetailsId" AS INTEGER) = rc."refDriverDetailsId"
-  LEFT JOIN public."refTermsAndConditions" rtc ON CAST(rtc."refTermsAndConditionsId" AS INTEGER) = rc."refTermsAndConditionsId"
+  LEFT JOIN public."refTermsAndConditions" rtc ON CAST(rtc."refCarsId" AS INTEGER) = rc."refCarsId"
   LEFT JOIN public."refFormDetails" rfd ON CAST(rfd."refFormDetailsId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(rc."refFormDetails", '[{}]', '', 'g'),
@@ -484,9 +576,9 @@ GROUP BY
   rc."refTrasmissionType",
   rc."refFuleLimit",
   rdd."refDriverName",
-  rtc."refQuestion",
-  rtc."refAnswer",
   rc."refOtherRequirements",
-  rdd."refDriverDetailsId"
+  rdd."refDriverDetailsId",
+  rtc."refTermsAndConditionsId";`;
 
-      `;
+
+  

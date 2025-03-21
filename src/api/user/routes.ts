@@ -92,6 +92,26 @@ export class userRoutes implements IRoute {
           },
         },
         {
+          method: "GET",
+          path: "/api/v1/userRoutes/getAllCar",
+          config: {
+            handler: controller.getAllCar,
+            description: "getAllCar",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/getCarById",
+          config: {
+            handler: controller.getCarById,
+            description: "getCarById",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
           method: "POST",
           path: "/api/v1/userRoutes/addTravalData",
           config: {

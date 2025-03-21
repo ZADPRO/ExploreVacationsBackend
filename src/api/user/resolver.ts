@@ -33,5 +33,11 @@ export class userResolver {
   public async uploadMapV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.uploadMapV1(user_data, token_data, domain_code);
   }
+  public async getAllCarV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.getAllCarV1(user_data, token_data, domain_code);
+  }
+  public async getCarByIdV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.getCarByIdV1(user_data, token_data, domain_code);
+  }
 
 }

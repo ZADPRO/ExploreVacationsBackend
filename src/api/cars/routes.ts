@@ -353,6 +353,17 @@ export class carsRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/carsRoutes/deleteCars",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCars,
+            description: "delete Cars",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
 
       ]);
       resolve(true);
