@@ -85,12 +85,12 @@ export class packageController {
     logger.info("Router-----gallery Upload");
   
     try {
-      // const decodedToken ={
-      //   id:request.plugins.token.id
-      // }
       const decodedToken ={
-        id:1
+        id:request.plugins.token.id
       }
+      // const decodedToken ={
+      //   id:1
+      // }
       let entity;
       entity = await this.resolver.galleryUploadV1(
         request.payload, decodedToken
@@ -117,7 +117,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----gallery Upload");
+    logger.info("Router-----list Package");
   
     try {
       const decodedToken ={

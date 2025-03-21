@@ -16,7 +16,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addVehicle,
-            description: "add Package",
+            description: "add Vehicle",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -27,7 +27,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateVehicle,
-            description: "update Package",
+            description: "update Vehicle",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -49,7 +49,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteVehicle,
-            description: "deleteVehicle",
+            description: "delete Vehicle",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -138,7 +138,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteInclude,
-            description: "deleteInclude",
+            description: "delete Include",
             tags: ["api", "Users"],
             auth: false,
           },

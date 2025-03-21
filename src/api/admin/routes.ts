@@ -23,7 +23,7 @@ export class adminRoutes implements IRoute {
         },
        
         {
-          method: "POST",
+          method: "GET",
           path: "/api/v1/adminRoutes/listTourBookings",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -34,7 +34,7 @@ export class adminRoutes implements IRoute {
           },
         },
         {
-          method: "POST",
+          method: "GET",
           path: "/api/v1/adminRoutes/listCarBookings",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -45,12 +45,12 @@ export class adminRoutes implements IRoute {
           },
         },
         {
-          method: "POST",
+          method: "GET",
           path: "/api/v1/adminRoutes/listCustomizeTourBookings",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.listCustomizeTourBookings,
-            description: "lis tCustomize Tour Bookings",
+            description: "list Customize Tour Bookings",
             tags: ["api", "Users"],
             auth: false,
           },

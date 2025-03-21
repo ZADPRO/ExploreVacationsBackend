@@ -43,6 +43,25 @@ export const insertGalleryQuery =`INSERT INTO public."refGallery" (
   VALUES ($1, $2, $3, $4)
   RETURNING *;
 `;
+
+export const addTravalDataQuery = `INSERT INTO
+  public."refTravalData" (
+    "refPackageId",
+    "refTravalOverView",
+    "refItinary",
+    "refItinaryMapPath",
+    "refTravalInclude",
+    "refTravalExclude",
+    "refSpecialNotes",
+    "createdAt",
+    "createdBy",
+    "isDelete"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7, $8, &9, false)
+RETURNING
+  *;
+`;
 export const updatePackageQuery = `UPDATE
   public."refPackage"
 SET
@@ -63,6 +82,28 @@ WHERE
   "refPackageId" = $1;
 
 `;
+
+export const updateTravalDataQuery = `UPDATE
+  public."refTravalData"
+SET
+  "refPackageId" = $2,
+  "refTravalOverView" = $3
+  "refItinary" = $4,
+  "refItinaryMapPath" = $5,
+  "refTravalInclude" = $6,
+  "refTravalExclude" = $7,
+  "refSpecialNotes" = $8,
+  "updatedAt" = $9,
+  "updatedBy" = $10
+WHERE
+  "refTravalDataId" = $1 
+RETURNING
+  *;
+`;
+
+
+
+
 
 export const listPackageQuery = `
 SELECT 

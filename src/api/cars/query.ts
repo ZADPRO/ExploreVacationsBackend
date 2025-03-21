@@ -26,7 +26,8 @@ SET
   "updatedAt" = $3,
   "updatedBy" = $4
 WHERE
-  "refVehicleTypeId" = $1;
+  "refVehicleTypeId" = $1
+  RETURNING *;
 `;
 
 export const listVehicleQuery = `SELECT

@@ -161,7 +161,7 @@ export class carsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in add Vehicle", error);
+      logger.error("Error in add benifits", error);
       return response
         .response({
           success: false,
@@ -192,7 +192,7 @@ export class carsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in update Vehicle", error);
+      logger.error("Error in update benifits", error);
       return response
         .response({
           success: false,
@@ -287,7 +287,7 @@ export class carsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in add Vehicle", error);
+      logger.error("Error in add include", error);
       return response
         .response({
           success: false,
@@ -317,7 +317,7 @@ export class carsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in update Vehicle", error);
+      logger.error("Error in update include", error);
       return response
         .response({
           success: false,
@@ -647,7 +647,7 @@ export class carsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add exclude'");
+    logger.info("Router-----add TermsAndConditions");
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -661,7 +661,7 @@ export class carsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in add exclude", error);
+      logger.error("Error in addTermsAndConditions", error);
       return response
         .response({
           success: false,
@@ -849,7 +849,7 @@ export class carsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in add cars", error);
+      logger.error("Error in upload cars", error);
       return response
         .response({
           success: false,

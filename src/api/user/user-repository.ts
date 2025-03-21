@@ -23,6 +23,7 @@ import {
   listOtherTourQuery,
   listTourQuery,
   updateHistoryQuery,
+  updateTravalDataQuery,
 } from "./query";
 import fs from "fs";
 
@@ -629,6 +630,75 @@ export class userRepository {
       client.release();
     }
   }
+  public async updateTravalDataV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const {
+        refTravalDataId,
+        refPackageId,
+        refItinary,
+        refItinaryMapPath,
+        refTravalInclude,
+        refTravalExclude,
+        refSpecialNotes
+      } = userData;
+
+
+      // Insert package details and get refPackageId
+      const Result = await client.query(updateTravalDataQuery, [
+        refTravalDataId,
+        refPackageId,
+        refItinary,
+        refItinaryMapPath,
+        refTravalInclude,
+        refTravalExclude,
+        refSpecialNotes,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      const history = [
+        47, 
+        tokendata.id, 
+        "update traval data", 
+        CurrentTime(),
+        "Admin"
+        ];
+
+      const updateHistory = await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "Package and gallery images added successfully",
+          tokens:tokens,
+          Data: Result.rows[0],
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback transaction in case of failure
+      console.error("Error adding package:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while adding the package",
+          tokens:tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
   public async uploadMapV1(userData: any, tokendata: any): Promise<any> {
       const token = { id: tokendata.id };
       const tokens = generateTokenWithExpire(token, true);

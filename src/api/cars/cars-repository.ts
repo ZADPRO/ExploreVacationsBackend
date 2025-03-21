@@ -74,13 +74,13 @@ export class carsRepository {
       const { refVehicleTypeName } = userData;
       console.log("userData", userData);
 
-      const userResult = await client.query(addVehicleQuery, [
+      const vehicleResult = await client.query(addVehicleQuery, [
         refVehicleTypeName,
         CurrentTime(),
         "Admin",
       ]);
 
-      console.log("userResult", userResult.rows);
+      console.log("vehicleResult", vehicleResult.rows);
       const history = [12, tokendata.id, "add Vehicle", CurrentTime(), "Admin"];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
@@ -89,7 +89,7 @@ export class carsRepository {
         {
           success: true,
           message: "vehicle added successfully",
-          data: userResult,
+          data: vehicleResult,
           token: tokens,
         },
         true
@@ -138,7 +138,7 @@ export class carsRepository {
         "Admin",
       ];
 
-      const updateDestination = await client.query(updateVehicleQuery, params);
+      const updatevehicle = await client.query(updateVehicleQuery, params);
 
       const history = [
         13,
@@ -154,6 +154,7 @@ export class carsRepository {
         {
           success: true,
           message: "vehicle updated successfully",
+          updatevehicle:updatevehicle,
           token: tokens,
         },
         true
@@ -347,7 +348,7 @@ export class carsRepository {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "An unknown error occurred during location addition";
+          : "An unknown error occurred during benefits addition";
 
       return encrypt(
         {
@@ -401,7 +402,7 @@ export class carsRepository {
       return encrypt(
         {
           success: true,
-          message: "vehicle updated successfully",
+          message: "benifits updated successfully",
           token: tokens,
           updateBenifits: updateBenifits,
         },
@@ -531,7 +532,7 @@ export class carsRepository {
         return encrypt(
           {
             success: false,
-            message: "No benefits provided",
+            message: "No include provided",
             token: tokens,
           },
           true
@@ -553,7 +554,7 @@ export class carsRepository {
           "Admin",
         ]);
 
-        console.log("Benefit added result:", result);
+        console.log("include added result:", result);
 
         resultArray.push(result);
       }
@@ -562,7 +563,7 @@ export class carsRepository {
       const history = [
         16,
         tokendata.id,
-        "add uncludes",
+        "add Includes",
         CurrentTime(),
         "Admin",
       ];
@@ -576,7 +577,7 @@ export class carsRepository {
       return encrypt(
         {
           success: true,
-          message: "Benefits added successfully",
+          message: "include added successfully",
           token: tokens,
           result: resultArray,
         },
@@ -590,14 +591,14 @@ export class carsRepository {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "An unknown error occurred during location addition";
+          : "An unknown error occurred during include addition";
 
       return encrypt(
         {
           success: false,
           message: errorMessage,
           error: String(error),
-          token: tokens,
+          token: tokens
         },
         true
       );
@@ -627,7 +628,7 @@ export class carsRepository {
 
       const params = [refIncludeId, refIncludeName, CurrentTime(), "Admin"];
 
-      const updateBenifits = await client.query(updateIncludeQuery, params);
+      const updateInclude = await client.query(updateIncludeQuery, params);
 
       const history = [
         17,
@@ -642,9 +643,9 @@ export class carsRepository {
       return encrypt(
         {
           success: true,
-          message: "vehicle updated successfully",
+          message: "include updated successfully",
           token: tokens,
-          updateBenifits: updateBenifits,
+          updateInclude: updateInclude,
         },
         true
       );
@@ -655,7 +656,7 @@ export class carsRepository {
       return encrypt(
         {
           success: false,
-          message: "vehicle update failed",
+          message: "include update failed",
           token: tokens,
           error: errorMessage,
         },
@@ -772,7 +773,7 @@ export class carsRepository {
         return encrypt(
           {
             success: false,
-            message: "No benefits provided",
+            message: "No exclude provided",
             token: tokens,
           },
           true
@@ -915,7 +916,7 @@ export class carsRepository {
       return encrypt(
         {
           success: true,
-          message: "list Include successfully",
+          message: "list exclude successfully",
           token: tokens,
           result: result,
         },
@@ -925,7 +926,7 @@ export class carsRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during list Includes",
+          message: "An unknown error occurred during list exclude",
           token: tokens,
           error: String(error),
         },
@@ -1078,7 +1079,7 @@ export class carsRepository {
         return encrypt(
           {
             success: false,
-            message: "include ID not found",
+            message: "DriverDetails Id not found",
             token: tokens,
           },
           true
@@ -1262,7 +1263,7 @@ export class carsRepository {
       return encrypt(
         {
           success: true,
-          message: "TermsAndConditions added successfully",
+          message: "Terms And Conditions added successfully",
           data: userResult,
           token: tokens,
         },
@@ -1299,7 +1300,7 @@ export class carsRepository {
         return encrypt(
           {
             success: false,
-            message: "No FormDetails provided",
+            message: "No Form Details provided",
             token: tokens,
           },
           true
@@ -1321,7 +1322,7 @@ export class carsRepository {
           "Admin",
         ]);
 
-        console.log("Benefit added result:", result);
+        console.log("Form Details added result:", result);
 
         resultArray.push(result);
       }
@@ -1330,7 +1331,7 @@ export class carsRepository {
       const history = [
         23,
         tokendata.id,
-        "addFormDetails", // Action name
+        "add Form Details", // Action name
         CurrentTime(), // Timestamp of the action
         "Admin", // Performed by
       ];
@@ -1723,6 +1724,7 @@ export class carsRepository {
       const refFormDetails = Array.isArray(userData.refFormDetails)
         ? `{${userData.refFormDetails.join(",")}}`
         : "{}";
+
       const carsResult = await client.query(addCarsQuery, [
         refVehicleTypeId,
         refPersonCount,
@@ -1883,7 +1885,6 @@ export class carsRepository {
       let carImageBase64 = null;
 
       if (carImage) {
-        // If there's an image to upload, store it and convert it to base64
         carImagePath = await storetheFile(carImage, 2); // 2 for car images
         carImageBase64 = await convertToBase64(carImagePath);
       }
@@ -1984,7 +1985,7 @@ export class carsRepository {
       return encrypt(
         {
           success: true,
-          message: "listed packege successfully",
+          message: "listed car successfully",
           token: tokens,
           result: result,
         },
@@ -2013,7 +2014,7 @@ export class carsRepository {
       return encrypt(
         {
           success: true,
-          message: "listed packege successfully",
+          message: "listed car successfully",
           token: tokens,
           result: result,
         },
@@ -2023,7 +2024,7 @@ export class carsRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed packege",
+          message: "An unknown error occurred during listed car",
           token: tokens,
           error: String(error),
         },
@@ -2032,3 +2033,7 @@ export class carsRepository {
     }
   }
 }
+
+
+
+

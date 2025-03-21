@@ -72,7 +72,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Bookings'");
+    logger.info("Router-----list car Bookings'");
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -86,7 +86,7 @@ export class adminController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in list Bookings", error);
+      logger.error("Error in list car Bookings", error);
       return response
         .response({
           success: false,
@@ -116,7 +116,7 @@ export class adminController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in list Bookings", error);
+      logger.error("Error in list Customize Bookings", error);
       return response
         .response({
           success: false,

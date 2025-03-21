@@ -17,6 +17,7 @@ import {
 import { CurrentTime } from "../../helper/common";
 import {
   addPackageQuery,
+  addTravalDataQuery,
   addTravalExcludeQuery,
   addTravalIncludeQuery,
   checkTravalExcludeQuery,
@@ -31,6 +32,7 @@ import {
   listTravalIncludeQuery,
   updateHistoryQuery,
   updatePackageQuery,
+  updateTravalDataQuery,
   updateTravalExcludeQuery,
   updateTravalIncludeQuery,
 } from "./query";
@@ -111,11 +113,17 @@ export class packageRepository {
         refTourCode,
         refTourPrice,
         refSeasonalPrice,
-        images, // Expecting an array of images
+        images,
+        refItinary,
+        refItinaryMapPath,
+        refSpecialNotes,
+        refTravalOverView,
       } = userData;
 
       const refLocation = `{${userData.refLocation.join(",")}}`;
       const refActivity = `{${userData.refActivity.join(",")}}`;
+      const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
+      const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
 
       // Insert package details and get refPackageId
       const packageResult = await client.query(addPackageQuery, [
@@ -138,44 +146,56 @@ export class packageRepository {
       console.log("Inserted Package ID:", refPackageId);
 
       // Store image paths and convert to base64
-      let storedImages: any[] = [];
-      if (Array.isArray(images) && images.length > 0) {
-        for (const image of images) {
-          if (!image || typeof image === "string") continue; // Skip invalid entries
+      // let storedImages: any[] = [];
+      // if (Array.isArray(images) && images.length > 0) {
+      //   for (const image of images) {
+      //     if (!image || typeof image === "string") continue; // Skip invalid entries
 
-          console.log(`Processing Image: ${image.hapi?.filename}`);
+      //     console.log(`Processing Image: ${image.hapi?.filename}`);
 
-          const filename = image.hapi?.filename;
-          if (!filename) {
-            console.error("Invalid image: Missing filename");
-            continue;
-          }
+      //     const filename = image.hapi?.filename;
+      //     if (!filename) {
+      //       console.error("Invalid image: Missing filename");
+      //       continue;
+      //     }
 
-          // Store file and get path
-          const uploadType = 2; // Assuming upload type 2 for gallery
-          const imagePath = await storeFile(image, uploadType);
-          console.log(`Stored Image Path: ${imagePath}`);
+      //     // Store file and get path
+      //     const uploadType = 2; // Assuming upload type 2 for gallery
+      //     const imagePath = await storeFile(image, uploadType);
+      //     console.log(`Stored Image Path: ${imagePath}`);
 
-          // Convert image to Base64
-          const imageBuffer = await viewFile(imagePath);
-          const imageBase64 = imageBuffer.toString("base64");
+          // // Convert image to Base64
+          // const imageBuffer = await viewFile(imagePath);
+          // const imageBase64 = imageBuffer.toString("base64");
 
-          // Store image path in the database
-          await client.query(insertGalleryQuery, [
-            refPackageId,
-            imagePath,
-            CurrentTime(),
-            "Admin",
-          ]);
+      // Store image path in the database
+      await client.query(insertGalleryQuery, [
+        refPackageId,
+        images,
+        CurrentTime(),
+        "Admin",
+      ]);
 
-          storedImages.push({
-            filename: filename,
-            path: imagePath,
-            content: imageBase64,
-            contentType: "image/jpeg", // Adjust based on file type
-          });
-        }
-      }
+      //     storedImages.push({
+      //       filename: filename,
+      //       path: imagePath,
+      //       content: imageBase64,
+      //       contentType: "image/jpeg", // Adjust based on file type
+      //     });
+      //   }
+      // }
+
+      const Result = await client.query(addTravalDataQuery, [
+        refPackageId,
+        refTravalOverView,
+        refItinary,
+        refItinaryMapPath,
+        refTravalInclude,
+        refTravalExclude,
+        refSpecialNotes,
+        CurrentTime(),
+        "Admin",
+      ]);
 
       const history = [10, tokendata.id, "add package", CurrentTime(), "Admin"];
 
@@ -188,7 +208,7 @@ export class packageRepository {
           message: "Package and gallery images added successfully",
           token: token,
           packageData: packageResult.rows[0],
-          galleryImages: storedImages,
+          ResultTravalData: Result,
         },
         true
       );
@@ -208,6 +228,122 @@ export class packageRepository {
       client.release();
     }
   }
+  // public async addPackageV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+
+  //   try {
+  //     await client.query("BEGIN"); // Start transaction
+
+  //     const {
+  //       refPackageName,
+  //       refDesignationId,
+  //       refDurationIday,
+  //       refDurationINight,
+  //       refCategoryId,
+  //       refGroupSize,
+  //       refTourCode,
+  //       refTourPrice,
+  //       refSeasonalPrice,
+  //       images, // Expecting an array of images
+  //     } = userData;
+
+  //     const refLocation = `{${userData.refLocation.join(",")}}`;
+  //     const refActivity = `{${userData.refActivity.join(",")}}`;
+
+  //     // Insert package details and get refPackageId
+  //     const packageResult = await client.query(addPackageQuery, [
+  //       refPackageName,
+  //       refDesignationId,
+  //       refDurationIday,
+  //       refDurationINight,
+  //       refLocation,
+  //       refCategoryId,
+  //       refActivity,
+  //       refGroupSize,
+  //       refTourCode,
+  //       refTourPrice,
+  //       refSeasonalPrice,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
+
+  //     const refPackageId = packageResult.rows[0].refPackageId;
+  //     console.log("Inserted Package ID:", refPackageId);
+
+  //     // Store image paths and convert to base64
+  //     let storedImages: any[] = [];
+  //     if (Array.isArray(images) && images.length > 0) {
+  //       for (const image of images) {
+  //         if (!image || typeof image === "string") continue; // Skip invalid entries
+
+  //         console.log(`Processing Image: ${image.hapi?.filename}`);
+
+  //         const filename = image.hapi?.filename;
+  //         if (!filename) {
+  //           console.error("Invalid image: Missing filename");
+  //           continue;
+  //         }
+
+  //         // Store file and get path
+  //         const uploadType = 2; // Assuming upload type 2 for gallery
+  //         const imagePath = await storeFile(image, uploadType);
+  //         console.log(`Stored Image Path: ${imagePath}`);
+
+  //         // Convert image to Base64
+  //         const imageBuffer = await viewFile(imagePath);
+  //         const imageBase64 = imageBuffer.toString("base64");
+
+  //         // Store image path in the database
+  //         await client.query(insertGalleryQuery, [
+  //           refPackageId,
+  //           imagePath,
+  //           CurrentTime(),
+  //           "Admin",
+  //         ]);
+
+  //         storedImages.push({
+  //           filename: filename,
+  //           path: imagePath,
+  //           content: imageBase64,
+  //           contentType: "image/jpeg", // Adjust based on file type
+  //         });
+  //       }
+  //     }
+
+  //     const history = [10, tokendata.id, "add package", CurrentTime(), "Admin"];
+
+  //     const updateHistory = await client.query(updateHistoryQuery, history);
+  //     await client.query("COMMIT"); // Commit transaction
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Package and gallery images added successfully",
+  //         token: token,
+  //         packageData: packageResult.rows[0],
+  //         galleryImages: storedImages,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error adding package:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while adding the package",
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+
   public async UpdatePackageV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokenData.id };
@@ -226,7 +362,13 @@ export class packageRepository {
         refTourCode,
         refTourPrice,
         refSeasonalPrice,
-        images,
+        refTravalDataId,
+        refTravalOverView,
+        refItinary,
+        refItinaryMapPath,
+        refTravalInclude,
+        refTravalExclude,
+        refSpecialNotes,
       } = userData;
       console.log("userData", userData);
 
@@ -273,44 +415,58 @@ export class packageRepository {
       ]);
       console.log("packageDetails", packageDetails);
 
-      let storedImages: any[] = [];
-      if (Array.isArray(images) && images.length > 0) {
-        for (const image of images) {
-          if (!image || typeof image === "string") continue; // Skip invalid entries
+      // let storedImages: any[] = [];
+      // if (Array.isArray(images) && images.length > 0) {
+      //   for (const image of images) {
+      //     if (!image || typeof image === "string") continue; // Skip invalid entries
 
-          console.log(`Processing Image: ${image.hapi?.filename}`);
+      //     console.log(`Processing Image: ${image.hapi?.filename}`);
 
-          const filename = image.hapi?.filename;
-          if (!filename) {
-            console.error("Invalid image: Missing filename");
-            continue;
-          }
+      //     const filename = image.hapi?.filename;
+      //     if (!filename) {
+      //       console.error("Invalid image: Missing filename");
+      //       continue;
+      //     }
 
-          // Store file and get path
-          const uploadType = 2; // Assuming upload type 2 for gallery
-          const imagePath = await storeFile(image, uploadType);
-          console.log(`Stored Image Path: ${imagePath}`);
+      //     // Store file and get path
+      //     const uploadType = 2; // Assuming upload type 2 for gallery
+      //     const imagePath = await storeFile(image, uploadType);
+      //     console.log(`Stored Image Path: ${imagePath}`);
 
-          // Convert image to Base64
-          const imageBuffer = await viewFile(imagePath);
-          const imageBase64 = imageBuffer.toString("base64");
+      //     // Convert image to Base64
+      //     const imageBuffer = await viewFile(imagePath);
+      //     const imageBase64 = imageBuffer.toString("base64");
 
-          // Store image path in the database
-          await client.query(insertGalleryQuery, [
-            refPackageId,
-            imagePath,
-            CurrentTime(),
-            "Admin",
-          ]);
+      //     // Store image path in the database
+      //     await client.query(insertGalleryQuery, [
+      //       refPackageId,
+      //       imagePath,
+      //       CurrentTime(),
+      //       "Admin",
+      //     ]);
 
-          storedImages.push({
-            filename: filename,
-            path: imagePath,
-            content: imageBase64,
-            contentType: "image/jpeg", // Adjust based on file type
-          });
-        }
-      }
+      //     storedImages.push({
+      //       filename: filename,
+      //       path: imagePath,
+      //       content: imageBase64,
+      //       contentType: "image/jpeg", // Adjust based on file type
+      //     });
+      //   }
+      // }
+
+      const Result = await client.query(updateTravalDataQuery, [
+        refTravalDataId,
+        refPackageId,
+        refTravalOverView,
+        refItinary,
+        refItinaryMapPath,
+        refTravalInclude,
+        refTravalExclude,
+        refSpecialNotes,
+        CurrentTime(),
+        "Admin",
+      ]);
+
       const history = [
         11,
         tokenData.id,
@@ -579,75 +735,75 @@ export class packageRepository {
     }
   }
 
-// public async listPackageV1(userData: any, tokendata: any): Promise<any> {
-//     const token = { id: tokendata.id };
-//     const tokens = generateTokenWithExpire(token, true);
+  // public async listPackageV1(userData: any, tokendata: any): Promise<any> {
+  //     const token = { id: tokendata.id };
+  //     const tokens = generateTokenWithExpire(token, true);
 
-//     try {
-//         const result = await executeQuery(listPackageQuery);
+  //     try {
+  //         const result = await executeQuery(listPackageQuery);
 
-//         // Ensure result is an array before processing
-//         if (!Array.isArray(result)) {
-//             throw new Error("Invalid data received from database");
-//         }
+  //         // Ensure result is an array before processing
+  //         if (!Array.isArray(result)) {
+  //             throw new Error("Invalid data received from database");
+  //         }
 
-//         // Convert multiple images to Base64 format
-//         for (const item of result) {
-//             if (item.refGallery) {
-//                 try {
-//                     // If refGallery is a string, convert it to an array
-//                     const imagePaths = Array.isArray(item.refGallery)
-//                         ? item.refGallery
-//                         : item.refGallery.split(",");
+  //         // Convert multiple images to Base64 format
+  //         for (const item of result) {
+  //             if (item.refGallery) {
+  //                 try {
+  //                     // If refGallery is a string, convert it to an array
+  //                     const imagePaths = Array.isArray(item.refGallery)
+  //                         ? item.refGallery
+  //                         : item.refGallery.split(",");
 
-//                     // Process each image
-//                     item.refGallery = await Promise.all(
-//                         imagePaths.map(async (filePath: string) => {
-//                             try {
-//                                 const fileBuffer = await fs.promises.readFile(filePath.trim());
-//                                 return {
-//                                     filename: path.basename(filePath),
-//                                     content: fileBuffer.toString("base64"),
-//                                     contentType: "image/jpeg",
-//                                 };
-//                             } catch (error) {
-//                                 console.error("Error reading image file:", filePath, error);
-//                                 return null; // Handle missing/unreadable files gracefully
-//                             }
-//                         })
-//                     );
+  //                     // Process each image
+  //                     item.refGallery = await Promise.all(
+  //                         imagePaths.map(async (filePath: string) => {
+  //                             try {
+  //                                 const fileBuffer = await fs.promises.readFile(filePath.trim());
+  //                                 return {
+  //                                     filename: path.basename(filePath),
+  //                                     content: fileBuffer.toString("base64"),
+  //                                     contentType: "image/jpeg",
+  //                                 };
+  //                             } catch (error) {
+  //                                 console.error("Error reading image file:", filePath, error);
+  //                                 return null; // Handle missing/unreadable files gracefully
+  //                             }
+  //                         })
+  //                     );
 
-//                     // Remove any null entries from the array
-//                     item.refGallery = item.refGallery.filter((img: any) => img !== null);
-//                 } catch (error) {
-//                     console.error("Error processing images:", error);
-//                     item.refGallery = [];
-//                 }
-//             }
-//         }
+  //                     // Remove any null entries from the array
+  //                     item.refGallery = item.refGallery.filter((img: any) => img !== null);
+  //                 } catch (error) {
+  //                     console.error("Error processing images:", error);
+  //                     item.refGallery = [];
+  //                 }
+  //             }
+  //         }
 
-//         return encrypt(
-//             {
-//                 success: true,
-//                 message: "Listed packages successfully",
-//                 token: tokens,
-//                 result: result,
-//             },
-//             false
-//         );
-//     } catch (error: unknown) {
-//         console.error("Error in listing packages:", error);
-//         return encrypt(
-//             {
-//                 success: false,
-//                 message: "An error occurred while listing packages",
-//                 token: tokens,
-//                 error: String(error),
-//             },
-//             false
-//         );
-//     }
-// }
+  //         return encrypt(
+  //             {
+  //                 success: true,
+  //                 message: "Listed packages successfully",
+  //                 token: tokens,
+  //                 result: result,
+  //             },
+  //             false
+  //         );
+  //     } catch (error: unknown) {
+  //         console.error("Error in listing packages:", error);
+  //         return encrypt(
+  //             {
+  //                 success: false,
+  //                 message: "An error occurred while listing packages",
+  //                 token: tokens,
+  //                 error: String(error),
+  //             },
+  //             false
+  //         );
+  //     }
+  // }
 
   public async deleteImageV1(userData: any): Promise<any> {
     try {
@@ -699,251 +855,264 @@ export class packageRepository {
     }
   }
 
-
   public async addTravalIncludeV1(userData: any, tokendata: any): Promise<any> {
-      const client: PoolClient = await getClient();
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-  
-      try {
-        await client.query("BEGIN");
-  
-        const { refTravalInclude } = userData;
-  
-        console.log("Received userData:", userData);
-  
-        if (!Array.isArray(refTravalInclude) || refTravalInclude.length === 0) {
-          return encrypt(
-            {
-              success: false,
-              message: "No inlcude provided",
-              token: tokens,
-            },
-            true
-          );
-        }
-  
-        let resultArray: any[] = [];
-  
-        for (const include of refTravalInclude) {
-          const { refTravalInclude: refTravalInclude } = include;
-  
-          if (!refTravalInclude) {
-            continue;
-          }
-  
-          const result = await client.query(addTravalIncludeQuery, [
-            refTravalInclude,
-            CurrentTime(),
-            "Admin",
-          ]);
-  
-          console.log("Benefit added result:", result);
-  
-          resultArray.push(result);
-        }
-  
-        // Log history of the action
-        const history = [
-          41,
-          tokendata.id,
-          "add traval includes",
-          CurrentTime(),
-          "Admin",
-        ];
-  
-        // Commit transaction
-        await client.query("COMMIT");
-  
-        await client.query(updateHistoryQuery, history);
-  
-        // Return success response
-        return encrypt(
-          {
-            success: true,
-            message: "Benefits added successfully",
-            token: tokens,
-            result: resultArray,
-          },
-          true
-        );
-      } catch (error) {
-        // Rollback transaction in case of error
-        await client.query("ROLLBACK");
-  
-        // Handle the error message
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "An unknown error occurred during location addition";
-  
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN");
+
+      const { refTravalInclude } = userData;
+
+      console.log("Received userData:", userData);
+
+      if (!Array.isArray(refTravalInclude) || refTravalInclude.length === 0) {
         return encrypt(
           {
             success: false,
-            message: errorMessage,
-            error: String(error),
+            message: "No inlcude provided",
             token: tokens,
           },
           true
         );
       }
-  }
-  public async updateTravalIncludeV1(userData: any, tokenData: any): Promise<any> {
-      const client: PoolClient = await getClient();
-      const token = { id: tokenData.id };
-      const tokens = generateTokenWithExpire(token, true);
-      try {
-        await client.query("BEGIN");
-        const { refTravalIncludeId, refTravalInclude } = userData;
-  
-        const checkResult = await executeQuery(checkTravalIncludeQuery, [refTravalIncludeId]);
-        console.log("checkResult", checkResult);
-  
-        if (checkResult[0]?.count == 0) {
-          return encrypt(
-            {
-              success: false,
-              message: "include ID not found",
-              token: tokens,
-            },
-            true
-          );
+
+      let resultArray: any[] = [];
+
+      for (const include of refTravalInclude) {
+        const { refTravalInclude: refTravalInclude } = include;
+
+        if (!refTravalInclude) {
+          continue;
         }
-  
-        const params = [
-          refTravalIncludeId, 
-          refTravalInclude, 
-          CurrentTime(), 
-          "Admin"
-        ];
-  
-        const updateBenifits = await client.query(updateTravalIncludeQuery, params);
-  
-        const history = [
-          42,
-          tokenData.id,
-          "Update traval include",
-          CurrentTime(),
-          "Admin",
-        ];
-        const updateHistory = await client.query(updateHistoryQuery, history);
-        await client.query("COMMIT");
-  
-        return encrypt(
-          {
-            success: true,
-            message: "vehicle updated successfully",
-            token: tokens,
-            updateBenifits: updateBenifits,
-          },
-          true
-        );
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "An unknown error occurred";
-        await client.query("ROLLBACK");
-        return encrypt(
-          {
-            success: false,
-            message: "vehicle update failed",
-            token: tokens,
-            error: errorMessage,
-          },
-          true
-        );
-      }
-  }
-  public async deleteTravalIncludeV1(userData: any, tokendata: any): Promise<any> {
-      const client: PoolClient = await getClient();
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-  
-      try {
-        await client.query("BEGIN"); // Start transaction
-  
-        const { refTravalIncludeId } = userData;
-        const result = await client.query(deleteTravalIncludeQuery, [
-          refTravalIncludeId,
+
+        const result = await client.query(addTravalIncludeQuery, [
+          refTravalInclude,
           CurrentTime(),
           "Admin",
         ]);
-  
-        if (result.rowCount === 0) {
-          await client.query("ROLLBACK");
-          return encrypt(
-            {
-              success: false,
-              message: "Include not found or already deleted",
-              token: tokens,
-            },
-            true
-          );
-        }
-  
-        // Insert delete action into history
-        const history = [
-          43, // Unique ID for delete action
-          tokendata.id,
-          "delete traval Include",
-          CurrentTime(),
-          "admin",
-        ];
-  
-        await client.query(updateHistoryQuery, history);
-        await client.query("COMMIT"); // Commit transaction
-  
-        return encrypt(
-          {
-            success: true,
-            message: "Include deleted successfully",
-            token: tokens,
-            deletedData: result.rows[0], // Return deleted record for reference
-          },
-          true
-        );
-      } catch (error: unknown) {
-        await client.query("ROLLBACK"); // Rollback on error
-        console.error("Error deleting Include:", error);
-  
-        return encrypt(
-          {
-            success: false,
-            message: "An error occurred while deleting the Include",
-            tokens: tokens,
-            error: String(error),
-          },
-          true
-        );
-      } finally {
-        client.release();
+
+        console.log("Benefit added result:", result);
+
+        resultArray.push(result);
       }
+
+      // Log history of the action
+      const history = [
+        41,
+        tokendata.id,
+        "add traval includes",
+        CurrentTime(),
+        "Admin",
+      ];
+
+      // Commit transaction
+      await client.query("COMMIT");
+
+      await client.query(updateHistoryQuery, history);
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Benefits added successfully",
+          token: tokens,
+          result: resultArray,
+        },
+        true
+      );
+    } catch (error) {
+      // Rollback transaction in case of error
+      await client.query("ROLLBACK");
+
+      // Handle the error message
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An unknown error occurred during location addition";
+
+      return encrypt(
+        {
+          success: false,
+          message: errorMessage,
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    }
   }
-  public async listTravalIncludeV1(userData: any, tokendata: any): Promise<any> {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-      try {
-        const result = await executeQuery(listTravalIncludeQuery);
-  
-        return encrypt(
-          {
-            success: true,
-            message: "list Include successfully",
-            token: tokens,
-            result: result,
-          },
-          true
-        );
-      } catch (error: unknown) {
+  public async updateTravalIncludeV1(
+    userData: any,
+    tokenData: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokenData.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      await client.query("BEGIN");
+      const { refTravalIncludeId, refTravalInclude } = userData;
+
+      const checkResult = await executeQuery(checkTravalIncludeQuery, [
+        refTravalIncludeId,
+      ]);
+      console.log("checkResult", checkResult);
+
+      if (checkResult[0]?.count == 0) {
         return encrypt(
           {
             success: false,
-            message: "An unknown error occurred during list Includes",
+            message: "include ID not found",
             token: tokens,
-            error: String(error),
           },
           true
         );
       }
+
+      const params = [
+        refTravalIncludeId,
+        refTravalInclude,
+        CurrentTime(),
+        "Admin",
+      ];
+
+      const updateBenifits = await client.query(
+        updateTravalIncludeQuery,
+        params
+      );
+
+      const history = [
+        42,
+        tokenData.id,
+        "Update traval include",
+        CurrentTime(),
+        "Admin",
+      ];
+      const updateHistory = await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "vehicle updated successfully",
+          token: tokens,
+          updateBenifits: updateBenifits,
+        },
+        true
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      await client.query("ROLLBACK");
+      return encrypt(
+        {
+          success: false,
+          message: "vehicle update failed",
+          token: tokens,
+          error: errorMessage,
+        },
+        true
+      );
+    }
+  }
+  public async deleteTravalIncludeV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refTravalIncludeId } = userData;
+      const result = await client.query(deleteTravalIncludeQuery, [
+        refTravalIncludeId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "Include not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      const history = [
+        43, // Unique ID for delete action
+        tokendata.id,
+        "delete traval Include",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "Include deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting Include:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Include",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async listTravalIncludeV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery(listTravalIncludeQuery);
+
+      return encrypt(
+        {
+          success: true,
+          message: "list Include successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during list Includes",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
   }
 
   public async addTravalExcludeV1(userData: any, tokendata: any): Promise<any> {
@@ -1034,7 +1203,10 @@ export class packageRepository {
       );
     }
   }
-  public async updateTravalExcludeV1(userData: any, tokenData: any): Promise<any> {
+  public async updateTravalExcludeV1(
+    userData: any,
+    tokenData: any
+  ): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokenData.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1042,7 +1214,9 @@ export class packageRepository {
       await client.query("BEGIN");
       const { refTravalExcludeId, refTravalExclude } = userData;
 
-      const checkResult = await executeQuery(checkTravalExcludeQuery, [refTravalExcludeId]);
+      const checkResult = await executeQuery(checkTravalExcludeQuery, [
+        refTravalExcludeId,
+      ]);
       console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
@@ -1057,13 +1231,16 @@ export class packageRepository {
       }
 
       const params = [
-        refTravalExcludeId, 
-        refTravalExclude, 
-        CurrentTime(), 
-        "Admin"
+        refTravalExcludeId,
+        refTravalExclude,
+        CurrentTime(),
+        "Admin",
       ];
 
-      const updateBenifits = await client.query(updateTravalExcludeQuery, params);
+      const updateBenifits = await client.query(
+        updateTravalExcludeQuery,
+        params
+      );
 
       const history = [
         45,
@@ -1099,7 +1276,10 @@ export class packageRepository {
       );
     }
   }
-  public async deleteTravalExcludeV1(userData: any, tokendata: any): Promise<any> {
+  public async deleteTravalExcludeV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1164,7 +1344,10 @@ export class packageRepository {
       client.release();
     }
   }
-  public async listTravalExcludeV1(userData: any, tokendata: any): Promise<any> {
+  public async listTravalExcludeV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -1190,6 +1373,5 @@ export class packageRepository {
         true
       );
     }
-}
-
+  }
 }

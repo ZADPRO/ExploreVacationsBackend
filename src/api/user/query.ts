@@ -159,3 +159,20 @@ VALUES
 RETURNING
   *;
 `;
+
+export const updateTravalDataQuery = `UPDATE
+  public."refTravalData"
+SET
+  "refPackageId" = $2,
+  "refItinary" = $3,
+  "refItinaryMapPath" = $4,
+  "refTravalInclude" = $5,
+  "refTravalExclude" = $6,
+  "refSpecialNotes" = $7,
+  "updatedAt" = $8,
+  "updatedBy" = $9
+WHERE
+  "refTravalDataId" = $1 
+RETURNING
+  *;
+`;
