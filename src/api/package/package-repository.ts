@@ -23,6 +23,7 @@ import {
   checkTravalExcludeQuery,
   checkTravalIncludeQuery,
   deleteImageRecordQuery,
+  deletePackageQuery,
   deleteTravalExcludeQuery,
   deleteTravalIncludeQuery,
   getImageRecordQuery,
@@ -527,6 +528,73 @@ export class packageRepository {
       );
     }
   }
+
+public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { refPackageId } = userData;
+      const result = await client.query(deletePackageQuery, [
+        refPackageId,
+        CurrentTime(),
+        "Admin",
+      ]);
+
+      // if (result.rowCount === 0) {
+      //   await client.query("ROLLBACK");
+      //   return encrypt(
+      //     {
+      //       success: false,
+      //       message: "car not found or already deleted",
+      //       token: tokens,
+      //     },
+      //     true
+      //   );
+      // }
+
+      // Insert delete action into history
+      const history = [
+        48, // Unique ID for delete action
+        tokendata.id,
+        "delete car",
+        CurrentTime(),
+        "admin",
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "car deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting car:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Vehicle",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
 
   // public async galleryUploadV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };

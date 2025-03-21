@@ -78,6 +78,40 @@ export class packageController {
         .code(500);
     }
   };
+  public deletePackage = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router----delete packages'");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      console.log('decodedToken', decodedToken)
+     
+      let entity;
+
+      entity = await this.resolver.deletePackageV1(request.payload, decodedToken);
+      console.log('entity', entity)
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in delete package controller", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
   public galleryUpload = async (
     request: any,
     response: Hapi.ResponseToolkit

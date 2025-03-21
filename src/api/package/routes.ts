@@ -34,6 +34,17 @@ export class packageRoutes implements IRoute {
         },
         {
           method: "POST",
+          path: "/api/v1/packageRoutes/deletePackage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deletePackage,
+            description: "delete Package",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
           path: "/api/v1/packageRoutes/galleryUpload",
           config: {
             pre: [{ method: validateToken, assign: "token" }],

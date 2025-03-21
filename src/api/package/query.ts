@@ -83,6 +83,14 @@ WHERE
 
 `;
 
+export const deletePackageQuery = `SELECT *
+FROM public."refPackage"
+WHERE "refPackageId" NOT IN ($1);
+`;
+
+
+
+
 export const updateTravalDataQuery = `UPDATE
   public."refTravalData"
 SET

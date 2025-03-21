@@ -2213,7 +2213,4 @@ export class carsRepository {
     }
   }
 
-
-
-
 }
