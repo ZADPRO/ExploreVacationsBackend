@@ -78,18 +78,176 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
 
 `;
 
-
-
-export const listTourQuery = `SELECT 
-rp.*
-FROM public."refPackage" rp
-WHERE rp."refPackageId" = $1
+export const listTourQuery = `SELECT
+  rp."refPackageId",
+  rp."refPackageName",
+  rp."refDesignationId",
+  rp."refDurationIday",
+  rp."refDurationINight",
+  rp."refCategoryId",
+  rp."refGroupSize",
+  rp."refTourPrice",
+  rp."refSeasonalPrice",
+  rp."refCoverImage",
+  STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
+  STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
+  rg."refGallery",
+  rtd."refItinary",
+  rtd."refItinaryMapPath",
+  STRING_AGG(DISTINCT rti."refTravalInclude", ', ') AS "refTravalInclude",
+  STRING_AGG(DISTINCT rte."refTravalExclude", ', ') AS "refTravalExclude",
+  rtd."refSpecialNotes",
+  rtd."refTravalOverView"
+FROM
+  public."refPackage" rp
+  LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rp."refLocation", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+  LEFT JOIN public."refActivities" ra ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rp."refActivity", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+  LEFT JOIN public."refTravalInclude" rti ON CAST(rti."refTravalIncludeId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rtd."refTravalInclude", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+  LEFT JOIN public."refTravalExclude" rte ON CAST(rte."refTravalExcludeId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rtd."refTravalExclude", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+WHERE
+  rp."isDelete" IS NOT true AND rp."refPackageId" = $1
+GROUP BY
+  rp."refPackageId",
+  rg."refGalleryId",
+  rtd."refTravalDataId";
 `;
 
 
-export const listOtherTourQuery = `SELECT *
-FROM public."refPackage"
-WHERE "refPackageId" NOT IN ($1);
+export const listOtherTourQuery = `SELECT
+  rp."refPackageId",
+  rp."refPackageName",
+  rp."refDesignationId",
+  rp."refDurationIday",
+  rp."refDurationINight",
+  rp."refCategoryId",
+  rp."refGroupSize",
+  rp."refTourPrice",
+  rp."refSeasonalPrice",
+  rp."refCoverImage",
+  STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
+  STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
+  rg."refGallery",
+  rtd."refItinary",
+  rtd."refItinaryMapPath",
+  STRING_AGG(DISTINCT rti."refTravalInclude", ', ') AS "refTravalInclude",
+  STRING_AGG(DISTINCT rte."refTravalExclude", ', ') AS "refTravalExclude",
+  rtd."refSpecialNotes",
+  rtd."refTravalOverView"
+FROM
+  public."refPackage" rp
+  LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rp."refLocation", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+  LEFT JOIN public."refActivities" ra ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rp."refActivity", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+  LEFT JOIN public."refTravalInclude" rti ON CAST(rti."refTravalIncludeId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rtd."refTravalInclude", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+  LEFT JOIN public."refTravalExclude" rte ON CAST(rte."refTravalExcludeId" AS INTEGER) = ANY (
+    SELECT
+      CAST(x AS INTEGER)
+    FROM
+      unnest(
+        string_to_array(
+          regexp_replace(rtd."refTravalExclude", '[{}]', '', 'g'),
+          ','
+        )
+      ) AS x
+    WHERE
+      x ~ '^\d+$'
+  )
+WHERE
+  rp."isDelete" IS NOT true AND rp."refPackageId" NOT IN ($1)
+GROUP BY
+  rp."refPackageId",
+  rg."refGalleryId",
+  rtd."refTravalDataId";
+
+
+
 `;
 
 export const listallTourQuery = `

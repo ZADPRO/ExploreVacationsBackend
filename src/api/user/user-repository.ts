@@ -3,7 +3,7 @@ import { PoolClient } from "pg";
 import { storeFile, viewFile, deleteFile } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
-import { formatDate } from "../../helper/common";
+import { formatDate, processImages } from "../../helper/common";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -450,71 +450,111 @@ export class userRepository {
     }
   }
 
-  // public async listTourV1(userData: any, tokendata: any): Promise<any> {
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
-  //     const {refPackageId} = userData;
+  
 
-  //     const result1 = await executeQuery(listTourQuery, [refPackageId]);
+//   public async listTourV1(userData: any, tokendata: any): Promise<any> {
+//     try {
+//       const { refPackageId } = userData;
 
-  //     const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
+//       const result1 = await executeQuery(listTourQuery, [refPackageId]);
+//       console.log("result1", result1);
 
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "listed Tour successfully",
-  //         token: tokens,
-  //         tourDetails: result1,
-  //         othertourDetails: result2,
+//       const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
+//       console.log("result2", result2);
 
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message:
-  //           "An unknown error occurred during listed  Tour ",
-  //         token: tokens,
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   }
-  // }
 
-  public async listTourV1(userData: any, tokendata: any): Promise<any> {
-    try {
-      const { refPackageId } = userData;
+//      for (const image of result) {
+//   for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+//     if (image[key]) {
+//       try {
+//         const fileBuffer = await fs.promises.readFile(image[key]);
+//         image[key] = {
+//           filename: path.basename(image[key]),
+//           content: fileBuffer.toString("base64"),
+//           contentType: "image/jpeg", // Adjust if needed
+//         };
+//       } catch (error) {
+//         console.error(`Error reading ${key} file:`, error);
+//         image[key] = null; // Handle missing/unreadable files
+//       }
+//     }
+//   }
+// }
 
-      const result1 = await executeQuery(listTourQuery, [refPackageId]);
-      console.log("result1", result1);
 
-      const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
-      console.log("result2", result2);
 
-      return encrypt(
-        {
-          success: true,
-          message: "listed Tour successfully",
-          tourDetails: result1,
-          othertourDetails: result2,
-        },
-        true
-      );
-    } catch (error: unknown) {
-      return encrypt(
-        {
-          success: false,
-          message: "An unknown error occurred during listed  Tour ",
-          error: String(error),
-        },
-        true
-      );
+
+//       return encrypt(
+//         {
+//           success: true,
+//           message: "listed Tour successfully",
+//           tourDetails: result1,
+//           othertourDetails: result2,
+//         },
+//         true
+//       );
+//     } catch (error: unknown) {
+//       return encrypt(
+//         {
+//           success: false,
+//           message: "An unknown error occurred during listed  Tour ",
+//           error: String(error),
+//         },
+//         true
+//       );
+//     }
+//   }
+
+
+public async  listTourV1(userData: any, tokendata: any): Promise<any> {
+
+  try {
+
+    const { refPackageId } = userData;
+
+    // Step 1: Execute Queries
+    const result1 = await executeQuery(listTourQuery, [refPackageId]);
+    console.log("result1:", result1);
+
+    const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
+    console.log("result2:", result2);
+
+    // Step 2: Process images for both sets of results
+    if (result1 && result1.length) {
+      await processImages(result1);
     }
+    if (result2 && result2.length) {
+      await processImages(result2);
+    }
+
+    // Step 3: Return success response
+    return encrypt(
+      {
+        success: true,
+        message: "Listed Tour successfully",
+        tourDetails: result1,
+        othertourDetails: result2,
+      },
+      true
+    );
+  } catch (error: unknown) {
+    // Log the error for debugging
+    console.error("Error in listing tour:", error);
+
+    // Step 4: Return error response with a more descriptive error message
+    return encrypt(
+      {
+        success: false,
+        message: "An error occurred while listing the tour details.",
+        error: String(error), // Return detailed error for debugging
+      },
+      true
+    );
   }
+}
+
+
+
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
 
@@ -557,6 +597,7 @@ export class userRepository {
       );
     }
   }
+  
   public async addTravalDataV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };

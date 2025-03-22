@@ -1,3 +1,7 @@
+import fs from "fs";
+import path from "path";
+
+
 export const getAdjustedTime = (): string => {
   const serverTime = new Date();
   serverTime.setMinutes(serverTime.getMinutes() + 330);
@@ -184,4 +188,27 @@ export function base64ToFile(base64String: string, fileName: string): { file: Fi
   const file = new File([byteArray], fileName, { type: fileType });
 
   return { file, fileType };
+}
+
+
+
+// Mark the function as async to use await inside it
+export async function processImages(result: any[]) {
+  for (const image of result) {
+    for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+      if (image[key]) {
+        try {
+          const fileBuffer = await fs.promises.readFile(image[key]);
+          image[key] = {
+            filename: path.basename(image[key]),
+            content: fileBuffer.toString("base64"),
+            contentType: "image/jpeg", // Adjust if needed based on the image type
+          };
+        } catch (error) {
+          console.error(`Error reading ${key} file:`, error);
+          image[key] = null; // Handle missing/unreadable files
+        }
+      }
+    }
+  }
 }
