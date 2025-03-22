@@ -337,7 +337,6 @@ export const addCarsQuery = `INSERT INTO
     "refInclude",
     "refExclude",
     "refDriverDetailsId",
-    "refTermsAndConditionsId",
     "refFormDetails",
     "refOtherRequirements",
     "refCarPath",
@@ -346,7 +345,7 @@ export const addCarsQuery = `INSERT INTO
     "isDelete"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, false) 
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, false) 
 RETURNING
   *;
 `;
@@ -418,10 +417,8 @@ RETURNING
 `;
 
 
-
-
-
 export const listCarsQuery = `SELECT
+rc.refCarsId,
   rvt."refVehicleTypeName",
   rc."refPersonCount",
   rc."refBagCount",
@@ -434,6 +431,7 @@ export const listCarsQuery = `SELECT
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+  WHERE rc."isDelete" IS NOT true ;
       `;
 
 // export const getCarsByIdQuery = `SELECT

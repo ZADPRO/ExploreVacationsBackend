@@ -18,13 +18,11 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----tour Booking");
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+     
      
       let entity;
 
-      entity = await this.resolver.tourBookingV1(request.payload, decodedToken);
+      entity = await this.resolver.tourBookingV1(request.payload);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -50,13 +48,11 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----customize Booking");
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      
      
       let entity;
 
-      entity = await this.resolver.customizeBookingV1(request.payload, decodedToken);
+      entity = await this.resolver.customizeBookingV1(request.payload);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -82,11 +78,9 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----upload Certificate");
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      
       let entity;
-      entity = await this.resolver.uploadCertificateV1(request.payload, decodedToken);
+      entity = await this.resolver.uploadCertificateV1(request.payload);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -112,13 +106,11 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----car Booking");
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+    
      
       let entity;
 
-      entity = await this.resolver.userCarBookingV1(request.payload, decodedToken);
+      entity = await this.resolver.userCarBookingV1(request.payload);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created

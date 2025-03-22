@@ -1703,7 +1703,6 @@ export class carsRepository {
         refTrasmissionType,
         refFuleLimit,
         refDriverDetailsId,
-        refTermsAndConditionsId,
         refOtherRequirements,
         refrefRentalAgreement,
         refFuelPolicy,
@@ -1739,7 +1738,7 @@ export class carsRepository {
         refInclude,
         refExclude,
         refDriverDetailsId,
-        refTermsAndConditionsId,
+        
         refFormDetails,
         refOtherRequirements,
         carImagePath,

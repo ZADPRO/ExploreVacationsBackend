@@ -86,9 +86,15 @@ WHERE
 
 `;
 
-export const deletePackageQuery = `SELECT *
-FROM public."refPackage"
-WHERE "refPackageId" NOT IN ($1);
+export const deletePackageQuery = `UPDATE
+  public."refPackage"
+SET
+  "isDelete" = TRUE,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refPackageId" = $1
+RETURNING
 `;
 
 
@@ -118,6 +124,7 @@ RETURNING
 
 export const listPackageQuery = `
 SELECT 
+rp."refPackageId",
   rp."refPackageName",
   rp."refDesignationId",
   rp."refDurationIday",
@@ -153,9 +160,9 @@ LEFT JOIN public."refActivities" ra
             ','
         )::INTEGER[]
     )
+        WHERE rp."isDelete" IS NOT true
 GROUP BY rp."refPackageId", rg."refGalleryId", rtd."refTravalDataId";
 `;
-
 
 
 export const getImageRecordQuery = `SELECT *

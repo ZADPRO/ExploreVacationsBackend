@@ -34,9 +34,7 @@ import fs from "fs";
 export class userRepository {
   public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-
+    
     try {
       await client.query("BEGIN"); // Start transaction
 
@@ -67,28 +65,27 @@ export class userRepository {
         "Admin",
       ]);
 
-      const history = [27, tokendata.id, "tour booking", CurrentTime(), "user"];
+      // const history = [27, tokendata.id, "tour booking", CurrentTime(), "user"];
 
-      const updateHistory = await client.query(updateHistoryQuery, history);
+      // const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
 
       return encrypt(
         {
           success: true,
-          message: "Package and gallery images added successfully",
-          token: token,
+          message: "tour booking successfully",
           Data: Result.rows[0],
         },
         true
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback transaction in case of failure
-      console.error("Error adding package:", error);
+      console.error("Error tour booking:", error);
 
       return encrypt(
         {
           success: false,
-          message: "An error occurred while adding the package",
+          message: "An error occurred while tour booking",
           error: String(error),
         },
         true
@@ -254,9 +251,7 @@ export class userRepository {
   // }
   public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-
+   
     try {
       await client.query("BEGIN"); // Start transaction
 
@@ -295,23 +290,22 @@ export class userRepository {
         "Admin",
       ]);
 
-      // Insert history
-      const history = [
-        28,
-        tokendata.id,
-        "add customize tour booking",
-        CurrentTime(),
-        "user",
-      ];
+      // const history = [
+      //   28,
+      //   tokendata.id,
+      //   "add customize tour booking",
+      //   CurrentTime(),
+      //   "user",
+      // ];
 
-      await client.query(updateHistoryQuery, history);
+      // await client.query(updateHistoryQuery, history);
+
       await client.query("COMMIT"); // Commit transaction
 
       return encrypt(
         {
           success: true,
           message: "Customize tour booking added successfully",
-          token: token,
           Data: Result.rows[0],
           pdfPath: refVaccinationCertificate, // Returning stored PDF path for confirmation
         },
@@ -337,9 +331,7 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-
+   
     try {
       // Extract the PDF file from userData
       const pdfFile = userData.PdfFile;
@@ -371,7 +363,6 @@ export class userRepository {
         {
           success: true,
           message: "PDF Stored Successfully",
-          token: tokens,
           filePath: filePath,
           files: storedFiles,
         },
@@ -383,7 +374,6 @@ export class userRepository {
         {
           success: false,
           message: "Error in Storing the PDF",
-          token: tokens,
         },
         true
       );
@@ -391,9 +381,7 @@ export class userRepository {
   }
   public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-
+   
     try {
       await client.query("BEGIN"); // Start transaction
 
@@ -431,16 +419,16 @@ export class userRepository {
         "Admin",
       ]);
 
-      const history = [29, tokendata.id, "car booking", CurrentTime(), "user"];
+      // const history = [29, tokendata.id, "car booking", CurrentTime(), "user"];
 
-      const updateHistory = await client.query(updateHistoryQuery, history);
+      // const updateHistory = await client.query(updateHistoryQuery, history);
+
       await client.query("COMMIT"); // Commit transaction
 
       return encrypt(
         {
           success: true,
           message: "Package and gallery images added successfully",
-          token: token,
           Data: Result.rows[0],
         },
         true

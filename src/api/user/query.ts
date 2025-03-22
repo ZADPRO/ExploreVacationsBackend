@@ -94,6 +94,7 @@ WHERE "refPackageId" NOT IN ($1);
 
 export const listallTourQuery = `
 SELECT 
+rp."refPackageId",
   rp."refPackageName",
   rp."refDesignationId",
   rp."refDurationIday",
@@ -129,7 +130,9 @@ LEFT JOIN public."refActivities" ra
             ','
         )::INTEGER[]
     )
+        WHERE rp."isDelete" IS NOT true
 GROUP BY rp."refPackageId", rg."refGalleryId", rtd."refTravalDataId";
+
 `;
 
 export const addTravalDataQuery = `INSERT INTO
@@ -181,6 +184,7 @@ export const listCarsQuery = `SELECT
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+  WHERE rc."isDelete" IS NOT true ;
       `;
 
 
@@ -206,5 +210,5 @@ WHERE "refCarsId" NOT IN ($1);
 `;
 
 
-export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" = false
+export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" IS NOT true
         `;
