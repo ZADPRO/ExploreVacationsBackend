@@ -1,4 +1,4 @@
-//update Transaction 
+//update Transaction
 export const updateHistoryQuery = `INSERT INTO
   public."refTxnHistory" (
     "refTransactionHistoryId",
@@ -33,7 +33,6 @@ RETURNING
   *;
 `;
 
-
 export const addcustomizeBookingQuery = `
     INSERT INTO public."customizeTourBooking" (
         "refUserName", 
@@ -55,7 +54,6 @@ export const addcustomizeBookingQuery = `
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
     RETURNING *;
 `;
-
 
 export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "refUserName", 
@@ -81,10 +79,10 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
 export const listTourQuery = `SELECT
   rp."refPackageId",
   rp."refPackageName",
-  rp."refDesignationId",
+  rd."refDestinationName",
   rp."refDurationIday",
   rp."refDurationINight",
-  rp."refCategoryId",
+  rc."refCategoryName",
   rp."refGroupSize",
   rp."refTourPrice",
   rp."refSeasonalPrice",
@@ -101,6 +99,8 @@ export const listTourQuery = `SELECT
 FROM
   public."refPackage" rp
   LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+    LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
+  LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
   LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
   LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
     SELECT
@@ -159,17 +159,18 @@ WHERE
 GROUP BY
   rp."refPackageId",
   rg."refGalleryId",
-  rtd."refTravalDataId";
+  rtd."refTravalDataId",
+  rd."refDestinationId",
+  rc."refCategoryId";
 `;
-
 
 export const listOtherTourQuery = `SELECT
   rp."refPackageId",
   rp."refPackageName",
-  rp."refDesignationId",
+  rd."refDestinationName",
   rp."refDurationIday",
   rp."refDurationINight",
-  rp."refCategoryId",
+  rc."refCategoryName",
   rp."refGroupSize",
   rp."refTourPrice",
   rp."refSeasonalPrice",
@@ -186,6 +187,8 @@ export const listOtherTourQuery = `SELECT
 FROM
   public."refPackage" rp
   LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+    LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
+  LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
   LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
   LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
     SELECT
@@ -244,7 +247,9 @@ WHERE
 GROUP BY
   rp."refPackageId",
   rg."refGalleryId",
-  rtd."refTravalDataId";
+  rtd."refTravalDataId",
+  rd."refDestinationId",
+  rc."refCategoryId";
 
 
 
@@ -254,14 +259,14 @@ export const listallTourQuery = `
 SELECT
   rp."refPackageId",
   rp."refPackageName",
-  rp."refDesignationId",
+  rd."refDestinationName",
   rp."refDurationIday",
   rp."refDurationINight",
-  rp."refCategoryId",
+  rc."refCategoryName",
   rp."refGroupSize",
   rp."refTourPrice",
   rp."refSeasonalPrice",
-  rp."refCoverImage",
+  rp."refCoverImage", 
   STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
   STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
   rg."refGallery",
@@ -274,7 +279,9 @@ SELECT
 FROM
   public."refPackage" rp
   LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
   LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
   LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
     SELECT
       CAST(x AS INTEGER)
@@ -332,8 +339,10 @@ WHERE
 GROUP BY
   rp."refPackageId",
   rg."refGalleryId",
-  rtd."refTravalDataId";
-
+  rtd."refTravalDataId",
+  rd."refDestinationId",
+  rc."refCategoryId"
+  ;
 `;
 
 export const addTravalDataQuery = `INSERT INTO
@@ -371,7 +380,6 @@ RETURNING
   *;
 `;
 
-
 export const listCarsQuery = `SELECT
   rvt."refVehicleTypeName",
   rc."refPersonCount",
@@ -387,7 +395,6 @@ FROM
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
   WHERE rc."isDelete" IS NOT true ;
       `;
-
 
 export const getCarsByIdQuery = `SELECT
   rvt."refVehicleTypeName",
@@ -409,7 +416,6 @@ export const getOtherCarsQuery = `SELECT *
 FROM public."refCarsTable"
 WHERE "refCarsId" NOT IN ($1);
 `;
-
 
 export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" IS NOT true
         `;
