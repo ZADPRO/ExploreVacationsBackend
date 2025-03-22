@@ -418,7 +418,7 @@ RETURNING
 
 
 export const listCarsQuery = `SELECT
-rc.refCarsId,
+rc."refCarsId",
   rvt."refVehicleTypeName",
   rc."refPersonCount",
   rc."refBagCount",
