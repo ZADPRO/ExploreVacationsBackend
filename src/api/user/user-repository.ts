@@ -18,16 +18,17 @@ import {
   addCarBookingQuery,
   addcustomizeBookingQuery,
   addTourBookingQuery,
-  addTravalDataQuery,
+  deleteImageRecordQuery,
   getCarsByIdQuery,
+  getImageRecordQuery,
   getOtherCarsQuery,
   listallTourQuery,
   listCarsQuery,
   listDestinationQuery,
   listOtherTourQuery,
   listTourQuery,
-  updateHistoryQuery,
-  updateTravalDataQuery,
+  updateHistoryQuery
+  
 } from "./query";
 import fs from "fs";
 
@@ -428,19 +429,19 @@ export class userRepository {
       return encrypt(
         {
           success: true,
-          message: "Package and gallery images added successfully",
+          message: "user car booking  added successfully",
           Data: Result.rows[0],
         },
         true
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback transaction in case of failure
-      console.error("Error adding package:", error);
+      console.error("Error adding user car booking:", error);
 
       return encrypt(
         {
           success: false,
-          message: "An error occurred while adding the package",
+          message: "An error occurred while adding the user car booking",
           error: String(error),
         },
         true
@@ -598,140 +599,140 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
     }
   }
   
-  public async addTravalDataV1(userData: any, tokendata: any): Promise<any> {
-    const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-    try {
-      await client.query("BEGIN"); // Start transaction
+  // public async addTravalDataV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   try {
+  //     await client.query("BEGIN"); // Start transaction
 
-      const {
-        refPackageId,
-        refItinary,
-        refItinaryMapPath,
-        refSpecialNotes
-      } = userData;
+  //     const {
+  //       refPackageId,
+  //       refItinary,
+  //       refItinaryMapPath,
+  //       refSpecialNotes
+  //     } = userData;
 
-      const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
-      const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
+  //     const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
+  //     const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
 
-      // Insert package details and get refPackageId
-      const Result = await client.query(addTravalDataQuery, [
-        refPackageId,
-        refItinary,
-        refItinaryMapPath,
-        refTravalInclude,
-        refTravalExclude,
-        refSpecialNotes,
-        CurrentTime(),
-        "Admin",
-      ]);
+  //     // Insert package details and get refPackageId
+  //     const Result = await client.query(addTravalDataQuery, [
+  //       refPackageId,
+  //       refItinary,
+  //       refItinaryMapPath,
+  //       refTravalInclude,
+  //       refTravalExclude,
+  //       refSpecialNotes,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
 
-      const history = [
-        40, 
-        tokendata.id, 
-        "add traval data", 
-        CurrentTime(),
-         "user"
-        ];
+  //     const history = [
+  //       40, 
+  //       tokendata.id, 
+  //       "add traval data", 
+  //       CurrentTime(),
+  //        "user"
+  //       ];
 
-      const updateHistory = await client.query(updateHistoryQuery, history);
-      await client.query("COMMIT"); // Commit transaction
+  //     const updateHistory = await client.query(updateHistoryQuery, history);
+  //     await client.query("COMMIT"); // Commit transaction
 
-      return encrypt(
-        {
-          success: true,
-          message: "Package and gallery images added successfully",
-          tokens:tokens,
-          Data: Result.rows[0],
-        },
-        true
-      );
-    } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback transaction in case of failure
-      console.error("Error adding package:", error);
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Package and gallery images added successfully",
+  //         tokens:tokens,
+  //         Data: Result.rows[0],
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error adding package:", error);
 
-      return encrypt(
-        {
-          success: false,
-          message: "An error occurred while adding the package",
-          tokens:tokens,
-          error: String(error),
-        },
-        true
-      );
-    } finally {
-      client.release();
-    }
-  }
-  public async updateTravalDataV1(userData: any, tokendata: any): Promise<any> {
-    const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-    try {
-      await client.query("BEGIN"); // Start transaction
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while adding the package",
+  //         tokens:tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+  // public async updateTravalDataV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   try {
+  //     await client.query("BEGIN"); // Start transaction
 
-      const {
-        refTravalDataId,
-        refPackageId,
-        refItinary,
-        refItinaryMapPath,
-        refTravalInclude,
-        refTravalExclude,
-        refSpecialNotes
-      } = userData;
+  //     const {
+  //       refTravalDataId,
+  //       refPackageId,
+  //       refItinary,
+  //       refItinaryMapPath,
+  //       refTravalInclude,
+  //       refTravalExclude,
+  //       refSpecialNotes
+  //     } = userData;
 
 
-      // Insert package details and get refPackageId
-      const Result = await client.query(updateTravalDataQuery, [
-        refTravalDataId,
-        refPackageId,
-        refItinary,
-        refItinaryMapPath,
-        refTravalInclude,
-        refTravalExclude,
-        refSpecialNotes,
-        CurrentTime(),
-        "Admin",
-      ]);
+  //     // Insert package details and get refPackageId
+  //     const Result = await client.query(updateTravalDataQuery, [
+  //       refTravalDataId,
+  //       refPackageId,
+  //       refItinary,
+  //       refItinaryMapPath,
+  //       refTravalInclude,
+  //       refTravalExclude,
+  //       refSpecialNotes,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
 
-      const history = [
-        47, 
-        tokendata.id, 
-        "update traval data", 
-        CurrentTime(),
-        "Admin"
-        ];
+  //     const history = [
+  //       47, 
+  //       tokendata.id, 
+  //       "update traval data", 
+  //       CurrentTime(),
+  //       "Admin"
+  //       ];
 
-      const updateHistory = await client.query(updateHistoryQuery, history);
-      await client.query("COMMIT"); // Commit transaction
+  //     const updateHistory = await client.query(updateHistoryQuery, history);
+  //     await client.query("COMMIT"); // Commit transaction
 
-      return encrypt(
-        {
-          success: true,
-          message: "Package and gallery images added successfully",
-          tokens:tokens,
-          Data: Result.rows[0],
-        },
-        true
-      );
-    } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback transaction in case of failure
-      console.error("Error adding package:", error);
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Package and gallery images added successfully",
+  //         tokens:tokens,
+  //         Data: Result.rows[0],
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error adding package:", error);
 
-      return encrypt(
-        {
-          success: false,
-          message: "An error occurred while adding the package",
-          tokens:tokens,
-          error: String(error),
-        },
-        true
-      );
-    } finally {
-      client.release();
-    }
-  }
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while adding the package",
+  //         tokens:tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
 
   public async uploadMapV1(userData: any, tokendata: any): Promise<any> {
       const token = { id: tokendata.id };
@@ -785,7 +786,64 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
         );
       }
   }
+  public async deleteMapV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // let filePath: string | any;
 
+      if (userData.refTravalDataId) {
+        console.log('userData.refTravalDataId', userData.refTravalDataId)
+        
+        // Retrieve the image record from the database
+        const imageRecord = await executeQuery(getImageRecordQuery, [
+          userData.refTravalDataId,
+        ]);
+        console.log('imageRecord', imageRecord)
+        if (imageRecord.length === 0) {
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              tokens:tokens
+            },
+            true
+          );
+        }
+      }
+        // filePath = imageRecord[0].refImagePath;
+
+        // Delete the image record from the database
+      const DeleteImage = await executeQuery(deleteImageRecordQuery, [userData.refTravalDataId]);
+      // } else {
+      //   // filePath = userData.filePath;
+      // }
+
+      // if (filePath) {
+      //   // Delete the file from local storage
+      //   await deleteFile(filePath);
+      // }
+
+      return encrypt(
+        {
+          success: true,
+          message: " Image Deleted Successfully",
+          tokens:tokens
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error in deleting file:", (error as Error).message); // Log the error for debugging
+      return encrypt(
+        {
+          success: false,
+          message: `Error In Deleting Image: ${(error as Error).message}`,
+          tokens:tokens
+        },
+        true
+      );
+    }
+  }
   public async getAllCarV1(userData: any, tokendata: any): Promise<any> {
     try {
 
@@ -852,13 +910,10 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
         }
       }
 
-
-
-
       return encrypt(
         {
           success: true,
-          message: "listed Tour successfully",
+          message: "listed car successfully",
           tourDetails: result1,
           othertourDetails: result2,
         },
@@ -868,7 +923,7 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed  Tour ",
+          message: "An unknown error occurred during listed  car ",
           error: String(error),
         },
         true

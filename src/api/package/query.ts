@@ -165,8 +165,10 @@ export const getImageRecordQuery = `SELECT *
     WHERE rg."refGalleryId" = $1;
 `;
 
-export const deleteImageRecordQuery =`DELETE FROM public."refGallery" rg 
-WHERE rg."refGalleryId" = $1;
+export const deleteImageRecordQuery =`UPDATE public."refGallery"
+SET "refGallery" = NULL
+WHERE "refGalleryId" = $1
+RETURNING *;
 `;
 
 export const updateHistoryQuery = `INSERT INTO
@@ -278,4 +280,20 @@ RETURNING
 export const listTravalExcludeQuery = `SELECT * FROM public."refTravalExclude"
 WHERE
   "isDelete" = false;
+`;
+
+
+export const getCoverImageRecordQuery = `SELECT *
+    FROM public."refPackage" rp
+    WHERE rp."refPackageId" = $1;
+`;
+
+export const deleteCoverImageRecordQuery =`UPDATE
+  public."refPackage"
+SET
+  "refCoverImage" = NULL
+WHERE
+  "refPackageId" = $1
+RETURNING
+  *;
 `;

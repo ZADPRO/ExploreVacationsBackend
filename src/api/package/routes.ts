@@ -72,7 +72,7 @@ export class packageRoutes implements IRoute {
           },
         },
         {
-          method: "DELETE",
+          method: "POST",
           path: "/api/v1/packageRoutes/deleteImage",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -185,6 +185,17 @@ export class packageRoutes implements IRoute {
               parse: true,
               multipart: true,
             },
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/deleteCoverImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCoverImage,
+            description: "deleteCoverImage",
+            tags: ["api", "Users"],
+            auth: false,
           },
         },
       ]);

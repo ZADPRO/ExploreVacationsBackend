@@ -250,7 +250,6 @@ SET "refAnswer" = $1,
 WHERE "refTermsAndConditionsId" = $2;
 `;
 
-
 // INSERT INTO public."refTermsAndConditions"  ("refQuestion", "refAnswer") VALUES ($1, $2, $3, $4)
 
 export const updateHistoryQuery = `INSERT INTO
@@ -364,8 +363,7 @@ values
   ($1, $2, $3, $4, $5, $6, $7)
   `;
 
-
-  export const updateCondation = `UPDATE
+export const updateCondation = `UPDATE
   public."refTermsAndConditions"
 SET
   "refRentalAgreement" = $2,
@@ -379,6 +377,24 @@ WHERE
 RETURNING
   *;
   `;
+
+export const getImageRecordQuery = `SELECT
+  *
+FROM
+  public."refCarsTable" 
+WHERE
+  "refCarsId" = $1;
+`;
+
+export const deleteImageRecordQuery = `UPDATE
+  public."refCarsTable" 
+SET
+  "refCarPath" = NULL
+WHERE
+  "refCarsId" = $1
+RETURNING
+  *;
+`;
 
 export const updateCarsQuery = `
         UPDATE public."refCarsTable"
@@ -404,7 +420,7 @@ export const updateCarsQuery = `
         RETURNING *;
       `;
 
-export const deleteCarsQuery =`UPDATE
+export const deleteCarsQuery = `UPDATE
   public."refCarsTable"
 SET
   "isDelete" = true,
@@ -415,7 +431,6 @@ WHERE
 RETURNING
   *;
 `;
-
 
 export const listCarsQuery = `SELECT
 rc."refCarsId",
@@ -486,7 +501,7 @@ FROM
 //       ','
 //     )::INTEGER[]
 //   )
-//   WHERE rc."refCarsId" = $1 
+//   WHERE rc."refCarsId" = $1
 // GROUP BY
 //   rc."refCarsId",
 //   rvt."refVehicleTypeName",
@@ -504,9 +519,6 @@ FROM
 //   rdd."refDriverDetailsId"
 // ;
 //       `;
-
-
-
 
 export const getCarsByIdQuery = `SELECT
   rc."refCarsId",
@@ -577,6 +589,3 @@ GROUP BY
   rc."refOtherRequirements",
   rdd."refDriverDetailsId",
   rtc."refTermsAndConditionsId";`;
-
-
-  

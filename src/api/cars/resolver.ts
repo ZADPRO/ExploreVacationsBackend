@@ -93,6 +93,9 @@ export class carsResolver {
   public async uploadCarsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.uploadCarsV1(user_data, token_data, domain_code);
   }
+  public async deleteCarImageV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carsRepository.deleteCarImageV1(user_data, token_data, domain_code);
+  }
   public async updateCarsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carsRepository.updateCarsV1(user_data, token_data, domain_code);
   }

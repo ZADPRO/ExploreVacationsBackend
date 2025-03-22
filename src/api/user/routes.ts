@@ -82,7 +82,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/getAllTour",
           config: {
             handler: controller.getAllTour,
-            description: "listTour",
+            description: "getAllTour",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -107,28 +107,28 @@ export class userRoutes implements IRoute {
             auth: false,
           },
         },
-        {
-          method: "POST",
-          path: "/api/v1/userRoutes/addTravalData",
-          config: {
-            pre: [{ method: validateToken, assign: "token" }],
-            handler: controller.addTravalData,
-            description: "add TravalData",
-            tags: ["api", "Users"],
-            auth: false,
-          },
-        },
-        {
-          method: "POST",
-          path: "/api/v1/userRoutes/updateTravalData",
-          config: {
-            pre: [{ method: validateToken, assign: "token" }],
-            handler: controller.updateTravalData,
-            description: "update TravalData",
-            tags: ["api", "Users"],
-            auth: false,
-          },
-        },
+        // {
+        //   method: "POST",
+        //   path: "/api/v1/userRoutes/addTravalData",
+        //   config: {
+        //     pre: [{ method: validateToken, assign: "token" }],
+        //     handler: controller.addTravalData,
+        //     description: "add TravalData",
+        //     tags: ["api", "Users"],
+        //     auth: false,
+        //   },
+        // },
+        // {
+        //   method: "POST",
+        //   path: "/api/v1/userRoutes/updateTravalData",
+        //   config: {
+        //     pre: [{ method: validateToken, assign: "token" }],
+        //     handler: controller.updateTravalData,
+        //     description: "update TravalData",
+        //     tags: ["api", "Users"],
+        //     auth: false,
+        //   },
+        // },
         {
           method: "POST",
           path: "/api/v1/userRoutes/uploadMap",
@@ -144,6 +144,18 @@ export class userRoutes implements IRoute {
               parse: true,
               multipart: true,
             },
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/deleteMap",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteMap,
+            description: "delete map",
+            tags: ["api", "Users"],
+            auth: false,
+            
           },
         },
         {

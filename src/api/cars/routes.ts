@@ -231,17 +231,17 @@ export class carsRoutes implements IRoute {
             auth: false,
           },
         },
-        {
-          method: "POST",
-          path: "/api/v1/carsRoutes/addTermsAndConditions",
-          config: {
-            pre: [{ method: validateToken, assign: "token" }],
-            handler: controller.addTermsAndConditions,
-            description: "add Terms And Conditions",
-            tags: ["api", "Users"],
-            auth: false,
-          },
-        },
+        // {
+        //   method: "POST",
+        //   path: "/api/v1/carsRoutes/addTermsAndConditions",
+        //   config: {
+        //     pre: [{ method: validateToken, assign: "token" }],
+        //     handler: controller.addTermsAndConditions,
+        //     description: "add Terms And Conditions",
+        //     tags: ["api", "Users"],
+        //     auth: false,
+        //   },
+        // },
         {
           method: "POST",
           path: "/api/v1/carsRoutes/addFormDetails",
@@ -327,6 +327,17 @@ export class carsRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateCars,
             description: "update addCars",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/carsRoutes/deleteCarImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCarImage,
+            description: "delete Car Image",
             tags: ["api", "Users"],
             auth: false,
           },

@@ -24,14 +24,17 @@ export class userResolver {
   public async getAllTourV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.getAllTourV1(user_data, token_data, domain_code);
   }
-  public async addTravalDataV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
-    return await this.userRepository.addTravalDataV1(user_data, token_data, domain_code);
-  }
-  public async updateTravalDataV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
-    return await this.userRepository.updateTravalDataV1(user_data, token_data, domain_code);
-  }
+  // public async addTravalDataV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+  //   return await this.userRepository.addTravalDataV1(user_data, token_data, domain_code);
+  // }
+  // public async updateTravalDataV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+  //   return await this.userRepository.updateTravalDataV1(user_data, token_data, domain_code);
+  // }
   public async uploadMapV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.uploadMapV1(user_data, token_data, domain_code);
+  }
+  public async deleteMapV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.deleteMapV1(user_data, token_data, domain_code);
   }
   public async getAllCarV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.getAllCarV1(user_data, token_data, domain_code);

@@ -22,10 +22,12 @@ import {
   addTravalIncludeQuery,
   checkTravalExcludeQuery,
   checkTravalIncludeQuery,
+  deleteCoverImageRecordQuery,
   deleteImageRecordQuery,
   deletePackageQuery,
   deleteTravalExcludeQuery,
   deleteTravalIncludeQuery,
+  getCoverImageRecordQuery,
   getImageRecordQuery,
   insertGalleryQuery,
   listPackageQuery,
@@ -380,11 +382,6 @@ export class packageRepository {
         );
       }
 
-      // const refLocation = `{${userData.refLocation.join(",")}}`;
-      // console.log('refLocation', refLocation)
-      // const refActivity = `{${userData.refActivity.join(",")}}`;
-      // console.log('refActivity', refActivity)
-
       const refLocation = Array.isArray(userData.refLocation)
         ? `{${userData.refLocation.join(",")}}`
         : "{}";
@@ -541,7 +538,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const history = [
         48, // Unique ID for delete action
         tokendata.id,
-        "delete car",
+        "delete Package",
         CurrentTime(),
         "admin",
       ];
@@ -552,7 +549,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       return encrypt(
         {
           success: true,
-          message: "car deleted successfully",
+          message: "package deleted successfully",
           token: tokens,
           deletedData: result.rows[0], // Return deleted record for reference
         },
@@ -560,12 +557,12 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback on error
-      console.error("Error deleting car:", error);
+      console.error("Error deleting package:", error);
 
       return encrypt(
         {
           success: false,
-          message: "An error occurred while deleting the Vehicle",
+          message: "An error occurred while deleting the package",
           tokens: tokens,
           error: String(error),
         },
@@ -792,15 +789,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       }
       
 
-
-
-
-
-
-
-
-
-
       return encrypt(
         {
           success: true,
@@ -894,9 +882,11 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
   //     }
   // }
 
-  public async deleteImageV1(userData: any): Promise<any> {
+  public async deleteImageV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
-      let filePath: string | any;
+      // let filePath: string | any;
 
       if (userData.refGalleryId) {
         // Retrieve the image record from the database
@@ -908,27 +898,30 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
             {
               success: false,
               message: "Image record not found",
+              tokens:tokens
             },
             true
           );
         }
-        filePath = imageRecord[0].refImagePath;
+      }
+        // filePath = imageRecord[0].refImagePath;
 
         // Delete the image record from the database
         await executeQuery(deleteImageRecordQuery, [userData.refGalleryId]);
-      } else {
-        filePath = userData.filePath;
-      }
+      // } else {
+      //   // filePath = userData.filePath;
+      // }
 
-      if (filePath) {
-        // Delete the file from local storage
-        await deleteFile(filePath);
-      }
+      // if (filePath) {
+      //   // Delete the file from local storage
+      //   await deleteFile(filePath);
+      // }
 
       return encrypt(
         {
           success: true,
           message: " Image Deleted Successfully",
+          tokens:tokens
         },
         true
       );
@@ -938,6 +931,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
+          tokens:tokens
         },
         true
       );
@@ -982,7 +976,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
           "Admin",
         ]);
 
-        console.log("Benefit added result:", result);
+        console.log("Include added result:", result);
 
         resultArray.push(result);
       }
@@ -991,7 +985,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const history = [
         41,
         tokendata.id,
-        "add traval includes",
+        "add travel includes",
         CurrentTime(),
         "Admin",
       ];
@@ -1005,7 +999,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       return encrypt(
         {
           success: true,
-          message: "Benefits added successfully",
+          message: "Include added successfully",
           token: tokens,
           result: resultArray,
         },
@@ -1019,7 +1013,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "An unknown error occurred during location addition";
+          : "An unknown error occurred during Include addition";
 
       return encrypt(
         {
@@ -1074,7 +1068,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const history = [
         42,
         tokenData.id,
-        "Update traval include",
+        "Update travel include",
         CurrentTime(),
         "Admin",
       ];
@@ -1084,7 +1078,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       return encrypt(
         {
           success: true,
-          message: "vehicle updated successfully",
+          message: "Include updated successfully",
           token: tokens,
           updateBenifits: updateBenifits,
         },
@@ -1097,7 +1091,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       return encrypt(
         {
           success: false,
-          message: "vehicle update failed",
+          message: "Include update failed",
           token: tokens,
           error: errorMessage,
         },
@@ -1139,7 +1133,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const history = [
         43, // Unique ID for delete action
         tokendata.id,
-        "delete traval Include",
+        "delete travel Include",
         CurrentTime(),
         "admin",
       ];
@@ -1251,7 +1245,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const history = [
         44,
         tokendata.id,
-        "add traval Excludes",
+        "add travel Excludes",
         CurrentTime(),
         "Admin",
       ];
@@ -1334,7 +1328,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const history = [
         45,
         tokenData.id,
-        "Update traval Exclude",
+        "Update travel Exclude",
         CurrentTime(),
         "Admin",
       ];
@@ -1388,7 +1382,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
         return encrypt(
           {
             success: false,
-            message: "Include not found or already deleted",
+            message: "Exclude not found or already deleted",
             token: tokens,
           },
           true
@@ -1399,7 +1393,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const history = [
         46, // Unique ID for delete action
         tokendata.id,
-        "delete traval Exclude",
+        "delete travel Exclude",
         CurrentTime(),
         "admin",
       ];
@@ -1410,7 +1404,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       return encrypt(
         {
           success: true,
-          message: "Include deleted successfully",
+          message: "Exclude deleted successfully",
           token: tokens,
           deletedData: result.rows[0], // Return deleted record for reference
         },
@@ -1418,12 +1412,12 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback on error
-      console.error("Error deleting Include:", error);
+      console.error("Error deleting Exclude:", error);
 
       return encrypt(
         {
           success: false,
-          message: "An error occurred while deleting the Include",
+          message: "An error occurred while deleting the Exclude",
           tokens: tokens,
           error: String(error),
         },
@@ -1515,5 +1509,60 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
           true
         );
       }
+  }
+  public async deleteCoverImageV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // let filePath: string | any;
+
+      if (userData.refPackageId) {
+        // Retrieve the image record from the database
+        const imageRecord = await executeQuery(getCoverImageRecordQuery, [
+          userData.refPackageId,
+        ]);
+        if (imageRecord.length === 0) {
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              tokens:tokens
+            },
+            true
+          );
+        }
+      }
+        // filePath = imageRecord[0].refImagePath;
+
+        // Delete the image record from the database
+        await executeQuery(deleteCoverImageRecordQuery, [userData.refPackageId]);
+      // } else {
+      //   // filePath = userData.filePath;
+      // }
+
+      // if (filePath) {
+      //   // Delete the file from local storage
+      //   await deleteFile(filePath);
+      // }
+
+      return encrypt(
+        {
+          success: true,
+          message: " Image Deleted Successfully",
+          tokens:tokens
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error in deleting file:", (error as Error).message); // Log the error for debugging
+      return encrypt(
+        {
+          success: false,
+          message: `Error In Deleting Image: ${(error as Error).message}`,
+          tokens:tokens
+        },
+        true
+      );
+    }
   }
 }

@@ -20,4 +20,7 @@ export class adminResolver {
   public async listCustomizeTourBookingsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.adminRepository.listCustomizeTourBookingsV1(user_data, token_data, domain_code);
   }
+  public async listAuditPageV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.listAuditPageV1(user_data, token_data, domain_code);
+  }
 }

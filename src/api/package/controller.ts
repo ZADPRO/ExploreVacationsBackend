@@ -167,7 +167,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in upload gallery  ", error);
+      logger.error("Error in list Package", error);
       return response
         .response({
           success: false,
@@ -217,7 +217,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- delete gallery image");
+    logger.info("Router----- add Traval Include");
   
     try {
       const decodedToken ={
@@ -233,7 +233,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in delete gallery image ", error);
+      logger.error("Error in add Traval Include", error);
       return response
         .response({
           success: false,
@@ -249,7 +249,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- delete gallery image");
+    logger.info("Router----- update Traval Include");
   
     try {
       const decodedToken ={
@@ -265,7 +265,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in delete gallery image ", error);
+      logger.error("Error in update Traval Include ", error);
       return response
         .response({
           success: false,
@@ -281,7 +281,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- delete gallery image");
+    logger.info("Router----- delete Traval Include");
   
     try {
       const decodedToken ={
@@ -297,7 +297,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in delete gallery image ", error);
+      logger.error("Error in delete Traval Include ", error);
       return response
         .response({
           success: false,
@@ -313,7 +313,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- delete gallery image");
+    logger.info("Router----- list Traval Include");
   
     try {
       const decodedToken ={
@@ -329,7 +329,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in delete gallery image ", error);
+      logger.error("Error in list Traval Include", error);
       return response
         .response({
           success: false,
@@ -362,7 +362,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in delete gallery image ", error);
+      logger.error("Error in add Traval Exclude", error);
       return response
         .response({
           success: false,
@@ -378,7 +378,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- add Traval Exclude");
+    logger.info("Router----- update Traval Exclude");
   
     try {
       const decodedToken ={
@@ -394,7 +394,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in updateTravalExclude ", error);
+      logger.error("Error in update Traval Exclude ", error);
       return response
         .response({
           success: false,
@@ -410,7 +410,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- deleteTravalExclude");
+    logger.info("Router----- delete Traval Exclude");
   
     try {
       const decodedToken ={
@@ -426,7 +426,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in deleteTravalExclude", error);
+      logger.error("Error in delete Traval Exclude", error);
       return response
         .response({
           success: false,
@@ -442,7 +442,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- listTravalExclude");
+    logger.info("Router----- list Traval Exclude");
   
     try {
       const decodedToken ={
@@ -458,7 +458,7 @@ export class packageController {
       }
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
-      logger.error("Error in listTravalExclude ", error);
+      logger.error("Error in list Traval Exclude ", error);
       return response
         .response({
           success: false,
@@ -495,6 +495,41 @@ export class packageController {
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
       logger.error("Error in upload cover  ", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public deleteCoverImage = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----delete Cover Image");
+  
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      // const decodedToken ={
+      //   id:1
+      // }
+      let entity;
+      entity = await this.resolver.deleteCoverImageV1(
+        request.payload, decodedToken
+      );
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+    } catch (error) {
+      logger.error("Error in delete Cover Image  ", error);
       return response
         .response({
           success: false,

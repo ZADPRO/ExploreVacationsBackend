@@ -50,8 +50,12 @@ export class PackageResolver {
   public async listTravalExcludeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.packageRepository.listTravalExcludeV1(user_data, token_data, domain_code);
   } 
+
   public async uploadCoverImageV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.packageRepository.uploadCoverImageV1(user_data, token_data, domain_code);
+  } 
+  public async deleteCoverImageV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.packageRepository.deleteCoverImageV1(user_data, token_data, domain_code);
   } 
   
 }

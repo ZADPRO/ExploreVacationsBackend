@@ -126,7 +126,7 @@ export class settingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.listCategories,
-            description: "add Categories",
+            description: "list Categories",
             tags: ["api", "Users"],
             auth: false,
           },

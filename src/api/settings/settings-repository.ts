@@ -165,7 +165,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: true,
-          message: "vendor updated successfully",
+          message: "list Destination successfully",
           token: tokens,
           destinationList: destinationList,
         },
@@ -174,12 +174,12 @@ export class settingsRepository {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
-      console.error("Error during vendor update:", error);
+      console.error("Error during list Destination", error);
 
       return encrypt(
         {
           success: false,
-          message: "vendor update failed",
+          message: "list Destination failed",
           token: tokens,
           error: errorMessage,
         },
@@ -367,7 +367,7 @@ export class settingsRepository {
       const history = [
         5,
         tokenData.id,
-        "update Destination",
+        "update location",
         CurrentTime(),
         "Admin",
       ];
@@ -393,7 +393,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: false,
-          message: "Destination update failed",
+          message: "location update failed",
           error: errorMessage,
           token: tokens,
         },
@@ -521,7 +521,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: true,
-          message: "destination added successfully",
+          message: "Categories added successfully",
           token: tokens,
           data: userResult,
         },
@@ -531,7 +531,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during destination addition",
+          message: "An unknown error occurred during Categories addition",
           token: tokens,
           error: String(error),
         },
@@ -588,7 +588,7 @@ export class settingsRepository {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
-      console.error("Error during location update:", error);
+      console.error("Error during category update:", error);
       await client.query("ROLLBACK");
 
       return encrypt(
@@ -611,7 +611,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: true,
-          message: "categories added successfully",
+          message: "categories listed successfully",
           token: tokens,
           result: result,
         },
@@ -621,7 +621,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during location addition",
+          message: "An unknown error occurred during categories listed ",
           error: String(error),
         },
         true
@@ -801,7 +801,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: false,
-          message: "cativity update failed",
+          message: "activity update failed",
           token: tokens,
           error: errorMessage,
         },
@@ -828,7 +828,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during location addition",
+          message: "An unknown error occurred during activities addition",
           token: tokens,
           error: String(error),
         },

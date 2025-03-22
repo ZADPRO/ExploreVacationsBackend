@@ -16,7 +16,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----adminLogin");
+    logger.info("Router-----admin Login");
 
     try {
       let entity;
@@ -42,7 +42,7 @@ export class adminController {
      request: any,
      response: Hapi.ResponseToolkit
    ): Promise<any> => {
-     logger.info("Router-----list Bookings'");
+     logger.info("Router-----list tour Bookings'");
      try {
        const decodedToken ={
          id:request.plugins.token.id
@@ -56,7 +56,7 @@ export class adminController {
        return response.response(entity).code(200); // Bad Request if failed
  
      } catch (error) {
-       logger.error("Error in list Bookings", error);
+       logger.error("Error in list tour Bookings", error);
        return response
          .response({
            success: false,
@@ -117,6 +117,36 @@ export class adminController {
 
     } catch (error) {
       logger.error("Error in list Customize Bookings", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public listAuditPage = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list Audit page");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+      entity = await this.resolver.listAuditPageV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list audit page", error);
       return response
         .response({
           success: false,

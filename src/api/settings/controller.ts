@@ -77,7 +77,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update Destination'");
+    logger.info("Router-----list  Destination'");
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -91,7 +91,7 @@ export class settingsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in update Destination", error);
+      logger.error("Error in list Destination", error);
       return response
         .response({
           success: false,
@@ -198,7 +198,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add Loaction");
+    logger.info("Router-----list Loaction");
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -212,7 +212,7 @@ export class settingsController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in add location", error);
+      logger.error("Error in list location", error);
       return response
         .response({
           success: false,
@@ -259,7 +259,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----addCategories");
+    logger.info("Router-----add Categories");
     try {
       const decodedToken ={
         id:request.plugins.token.id

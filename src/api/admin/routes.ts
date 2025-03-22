@@ -55,6 +55,17 @@ export class adminRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "GET",
+          path: "/api/v1/adminRoutes/listAuditPage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listAuditPage,
+            description: "listAuditPage",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
         
       ]);
       resolve(true);

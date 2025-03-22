@@ -40,3 +40,5 @@ FROM public."customizeTourBooking" ctb
 LEFT JOIN public."refPackage" rp ON CAST ( rp."refPackageId" AS INTEGER ) = ctb."refPackageId"::INTEGER
 `;
 
+export const listAuditPageQuery = `SELECT * FROM public."refTxnHistory";
+`;

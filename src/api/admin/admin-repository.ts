@@ -11,7 +11,7 @@ import {
   generateTokenWithExpire,
   generateTokenWithoutExpire,
 } from "../../helper/token";
-import { listCarBookingsQuery, listCustomizeTourBookingsQuery, listTourBookingsQuery, 
+import { listAuditPageQuery, listCarBookingsQuery, listCustomizeTourBookingsQuery, listTourBookingsQuery, 
   selectUserByLogin, 
   updateHistoryQuery
  } from "./query";
@@ -158,18 +158,18 @@ export class adminRepository {
       const result = await executeQuery (listCustomizeTourBookingsQuery);
 
        // Convert images to Base64 format
-       for (const product of result) {
-        if (product.refVaccinationCertificate) {
+       for (const certificate of result) {
+        if (certificate.refVaccinationCertificate) {
           try {
-            const fileBuffer = await fs.promises.readFile(product.refVaccinationCertificate);
-            product.refVaccinationCertificate = {
-              filename: path.basename(product.refVaccinationCertificate),
+            const fileBuffer = await fs.promises.readFile(certificate.refVaccinationCertificate);
+            certificate.refVaccinationCertificate = {
+              filename: path.basename(certificate.refVaccinationCertificate),
               content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", 
+              contentType: "application/pdf", 
             };
-          } catch (err) {
-            console.error("Error reading image file for product ${product.productId}:,err ");
-            product.foodPic = null; 
+          } catch (error) {
+            console.log('error', error)
+            certificate.refVaccinationCertificate = null; 
           }
         }
       }
@@ -190,6 +190,34 @@ export class adminRepository {
         {
           success: false,
           message: "An unknown error occurred during listed Customize Tour Bookings",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery (listAuditPageQuery);
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed audit page successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed audit bookings",
           token: tokens,
           error: String(error),
         },
