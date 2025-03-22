@@ -150,6 +150,16 @@ export class userRoutes implements IRoute {
             },
           },
         },
+        {
+          method: "GET",
+          path: "/api/v1/userRoutes/listDestination",
+          config: {
+            handler: controller.listDestination,
+            description: "listDestination",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

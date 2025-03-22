@@ -70,7 +70,7 @@ export class adminRepository {
               message: "Login successful",
               token: generateTokenWithoutExpire(tokenData, true),
             },
-            true
+          true
           );
         }
       }

@@ -92,7 +92,8 @@ FROM public."refPackage"
 WHERE "refPackageId" NOT IN ($1);
 `;
 
-export const listallTourQuery = `SELECT 
+export const listallTourQuery = `
+SELECT 
   rp."refPackageName",
   rp."refDesignationId",
   rp."refDurationIday",
@@ -101,15 +102,19 @@ export const listallTourQuery = `SELECT
   rp."refGroupSize",
   rp."refTourPrice",
   rp."refSeasonalPrice",
+  rp."refCoverImage",
     STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
     STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
-    STRING_AGG(DISTINCT rti."refTravalInclude", ', ') AS "travalInclude",
-    STRING_AGG(DISTINCT rte."refTravalExclude", ', ') AS "travalExclude",
-    rg.*,
-    rtd.*
+    rg."refGallery",
+    rtd."refItinary",
+    rtd."refItinaryMapPath",
+    rtd."refTravalInclude",
+    rtd."refTravalExclude",
+    rtd."refSpecialNotes",
+    rtd."refTravalOverView"
 FROM public."refPackage" rp
 LEFT JOIN public."refGallery" rg ON CAST (rg."refPackageId" AS INTEGER ) = rp."refPackageId"
-LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refTravalDataId" AS INTEGER) = rp."refTravalDataId"
+LEFT JOIN public."refTravalData" rtd ON CAST (rtd."refPackageId" AS INTEGER ) = rp."refPackageId"
 LEFT JOIN public."refLocation" rl 
     ON CAST(rl."refLocationId" AS INTEGER) = ANY (
         string_to_array(
@@ -124,22 +129,7 @@ LEFT JOIN public."refActivities" ra
             ','
         )::INTEGER[]
     )
-LEFT JOIN public."refTravalInclude" rti
-    ON CAST(rti."refTravalIncludeId" AS INTEGER) = ANY (
-        string_to_array(
-            regexp_replace(rtd."refTravalInclude", '[{}]', '', 'g'),
-            ','
-        )::INTEGER[]
-    ) 
-LEFT JOIN public."refTravalExclude" rte
-    ON CAST(rte."refTravalExcludeId" AS INTEGER) = ANY (
-        string_to_array(
-            regexp_replace(rtd."refTravalExclude", '[{}]', '', 'g'),
-            ','
-        )::INTEGER[]
-    )    
 GROUP BY rp."refPackageId", rg."refGalleryId", rtd."refTravalDataId";
-
 `;
 
 export const addTravalDataQuery = `INSERT INTO
@@ -214,3 +204,7 @@ export const getOtherCarsQuery = `SELECT *
 FROM public."refCarsTable"
 WHERE "refCarsId" NOT IN ($1);
 `;
+
+
+export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" = false
+        `;

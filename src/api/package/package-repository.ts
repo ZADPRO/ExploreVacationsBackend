@@ -119,6 +119,7 @@ export class packageRepository {
         refItinaryMapPath,
         refSpecialNotes,
         refTravalOverView,
+        refCoverImage
       } = userData;
 
       // const refLocation = `{${userData.refLocation.join(",")}}`;
@@ -145,35 +146,12 @@ export class packageRepository {
         refTourCode,
         refTourPrice,
         refSeasonalPrice,
+        refCoverImage,
         CurrentTime(),
         "Admin",
       ]);
-      
 
       const refPackageId = packageResult.rows[0].refPackageId;
-
-      // Store image paths and convert to base64
-      // let storedImages: any[] = [];
-      // if (Array.isArray(images) && images.length > 0) {
-      //   for (const image of images) {
-      //     if (!image || typeof image === "string") continue; // Skip invalid entries
-
-      //     console.log(`Processing Image: ${image.hapi?.filename}`);
-
-      //     const filename = image.hapi?.filename;
-      //     if (!filename) {
-      //       console.error("Invalid image: Missing filename");
-      //       continue;
-      //     }
-
-      //     // Store file and get path
-      //     const uploadType = 2; // Assuming upload type 2 for gallery
-      //     const imagePath = await storeFile(image, uploadType);
-      //     console.log(`Stored Image Path: ${imagePath}`);
-
-      // // Convert image to Base64
-      // const imageBuffer = await viewFile(imagePath);
-      // const imageBase64 = imageBuffer.toString("base64");
 
       // Store image path in the database
       const image = await client.query(insertGalleryQuery, [
@@ -246,6 +224,7 @@ export class packageRepository {
       client.release();
     }
   }
+
   // public async addPackageV1(userData: any, tokendata: any): Promise<any> {
   //   const client: PoolClient = await getClient();
   //   const token = { id: tokendata.id };
@@ -387,6 +366,7 @@ export class packageRepository {
         refTravalInclude,
         refTravalExclude,
         refSpecialNotes,
+        refCoverImage,
       } = userData;
       console.log("userData", userData);
 
@@ -428,6 +408,7 @@ export class packageRepository {
         refTourCode,
         refTourPrice,
         refSeasonalPrice,
+        refCoverImage,
         CurrentTime(),
         "Admin",
       ]);
@@ -773,21 +754,52 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       }
 
       // Convert images to Base64 format
+
+
+      
+      // for (const image of result) {
+      //   if (image.refGallery) {
+      //     try {
+      //       const fileBuffer = await fs.promises.readFile(image.refGallery);
+      //       image.refGallery = {
+      //         filename: path.basename(image.refGallery),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg", // Adjust if needed
+      //       };
+      //     } catch (error) {
+      //       console.error("Error reading image file:", error);
+      //       image.refGallery = null; // Handle missing/unreadable files
+      //     }
+      //   }
+      // }
+
       for (const image of result) {
-        if (image.refGallery) {
-          try {
-            const fileBuffer = await fs.promises.readFile(image.refGallery);
-            image.refGallery = {
-              filename: path.basename(image.refGallery),
-              content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", // Adjust if needed
-            };
-          } catch (error) {
-            console.error("Error reading image file:", error);
-            image.refGallery = null; // Handle missing/unreadable files
+        for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+          if (image[key]) {
+            try {
+              const fileBuffer = await fs.promises.readFile(image[key]);
+              image[key] = {
+                filename: path.basename(image[key]),
+                content: fileBuffer.toString("base64"),
+                contentType: "image/jpeg", // Adjust if needed
+              };
+            } catch (error) {
+              console.error(`Error reading ${key} file:`, error);
+              image[key] = null; // Handle missing/unreadable files
+            }
           }
         }
       }
+      
+
+
+
+
+
+
+
+
+
 
       return encrypt(
         {
@@ -1450,5 +1462,58 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
         true
       );
     }
+  }
+
+  public async uploadCoverImageV1(userData: any, tokendata: any): Promise<any> {
+      const token = { id: tokendata.id };
+      const tokens = generateTokenWithExpire(token, true);
+      try {
+        // Extract the image from userData
+        const image = userData.Image;
+  
+        // Ensure that only one image is provided
+        if (!image) {
+          throw new Error("Please provide an image.");
+        }
+  
+        let filePath: string = "";
+        let storedFiles: any[] = [];
+  
+        // Store the image
+        console.log("Storing image...");
+        filePath = await storeFile(image, 5);
+  
+        // Read the file buffer and convert it to Base64
+        const imageBuffer = await viewFile(filePath);
+        const imageBase64 = imageBuffer.toString("base64");
+  
+        storedFiles.push({
+          filename: path.basename(filePath),
+          content: imageBase64,
+          contentType: "image/jpeg", // Assuming the image is in JPEG format
+        });
+  
+        // Return success response
+        return encrypt(
+          {
+            success: true,
+            message: "Image Stored Successfully",
+            token: tokens,
+            filePath: filePath,
+            files: storedFiles,
+          },
+          true
+        );
+      } catch (error) {
+        console.error("Error occurred:", error);
+        return encrypt(
+          {
+            success: false,
+            message: "Error in Storing the Image",
+            token: tokens,
+          },
+          true
+        );
+      }
   }
 }

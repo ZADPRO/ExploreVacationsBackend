@@ -11,6 +11,7 @@ export const addPackageQuery =`INSERT INTO
     "refTourCode",
     "refTourPrice",
     "refSeasonalPrice",
+    "refCoverImage",
     "createdAt",
     "createdBy"
   )
@@ -28,7 +29,8 @@ VALUES
     $10,
     $11,
     $12,
-    $13
+    $13,
+    $14
   )
 RETURNING
   "refPackageId";
@@ -76,8 +78,9 @@ SET
   "refTourCode" = $10,
   "refTourPrice" = $11,
   "refSeasonalPrice" = $12,
-  "updatedAt" = $13,
-  "updatedBy" = $14
+  "refCoverImage" = $13
+  "updatedAt" = $14,
+  "updatedBy" = $15
 WHERE
   "refPackageId" = $1;
 
@@ -123,11 +126,19 @@ SELECT
   rp."refGroupSize",
   rp."refTourPrice",
   rp."refSeasonalPrice",
+  rp."refCoverImage",
     STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
     STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
-    rg."refGallery"
+    rg."refGallery",
+    rtd."refItinary",
+    rtd."refItinaryMapPath",
+    rtd."refTravalInclude",
+    rtd."refTravalExclude",
+    rtd."refSpecialNotes",
+    rtd."refTravalOverView"
 FROM public."refPackage" rp
 LEFT JOIN public."refGallery" rg ON CAST (rg."refPackageId" AS INTEGER ) = rp."refPackageId"
+LEFT JOIN public."refTravalData" rtd ON CAST (rtd."refPackageId" AS INTEGER ) = rp."refPackageId"
 LEFT JOIN public."refLocation" rl 
     ON CAST(rl."refLocationId" AS INTEGER) = ANY (
         string_to_array(
@@ -142,8 +153,7 @@ LEFT JOIN public."refActivities" ra
             ','
         )::INTEGER[]
     )
-GROUP BY rp."refPackageId", rg."refGalleryId";
-
+GROUP BY rp."refPackageId", rg."refGalleryId", rtd."refTravalDataId";
 `;
 
 

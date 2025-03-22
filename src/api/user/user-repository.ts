@@ -23,6 +23,7 @@ import {
   getOtherCarsQuery,
   listallTourQuery,
   listCarsQuery,
+  listDestinationQuery,
   listOtherTourQuery,
   listTourQuery,
   updateHistoryQuery,
@@ -839,6 +840,30 @@ export class userRepository {
         {
           success: false,
           message: "An unknown error occurred during listed  Tour ",
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async listDestinationV1(userData: any, tokendata: any): Promise<any> {
+    try {
+
+      const result = await executeQuery(listDestinationQuery);
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed destination successfully",
+          Details: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed  destination ",
           error: String(error),
         },
         true

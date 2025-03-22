@@ -170,6 +170,23 @@ export class packageRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/uploadCoverImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.uploadCoverImage,
+            description: "Upload cover Image",
+            tags: ["api", "Users"],
+            auth: false,
+            payload: {
+              maxBytes: 10485760,
+              output: "stream",
+              parse: true,
+              multipart: true,
+            },
+          },
+        },
       ]);
       resolve(true);
     });

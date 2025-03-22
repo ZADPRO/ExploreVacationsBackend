@@ -46,6 +46,8 @@ export const storeFile = async (
     uploadDir = path.join(process.cwd(), "./src/assets/certificate");
   }else if (uploadType === 4) {
     uploadDir = path.join(process.cwd(), "./src/assets/map");
+  }else if (uploadType === 5) {
+    uploadDir = path.join(process.cwd(), "./src/assets/coverImage");
   }
 
   
