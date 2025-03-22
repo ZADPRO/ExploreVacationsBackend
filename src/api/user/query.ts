@@ -93,8 +93,10 @@ WHERE "refPackageId" NOT IN ($1);
 `;
 
 export const listallTourQuery = `
-SELECT 
-rp."refPackageId",
+
+
+SELECT
+  rp."refPackageId",
   rp."refPackageName",
   rp."refDesignationId",
   rp."refDurationIday",
@@ -104,34 +106,43 @@ rp."refPackageId",
   rp."refTourPrice",
   rp."refSeasonalPrice",
   rp."refCoverImage",
-    STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
-    STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
-    rg."refGallery",
-    rtd."refItinary",
-    rtd."refItinaryMapPath",
-    rtd."refTravalInclude",
-    rtd."refTravalExclude",
-    rtd."refSpecialNotes",
-    rtd."refTravalOverView"
-FROM public."refPackage" rp
-LEFT JOIN public."refGallery" rg ON CAST (rg."refPackageId" AS INTEGER ) = rp."refPackageId"
-LEFT JOIN public."refTravalData" rtd ON CAST (rtd."refPackageId" AS INTEGER ) = rp."refPackageId"
-LEFT JOIN public."refLocation" rl 
-    ON CAST(rl."refLocationId" AS INTEGER) = ANY (
-        string_to_array(
-            regexp_replace(rp."refLocation", '[{}]', '', 'g'),
-            ','
-        )::INTEGER[]
-    )
-LEFT JOIN public."refActivities" ra 
-    ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
-        string_to_array(
-            regexp_replace(rp."refActivity", '[{}]', '', 'g'),
-            ','
-        )::INTEGER[]
-    )
-        WHERE rp."isDelete" IS NOT true
-GROUP BY rp."refPackageId", rg."refGalleryId", rtd."refTravalDataId";
+  STRING_AGG(DISTINCT rl."refLocationName", ', ') AS "refLocation",
+  STRING_AGG(DISTINCT ra."refActivitiesName", ', ') AS "refActivity",
+  rg."refGallery",
+  rtd."refItinary",
+  rtd."refItinaryMapPath",
+  STRING_AGG(DISTINCT rti."refTravalInclude", ', ') AS "refTravalInclude",
+  STRING_AGG(DISTINCT rte."refTravalExclude", ', ') AS "refTravalExclude",
+  rtd."refTravalExclude",
+  rtd."refSpecialNotes",
+  rtd."refTravalOverView"
+FROM
+  public."refPackage" rp
+  LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+  LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
+    SELECT CAST(x AS INTEGER) FROM unnest(string_to_array(regexp_replace(rp."refLocation", '[{}]', '', 'g'), ',')) AS x
+    WHERE x ~ '^\d+$'  -- Ensure the value is a number
+  )
+  LEFT JOIN public."refActivities" ra ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
+    SELECT CAST(x AS INTEGER) FROM unnest(string_to_array(regexp_replace(rp."refActivity", '[{}]', '', 'g'), ',')) AS x
+    WHERE x ~ '^\d+$'  -- Ensure the value is a number
+  )
+  LEFT JOIN public."refTravalInclude" rti ON CAST(rti."refTravalIncludeId" AS INTEGER) = ANY (
+    SELECT CAST(x AS INTEGER) FROM unnest(string_to_array(regexp_replace(rtd."refTravalInclude", '[{}]', '', 'g'), ',')) AS x
+    WHERE x ~ '^\d+$'  -- Ensure the value is a number
+  )
+  LEFT JOIN public."refTravalExclude" rte ON CAST(rte."refTravalExcludeId" AS INTEGER) = ANY (
+    SELECT CAST(x AS INTEGER) FROM unnest(string_to_array(regexp_replace(rtd."refTravalExclude", '[{}]', '', 'g'), ',')) AS x
+    WHERE x ~ '^\d+$'  -- Ensure the value is a number
+  )
+WHERE
+  rp."isDelete" IS NOT true
+GROUP BY
+  rp."refPackageId",
+  rg."refGalleryId",
+  rtd."refTravalDataId";
+
 
 `;
 

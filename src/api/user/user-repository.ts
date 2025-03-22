@@ -544,7 +544,7 @@ export class userRepository {
           message: "listed Tour successfully",
           tourDetails: result,
         },
-        true
+        false
       );
     } catch (error: unknown) {
       return encrypt(
