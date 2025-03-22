@@ -523,17 +523,17 @@ export class userRepository {
       console.log("result1", result);
         // Convert images to Base64 format
             for (const image of result) {
-              if (image.refGallery) {
+              if (image.refCoverImage) {
                 try {
-                  const fileBuffer = await fs.promises.readFile(image.refGallery);
-                  image.refGallery = {
-                    filename: path.basename(image.refGallery),
+                  const fileBuffer = await fs.promises.readFile(image.refCoverImage);
+                  image.refCoverImage = {
+                    filename: path.basename(image.refCoverImage),
                     content: fileBuffer.toString("base64"),
                     contentType: "image/jpeg", // Adjust if needed
                   };
                 } catch (error) {
                   console.error("Error reading image file:", error);
-                  image.refGallery = null; // Handle missing/unreadable files
+                  image.refCoverImage = null; // Handle missing/unreadable files
                 }
               }
             }
