@@ -407,7 +407,7 @@ export const updateCarsQuery = `
 export const deleteCarsQuery =`UPDATE
   public."refCarsTable"
 SET
-  "isDelete" = TRUE,
+  "isDelete" = true,
   "deletedAt" = $2,
   "deletedBy" = $3
 WHERE
