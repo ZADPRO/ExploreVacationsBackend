@@ -89,15 +89,13 @@ WHERE
 export const deletePackageQuery = `UPDATE
   public."refPackage"
 SET
-  "isDelete" = TRUE,
+  "isDelete" = true,
   "deletedAt" = $2,
   "deletedBy" = $3
 WHERE
   "refPackageId" = $1
-RETURNING
+RETURNING *
 `;
-
-
 
 
 export const updateTravalDataQuery = `UPDATE
@@ -117,9 +115,6 @@ WHERE
 RETURNING
   *;
 `;
-
-
-
 
 
 export const listPackageQuery = `
