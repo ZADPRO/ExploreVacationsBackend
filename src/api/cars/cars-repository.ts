@@ -1035,7 +1035,7 @@ export class carsRepository {
         {
           success: true,
           message: "driver added successfully",
-          data: driverResult,
+          // data: driverResult,
           token: tokens,
         },
         true
