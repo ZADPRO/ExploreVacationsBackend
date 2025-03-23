@@ -80,6 +80,7 @@ WHERE
   "isDelete" = false;
 `;
 
+
 export const deletebenifitsQuery = `UPDATE
   public."refBenifits"
 SET
@@ -168,10 +169,11 @@ WHERE
 "refExcludeId" = $1;
 `;
 
-export const listExcludeQuery = `SELECT * FROM public."refExclude"
+export const listExcludeQuery = `SELECT * FROM public."refExclude" WHERE
+  "isDelete" = false;
 `;
 
-export const deleteExcludeQuery = `UPDATE
+export const deleteExcludeQuery = ` UPDATE
   public."refExclude"
 SET
   "isDelete" = TRUE,
@@ -241,14 +243,14 @@ RETURNING
   *;
 `;
 
-// TermsAndConditions
-export const addTermsAndConditionsQuery = `UPDATE public."refTermsAndConditions"
-SET "refAnswer" = $1,
-"refCarsId" = $5,
-"updatedAt" = $3,
-"updatedBy" = $4
-WHERE "refTermsAndConditionsId" = $2;
-`;
+// // TermsAndConditions
+// export const addTermsAndConditionsQuery = `UPDATE public."refTermsAndConditions"
+// SET "refAnswer" = $1,
+// "refCarsId" = $5,
+// "updatedAt" = $3,
+// "updatedBy" = $4
+// WHERE "refTermsAndConditionsId" = $2;
+// `;
 
 // INSERT INTO public."refTermsAndConditions"  ("refQuestion", "refAnswer") VALUES ($1, $2, $3, $4)
 
@@ -535,5 +537,4 @@ WHERE
   AND (
     rct."isDelete" IS null
     OR rct."isDelete" IS false
-  );`
-  ;
+  );`;

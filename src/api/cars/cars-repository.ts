@@ -21,7 +21,6 @@ import {
   addIncludeQuery,
   addExcludeQuery,
   addDriverDetailsQuery,
-  addTermsAndConditionsQuery,
   updateHistoryQuery,
   checkVehiclesQuery,
   updateVehicleQuery,
@@ -58,7 +57,6 @@ import {
   deleteImageRecordQuery,
   getImageRecordQuery,
 } from "./query";
-
 
 export class carsRepository {
   public async addVehicleV1(userData: any, tokendata: any): Promise<any> {
@@ -949,7 +947,8 @@ export class carsRepository {
         CurrentTime(),
         "Admin",
       ]);
-
+      
+      console.log('result', result)
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
         return encrypt(
@@ -958,7 +957,7 @@ export class carsRepository {
             message: "Exclude not found or already deleted",
             token: tokens,
           },
-          true
+          false
         );
       }
 
@@ -981,7 +980,7 @@ export class carsRepository {
           token: tokens,
           deletedData: result.rows[0], // Return deleted record for reference
         },
-        true
+        false
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback on error
@@ -994,7 +993,7 @@ export class carsRepository {
           tokens: tokens,
           error: String(error),
         },
-        true
+        false
       );
     } finally {
       client.release();

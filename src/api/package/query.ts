@@ -319,6 +319,7 @@ RETURNING
   *;
 `;
 
+
 export const listTravalIncludeQuery = `SELECT * FROM public."refTravalInclude"
 WHERE
   "isDelete" = false;
