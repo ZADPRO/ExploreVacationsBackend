@@ -957,7 +957,7 @@ export class carsRepository {
             message: "Exclude not found or already deleted",
             token: tokens,
           },
-          false
+          true
         );
       }
 
@@ -980,7 +980,7 @@ export class carsRepository {
           token: tokens,
           deletedData: result.rows[0], // Return deleted record for reference
         },
-        false
+        true
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback on error
@@ -993,7 +993,7 @@ export class carsRepository {
           tokens: tokens,
           error: String(error),
         },
-        false
+        true
       );
     } finally {
       client.release();
