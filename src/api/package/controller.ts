@@ -541,4 +541,39 @@ export class packageController {
         .code(500);
     }
   };
+  public getTour = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----getTour");
+  
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      // const decodedToken ={
+      //   id:1
+      // }
+      let entity;
+      entity = await this.resolver.getTourV1(
+        request.payload, decodedToken
+      );
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+    } catch (error) {
+      logger.error("Error in getTour ", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 }

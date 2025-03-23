@@ -198,6 +198,17 @@ export class packageRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/packageRoutes/getTour",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getTour,
+            description: "getTour",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

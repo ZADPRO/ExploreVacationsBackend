@@ -31,6 +31,7 @@ import {
   getImageRecordQuery,
   insertGalleryQuery,
   listPackageQuery,
+  listTourByIdQuery,
   listTravalExcludeQuery,
   listTravalIncludeQuery,
   updateHistoryQuery,
@@ -812,6 +813,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
     }
   }
 
+
   // public async listPackageV1(userData: any, tokendata: any): Promise<any> {
   //     const token = { id: tokendata.id };
   //     const tokens = generateTokenWithExpire(token, true);
@@ -1560,6 +1562,63 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
           tokens:tokens
+        },
+        true
+      );
+    }
+  }
+  
+  public async  getTourV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+  
+      const { refPackageId } = userData;
+  
+      // Step 1: Execute Queries
+      const result1 = await executeQuery(listTourByIdQuery, [refPackageId]);
+      console.log("result1:", result1);
+
+
+      for (const image of result1) {
+          for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+            if (image[key]) {
+              try {
+                const fileBuffer = await fs.promises.readFile(image[key]);
+                image[key] = {
+                  filename: path.basename(image[key]),
+                  content: fileBuffer.toString("base64"),
+                  contentType: "image/jpeg", // Adjust if needed
+                };
+              } catch (error) {
+                console.error(`Error reading ${key} file:`, error);
+                image[key] = null; // Handle missing/unreadable files
+              }
+            }
+          }
+        }
+  
+      // Step 3: Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Listed Tour successfully",
+          tokens:tokens,
+          tourDetails: result1,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      // Log the error for debugging
+      console.error("Error in listing tour:", error);
+  
+      // Step 4: Return error response with a more descriptive error message
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while listing the tour details.",
+          tokens:tokens,
+          error: String(error), // Return detailed error for debugging
         },
         true
       );

@@ -109,5 +109,4 @@ export class carsResolver {
     return await this.carsRepository.deleteCarsV1(user_data, token_data, domain_code);
   }
  
-  
 }

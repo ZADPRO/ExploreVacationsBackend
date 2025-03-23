@@ -402,7 +402,7 @@ GROUP BY
   aa."refSpecialNotes",
   aa."refTravalOverView",
   aa."refTravalDataId",
-  aa."refGallery"`;
+  aa."refGallery";`;
 
 // export const addTravalDataQuery = `INSERT INTO
 //   public."refTravalData" (

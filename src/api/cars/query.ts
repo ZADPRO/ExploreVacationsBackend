@@ -520,72 +520,20 @@ FROM
 // ;
 //       `;
 
-export const getCarsByIdQuery = `SELECT
-  rc."refCarsId",
-  rvt."refVehicleTypeName",
-  rc."refPersonCount",
-  rc."refBagCount",
-  rc."refFuelType",
-  rc."refcarManufactureYear",
-  rc."refMileage",
-  rc."refTrasmissionType",
-  rc."refFuleLimit",
-  STRING_AGG(DISTINCT rb."refBenifitsName", ', ') AS "benifits",
-  STRING_AGG(DISTINCT ri."refIncludeName", ', ') AS "Include",
-  STRING_AGG(DISTINCT re."refExcludeName", ', ') AS "Exclude",
-  rdd."refDriverName",
-  rdd."refDriverAge",
-  rdd."refDriverMail",
-  rdd."refDriverMobile",
-  rdd."refDriverLocation",
-  rdd."isVerified",
-  rtc."refRentalAgreement",
-  rtc."refFuelPolicy",
-  rtc."refDriverRequirements",
-  rtc."refPaymentTerms",
-  STRING_AGG(DISTINCT rfd."refFormDetails", ', ') AS "refFormDetails",
-  rc."refOtherRequirements"
+export const getCarsByIdQuery = `SELECT DISTINCT
+  ON (rct."refCarsId") rct.*,
+  vt.*,
+  rdd.*,
+  tc.*
 FROM
-  public."refCarsTable" rc
-  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
-  LEFT JOIN public."refBenifits" rb ON CAST(rb."refBenifitsId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(rc."refBenifits", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
-  )
-  LEFT JOIN public."refInclude" ri ON CAST(ri."refIncludeId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(rc."refInclude", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
-  )
-  LEFT JOIN public."refExclude" re ON CAST(re."refExcludeId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(rc."refExclude", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
-  )
-  LEFT JOIN public."refDriverDetails" rdd ON CAST(rdd."refDriverDetailsId" AS INTEGER) = rc."refDriverDetailsId"
-  LEFT JOIN public."refTermsAndConditions" rtc ON CAST(rtc."refCarsId" AS INTEGER) = rc."refCarsId"
-  LEFT JOIN public."refFormDetails" rfd ON CAST(rfd."refFormDetailsId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(rc."refFormDetails", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
-  )
-  WHERE rc."refCarsId" = $1 
-GROUP BY
-  rc."refCarsId",
-  rvt."refVehicleTypeName",
-  rc."refPersonCount",
-  rc."refBagCount",
-  rc."refFuelType",
-  rc."refcarManufactureYear",
-  rc."refMileage",
-  rc."refTrasmissionType",
-  rc."refFuleLimit",
-  rdd."refDriverName",
-  rc."refOtherRequirements",
-  rdd."refDriverDetailsId",
-  rtc."refTermsAndConditionsId";`;
+  public."refCarsTable" rct
+  JOIN public."refVehicleType" vt ON vt."refVehicleTypeId" = rct."refVehicleTypeId"
+  JOIN public."refDriverDetails" rdd ON rdd."refDriverDetailsId" = rct."refDriverDetailsId"
+  JOIN public."refTermsAndConditions" tc ON tc."refCarsId" = rct."refCarsId"
+WHERE
+  rct."refCarsId" = $1
+  AND (
+    rct."isDelete" IS null
+    OR rct."isDelete" IS false
+  );`
+  ;

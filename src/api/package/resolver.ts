@@ -56,6 +56,9 @@ export class PackageResolver {
   } 
   public async deleteCoverImageV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.packageRepository.deleteCoverImageV1(user_data, token_data, domain_code);
+  }
+  public async getTourV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.packageRepository.getTourV1(user_data, token_data, domain_code);
   } 
   
 }
