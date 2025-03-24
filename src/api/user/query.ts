@@ -76,7 +76,9 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
 
 `;
 
-export const listTourQuery = `WITH
+export const listTourQuery = `
+
+WITH
   "location" AS (
     SELECT
       rp.*,
@@ -88,12 +90,14 @@ export const listTourQuery = `WITH
       rtd."refTravalOverView",
       rd.*,
       rg."refGallery",
+      rc."refCategoryName",
       ARRAY_AGG(rl."refLocationName") AS "refLocationName"
     FROM
       public."refPackage" rp
       LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
       LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
       LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
+      LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
       LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
         string_to_array(
           regexp_replace(rp."refLocation", '[{}]', '', 'g'),
@@ -101,16 +105,14 @@ export const listTourQuery = `WITH
         )::INTEGER[]
       )
     WHERE
-      (
-        rp."isDelete" IS null
-        OR "rp"."isDelete" IS false
-      )
-      AND rp."refPackageId" = $1
+     (rp."isDelete" IS null
+      OR "rp"."isDelete" IS false ) AND rp."refPackageId" = $1
     GROUP BY
       rp."refPackageId",
       rtd."refTravalDataId",
       rd."refDestinationId",
-      rg."refGallery"
+      rg."refGallery",
+      rc."refCategoryId"
   ),
   "activity" AS (
     SELECT
@@ -127,7 +129,15 @@ export const listTourQuery = `WITH
       l."refItinaryMapPath",
       l."refSpecialNotes",
       l."refTravalOverView",
-      l."refGallery"
+      l."refGallery",
+      l."refCategoryName",
+      l."refDurationIday",
+      l."refDurationINight",
+      l."refGroupSize",
+      l."refTourCode",
+      l."refTourPrice",
+      l."refSeasonalPrice",
+      l."refCoverImage"
     FROM
       "location" l
       LEFT JOIN public."refActivities" ra ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
@@ -149,7 +159,15 @@ export const listTourQuery = `WITH
       l."refSpecialNotes",
       l."refTravalOverView",
       l."refTravalDataId",
-      l."refGallery"
+      l."refGallery",
+      l."refCategoryName",
+      l."refDurationIday",
+      l."refDurationINight",
+      l."refGroupSize",
+      l."refTourCode",
+      l."refTourPrice",
+      l."refSeasonalPrice",
+      l."refCoverImage"
   )
 SELECT
   aa.*,
@@ -183,8 +201,15 @@ GROUP BY
   aa."refSpecialNotes",
   aa."refTravalOverView",
   aa."refTravalDataId",
-  aa."refGallery"
-`;
+  aa."refGallery",
+  aa."refCategoryName",
+  aa."refDurationIday",
+  aa."refDurationINight",
+  aa."refGroupSize",
+  aa."refTourCode",
+  aa."refTourPrice",
+  aa."refSeasonalPrice",
+  aa."refCoverImage";`;
 
 export const listOtherTourQuery = `WITH
   "location" AS (
@@ -429,7 +454,8 @@ GROUP BY
   aa."refTourCode",
   aa."refTourPrice",
   aa."refSeasonalPrice",
-  aa."refCoverImage"; `;
+  aa."refCoverImage"; 
+  `;
 
 // export const addTravalDataQuery = `INSERT INTO
 //   public."refTravalData" (
