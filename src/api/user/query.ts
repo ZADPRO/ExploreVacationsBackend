@@ -511,11 +511,11 @@ FROM
   WHERE rc."isDelete" IS NOT true ;
       `;
 
-
 export const getCarsByIdQuery = `
  WITH
   "carData" AS (
     SELECT
+    rvt."refVehicleTypeId",
       rvt."refVehicleTypeName",
       rc."refPersonCount",
       rc."refBagCount",
@@ -578,9 +578,11 @@ export const getCarsByIdQuery = `
       tc."refRentalAgreement",
       tc."refPaymentTerms",
       tc."refFuelPolicy",
-      tc."refPaymentTerms"
+      tc."refPaymentTerms",
+    rvt."refVehicleTypeId"
   )
 SELECT
+cd."refVehicleTypeId",
   cd."refVehicleTypeName",
   cd."refPersonCount",
   cd."refBagCount",
@@ -648,7 +650,8 @@ GROUP BY
   cd."refRentalAgreement",
   cd."refPaymentTerms",
   cd."refFuelPolicy",
-  cd."refPaymentTerms";
+  cd."refPaymentTerms",
+  cd."refVehicleTypeId";
 `;
 
 export const getOtherCarsQuery = `SELECT
