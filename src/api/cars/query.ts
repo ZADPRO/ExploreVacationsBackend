@@ -98,7 +98,7 @@ export const addIncludeQuery = `INSERT INTO public."refInclude"(
     "refIncludeName",
     "createdAt",
     "createdBy",
-  "isDelete",
+  "isDelete"
   )
   VALUES ($1, $2, $3, false)
   RETURNING *;

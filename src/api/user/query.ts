@@ -209,7 +209,8 @@ GROUP BY
   aa."refTourCode",
   aa."refTourPrice",
   aa."refSeasonalPrice",
-  aa."refCoverImage";`;
+  aa."refCoverImage";
+  `;
 
 export const listOtherTourQuery = `WITH
   "location" AS (

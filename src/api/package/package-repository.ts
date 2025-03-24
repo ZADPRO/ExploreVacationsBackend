@@ -574,7 +574,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
     }
   }
 
-
   // public async galleryUploadV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);

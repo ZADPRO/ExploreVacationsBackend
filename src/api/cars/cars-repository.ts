@@ -520,9 +520,13 @@ export class carsRepository {
 
       const { refIncludeName } = userData;
 
+      console.log("line ------ 523");
+
       console.log("Received userData:", userData);
 
       if (!Array.isArray(refIncludeName) || refIncludeName.length === 0) {
+        console.log("line ------ 528");
+
         return encrypt(
           {
             success: false,
@@ -532,15 +536,21 @@ export class carsRepository {
           true
         );
       }
+      console.log("line ------ 537");
 
       let resultArray: any[] = [];
 
       for (const include of refIncludeName) {
         const { refIncludeName: refIncludeName } = include;
 
+        console.log("include", include);
         if (!refIncludeName) {
           continue;
         }
+        console.log('line ------ 550', )
+        console.log('refIncludeName line ------ 551', refIncludeName)
+        console.log('CurrentTime() line -------- 552', CurrentTime())
+
 
         const result = await client.query(addIncludeQuery, [
           refIncludeName,
@@ -548,7 +558,7 @@ export class carsRepository {
           "Admin",
         ]);
 
-        console.log("include added result:", result);
+        console.log("result", result);
 
         resultArray.push(result);
       }
@@ -561,6 +571,8 @@ export class carsRepository {
         CurrentTime(),
         "Admin",
       ];
+      console.log('line ------ 570', )
+
 
       // Commit transaction
       await client.query("COMMIT");
@@ -578,6 +590,10 @@ export class carsRepository {
         true
       );
     } catch (error) {
+      console.log(
+        "error-------------------------------------------------------------------------581",
+        error
+      );
       // Rollback transaction in case of error
       await client.query("ROLLBACK");
 
@@ -598,6 +614,7 @@ export class carsRepository {
       );
     }
   }
+  
   public async updateIncludeV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokenData.id };
@@ -863,12 +880,7 @@ export class carsRepository {
         );
       }
 
-      const params = [
-        refExcludeId, 
-        refExcludeName, 
-        CurrentTime(),
-         "Admin"
-        ];
+      const params = [refExcludeId, refExcludeName, CurrentTime(), "Admin"];
 
       const update = await client.query(updateExcludeQuery, params);
 
@@ -947,8 +959,8 @@ export class carsRepository {
         CurrentTime(),
         "Admin",
       ]);
-      
-      console.log('result', result)
+
+      console.log("result", result);
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
         return encrypt(
@@ -1534,7 +1546,6 @@ export class carsRepository {
     }
   }
 
-
   public async addCarsV1(
     userData: any,
     tokendata: any,
@@ -1713,16 +1724,16 @@ export class carsRepository {
             {
               success: false,
               message: "Image record not found",
-              tokens:tokens
+              tokens: tokens,
             },
             true
           );
         }
       }
-        // filePath = imageRecord[0].refImagePath;
+      // filePath = imageRecord[0].refImagePath;
 
-        // Delete the image record from the database
-        await executeQuery(deleteImageRecordQuery, [userData.refCarsId]);
+      // Delete the image record from the database
+      await executeQuery(deleteImageRecordQuery, [userData.refCarsId]);
       // } else {
       //   // filePath = userData.filePath;
       // }
@@ -1736,7 +1747,7 @@ export class carsRepository {
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -1746,7 +1757,7 @@ export class carsRepository {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -2003,5 +2014,4 @@ export class carsRepository {
       client.release();
     }
   }
-
 }
