@@ -504,7 +504,8 @@ rc."refCarsId",
   rc."refMileage",
   rc."refTrasmissionType",
   rc."refFuleLimit",
-  rc."refCarPath"
+  rc."refCarPath",
+  rc."refCarPrice"
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
@@ -522,7 +523,8 @@ export const getCarsByIdQuery = `
   rc."refMileage",
   rc."refTrasmissionType",
   rc."refFuleLimit",
-  rc."refCarPath"
+  rc."refCarPath",
+  rc."refCarPrice"
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
