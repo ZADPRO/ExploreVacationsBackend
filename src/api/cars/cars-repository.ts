@@ -1573,42 +1573,55 @@ export class carsRepository {
         refDriverRequirements,
         refPaymentTerms,
         carImagePath,
+        refCarPrice
       } = userData;
       console.log("userData", userData);
 
       const refBenifits = Array.isArray(userData.refBenifits)
         ? `{${userData.refBenifits.join(",")}}`
         : "{}";
+
+        console.log('line ------ 1584', )
       const refInclude = Array.isArray(userData.refInclude)
         ? `{${userData.refInclude.join(",")}}`
         : "{}";
+
+        console.log('line ----------- 1589', )
       const refExclude = Array.isArray(userData.refExclude)
         ? `{${userData.refExclude.join(",")}}`
         : "{}";
+
+        console.log('line ------- 1594', )
       const refFormDetails = Array.isArray(userData.refFormDetails)
         ? `{${userData.refFormDetails.join(",")}}`
         : "{}";
 
-      const carsResult = await client.query(addCarsQuery, [
-        refVehicleTypeId,
-        refPersonCount,
-        refBag,
-        refFuelType,
-        refcarManufactureYear,
-        refMileage,
-        refTrasmissionType,
-        refFuleLimit,
-        refBenifits,
-        refInclude,
-        refExclude,
-        refDriverDetailsId,
-        refFormDetails,
-        refOtherRequirements,
-        carImagePath,
-        CurrentTime(),
-        "Admin",
-      ]);
-      console.log("carsResult linre ---- 1697", carsResult.rows[0].refCarsId);
+
+        console.log('line ---------- 1600', )
+        const params = [ 
+          refVehicleTypeId,
+          refPersonCount,
+          refBag,
+          refFuelType,
+          refcarManufactureYear,
+          refMileage,
+          refTrasmissionType,
+          refFuleLimit,
+          refBenifits,
+          refInclude,
+          refExclude,
+          refDriverDetailsId,
+          refFormDetails,
+          refOtherRequirements,
+          carImagePath,
+          refCarPrice,
+          CurrentTime(),
+          "Admin"
+        ]
+          console.log('params line ------ 1619', params)
+          
+      const carsResult = await client.query(addCarsQuery, params);
+      console.log("carsResult linre ------------------------------------------------------------ 1613", carsResult.rows[0].refCarsId);
       const termsPrams = [
         carsResult.rows[0].refCarsId,
         refrefRentalAgreement,
@@ -1620,6 +1633,7 @@ export class carsRepository {
       ];
 
       console.log("termsPrams line------- 1728", termsPrams);
+
       await client.query(addCondation, termsPrams);
 
       const refCarsId = carsResult.rows[0].refCarsId;
@@ -1636,7 +1650,7 @@ export class carsRepository {
           success: true,
           message: "Car added successfully with image",
           token: tokens,
-          carsResult: carsResult.rows[0],
+          carsResult: carsResult.rows,
         },
         true
       );
@@ -1790,6 +1804,7 @@ export class carsRepository {
         refFuelPolicy,
         refDriverRequirements,
         refPaymentTerms,
+        refCarPrice
       } = userData;
       console.log("userData", userData);
 
@@ -1821,6 +1836,7 @@ export class carsRepository {
         refFormDetails,
         refOtherRequirements,
         carImagePath, // Updated image path (if provided)
+        refCarPrice,
         CurrentTime(),
         "Admin",
         refCarsId, // Specify the car to be updated by `refCarsId`

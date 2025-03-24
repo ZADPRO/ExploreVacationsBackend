@@ -341,12 +341,13 @@ export const addCarsQuery = `INSERT INTO
     "refFormDetails",
     "refOtherRequirements",
     "refCarPath",
+    "refCarPrice",
     "createdAt",
     "createdBy",
     "isDelete"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, false) 
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, false) 
 RETURNING
   *;
 `;
@@ -416,9 +417,10 @@ export const updateCarsQuery = `
           "refFormDetails" = $13,
           "refOtherRequirements" = $14,
           "refCarPath" = $15,
-          "updatedAt" = $16,
-          "updatedBy" = $17
-        WHERE "refCarsId" = $18
+          "refCarPrice" = $16
+          "updatedAt" = $17,
+          "updatedBy" = $18
+        WHERE "refCarsId" = $19
         RETURNING *;
       `;
 
@@ -444,7 +446,8 @@ rc."refCarsId",
   rc."refMileage",
   rc."refTrasmissionType",
   rc."refFuleLimit",
-  rc."refCarPath"
+  rc."refCarPath",
+  rc."refCarPrice"
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
