@@ -52,7 +52,7 @@ export class userRepository {
       } = userData;
 
       // Insert package details and get refPackageId
-      
+
       const Result = await client.query(addTourBookingQuery, [
         refPackageId,
         refUserName,
@@ -391,6 +391,7 @@ export class userRepository {
       await client.query("BEGIN"); // Start transaction
 
       const {
+        refCarsId,
         refUserName,
         refUserMail,
         refUserMobile,
@@ -408,6 +409,7 @@ export class userRepository {
 
       // Insert package details and get refPackageId
       const Result = await client.query(addCarBookingQuery, [
+        refCarsId,
         refUserName,
         refUserMail,
         refUserMobile,

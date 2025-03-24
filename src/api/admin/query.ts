@@ -18,6 +18,7 @@ RETURNING
 
 
 export const listTourBookingsQuery = `
+
 WITH
   "location" AS (
     SELECT

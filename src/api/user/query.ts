@@ -56,6 +56,7 @@ export const addcustomizeBookingQuery = `
 `;
 
 export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
+        "refCarsId",
         "refUserName", 
         "refUserMail", 
         "refUserMobile", 
@@ -71,7 +72,7 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "createdAt", 
         "createdBy"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
     RETURNING *;
 
 `;
@@ -488,12 +489,13 @@ GROUP BY
 //   "updatedAt" = $8,
 //   "updatedBy" = $9
 // WHERE
-//   "refTravalDataId" = $1 
+//   "refTravalDataId" = $1
 // RETURNING
 //   *;
 // `;
 
 export const listCarsQuery = `SELECT
+rc."refCarsId",
   rvt."refVehicleTypeName",
   rc."refPersonCount",
   rc."refBagCount",
@@ -508,6 +510,7 @@ FROM
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
   WHERE rc."isDelete" IS NOT true ;
       `;
+
 
 export const getCarsByIdQuery = `
   SELECT
