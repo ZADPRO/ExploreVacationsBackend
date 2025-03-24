@@ -249,7 +249,7 @@ GROUP BY
   aa."refTourCode",
   aa."refTourPrice",
   aa."refSeasonalPrice",
-  aa."refCoverImage";`;
+  aa."refCoverImage"; `;
 
 
 export const getImageRecordQuery = `SELECT *
@@ -397,12 +397,9 @@ export const listTourByIdQuery = `SELECT
   rg.*
 FROM
   public."refPackage" rp
-  JOIN public."refTravalData" rtd ON CAST(rtd."refTravalDataId" AS INTEGER) = rp."refTravalDataId"
-  JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+ FULL JOIN public."refTravalData" rtd ON CAST(rtd."refTravalDataId" AS INTEGER) = rp."refTravalDataId"
+ FULL JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
 WHERE
   rp."refPackageId" = $1
-  AND (
-    rp."isDelete" IS null
-    OR rp."isDelete" IS false
-  );
+  AND rp."isDelete" IS NOT true
 `;

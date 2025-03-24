@@ -753,8 +753,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
 
       // Convert images to Base64 format
 
-
-      
       // for (const image of result) {
       //   if (image.refGallery) {
       //     try {
@@ -788,7 +786,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
           }
         }
       }
-      
 
       return encrypt(
         {
@@ -1579,7 +1576,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       const result1 = await executeQuery(listTourByIdQuery, [refPackageId]);
       console.log("result1:", result1);
 
-
       for (const image of result1) {
           for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
             if (image[key]) {
@@ -1625,5 +1621,3 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
     }
   }
 }
-
-
