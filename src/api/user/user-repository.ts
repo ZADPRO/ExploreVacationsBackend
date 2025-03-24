@@ -52,6 +52,7 @@ export class userRepository {
       } = userData;
 
       // Insert package details and get refPackageId
+      
       const Result = await client.query(addTourBookingQuery, [
         refPackageId,
         refUserName,
@@ -65,6 +66,9 @@ export class userRepository {
         CurrentTime(),
         "Admin",
       ]);
+
+
+
 
       // const history = [27, tokendata.id, "tour booking", CurrentTime(), "user"];
 
