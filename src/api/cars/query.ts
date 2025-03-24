@@ -417,7 +417,7 @@ export const updateCarsQuery = `
           "refFormDetails" = $13,
           "refOtherRequirements" = $14,
           "refCarPath" = $15,
-          "refCarPrice" = $16
+          "refCarPrice" = $16,
           "updatedAt" = $17,
           "updatedBy" = $18
         WHERE "refCarsId" = $19
@@ -540,4 +540,5 @@ WHERE
   AND (
     rct."isDelete" IS null
     OR rct."isDelete" IS false
-  );`;
+  );
+  `;

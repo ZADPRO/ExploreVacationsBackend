@@ -193,10 +193,9 @@ GROUP BY
 `;
 
 export const listCarBookingsQuery = `SELECT 
-rcb.*,
-rvt."refVehicleTypeName"
+rcb.*
 FROM public."userCarBooking" rcb
-JOIN public."refVehicleType" rvt ON CAST ( rvt."refVehicleTypeId" AS INTEGER ) = rcb."refVehicleTypeId"
+JOIN public."refCarsTable" ct ON CAST ( ct."refCarsId" AS INTEGER ) = rcb."refCarsId"
 `;
 
 
