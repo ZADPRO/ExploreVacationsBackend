@@ -1,4 +1,4 @@
-export const  selectUserByLogin =`SELECT *
+export const selectUserByLogin = `SELECT *
 FROM  public."refUserDomain" rd
 WHERE rd."refUserEmail" = $1 OR rd."refUsername" = $1;`;
 
@@ -15,7 +15,6 @@ VALUES
 RETURNING
   *;
 `;
-
 
 export const listTourBookingsQuery = `
 
@@ -198,7 +197,6 @@ FROM public."userCarBooking" rcb
 JOIN public."refCarsTable" ct ON CAST ( ct."refCarsId" AS INTEGER ) = rcb."refCarsId"
 `;
 
-
 export const listCustomizeTourBookingsQuery = `SELECT 
 ctb.*,
 rp."refPackageName"
@@ -208,3 +206,106 @@ LEFT JOIN public."refPackage" rp ON CAST ( rp."refPackageId" AS INTEGER ) = ctb.
 
 export const listAuditPageQuery = `SELECT * FROM public."refTxnHistory";
 `;
+
+export const checkQuery = `SELECT
+  *
+FROM
+  public."refUserDomain"
+WHERE
+  "refUsername" = $1
+LIMIT
+  10;`;
+
+export const getLastEmployeeIdQuery = `
+SELECT
+  COUNT(*)
+FROM
+  public.users u
+WHERE
+  u."refCustId" LIKE 'EV-EMP-%';
+  `;
+
+export const insertUserQuery = `INSERT INTO
+  public.users(
+    "refCustId",
+    "refFName",
+    "refLName",
+    "refDOB",
+    "refDesignation",
+    "refQualification",
+    "refProfileImage",
+    "refMoblile",
+    "refUserTypeId",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+RETURNING
+  *;`;
+
+export const insertUserDomainQuery = `INSERT INTO
+  public."refUserDomain" (
+    "refUserId",
+    "refUserEmail",
+    "refUserPassword",
+    "refUserHashedPassword",
+    "refUsername",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7)
+RETURNING
+  *;`;
+
+export const updateEmployeeQuery = `UPDATE
+  public."users" 
+SET
+  "refFName" = $2,
+  "refLName" = $3,
+  "refDOB" = $4,
+  "refDesignation" = $5,
+  "refQualification" = $6,
+  "refProfileImage" =$7,
+  "refMoblile" = $8,
+  "refUserTypeId" = $9,
+  "updatedAt" = $10,
+  "updatedBy" = $11
+WHERE
+  "refuserId" = $1
+RETURNING
+  *;
+  `;
+
+export const deleteEmployeeImageQuery = `
+  `;
+
+export const listEmployeesQuery = `
+ SELECT
+  *
+FROM
+  public."users" u
+WHERE
+  u."isDelete" IS NOT true;
+  `;
+
+export const getEmployeesQuery = `SELECT
+  *
+FROM
+  public."users"
+WHERE
+  "refuserId" = $1
+  `;
+
+export const deleteEmployeesQuery = `UPDATE
+  public."users"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refuserId" = $1
+RETURNING
+  *;
+  `;

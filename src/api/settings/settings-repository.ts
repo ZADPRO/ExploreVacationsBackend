@@ -707,7 +707,7 @@ export class settingsRepository {
         "Admin",
       ]);
       
-      console.log('userResult-------------------------------------------------------------------507', userResult)
+      console.log('userResult', userResult)
       const history = [
         8, 
         tokendata.id, 
@@ -717,7 +717,6 @@ export class settingsRepository {
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
-      console.log('updateHistory--------------------------------------------------------517', updateHistory)
       await client.query("COMMIT");
 
       return encrypt(

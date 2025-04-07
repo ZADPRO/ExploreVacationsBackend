@@ -78,7 +78,7 @@ SET
   "refTourCode" = $10,
   "refTourPrice" = $11,
   "refSeasonalPrice" = $12,
-  "refCoverImage" = $13
+  "refCoverImage" = $13,
   "updatedAt" = $14,
   "updatedBy" = $15
 WHERE
@@ -98,20 +98,37 @@ RETURNING *
 `;
 
 
+// export const updateTravalDataQuery = `UPDATE
+//   public."refTravalData"
+// SET
+//   "refPackageId" = $2,
+//   "refTravalOverView" = $3
+//   "refItinary" = $4,
+//   "refItinaryMapPath" = $5,
+//   "refTravalInclude" = $6,
+//   "refTravalExclude" = $7,
+//   "refSpecialNotes" = $8,
+//   "updatedAt" = $9,
+//   "updatedBy" = $10
+// WHERE
+//   "refTravalDataId" = $1 
+// RETURNING
+//   *;
+// `;
+
 export const updateTravalDataQuery = `UPDATE
   public."refTravalData"
 SET
-  "refPackageId" = $2,
-  "refTravalOverView" = $3
-  "refItinary" = $4,
-  "refItinaryMapPath" = $5,
-  "refTravalInclude" = $6,
-  "refTravalExclude" = $7,
-  "refSpecialNotes" = $8,
-  "updatedAt" = $9,
-  "updatedBy" = $10
+  "refTravalOverView" = $2,
+  "refItinary" = $3,
+  "refItinaryMapPath" = $4,
+  "refTravalInclude" = $5,
+  "refTravalExclude" = $6,
+  "refSpecialNotes" = $7,
+  "updatedAt" = $8,
+  "updatedBy" = $9
 WHERE
-  "refTravalDataId" = $1 
+  "refPackageId" = $1 
 RETURNING
   *;
 `;

@@ -49,6 +49,9 @@ export const storeFile = async (
   }else if (uploadType === 5) {
     uploadDir = path.join(process.cwd(), "./src/assets/coverImage");
   }
+  else if (uploadType === 6) {
+    uploadDir = path.join(process.cwd(), "./src/assets/employeeProfile");
+  }
 
   
   else {

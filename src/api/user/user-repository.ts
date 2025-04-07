@@ -27,15 +27,21 @@ import {
   listDestinationQuery,
   listOtherTourQuery,
   listTourQuery,
-  updateHistoryQuery
-  
+  updateHistoryQuery,
 } from "./query";
 import fs from "fs";
+import {
+  generateCarBookingEmailContent,
+  generateCustomizeTourBookingEmailContent,
+  generateSignupEmailContent,
+  generateTourBookingEmailContent,
+} from "../../helper/mailcontent";
+import { sendEmail } from "../../helper/mail";
 
 export class userRepository {
   public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    
+
     try {
       await client.query("BEGIN"); // Start transaction
 
@@ -67,8 +73,22 @@ export class userRepository {
         "Admin",
       ]);
 
+      const main = async () => {
+        const mailOptions = {
+          to: "indumathi123indumathi@gmail.com",
+          subject: "New Tour Booking Received", // Subject of the email
+          html: generateTourBookingEmailContent(Result),
+        };
 
+        // Call the sendEmail function
+        try {
+          await sendEmail(mailOptions);
+        } catch (error) {
+          console.error("Failed to send email:", error);
+        }
+      };
 
+      main().catch(console.error);
 
       // const history = [27, tokendata.id, "tour booking", CurrentTime(), "user"];
 
@@ -99,164 +119,10 @@ export class userRepository {
       client.release();
     }
   }
-  // public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
-  //   const client: PoolClient = await getClient();
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
 
-  //   try {
-  //     await client.query("BEGIN"); // Start transaction
-
-  //     const {
-  //       refPackageId,
-  //       refUserName,
-  //       refUserMail,
-  //       refUserMobile,
-  //       refArrivalDate,
-  //       refSingleRoom,
-  //       refTwinRoom,
-  //       refTripleRoom,
-  //       refAdultCount,
-  //       refChildrenCount,
-  //       refVaccinationType,
-  //       refVaccinationCertificate,
-  //       refOtherRequirements,
-  //     } = userData;
-
-  //     // Insert package details and get refPackageId
-  //     const Result = await client.query(addcustomizeBookingQuery, [
-  //       refUserName,
-  //       refUserMail,
-  //       refUserMobile,
-  //       refPackageId,
-  //       refArrivalDate,
-  //       refSingleRoom,
-  //       refTwinRoom,
-  //       refTripleRoom,
-  //       refAdultCount,
-  //       refChildrenCount,
-  //       refVaccinationType,
-  //       refVaccinationCertificate,
-  //       refOtherRequirements,
-  //       CurrentTime(),
-  //       "Admin",
-  //     ]);
-
-  //     const pdfFile = userData.file; // Expecting a single PDF file
-  //     console.log("Received file:", pdfFile);
-
-  //     if (!pdfFile || typeof pdfFile === "string") {
-  //         return encrypt(
-  //             {
-  //                 success: false,
-  //                 message: "No valid PDF file provided for upload.",
-  //                 token: tokens,
-  //             },
-  //             false
-  //         );
-  //     }
-
-  //     const filename = pdfFile.hapi?.filename;
-  //     if (!filename || !filename.endsWith(".pdf")) {
-  //         return encrypt(
-  //             {
-  //                 success: false,
-  //                 message: "Invalid file type. Only PDFs are allowed.",
-  //                 token: tokens,
-  //             },
-  //             false
-  //         );
-  //     }
-
-  //     // Set uploadType to 3 for PDF files
-  //     const uploadType = 3;
-
-  //     // Store file and get path
-  //     const filePath = await storeFile(pdfFile, uploadType);
-  //     console.log(`Stored PDF Path: ${filePath}`);
-
-  //     // Read the PDF file
-  //     const fileBuffer = await viewFile(filePath);
-  //     const fileBase64 = fileBuffer.toString("base64");
-
-  //     //  let storedImages: any[] = [];
-  //     //  if (Array.isArray(images) && images.length > 0) {
-  //     //    for (const image of images) {
-  //     //      if (!image || typeof image === "string") continue; // Skip invalid entries
-
-  //     //      console.log(`Processing Image: ${image.hapi?.filename}`);
-
-  //     //      const filename = image.hapi?.filename;
-  //     //      if (!filename) {
-  //     //        console.error("Invalid image: Missing filename");
-  //     //        continue;
-  //     //      }
-
-  //     //      // Store file and get path
-  //     //      const uploadType = 2; // Assuming upload type 2 for gallery
-  //     //      const imagePath = await storeFile(image, uploadType);
-  //     //      console.log(`Stored Image Path: ${imagePath}`);
-
-  //     //      // Convert image to Base64
-  //     //      const imageBuffer = await viewFile(imagePath);
-  //     //      const imageBase64 = imageBuffer.toString("base64");
-
-  //     //      // Store image path in the database
-  //     //      await client.query(insertGalleryQuery, [
-  //     //        refPackageId,
-  //     //        imagePath,
-  //     //        CurrentTime(),
-  //     //        "Admin",
-  //     //      ]);
-
-  //     //      storedImages.push({
-  //     //        filename: filename,
-  //     //        path: imagePath,
-  //     //        content: imageBase64,
-  //     //        contentType: "image/jpeg", // Adjust based on file type
-  //     //      });
-  //     //    }
-  //     //  }
-
-  //     const history = [
-  //       28,
-  //       tokendata.id,
-  //       "add customize tour booking",
-  //       CurrentTime(),
-  //       "user"
-  //     ];
-
-  //     const updateHistory = await client.query(updateHistoryQuery, history);
-  //     await client.query("COMMIT"); // Commit transaction
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "customize tour booking added successfully",
-  //         token: token,
-  //         Data: Result.rows[0],
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
-  //     console.error("Error adding customize tour booking:", error);
-
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An error occurred while adding the customize tour booking",
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   } finally {
-  //     client.release();
-  //   }
-  // }
   public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-   
+
     try {
       await client.query("BEGIN"); // Start transaction
 
@@ -294,6 +160,24 @@ export class userRepository {
         CurrentTime(),
         "Admin",
       ]);
+      
+      console.log('Result', Result.rows)
+      const main = async () => {
+        const mailOptions = {
+          to: "indumathi123indumathi@gmail.com",
+          subject: "New customize Tour Booking Received", // Subject of the email
+          html: generateCustomizeTourBookingEmailContent(Result.rows[0]),
+        };
+      
+        // Call the sendEmail function
+        try {
+          await sendEmail(mailOptions);
+        } catch (error) {
+          console.error("Failed to send email:", error);
+        }
+      };
+      
+      main().catch(console.error);
 
       // const history = [
       //   28,
@@ -332,14 +216,15 @@ export class userRepository {
       client.release();
     }
   }
+
   public async uploadCertificateV1(
     userData: any,
     tokendata: any
   ): Promise<any> {
-   
     try {
       // Extract the PDF file from userData
       const pdfFile = userData.PdfFile;
+      console.log("pdfFile-------------------------------------", pdfFile);
 
       // Ensure that a PDF file is provided
       if (!pdfFile) {
@@ -386,7 +271,7 @@ export class userRepository {
   }
   public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-   
+
     try {
       await client.query("BEGIN"); // Start transaction
 
@@ -424,6 +309,23 @@ export class userRepository {
         "Admin",
       ]);
 
+      const main = async () => {
+        const mailOptions = {
+          to: "indumathi123indumathi@gmail.com",
+          subject: "New car Booking Received", // Subject of the email
+          html: generateCarBookingEmailContent(Result.rows[0]),
+        };
+      
+        // Call the sendEmail function
+        try {
+          await sendEmail(mailOptions);
+        } catch (error) {
+          console.error("Failed to send email:", error);
+        }
+      };
+      
+      main().catch(console.error);
+
       // const history = [29, tokendata.id, "car booking", CurrentTime(), "user"];
 
       // const updateHistory = await client.query(updateHistoryQuery, history);
@@ -436,7 +338,7 @@ export class userRepository {
           message: "user car booking  added successfully",
           Data: Result.rows[0],
         },
-        true
+        false
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback transaction in case of failure
@@ -448,140 +350,78 @@ export class userRepository {
           message: "An error occurred while adding the user car booking",
           error: String(error),
         },
-        true
+        false
       );
     } finally {
       client.release();
     }
   }
 
-  
+  public async listTourV1(userData: any, tokendata: any): Promise<any> {
+    try {
+      const { refPackageId } = userData;
 
-//   public async listTourV1(userData: any, tokendata: any): Promise<any> {
-//     try {
-//       const { refPackageId } = userData;
+      // Step 1: Execute Queries
+      const result1 = await executeQuery(listTourQuery, [refPackageId]);
+      console.log("result1:", result1);
 
-//       const result1 = await executeQuery(listTourQuery, [refPackageId]);
-//       console.log("result1", result1);
+      const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
+      console.log("result2:", result2);
 
-//       const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
-//       console.log("result2", result2);
+      // Step 2: Process images for both sets of results
+      if (result1 && result1.length) {
+        await processImages(result1);
+      }
+      if (result2 && result2.length) {
+        await processImages(result2);
+      }
 
+      // Step 3: Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Listed Tour successfully",
+          tourDetails: result1,
+          othertourDetails: result2,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      // Log the error for debugging
+      console.error("Error in listing tour:", error);
 
-//      for (const image of result) {
-//   for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
-//     if (image[key]) {
-//       try {
-//         const fileBuffer = await fs.promises.readFile(image[key]);
-//         image[key] = {
-//           filename: path.basename(image[key]),
-//           content: fileBuffer.toString("base64"),
-//           contentType: "image/jpeg", // Adjust if needed
-//         };
-//       } catch (error) {
-//         console.error(`Error reading ${key} file:`, error);
-//         image[key] = null; // Handle missing/unreadable files
-//       }
-//     }
-//   }
-// }
-
-
-
-
-//       return encrypt(
-//         {
-//           success: true,
-//           message: "listed Tour successfully",
-//           tourDetails: result1,
-//           othertourDetails: result2,
-//         },
-//         true
-//       );
-//     } catch (error: unknown) {
-//       return encrypt(
-//         {
-//           success: false,
-//           message: "An unknown error occurred during listed  Tour ",
-//           error: String(error),
-//         },
-//         true
-//       );
-//     }
-//   }
-
-
-public async  listTourV1(userData: any, tokendata: any): Promise<any> {
-
-  try {
-
-    const { refPackageId } = userData;
-
-    // Step 1: Execute Queries
-    const result1 = await executeQuery(listTourQuery, [refPackageId]);
-    console.log("result1:", result1);
-
-    const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
-    console.log("result2:", result2);
-
-    // Step 2: Process images for both sets of results
-    if (result1 && result1.length) {
-      await processImages(result1);
+      // Step 4: Return error response with a more descriptive error message
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while listing the tour details.",
+          error: String(error), // Return detailed error for debugging
+        },
+        true
+      );
     }
-    if (result2 && result2.length) {
-      await processImages(result2);
-    }
-
-    // Step 3: Return success response
-    return encrypt(
-      {
-        success: true,
-        message: "Listed Tour successfully",
-        tourDetails: result1,
-        othertourDetails: result2,
-      },
-      true
-    );
-  } catch (error: unknown) {
-    // Log the error for debugging
-    console.error("Error in listing tour:", error);
-
-    // Step 4: Return error response with a more descriptive error message
-    return encrypt(
-      {
-        success: false,
-        message: "An error occurred while listing the tour details.",
-        error: String(error), // Return detailed error for debugging
-      },
-      true
-    );
   }
-}
-
-
-
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
-
       const result = await executeQuery(listallTourQuery);
 
       console.log("result1", result);
-        // Convert images to Base64 format
-            for (const image of result) {
-              if (image.refCoverImage) {
-                try {
-                  const fileBuffer = await fs.promises.readFile(image.refCoverImage);
-                  image.refCoverImage = {
-                    filename: path.basename(image.refCoverImage),
-                    content: fileBuffer.toString("base64"),
-                    contentType: "image/jpeg", // Adjust if needed
-                  };
-                } catch (error) {
-                  console.error("Error reading image file:", error);
-                  image.refCoverImage = null; // Handle missing/unreadable files
-                }
-              }
-            }
+      // Convert images to Base64 format
+      for (const image of result) {
+        if (image.refCoverImage) {
+          try {
+            const fileBuffer = await fs.promises.readFile(image.refCoverImage);
+            image.refCoverImage = {
+              filename: path.basename(image.refCoverImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Adjust if needed
+            };
+          } catch (error) {
+            console.error("Error reading image file:", error);
+            image.refCoverImage = null; // Handle missing/unreadable files
+          }
+        }
+      }
 
       return encrypt(
         {
@@ -602,193 +442,58 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
       );
     }
   }
-  
-  // public async addTravalDataV1(userData: any, tokendata: any): Promise<any> {
-  //   const client: PoolClient = await getClient();
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
-  //     await client.query("BEGIN"); // Start transaction
-
-  //     const {
-  //       refPackageId,
-  //       refItinary,
-  //       refItinaryMapPath,
-  //       refSpecialNotes
-  //     } = userData;
-
-  //     const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
-  //     const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
-
-  //     // Insert package details and get refPackageId
-  //     const Result = await client.query(addTravalDataQuery, [
-  //       refPackageId,
-  //       refItinary,
-  //       refItinaryMapPath,
-  //       refTravalInclude,
-  //       refTravalExclude,
-  //       refSpecialNotes,
-  //       CurrentTime(),
-  //       "Admin",
-  //     ]);
-
-  //     const history = [
-  //       40, 
-  //       tokendata.id, 
-  //       "add traval data", 
-  //       CurrentTime(),
-  //        "user"
-  //       ];
-
-  //     const updateHistory = await client.query(updateHistoryQuery, history);
-  //     await client.query("COMMIT"); // Commit transaction
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "Package and gallery images added successfully",
-  //         tokens:tokens,
-  //         Data: Result.rows[0],
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
-  //     console.error("Error adding package:", error);
-
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An error occurred while adding the package",
-  //         tokens:tokens,
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   } finally {
-  //     client.release();
-  //   }
-  // }
-  // public async updateTravalDataV1(userData: any, tokendata: any): Promise<any> {
-  //   const client: PoolClient = await getClient();
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
-  //     await client.query("BEGIN"); // Start transaction
-
-  //     const {
-  //       refTravalDataId,
-  //       refPackageId,
-  //       refItinary,
-  //       refItinaryMapPath,
-  //       refTravalInclude,
-  //       refTravalExclude,
-  //       refSpecialNotes
-  //     } = userData;
-
-
-  //     // Insert package details and get refPackageId
-  //     const Result = await client.query(updateTravalDataQuery, [
-  //       refTravalDataId,
-  //       refPackageId,
-  //       refItinary,
-  //       refItinaryMapPath,
-  //       refTravalInclude,
-  //       refTravalExclude,
-  //       refSpecialNotes,
-  //       CurrentTime(),
-  //       "Admin",
-  //     ]);
-
-  //     const history = [
-  //       47, 
-  //       tokendata.id, 
-  //       "update traval data", 
-  //       CurrentTime(),
-  //       "Admin"
-  //       ];
-
-  //     const updateHistory = await client.query(updateHistoryQuery, history);
-  //     await client.query("COMMIT"); // Commit transaction
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "Package and gallery images added successfully",
-  //         tokens:tokens,
-  //         Data: Result.rows[0],
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
-  //     console.error("Error adding package:", error);
-
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An error occurred while adding the package",
-  //         tokens:tokens,
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   } finally {
-  //     client.release();
-  //   }
-  // }
 
   public async uploadMapV1(userData: any, tokendata: any): Promise<any> {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-      try {
-        // Extract the image from userData
-        const image = userData.Image;
-  
-        // Ensure that only one image is provided
-        if (!image) {
-          throw new Error("Please provide an image.");
-        }
-  
-        let filePath: string = "";
-        let storedFiles: any[] = [];
-  
-        // Store the image
-        console.log("Storing image...");
-        filePath = await storeFile(image, 4);
-  
-        // Read the file buffer and convert it to Base64
-        const imageBuffer = await viewFile(filePath);
-        const imageBase64 = imageBuffer.toString("base64");
-  
-        storedFiles.push({
-          filename: path.basename(filePath),
-          content: imageBase64,
-          contentType: "image/jpeg", // Assuming the image is in JPEG format
-        });
-  
-        // Return success response
-        return encrypt(
-          {
-            success: true,
-            message: "Image Stored Successfully",
-            token: tokens,
-            filePath: filePath,
-            files: storedFiles,
-          },
-          true
-        );
-      } catch (error) {
-        console.error("Error occurred:", error);
-        return encrypt(
-          {
-            success: false,
-            message: "Error in Storing the Image",
-            token: tokens,
-          },
-          true
-        );
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the image from userData
+      const image = userData.Image;
+
+      // Ensure that only one image is provided
+      if (!image) {
+        throw new Error("Please provide an image.");
       }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the image
+      console.log("Storing image...");
+      filePath = await storeFile(image, 4);
+
+      // Read the file buffer and convert it to Base64
+      const imageBuffer = await viewFile(filePath);
+      const imageBase64 = imageBuffer.toString("base64");
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: imageBase64,
+        contentType: "image/jpeg", // Assuming the image is in JPEG format
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Image Stored Successfully",
+          token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the Image",
+          token: tokens,
+        },
+        true
+      );
+    }
   }
   public async deleteMapV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
@@ -797,28 +502,30 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
       // let filePath: string | any;
 
       if (userData.refTravalDataId) {
-        console.log('userData.refTravalDataId', userData.refTravalDataId)
-        
+        console.log("userData.refTravalDataId", userData.refTravalDataId);
+
         // Retrieve the image record from the database
         const imageRecord = await executeQuery(getImageRecordQuery, [
           userData.refTravalDataId,
         ]);
-        console.log('imageRecord', imageRecord)
+        console.log("imageRecord", imageRecord);
         if (imageRecord.length === 0) {
           return encrypt(
             {
               success: false,
               message: "Image record not found",
-              tokens:tokens
+              tokens: tokens,
             },
             true
           );
         }
       }
-        // filePath = imageRecord[0].refImagePath;
+      // filePath = imageRecord[0].refImagePath;
 
-        // Delete the image record from the database
-      const DeleteImage = await executeQuery(deleteImageRecordQuery, [userData.refTravalDataId]);
+      // Delete the image record from the database
+      const DeleteImage = await executeQuery(deleteImageRecordQuery, [
+        userData.refTravalDataId,
+      ]);
       // } else {
       //   // filePath = userData.filePath;
       // }
@@ -832,7 +539,7 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -842,7 +549,7 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -850,7 +557,6 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
   }
   public async getAllCarV1(userData: any, tokendata: any): Promise<any> {
     try {
-
       const result = await executeQuery(listCarsQuery);
 
       for (const image of result) {
@@ -897,7 +603,6 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
       const result2 = await executeQuery(getOtherCarsQuery, [refCarsId]);
       console.log("result2", result2);
 
-
       for (const image of result1) {
         if (image.refCarPath) {
           try {
@@ -936,7 +641,6 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
   }
   public async listDestinationV1(userData: any, tokendata: any): Promise<any> {
     try {
-
       const result = await executeQuery(listDestinationQuery);
 
       return encrypt(
@@ -958,5 +662,73 @@ public async  listTourV1(userData: any, tokendata: any): Promise<any> {
       );
     }
   }
+  // public async sendRemainderMailV1(userData: any, token_data?: any): Promise<any> {
+  //     const client: PoolClient = await getClient();
+  //     const token = { id: token_data.id }; // Extract token ID
+  //     const tokens = generateTokenWithExpire(token, true);
+  //     try {
+  //       await client.query("BEGIN");
 
+  //         if ((updateHistory.rowCount ?? 0) > 0) {
+  //           const tokenData = {
+  //             id: newUser.refUserId,
+  //             email: userData.refUserEmail,
+  //           };
+  //           await client.query("COMMIT");
+  //           const main = async () => {
+  //             const mailOptions = {
+  //               to: userData.refUserEmail,
+  //               subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
+  //               html: generateSignupEmailContent(
+  //                 userData.refMoblile,
+  //                 genPassword
+  //               ),
+  //             };
+
+  //             // Call the sendEmail function
+  //             try {
+  //               await sendEmail(mailOptions);
+  //             } catch (error) {
+  //               console.error("Failed to send email:", error);
+  //             }
+  //           };
+
+  //           main().catch(console.error);
+  //           return encrypt(
+  //             {
+  //               success: true,
+  //               message: "User signup successful",
+  //               user: newUser,
+  //               token: tokens,
+  //             },
+  //             true
+  //           );
+  //         }
+  //       }
+
+  //       await client.query("ROLLBACK");
+  //       return encrypt(
+  //         {
+  //           success: false,
+  //           message: "Signup failed",
+  //           token: tokens,
+  //         },
+  //         true
+  //       );
+  //     } catch (error: unknown) {
+  //       await client.query("ROLLBACK");
+  //       console.error("Error during user signup:", error);
+  //       return encrypt(
+  //         {
+  //           success: false,
+  //           message: "An unexpected error occurred during signup",
+  //           error: error instanceof Error ? error.message : String(error),
+  //         },
+  //         true
+  //       );
+  //     } finally {
+  //       client.release();
+  //     }
+  //  }
+  
 }

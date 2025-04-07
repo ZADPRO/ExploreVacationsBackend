@@ -45,5 +45,8 @@ export class userResolver {
   public async listDestinationV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.listDestinationV1(user_data, token_data, domain_code);
   }
+  public async sendRemainderMailV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.sendRemainderMailV1(user_data, token_data, domain_code);
+  }
 
 }

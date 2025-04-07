@@ -532,13 +532,14 @@ export const getCarsByIdQuery = `SELECT DISTINCT
   tc.*
 FROM
   public."refCarsTable" rct
-  JOIN public."refVehicleType" vt ON vt."refVehicleTypeId" = rct."refVehicleTypeId"
-  JOIN public."refDriverDetails" rdd ON rdd."refDriverDetailsId" = rct."refDriverDetailsId"
-  JOIN public."refTermsAndConditions" tc ON tc."refCarsId" = rct."refCarsId"
+  LEFT JOIN public."refVehicleType" vt ON vt."refVehicleTypeId" = rct."refVehicleTypeId"
+  LEFT JOIN public."refDriverDetails" rdd ON rdd."refDriverDetailsId" = rct."refDriverDetailsId"
+  LEFT JOIN public."refTermsAndConditions" tc ON tc."refCarsId" = rct."refCarsId"
 WHERE
   rct."refCarsId" = $1
   AND (
     rct."isDelete" IS null
     OR rct."isDelete" IS false
   );
-  `;
+  `
+  ;

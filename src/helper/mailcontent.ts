@@ -1,75 +1,196 @@
-// export function sendOtpTemplate(clientName: string, otp: string) {
-//   const mail = `<!DOCTYPE html>
-//       <html lang="en">
-//       <head>
-//         <meta charset="UTF-8">
-//         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-//         <title>OTP Verification</title>
-//         <style>
-//           body { font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333; }
-//           .container { max-width: 600px; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-//           .header { background-color: #ff7043; padding: 15px; text-align: center; border-radius: 8px 8px 0 0; color: #ffffff; }
-//           .header h1 { margin: 0; font-size: 24px; }
-//           .content { padding: 20px; }
-//           .content p { font-size: 16px; line-height: 1.6; }
-//           .otp-box { font-size: 24px; font-weight: bold; text-align: center; padding: 10px; margin: 20px 0; background-color: #ffe0b2; border: 1px dashed #ff7043; border-radius: 8px; }
-//           .footer { text-align: center; padding: 10px; font-size: 14px; color: #666; }
-//         </style>
-//       </head>
-//       <body>
-//         <div class="container">
-//           <div class="header">
-//             <h1>Ublis Yogo</h1>
-//           </div>
-//           <div class="content">
-//             <p>Dear ${clientName},</p>
-//             <p>We have received a request to verify your identity. Please use the following OTP to complete the process:</p>
-//             <div class="otp-box">${otp}</div>
-//             <p>Note: This OTP is valid for only **1 minute**. Please ensure to use it promptly.</p>
-//             <p>If you did not initiate this request, please contact us immediately.</p>
-//             <p>Best regards,<br>Director, Ublis Yogo</p>
-//           </div>
-//           <div class="footer">&copy; 2024 Ublis Yogo. All rights reserved.</div>
-//         </div>
-//       </body>
-//       </html>`;
-//   return mail;
-// }
+export const generateSignupEmailContent = (
+  username: string,
+  password: string
+) => {
+  return `
+      <h3>Welcome to Our Platform!</h3>
+      <p>Dear User,</p>
+      <p>Your account has been successfully created. Below are your login details:</p>
+      <ul>
+        <li><strong>Email:</strong> ${username}</li>
+        <li><strong>Password:</strong> ${password}</li>
+      </ul>
+      <p>Please log in and change your password for security reasons.</p>
+      <p>Best Regards,<br/>The Team</p>
+    `;
+};
 
-export function sendOtpTemplate(clientName: string, otp: string) {
-  const mail = `<!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>OTP Verification</title>
-        <style>
-          body { font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333; }
-          .container { max-width: 600px; background-color:rgba(254, 208, 165, 0.86); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-          .header { background-color:rgb(250, 126, 2); padding: 15px; text-align: center; border-radius: 8px 8px 0 0; color: #ffffff; }
-          .header h1 { margin: 0; font-size: 24px; }
-          .content { padding: 20px; }
-          .content p { font-size: 16px; line-height: 1.6; }
-          .otp-box { font-size: 24px; font-weight: bold; text-align: center; padding: 10px; margin: 20px 0; background-color: #bbdefb; border: 1px dashed #42a5f5; border-radius: 8px; }
-          .footer { text-align: center; padding: 10px; font-size: 14px; color: #666; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>Karma Cuisine</h1>
-          </div>
-          <div class="content">
-            <p>${clientName},</p>
-            <p>We have received a request to reset your password. Please use the following OTP to complete the process:</p>
-            <div class="otp-box">${otp}</div>
-            <p>Note: This OTP is valid for only **30 secs**. Please ensure to use it promptly.</p>
-            <p>If you did not initiate this request, please contact us immediately.</p>
-            <p>Best regards,<br>Director, Karma Cuisine</p>
-          </div>
-          <div class="footer">&copy; 2024 Karma Cuisine. All rights reserved.</div>
-        </div>
-      </body>
-      </html>`;
-  return mail;
+
+export function generateTourBookingEmailContent(result: any): string {
+  const data = result.rows[0];
+
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+      <h2 style="color: #2c3e50; text-align: center;">New Tour Booking Received</h2>
+      <p style="text-align: center; color: #555;">A customer has booked a new tour. Please find the booking details below:</p>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <tbody>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Customer Name</td>
+            <td style="padding: 8px;">${data.refUserName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Email</td>
+            <td style="padding: 8px;">${data.refUserMail}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Mobile</td>
+            <td style="padding: 8px;">${data.refUserMobile}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Pickup Date</td>
+            <td style="padding: 8px;">${data.refPickupDate}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Adults</td>
+            <td style="padding: 8px;">${data.refAdultCount}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Children</td>
+            <td style="padding: 8px;">${data.refChildrenCount}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Infants</td>
+            <td style="padding: 8px;">${data.refInfants}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Other Requirements</td>
+            <td style="padding: 8px;">${data.refOtherRequirements || "N/A"}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 20px; color: #888; text-align: center;">
+        <em>Booking created on: ${new Date().toLocaleString()}</em>
+      </p>
+    </div>
+  `;
+}
+
+
+
+export function generateCustomizeTourBookingEmailContent(data: any): string {
+  console.log("data", data); // This should now log the actual row
+
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+      <h2 style="color: #2c3e50; text-align: center;">🧳 New Customized Tour Booking Request</h2>
+      <p style="text-align: center; color: #555;">A customer has booked a new Customized tour. Please find the booking details below:</p>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <tbody>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Customer Name</td>
+            <td style="padding: 8px;">${data.refUserName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Email</td>
+            <td style="padding: 8px;">${data.refUserMail}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Mobile</td>
+            <td style="padding: 8px;">${data.refUserMobile}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Arrival Date</td>
+            <td style="padding: 8px;">${data.refArrivalDate}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Single Room</td>
+            <td style="padding: 8px;">${data.refSingleRoom}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Twin Room</td>
+            <td style="padding: 8px;">${data.refTwinRoom}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Triple Room</td>
+            <td style="padding: 8px;">${data.refTripleRoom}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Adults</td>
+            <td style="padding: 8px;">${data.refAdultCount}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Children</td>
+            <td style="padding: 8px;">${data.refChildrenCount}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Vaccination Type</td>
+            <td style="padding: 8px;">${data.refVaccinationType}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Other Requirements</td>
+            <td style="padding: 8px;">${data.refOtherRequirements || "N/A"}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 20px; color: #888; text-align: center;">
+        <em>Booking created on: ${new Date().toLocaleString()}</em>
+      </p>
+    </div>
+  `;
+}
+
+
+export function generateCarBookingEmailContent(data: any): string {
+  console.log("data", data); // This should now log the actual row
+
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+      <h2 style="color: #2c3e50; text-align: center;">🧳 New Customized Tour Booking Request</h2>
+      <p style="text-align: center; color: #555;">A customer has booked a new Customized tour. Please find the booking details below:</p>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <tbody>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Customer Name</td>
+            <td style="padding: 8px;">${data.refUserName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Email</td>
+            <td style="padding: 8px;">${data.refUserMail}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Mobile</td>
+            <td style="padding: 8px;">${data.refUserMobile}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Pickup Address</td>
+            <td style="padding: 8px;">${data.refPickupAddress}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Submission Address</td>
+            <td style="padding: 8px;">${data.refSubmissionAddress}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Pickup Date</td>
+            <td style="padding: 8px;">${data.refPickupDate}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Adult</td>
+            <td style="padding: 8px;">${data.refAdultCount}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Children</td>
+            <td style="padding: 8px;">${data.refChildrenCount}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Infants</td>
+            <td style="padding: 8px;">${data.refInfants}</td>
+          </tr> 
+          <tr>
+            <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Other Requirements</td>
+            <td style="padding: 8px;">${data.refOtherRequirements}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 20px; color: #888; text-align: center;">
+        <em>Booking created on: ${new Date().toLocaleString()}</em>
+      </p>
+    </div>
+  `;
 }

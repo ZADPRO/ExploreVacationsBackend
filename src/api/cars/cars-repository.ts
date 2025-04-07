@@ -75,7 +75,13 @@ export class carsRepository {
       ]);
 
       console.log("vehicleResult", vehicleResult.rows);
-      const history = [12, tokendata.id, "add Vehicle", CurrentTime(), "Admin"];
+      const history = [
+        12, 
+        tokendata.id, 
+        "add Vehicle", 
+        CurrentTime(), 
+        "Admin"
+      ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -373,7 +379,7 @@ export class carsRepository {
           {
             success: false,
             message: "Benifits ID not found",
-            token: tokens,
+            token: tokens
           },
           true
         );
@@ -1676,6 +1682,7 @@ export class carsRepository {
     try {
       // Extract the image from userData
       const image = userData.Image;
+      console.log('image', image)
 
       // Ensure that only one image is provided
       if (!image) {
@@ -1941,15 +1948,16 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refCarsId } = userData;
+      console.log('refCarsId liune ------ 1950', refCarsId)
 
       const result = await executeQuery(getCarsByIdQuery, [refCarsId]);
 
       return encrypt(
         {
           success: true,
-          message: "listed car successfully",
+          message: "listed car by id successfully",
           token: tokens,
-          result: result,
+          result: result
         },
         true
       );
@@ -1972,7 +1980,6 @@ export class carsRepository {
 
     try {
       await client.query("BEGIN"); // Start transaction
-
       const { refCarsId } = userData;
       const result = await client.query(deleteCarsQuery, [
         refCarsId,

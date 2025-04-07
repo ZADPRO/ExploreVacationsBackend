@@ -3,7 +3,7 @@ import * as Hapi from "@hapi/hapi";
 import { decodeToken, validateToken } from "../../helper/token";
 import IRoute from "../../helper/routes";
 import { adminController } from "./controller";
-
+import validate from "./validate";
 
 export class adminRoutes implements IRoute {
   public async register(server: any): Promise<any> {
@@ -14,14 +14,14 @@ export class adminRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/adminRoutes/adminLogin",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.adminLogin,
+            validate: validate.userLogin,
             description: "admin Login",
             // tags: ["api", "Users"],
             auth: false,
           },
         },
-       
+
         {
           method: "GET",
           path: "/api/v1/adminRoutes/listTourBookings",
@@ -66,7 +66,95 @@ export class adminRoutes implements IRoute {
             auth: false,
           },
         },
-        
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/addEmployee",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.addEmployee,
+            validate: validate.addEmployee,
+            description: "update addCars",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/uploadEmployeeImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.uploadEmployeeImage,
+            validate: validate.uploadEmployeeImage,
+            description: "Upload employee Image",
+            tags: ["api", "Users"],
+            auth: false,
+            payload: {
+              maxBytes: 10485760,
+              output: "stream",
+              parse: true,
+              multipart: true,
+            },
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/carsRoutes/deleteEmployeeImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteEmployeeImage,
+            description: "delete Employee Image",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/updateEmployee",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.updateEmployee,
+            validate: validate.updateEmployee,
+            description: "update employee",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/adminRoutes/listEmployees",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listEmployees,
+            description: "listEmployees",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/getEmployee",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getEmployee,
+            validate: validate.getEmployee,
+            description: "get Employee",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/deleteEmployee",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteEmployee,
+            validate: validate.deleteEmployee,
+            description: "delete Employee",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+
       ]);
       resolve(true);
     });

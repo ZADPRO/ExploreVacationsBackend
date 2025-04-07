@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 
-
 export const getAdjustedTime = (): string => {
   const serverTime = new Date();
   serverTime.setMinutes(serverTime.getMinutes() + 330);
@@ -51,12 +50,12 @@ function formatDateWithOffset(offsetSeconds = 0) {
   const date = new Date(Date.now() + offsetSeconds * 1000);
 
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const day = String(date.getDate()).padStart(2, "0");
 
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
@@ -64,9 +63,6 @@ function formatDateWithOffset(offsetSeconds = 0) {
 // Usage: Current time + 30 seconds
 const formattedDate = formatDateWithOffset(30);
 console.log(formattedDate);
-
-
-
 
 export function formatDate_Time(isoDate: any) {
   const date = new Date(isoDate);
@@ -163,25 +159,29 @@ export function generateFileName(): string {
 
   // Get current date in DDMMYYYY format
   const today = new Date();
-  const datePart = `${String(today.getDate()).padStart(2, '0')}${String(today.getMonth() + 1).padStart(2, '0')}${today.getFullYear()}`;
+  const datePart = `${String(today.getDate()).padStart(2, "0")}${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}${today.getFullYear()}`;
 
   // Combine random characters with date
   return `${randomChars}${datePart}`;
 }
 
-
-export function base64ToFile(base64String: string, fileName: string): { file: File; fileType: string } {
+export function base64ToFile(
+  base64String: string,
+  fileName: string
+): { file: File; fileType: string } {
   const matches = base64String.match(/^data:(.+);base64,(.*)$/);
   if (!matches || matches.length !== 3) {
-      throw new Error("Invalid base64 string");
+    throw new Error("Invalid base64 string");
   }
 
   const fileType = matches[1];
   const byteCharacters = atob(matches[2]);
   const byteNumbers = new Array(byteCharacters.length);
-  
+
   for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
   }
 
   const byteArray = new Uint8Array(byteNumbers);
@@ -189,8 +189,6 @@ export function base64ToFile(base64String: string, fileName: string): { file: Fi
 
   return { file, fileType };
 }
-
-
 
 // Mark the function as async to use await inside it
 export async function processImages(result: any[]) {
@@ -211,4 +209,25 @@ export async function processImages(result: any[]) {
       }
     }
   }
+}
+
+export function generatePassword(length: number = 8): string {
+  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
+  const symbols = "!@#$%^&*()_+{}[]<>?";
+  const allChars = upperCase + lowerCase + symbols;
+
+  let password = "";
+  password += upperCase[Math.floor(Math.random() * upperCase.length)];
+  password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
+  password += symbols[Math.floor(Math.random() * symbols.length)];
+
+  for (let i = 3; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+
+  return password
+    .split("")
+    .sort(() => 0.5 - Math.random())
+    .join("");
 }

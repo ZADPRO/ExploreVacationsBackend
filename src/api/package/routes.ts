@@ -3,7 +3,7 @@ import * as Hapi from "@hapi/hapi";
 import { decodeToken, validateToken } from "../../helper/token";
 import { packageController } from "./controller";
 import IRoute from "../../helper/routes";
-
+import validate from "./validate";
 
 export class packageRoutes implements IRoute {
   public async register(server: any): Promise<any> {
@@ -16,6 +16,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addPackage,
+            validate: validate.addPackage,
             description: "add Package",
             tags: ["api", "Users"],
             auth: false,
@@ -27,6 +28,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.UpdatePackage,
+            validate: validate.UpdatePackage,
             description: "update Package",
             tags: ["api", "Users"],
             auth: false,
@@ -38,6 +40,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deletePackage,
+            validate: validate.deletePackage,
             description: "delete Package",
             tags: ["api", "Users"],
             auth: false,
@@ -88,6 +91,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addTravalInclude,
+            validate: validate.addTravalInclude,
             description: "add TravalInclude",
             tags: ["api", "Users"],
             auth: false,
@@ -99,6 +103,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateTravalInclude,
+            validate: validate.updateTravalInclude,
             description: "update TravalInclude",
             tags: ["api", "Users"],
             auth: false,
@@ -110,6 +115,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteTravalInclude,
+            validate: validate.deleteTravalInclude,
             description: "delete TravalInclude",
             tags: ["api", "Users"],
             auth: false,
@@ -132,6 +138,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addTravalExclude,
+            validate: validate.addTravalExclude,
             description: "add TravalExclude",
             tags: ["api", "Users"],
             auth: false,
@@ -143,6 +150,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateTravalExclude,
+            validate: validate.updateTravalExclude,
             description: "update TravalExclude",
             tags: ["api", "Users"],
             auth: false,
@@ -154,6 +162,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteTravalExclude,
+            validate: validate.deleteTravalExclude,
             description: "delete Traval Exclude",
             tags: ["api", "Users"],
             auth: false,
@@ -176,6 +185,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.uploadCoverImage,
+            validate: validate.uploadCoverImage,
             description: "Upload cover Image",
             tags: ["api", "Users"],
             auth: false,
@@ -204,6 +214,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.getTour,
+            validate: validate.getTour,
             description: "getTour",
             tags: ["api", "Users"],
             auth: false,

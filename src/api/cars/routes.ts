@@ -3,6 +3,7 @@ import * as Hapi from "@hapi/hapi";
 import { decodeToken, validateToken } from "../../helper/token";
 import IRoute from "../../helper/routes";
 import { carsController } from "./controller";
+import validate from "./validate";
 
 
 export class carsRoutes implements IRoute {
@@ -16,6 +17,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addVehicle,
+            validate: validate.addVehicle,
             description: "add Vehicle",
             tags: ["api", "Users"],
             auth: false,
@@ -26,6 +28,7 @@ export class carsRoutes implements IRoute {
           path: "/api/v1/carsRoutes/updateVehicle",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
+            validate: validate.updateVehicle,
             handler: controller.updateVehicle,
             description: "update Vehicle",
             tags: ["api", "Users"],
@@ -49,6 +52,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteVehicle,
+            validate: validate.deleteVehicle,
             description: "delete Vehicle",
             tags: ["api", "Users"],
             auth: false,
@@ -61,6 +65,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addBenifits,
+            validate: validate.addBenifits,
             description: "add Benifits",
             tags: ["api", "Users"],
             auth: false,
@@ -72,6 +77,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateBenifits,
+            validate: validate.updateBenifits,
             description: "update Benifits",
             tags: ["api", "Users"],
             auth: false,
@@ -94,6 +100,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteBenifits,
+            validate: validate.deleteBenifits,
             description: "delete Benifits",
             tags: ["api", "Users"],
             auth: false,
@@ -105,6 +112,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addInclude,
+            validate: validate.addInclude,
             description: "add include",
             tags: ["api", "Users"],
             auth: false,
@@ -116,6 +124,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateInclude,
+            validate: validate.updateInclude,
             description: "update include",
             tags: ["api", "Users"],
             auth: false,
@@ -138,6 +147,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteInclude,
+            validate: validate.deleteInclude,
             description: "delete Include",
             tags: ["api", "Users"],
             auth: false,
@@ -149,6 +159,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addExclude,
+            validate: validate.addExclude,
             description: "add Exclude",
             tags: ["api", "Users"],
             auth: false,
@@ -160,6 +171,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.UpdateExclude,
+            validate: validate.UpdateExclude,
             description: "update Exclude",
             tags: ["api", "Users"],
             auth: false,
@@ -182,6 +194,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteExclude,
+            validate: validate.deleteExclude,
             description: "delete Exclude",
             tags: ["api", "Users"],
             auth: false,
@@ -193,6 +206,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addDriverDetails,
+            validate: validate.addDriverDetails,
             description: "add Driver Details",
             tags: ["api", "Users"],
             auth: false,
@@ -204,6 +218,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateDriverDetails,
+            validate: validate.updateDriverDetails,
             description: "update Driver Details",
             tags: ["api", "Users"],
             auth: false,
@@ -226,6 +241,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteDriverDetails,
+            validate: validate.deleteDriverDetails,
             description: "delete Driver Details",
             tags: ["api", "Users"],
             auth: false,
@@ -248,6 +264,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addFormDetails,
+            validate: validate.addFormDetails,
             description: "add Form Details",
             tags: ["api", "Users"],
             auth: false,
@@ -259,6 +276,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateFormDetails,
+            validate: validate.updateFormDetails,
             description: "update Form Details",
             tags: ["api", "Users"],
             auth: false,
@@ -281,6 +299,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteFormDetails,
+            validate: validate.deleteFormDetails,
             description: "delete Form Details",
             tags: ["api", "Users"],
             auth: false,
@@ -292,6 +311,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addCars,
+            validate: validate.addCars,
             description: "add Cars ",
             tags: ["api", "Users"],
             auth: false,
@@ -309,6 +329,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.uploadCars,
+            // validate: validate.uploadCars,
             description: "upload Cars",
             tags: ["api", "Users"],
             auth: false,
@@ -326,6 +347,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateCars,
+            validate: validate.updateCars,
             description: "update addCars",
             tags: ["api", "Users"],
             auth: false,
@@ -358,6 +380,7 @@ export class carsRoutes implements IRoute {
           path: "/api/v1/carsRoutes/getCars",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
+            validate: validate.getCars,
             handler: controller.getCars,
             description: "get Cars",
             tags: ["api", "Users"],
@@ -370,6 +393,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteCars,
+            validate: validate.deleteCars,
             description: "delete Cars",
             tags: ["api", "Users"],
             auth: false,

@@ -362,7 +362,6 @@ export class packageRepository {
         refTourCode,
         refTourPrice,
         refSeasonalPrice,
-        refTravalDataId,
         refTravalOverView,
         refItinary,
         refItinaryMapPath,
@@ -452,7 +451,6 @@ export class packageRepository {
       // }
 
       const Result = await client.query(updateTravalDataQuery, [
-        refTravalDataId,
         refPackageId,
         refTravalOverView,
         refItinary,
@@ -508,7 +506,7 @@ export class packageRepository {
     }
   }
 
-public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
+  public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -573,7 +571,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       client.release();
     }
   }
-
   // public async galleryUploadV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);
@@ -684,7 +681,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
   //     );
   //   }
   // }
-
   public async galleryUploadV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -808,7 +804,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       );
     }
   }
-
 
   // public async listPackageV1(userData: any, tokendata: any): Promise<any> {
   //     const token = { id: tokendata.id };
@@ -1563,7 +1558,6 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
       );
     }
   }
-  
   public async  getTourV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1592,8 +1586,7 @@ public async deletePackageV1(userData: any, tokendata: any): Promise<any> {
             }
           }
         }
-  
-      // Step 3: Return success response
+              // Step 3: Return success response
       return encrypt(
         {
           success: true,

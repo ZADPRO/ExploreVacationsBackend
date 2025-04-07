@@ -432,4 +432,33 @@ export class userController {
         .code(500);
     }
   };
+  public sendRemainderMail = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----send Remainder Mail");
+    try {
+      
+      let entity;
+
+      entity = await this.resolver.sendRemainderMailV1(request.payload);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in send Remainder Mail", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 }

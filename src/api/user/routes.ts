@@ -3,6 +3,7 @@ import * as Hapi from "@hapi/hapi";
 import { decodeToken, validateToken } from "../../helper/token";
 import IRoute from "../../helper/routes";
 import { userController } from "./controller";
+import validate from "./validate";
 
 export class userRoutes implements IRoute {
   public async register(server: any): Promise<any> {
@@ -14,6 +15,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/tourBooking",
           config: {
             handler: controller.tourBooking,
+            validate: validate.tourBooking,
             description: "tour Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -24,6 +26,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/customizeBooking",
           config: {
             handler: controller.customizeBooking,
+            validate: validate.customizeBooking,
             description: "customize Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -34,6 +37,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/uploadCertificate",
           config: {
             handler: controller.uploadCertificate,
+            validate: validate.uploadCertificate,
             description: "Upload certificate",
             tags: ["api", "Users"],
             auth: false,
@@ -45,12 +49,12 @@ export class userRoutes implements IRoute {
             },
           },
         },
-
         {
           method: "POST",
           path: "/api/v1/userRoutes/userCarBooking",
           config: {
             handler: controller.userCarBooking,
+            validate: validate.userCarBooking,
             description: "car Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -72,6 +76,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/listTour",
           config: {
             handler: controller.listTour,
+            validate: validate.listTour,
             description: "listTour",
             tags: ["api", "Users"],
             auth: false,
@@ -102,6 +107,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/getCarById",
           config: {
             handler: controller.getCarById,
+            validate: validate.getCarById,
             description: "getCarById",
             tags: ["api", "Users"],
             auth: false,
@@ -155,7 +161,6 @@ export class userRoutes implements IRoute {
             description: "delete map",
             tags: ["api", "Users"],
             auth: false,
-            
           },
         },
         {
@@ -164,6 +169,17 @@ export class userRoutes implements IRoute {
           config: {
             handler: controller.listDestination,
             description: "listDestination",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/sendRemainderMail",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.sendRemainderMail,
+            description: "send Remainder Mail",
             tags: ["api", "Users"],
             auth: false,
           },
