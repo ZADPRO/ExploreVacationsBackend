@@ -6,7 +6,7 @@ import { encrypt } from "../../helper/encrypt";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import fs from "fs";
-
+import nodemailer from "nodemailer";
 import {
   generateTokenWithExpire,
   generateTokenWithoutExpire,
@@ -15,6 +15,8 @@ import {
   checkQuery,
   deleteEmployeeImageQuery,
   deleteEmployeesQuery,
+  getDeletedEmployeeQuery,
+  getEmployeeQuery,
   getEmployeesQuery,
   getLastEmployeeIdQuery,
   insertUserDomainQuery,
@@ -24,6 +26,8 @@ import {
   listCustomizeTourBookingsQuery,
   listEmployeesQuery,
   listTourBookingsQuery,
+  listTransactionTypeQuery,
+  listUserTypeQuery,
   selectUserByLogin,
   updateEmployeeQuery,
   updateHistoryQuery,
@@ -40,9 +44,10 @@ export class adminRepository {
     try {
       const params = [user_data.login];
       console.log("params line ------ 25", params);
-      const users = await client.query(selectUserByLogin, params);
+      const users:any = await client.query(selectUserByLogin, params);
       console.log("users", users);
 
+      
       if (users.rows.length > 0) {
         const user = users.rows[0];
 
@@ -70,7 +75,13 @@ export class adminRepository {
           const tokenData = { id: user.refUserId };
           console.log("tokenData", tokenData);
 
-          const history = [1, user.refUserId, "logIn", CurrentTime(), "Admin"];
+          const history = [
+            1,
+            user.refUserId,
+           `${user_data.login} login succesfully`,
+            CurrentTime(),
+            user.refUserId,
+          ];
 
           const updateHistory = await client.query(updateHistoryQuery, history);
 
@@ -78,7 +89,7 @@ export class adminRepository {
             {
               success: true,
               message: "Login successful",
-              token: generateTokenWithoutExpire(tokenData, true),
+              token: generateTokenWithExpire(tokenData, true),
             },
             true
           );
@@ -172,7 +183,7 @@ export class adminRepository {
       for (const certificate of result) {
         if (certificate.refVaccinationCertificate) {
           try {
-            const fileBuffer = await fs.promises.readFile(
+            const fileBuffer = await viewFile(
               certificate.refVaccinationCertificate
             );
             certificate.refVaccinationCertificate = {
@@ -209,11 +220,101 @@ export class adminRepository {
       );
     }
   }
+  // public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   try {
+
+  //     const{
+  //        TransactionType,
+  //        updatedAt
+  //     }= userData
+  //     const result = await executeQuery(listAuditPageQuery,[
+  //       TransactionType,
+  //       updatedAt
+  //     ]);
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "listed audit page successfully",
+  //         token: tokens,
+  //         result: result,
+  //       },
+  //       false
+  //     );
+  //   } catch (error: unknown) {
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An unknown error occurred during listed audit bookings",
+  //         token: tokens,
+  //         error: String(error),
+  //       },
+  //       false
+  //     );
+  //   }
+  // }
   public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
+
     try {
-      const result = await executeQuery(listAuditPageQuery);
+      const { TransactionType, updatedAt } = userData;
+
+      const date = updatedAt
+        ? updatedAt
+        : (() => {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, "0");
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const year = now.getFullYear();
+            return `${day}/${month}/${year}`; // Format: 'DD/MM/YYYY'
+          })();
+
+      // const result = await executeQuery(listAuditPageQuery, [
+      //   date,
+      //   [TransactionType],
+      // ]);
+      
+
+      const result = await executeQuery(listAuditPageQuery, [
+        date,
+        [parseInt(TransactionType)], // ensure it's an integer array
+      ]);
+      
+      console.log('result', result)
+      return encrypt(
+        {
+          success: true,
+          message: "listed audit page successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.log("error line ----- 285", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed audit bookings",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+
+  public async listTransactionTypeV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery(listTransactionTypeQuery);
 
       return encrypt(
         {
@@ -239,6 +340,8 @@ export class adminRepository {
   public async addEmployeeV1(userData: any, token_data?: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: token_data.id }; // Extract token ID
+    console.log('token', token)
+    console.log('token_data.id', token_data.id)
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -295,7 +398,7 @@ export class adminRepository {
 
       // Insert into userDomain table
       const domainParams = [
-        newUser.refUserId,
+        newUser.refuserId,
         userData.refUserEmail,
         genPassword,
         genHashedPassword,
@@ -312,10 +415,10 @@ export class adminRepository {
       if ((userResult.rowCount ?? 0) > 0 && (domainResult.rowCount ?? 0) > 0) {
         const history = [
           49,
-          newUser.refUserId,
-          "User SignUp",
+          token_data.id,
+          `${userData.refFName} added succcesfully`,
           CurrentTime(),
-          "user",
+          token_data.id,
         ];
         const updateHistory = await client.query(updateHistoryQuery, history);
 
@@ -326,6 +429,7 @@ export class adminRepository {
           };
           await client.query("COMMIT");
           const main = async () => {
+           
             const mailOptions = {
               to: userData.refUserEmail,
               subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
@@ -342,8 +446,34 @@ export class adminRepository {
               console.error("Failed to send email:", error);
             }
           };
-
           main().catch(console.error);
+
+  // const adminMail = {
+  //       to: userData.refUserEmail,
+  //       subject: "You Accont has be Created Successfully In our Platform",
+  //       html: generateSignupEmailContent( userData.refMoblile,
+  //               genPassword)
+  //     };
+  //     // await sendEmail(adminMail);
+
+  //     const transporter = nodemailer.createTransport({
+  //       service: "gmail",
+  //       auth: {
+  //         user: process.env.EMAILID,
+  //         pass: process.env.PASSWORD,
+  //       },
+  //     });
+
+//       const mailoption = {
+//         from: process.env.EMAILID,
+//         to: "indumathi123indumathi@gmail.com",
+//         subject: "New Tour Booking Received",
+//         html:  generateSignupEmailContent( userData.refMoblile,
+//           genPassword)
+    
+// };
+//       await transporter.sendMail(mailoption);
+
           return encrypt(
             {
               success: true,
@@ -360,18 +490,18 @@ export class adminRepository {
       return encrypt(
         {
           success: false,
-          message: "Signup failed",
+          message: "failed Employee added",
           token: tokens,
         },
         true
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK");
-      console.error("Error during user signup:", error);
+      console.error("Error during Employee added:", error);
       return encrypt(
         {
           success: false,
-          message: "An unexpected error occurred during signup",
+          message: "An unexpected error occurred during Employee added",
           error: error instanceof Error ? error.message : String(error),
         },
         true
@@ -488,13 +618,83 @@ export class adminRepository {
       client.release();
     }
   }
+  // public async updateEmployeeV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   try {
+  //     await client.query("BEGIN");
+
+  //     const {
+  //       refuserId,
+  //       refFName,
+  //       refLName,
+  //       refDOB,
+  //       refDesignation,
+  //       refQualification,
+  //       refProfileImage,
+  //       refMoblile,
+  //       refUserTypeId,
+  //     } = userData;
+
+  //     const params = [
+  //       refuserId,
+  //       refFName,
+  //       refLName,
+  //       refDOB,
+  //       refDesignation,
+  //       refQualification,
+  //       refProfileImage,
+  //       refMoblile,
+  //       // refUserTypeId,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ];
+  //     const updateResult = await client.query(updateEmployeeQuery, params);
+  //     // Log history of the action
+  //     const history = [
+  //       50,
+  //       tokendata.id,
+  //       "update employee",
+  //       CurrentTime(),
+  //       tokendata.id,
+  //     ];
+
+  //     const updateHistory = await client.query(updateHistoryQuery, history);
+  //     await client.query("COMMIT"); // Commit transaction
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "employee updated successfully",
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error updating employee:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while updating the employee",
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
   public async updateEmployeeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
+  
     try {
       await client.query("BEGIN");
-
+  
       const {
         refuserId,
         refFName,
@@ -504,10 +704,42 @@ export class adminRepository {
         refQualification,
         refProfileImage,
         refMoblile,
-        refUserTypeId,
       } = userData;
-
-      const params = [
+  
+      const existingEmployeeRes = await client.query(
+        getEmployeeQuery,
+        [refuserId]
+      );
+      const existingData = existingEmployeeRes.rows[0];
+  
+      if (!existingData) throw new Error(`Employee with ID ${refuserId} not found`);
+  
+      const changes: string[] = [];
+  
+      if (existingData.refFName !== refFName)
+        changes.push(`First Name: '${existingData.refFName}' : '${refFName}'`);
+  
+      if (existingData.refLName !== refLName)
+        changes.push(`Last Name: '${existingData.refLName}' : '${refLName}'`);
+  
+      if (existingData.refDOB!== refDOB)
+        changes.push(`DOB: '${existingData.refDOB}' : '${refDOB}'`);
+  
+      if (existingData.refDesignation !== refDesignation)
+        changes.push(`Designation: '${existingData.refDesignation}' : '${refDesignation}'`);
+  
+      if (existingData.refQualification !== refQualification)
+        changes.push(`Qualification: '${existingData.refQualification}' : '${refQualification}'`);
+  
+      if (existingData.refProfileImage !== refProfileImage)
+        changes.push(`Profile Image changed`);
+  
+      if (existingData.refMoblile !== refMoblile)
+        changes.push(`Mobile: '${existingData.refMoblile}' : '${refMoblile}'`);
+  
+      const changeSummary = changes.length ? `Updated Fields: ${changes.join(", ")}` : "No changes detected";
+  
+      const updateParams = [
         refuserId,
         refFName,
         refLName,
@@ -516,35 +748,34 @@ export class adminRepository {
         refQualification,
         refProfileImage,
         refMoblile,
-        refUserTypeId,
         CurrentTime(),
         "Admin",
       ];
-      const updateResult = await client.query(updateEmployeeQuery, params);
-      // Log history of the action
-      const history = [
+      await client.query(updateEmployeeQuery, updateParams);
+  
+      const historyParams = [
         50,
         tokendata.id,
-        "update employee",
+        changeSummary,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
-
-      const updateHistory = await client.query(updateHistoryQuery, history);
-      await client.query("COMMIT"); // Commit transaction
-
+      await client.query(updateHistoryQuery, historyParams);
+  
+      await client.query("COMMIT");
+  
       return encrypt(
         {
           success: true,
-          message: "employee updated successfully",
+          message: "Employee updated successfully",
           token: tokens,
         },
         true
       );
     } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback transaction in case of failure
+      await client.query("ROLLBACK");
       console.error("Error updating employee:", error);
-
+  
       return encrypt(
         {
           success: false,
@@ -563,6 +794,21 @@ export class adminRepository {
     try {
       const result = await executeQuery(listEmployeesQuery);
 
+      // for (const profile of result) {
+      //   if (profile.refProfileImage) {
+      //     try {
+      //       const fileBuffer = await fs.promises.readFile(profile.refProfileImage);
+      //       profile.refProfileImage = {
+      //         filename: path.basename(profile.refProfileImage),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg", // Change based on actual file type if necessary
+      //       };
+      //     } catch (err) {
+      //       console.error("Error reading image file for product ${product.productId}",err);
+      //       profile.refProfileImage = null; // Handle missing or unreadable files gracefully
+      //     }
+      //   }
+      // }
       return encrypt(
         {
           success: true,
@@ -592,6 +838,27 @@ export class adminRepository {
         userData.refuserId,
       ]);
 
+      for (const profile of result) {
+        if (profile.refProfileImage) {
+          try {
+            const fileBuffer = await viewFile(
+              profile.refProfileImage
+            );
+            profile.refProfileImage = {
+              filename: path.basename(profile.refProfileImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Change based on actual file type if necessary
+            };
+          } catch (err) {
+            console.error(
+              "Error reading image file for product ${product.productId}",
+              err
+            );
+            profile.refProfileImage = null; // Handle missing or unreadable files gracefully
+          }
+        }
+      }
+
       return encrypt(
         {
           success: true,
@@ -613,29 +880,136 @@ export class adminRepository {
       );
     }
   }
+  // public async deleteEmployeeV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+
+  //   const token = { id: tokendata.id };
+
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   try {
+  //     const result = await client.query(deleteEmployeesQuery, [
+  //       userData.refuserId,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
+      
+  //     const getDeletedEmployee: any = await client.query(getDeletedEmployeeQuery,[userData.refuserId]);
+
+  //     const employeeName = `${getDeletedEmployee[0].refFName}, (${getDeletedEmployee[0].refCustId})`;
+  //     console.log('employeeName', employeeName)
+
+  //     const history = [
+  //       51,
+  //       tokendata.id,
+  //       `${employeeName} has been deleted.`,
+  //       CurrentTime(),
+  //       tokendata.id,
+  //     ];
+
+  //     const updateHistory = await client.query(updateHistoryQuery, history);
+  //     console.log('updateHistory', updateHistory)
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "get Employee successfully",
+  //         token: tokens,
+  //         result: result,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An unknown error occurred during get Employee ",
+  //         token: tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
   public async deleteEmployeeV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+  
+    try {
+      await client.query("BEGIN");
+  
+      const getDeletedEmployee: any = await client.query(getDeletedEmployeeQuery, [userData.refuserId]);
+  
+      if (!getDeletedEmployee.rows.length) {
+        throw new Error("Employee not found");
+      }
+  
+      const employee = getDeletedEmployee.rows[0];
+      const employeeName = `${employee.refFName}, (${employee.refCustId})`;
+      console.log("employeeName", employeeName);
+  
+      const result = await client.query(deleteEmployeesQuery, [
+        userData.refuserId,
+        CurrentTime(),
+        "Admin",
+      ]);
+  
+      const history = [
+        51,
+        tokendata.id,
+        `${employeeName} has been deleted.`,
+        CurrentTime(),
+        tokendata.id,
+      ];
+  
+      const updateHistory = await client.query(updateHistoryQuery, history);
+      console.log("updateHistory", updateHistory);
+  
+      await client.query("COMMIT");
+  
+      return encrypt(
+        {
+          success: true,
+          message: "Employee deleted successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during deleting employee",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async listUserTypeV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const result = await executeQuery(deleteEmployeesQuery, [
-        userData.refuserId,
-        CurrentTime(),
-        "Admin"
-      ]);
+      const result = await executeQuery(listUserTypeQuery);
       return encrypt(
         {
           success: true,
-          message: "get Employee successfully",
+          message: "listed userType successfully",
           token: tokens,
           result: result,
         },
-        true
+        false
       );
     } catch (error: unknown) {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during get Employee ",
+          message: "An unknown error occurred during listed userType ",
           token: tokens,
           error: String(error),
         },
@@ -643,5 +1017,4 @@ export class adminRepository {
       );
     }
   }
-  
 }

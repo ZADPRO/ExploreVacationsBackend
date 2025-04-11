@@ -432,16 +432,14 @@ export class userController {
         .code(500);
     }
   };
-  public sendRemainderMail = async (
+  public userSignUp = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----send Remainder Mail");
-    try {
-      
+    logger.info("Router-----user SignUp");
+    try { 
       let entity;
-
-      entity = await this.resolver.sendRemainderMailV1(request.payload);
+      entity = await this.resolver.userSignUpV1(request.payload);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -449,7 +447,7 @@ export class userController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in send Remainder Mail", error);
+      logger.error("Error in user signup", error);
       return response
         .response({
           success: false,
@@ -461,4 +459,96 @@ export class userController {
         .code(500);
     }
   };
+  public forgotPassword = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----forgotPassword");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.forgotPasswordV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in forgot Password", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public tourBrochure = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----tour Brochure");
+    try {
+      
+      let entity;
+
+      entity = await this.resolver.tourBrochureV1(request.payload);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in tour Brochure", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public userBookingHistory = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----user Booking History");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.userBookingHistoryV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in user Booking History", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+
 }

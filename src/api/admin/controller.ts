@@ -167,6 +167,7 @@ export class adminController {
       const decodedToken ={
         id:request.plugins.token.id
       }
+      console.log('decodedToken', decodedToken)
       let entity;
       entity = await this.resolver.addEmployeeV1(request.payload, decodedToken);
 
@@ -357,6 +358,66 @@ export class adminController {
 
     } catch (error) {
       logger.error("Error in delete Employee " , error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public listTransactionType = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list Transaction Type ");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+      entity = await this.resolver.listTransactionTypeV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list TransactionType " , error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public listUserType = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list UserType");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+      entity = await this.resolver.listUserTypeV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list User type " , error);
       return response
         .response({
           success: false,

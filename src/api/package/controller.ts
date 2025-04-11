@@ -18,10 +18,12 @@ export class packageController {
   ): Promise<any> => {
     logger.info("Router-----add packages'");
     try {
+      console.log('request line ----- 21', request)
       const decodedToken ={
         id:request.plugins.token.id
       }
-     
+      console.log('decodedToken line ------ 24', decodedToken)
+      
       let entity;
 
       entity = await this.resolver.addPackageV1(request.payload, decodedToken);
@@ -549,6 +551,7 @@ export class packageController {
   
     try {
       const decodedToken ={
+        
         id:request.plugins.token.id
       }
       // const decodedToken ={

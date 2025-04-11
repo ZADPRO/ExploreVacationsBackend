@@ -194,3 +194,50 @@ export function generateCarBookingEmailContent(data: any): string {
     </div>
   `;
 }
+
+interface TourReminderUser {
+  refUserName: string;
+  refPackageId: string;
+  refPickupDate: string;
+  refUserMail:string;
+}
+
+export const generateReminderEmailContent = (user: TourReminderUser): string => {
+  const { refUserName, refPackageId, refPickupDate } = user;
+
+  return `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2>Hi ${refUserName},</h2>
+
+      <p>Just a quick reminder that your tour is scheduled for <strong>tomorrow</strong>!</p>
+
+      <ul>
+        <li><strong>Package:</strong> ${refPackageId}</li>
+        <li><strong>Pickup Date:</strong> ${new Date(refPickupDate).toDateString()}</li>
+      </ul>
+
+      <p>Make sure you're ready with all your essentials. We're excited to have you on board!</p>
+
+      <p>Safe travels,<br/>
+      The Tour Team</p>
+
+      <hr style="margin-top: 20px;" />
+      <p style="font-size: 12px; color: #666;">If you have any questions or need help, just reply to this email.</p>
+    </div>
+  `;
+};
+
+export const generateforgotPasswordEmailContent= (emailId: string, newPassword: string): string => {
+  return `
+    <div style="font-family: Arial, sans-serif;">
+      <h2>Password Reset</h2>
+      <p>Hello,</p>
+      <p>Your temporary password has been generated.</p>
+      <p><strong>Email:</strong> ${emailId}</p>
+      <p><strong>New Password:</strong> ${newPassword}</p>
+      <p>Please login and change it immediately.</p>
+      <br>
+      <p>Regards,<br>Team</p>
+    </div>
+  `;
+}

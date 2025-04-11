@@ -56,7 +56,7 @@ export class adminRoutes implements IRoute {
           },
         },
         {
-          method: "GET",
+          method: "POST",
           path: "/api/v1/adminRoutes/listAuditPage",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
@@ -72,8 +72,8 @@ export class adminRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addEmployee,
-            validate: validate.addEmployee,
-            description: "update addCars",
+            // validate: validate.addEmployee,
+            description: "add Employee",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -113,7 +113,7 @@ export class adminRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateEmployee,
-            validate: validate.updateEmployee,
+            // validate: validate.updateEmployee,
             description: "update employee",
             tags: ["api", "Users"],
             auth: false,
@@ -150,6 +150,28 @@ export class adminRoutes implements IRoute {
             handler: controller.deleteEmployee,
             validate: validate.deleteEmployee,
             description: "delete Employee",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/adminRoutes/listTransactionType",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listTransactionType,
+            description: "delete Employee",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/adminRoutes/listUserType",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listUserType,
+            description: "listUserType",
             tags: ["api", "Users"],
             auth: false,
           },

@@ -56,7 +56,10 @@ import {
   deleteCarsQuery,
   deleteImageRecordQuery,
   getImageRecordQuery,
+  getVehicleNameQuery,
+  getDeletedCarQuery,
 } from "./query";
+import { cli } from "winston/lib/winston/config";
 
 export class carsRepository {
   public async addVehicleV1(userData: any, tokendata: any): Promise<any> {
@@ -75,13 +78,7 @@ export class carsRepository {
       ]);
 
       console.log("vehicleResult", vehicleResult.rows);
-      const history = [
-        12, 
-        tokendata.id, 
-        "add Vehicle", 
-        CurrentTime(), 
-        "Admin"
-      ];
+      const history = [12, tokendata.id, "add Vehicle", CurrentTime(), tokendata.id];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -145,7 +142,7 @@ export class carsRepository {
         tokenData.id,
         "Update vehicle",
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -234,7 +231,7 @@ export class carsRepository {
         tokendata.id,
         "delete Vehicle",
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -321,7 +318,7 @@ export class carsRepository {
         tokendata.id, // User ID
         "add benefits", // Action name
         CurrentTime(), // Timestamp of the action
-        "Admin", // Performed by
+        tokendata.id, // Performed by
       ];
 
       // Commit transaction
@@ -379,7 +376,7 @@ export class carsRepository {
           {
             success: false,
             message: "Benifits ID not found",
-            token: tokens
+            token: tokens,
           },
           true
         );
@@ -394,7 +391,7 @@ export class carsRepository {
         tokenData.id,
         "Update benifits",
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -483,7 +480,7 @@ export class carsRepository {
         tokendata.id,
         "delete benifits",
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -553,10 +550,9 @@ export class carsRepository {
         if (!refIncludeName) {
           continue;
         }
-        console.log('line ------ 550', )
-        console.log('refIncludeName line ------ 551', refIncludeName)
-        console.log('CurrentTime() line -------- 552', CurrentTime())
-
+        console.log("line ------ 550");
+        console.log("refIncludeName line ------ 551", refIncludeName);
+        console.log("CurrentTime() line -------- 552", CurrentTime());
 
         const result = await client.query(addIncludeQuery, [
           refIncludeName,
@@ -575,10 +571,9 @@ export class carsRepository {
         tokendata.id,
         "add Includes",
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
-      console.log('line ------ 570', )
-
+      console.log("line ------ 570");
 
       // Commit transaction
       await client.query("COMMIT");
@@ -620,7 +615,6 @@ export class carsRepository {
       );
     }
   }
-  
   public async updateIncludeV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokenData.id };
@@ -652,7 +646,7 @@ export class carsRepository {
         tokenData.id,
         "Update include",
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -741,7 +735,7 @@ export class carsRepository {
         tokendata.id,
         "delete Include",
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -823,7 +817,7 @@ export class carsRepository {
         tokendata.id,
         "add excludes",
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
 
       // Commit transaction
@@ -895,7 +889,7 @@ export class carsRepository {
         tokenData.id,
         "Update Exclude",
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -985,7 +979,7 @@ export class carsRepository {
         tokendata.id,
         "delete Exclude",
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -1044,7 +1038,7 @@ export class carsRepository {
         "Admin",
       ]);
 
-      const history = [20, token.id, "Add driver", CurrentTime(), "admin"];
+      const history = [20, token.id, "Add driver", CurrentTime(), tokendata.id];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
 
@@ -1123,7 +1117,7 @@ export class carsRepository {
         tokenData.id,
         "Update driver details",
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -1218,7 +1212,7 @@ export class carsRepository {
         tokendata.id,
         "delete Driver Details",
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -1351,7 +1345,7 @@ export class carsRepository {
         tokendata.id,
         "add Form Details", // Action name
         CurrentTime(), // Timestamp of the action
-        "Admin", // Performed by
+        tokendata.id, // Performed by
       ];
 
       // Commit transaction
@@ -1427,7 +1421,7 @@ export class carsRepository {
         tokenData.id,
         "Update form details",
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -1519,7 +1513,7 @@ export class carsRepository {
         tokendata.id,
         "delete form Details",
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -1552,11 +1546,7 @@ export class carsRepository {
     }
   }
 
-  public async addCarsV1(
-    userData: any,
-    tokendata: any,
-    carImage: any
-  ): Promise<any> {
+  public async addCarsV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1579,55 +1569,47 @@ export class carsRepository {
         refDriverRequirements,
         refPaymentTerms,
         carImagePath,
-        refCarPrice
+        refCarPrice,
       } = userData;
-      console.log("userData", userData);
 
       const refBenifits = Array.isArray(userData.refBenifits)
         ? `{${userData.refBenifits.join(",")}}`
         : "{}";
 
-        console.log('line ------ 1584', )
       const refInclude = Array.isArray(userData.refInclude)
         ? `{${userData.refInclude.join(",")}}`
         : "{}";
 
-        console.log('line ----------- 1589', )
       const refExclude = Array.isArray(userData.refExclude)
         ? `{${userData.refExclude.join(",")}}`
         : "{}";
 
-        console.log('line ------- 1594', )
       const refFormDetails = Array.isArray(userData.refFormDetails)
         ? `{${userData.refFormDetails.join(",")}}`
         : "{}";
 
+      const params = [
+        refVehicleTypeId,
+        refPersonCount,
+        refBag,
+        refFuelType,
+        refcarManufactureYear,
+        refMileage,
+        refTrasmissionType,
+        refFuleLimit,
+        refBenifits,
+        refInclude,
+        refExclude,
+        refDriverDetailsId,
+        refFormDetails,
+        refOtherRequirements,
+        carImagePath,
+        refCarPrice,
+        CurrentTime(),
+        "Admin",
+      ];
 
-        console.log('line ---------- 1600', )
-        const params = [ 
-          refVehicleTypeId,
-          refPersonCount,
-          refBag,
-          refFuelType,
-          refcarManufactureYear,
-          refMileage,
-          refTrasmissionType,
-          refFuleLimit,
-          refBenifits,
-          refInclude,
-          refExclude,
-          refDriverDetailsId,
-          refFormDetails,
-          refOtherRequirements,
-          carImagePath,
-          refCarPrice,
-          CurrentTime(),
-          "Admin"
-        ]
-          console.log('params line ------ 1619', params)
-          
       const carsResult = await client.query(addCarsQuery, params);
-      console.log("carsResult linre ------------------------------------------------------------ 1613", carsResult.rows[0].refCarsId);
       const termsPrams = [
         carsResult.rows[0].refCarsId,
         refrefRentalAgreement,
@@ -1638,15 +1620,28 @@ export class carsRepository {
         "Admin",
       ];
 
-      console.log("termsPrams line------- 1728", termsPrams);
-
       await client.query(addCondation, termsPrams);
 
       const refCarsId = carsResult.rows[0].refCarsId;
       console.log("Inserted cars ID:", refCarsId);
 
+      const getVehicleName: any = await executeQuery(getVehicleNameQuery, [
+        refVehicleTypeId,
+      ]);
+
+      console.log("getVehicleName", getVehicleName);
+
+      const vehicleName = getVehicleName[0]?.refVehicleTypeName || "Vehicle";
+
       // Log history of the action
-      const history = [24, tokendata.id, "add cars", CurrentTime(), "Admin"];
+      const history = [
+        24,
+        tokendata.id,
+        `${vehicleName} added successfully`,
+        CurrentTime(),
+        tokendata.id,
+      ];
+
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -1676,13 +1671,14 @@ export class carsRepository {
       client.release();
     }
   }
+
   public async uploadCarsV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
       const image = userData.Image;
-      console.log('image', image)
+      console.log("image", image);
 
       // Ensure that only one image is provided
       if (!image) {
@@ -1811,7 +1807,8 @@ export class carsRepository {
         refFuelPolicy,
         refDriverRequirements,
         refPaymentTerms,
-        refCarPrice
+        refCarPrice,
+        carImagePath
       } = userData;
       console.log("userData", userData);
 
@@ -1820,7 +1817,7 @@ export class carsRepository {
       const refExclude = `{${userData.refExclude.join(",")}}`;
       const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
 
-      let carImagePath = null;
+      // let carImagePath = null;
       let carImageBase64 = null;
 
       // if (carImage) {
@@ -1868,7 +1865,14 @@ export class carsRepository {
       console.log("Updated car ID:", updatedCar.refCarsId);
 
       // Log history of the action
-      const history = [26, tokendata.id, "update cars", CurrentTime(), "Admin"];
+      const history = [
+        26, 
+        tokendata.id, 
+        `${refCarsId}car updated Succesfully`,
+         CurrentTime(), 
+         tokendata.id
+        ]
+        ;
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -1905,11 +1909,10 @@ export class carsRepository {
     try {
       const result = await executeQuery(listCarsQuery);
 
-      // Convert images to Base64 format
       for (const image of result) {
         if (image.refCarPath) {
           try {
-            const fileBuffer = await fs.promises.readFile(image.refCarPath);
+            const fileBuffer = await viewFile(image.refCarPath);
             image.refCarPath = {
               filename: path.basename(image.refCarPath),
               content: fileBuffer.toString("base64"),
@@ -1922,6 +1925,21 @@ export class carsRepository {
         }
       }
 
+      // let profileFile = null;
+      // if (Data.refProfilePath) {
+      //   const profileFilePath = Data.refProfilePath;
+      //   try {
+      //     const fileBuffer = await viewFile(profileFilePath);
+      //     const fileBase64 = fileBuffer.toString("base64"); // Convert file to base64 to pass in response
+      //     profileFile = {
+      //       filename: path.basename(profileFilePath),
+      //       content: fileBase64,
+      //       contentType: "image/jpeg", // Assume JPEG, adjust if necessary
+      //     };
+      //   } catch (err) {
+      //     console.error("Error retrieving profile file:", err);
+      //   }
+      // }
       return encrypt(
         {
           success: true,
@@ -1948,16 +1966,32 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refCarsId } = userData;
-      console.log('refCarsId liune ------ 1950', refCarsId)
+      console.log("refCarsId liune ------ 1950", refCarsId);
 
       const result = await executeQuery(getCarsByIdQuery, [refCarsId]);
+
+      for (const image of result) {
+        if (image.refCarPath) {
+          try {
+            const fileBuffer = await viewFile(image.refCarPath);
+            image.refCarPath = {
+              filename: path.basename(image.refCarPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", 
+            };
+          } catch (error) {
+            console.error("Error reading image file for product ,err");
+            image.refCarPath = null; 
+          }
+        }
+      }
 
       return encrypt(
         {
           success: true,
           message: "listed car by id successfully",
           token: tokens,
-          result: result
+          result: result,
         },
         true
       );
@@ -1987,6 +2021,11 @@ export class carsRepository {
         "Admin",
       ]);
 
+
+      const getDeletedCar = await executeQuery(getDeletedCarQuery,[refCarsId])
+
+      console.log('getDeletedCar line ------ 1997', getDeletedCar)
+
       // if (result.rowCount === 0) {
       //   await client.query("ROLLBACK");
       //   return encrypt(
@@ -1999,14 +2038,17 @@ export class carsRepository {
       //   );
       // }
 
+      console.log('`${getDeletedCar[0]} deleted Successfully`', `${getDeletedCar[0].refVehicleTypeName} deleted Successfully`)
       // Insert delete action into history
+
       const history = [
         48, // Unique ID for delete action
         tokendata.id,
-        "delete car",
-        CurrentTime(),
-        "admin",
+        `${getDeletedCar[0].refVehicleTypeName} deleted Successfully`,
+        CurrentTime(), 
+        tokendata.id,
       ];
+      console.log('`${getDeletedCar} deleted Successfully`', `${getDeletedCar[0]} deleted Successfully`)
 
       await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -2037,4 +2079,5 @@ export class carsRepository {
       client.release();
     }
   }
+  
 }

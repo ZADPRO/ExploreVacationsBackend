@@ -204,7 +204,28 @@ FROM public."customizeTourBooking" ctb
 LEFT JOIN public."refPackage" rp ON CAST ( rp."refPackageId" AS INTEGER ) = ctb."refPackageId"::INTEGER
 `;
 
-export const listAuditPageQuery = `SELECT * FROM public."refTxnHistory";
+
+
+export const listAuditPageQuery = `SELECT
+  th.*,
+  td."refTransactionHistory",
+  ut."refUserType"
+FROM
+  public."refTxnHistory" th
+  INNER JOIN public."refTransactionTable" td ON CAST(th."refTransactionHistoryId" AS INTEGER) = td."refTransactionHistoryId"
+  INNER JOIN public."refUserType" ut ON CAST (th."updatedBy" AS INTEGER) = ut."refUserTypeId"
+WHERE
+  (th."updatedAt"::DATE = TO_DATE($1, 'DD/MM/YYYY')) AND
+  th."refTransactionHistoryId" = ANY($2::integer[]);
+
+`;
+
+
+
+export const listTransactionTypeQuery = `SELECT
+  *
+FROM
+  public."refTransactionTable";
 `;
 
 export const checkQuery = `SELECT
@@ -223,7 +244,8 @@ FROM
   public.users u
 WHERE
   u."refCustId" LIKE 'EV-EMP-%';
-  `;
+  `
+  ;
 
 export const insertUserQuery = `INSERT INTO
   public.users(
@@ -269,31 +291,42 @@ SET
   "refQualification" = $6,
   "refProfileImage" =$7,
   "refMoblile" = $8,
-  "refUserTypeId" = $9,
-  "updatedAt" = $10,
-  "updatedBy" = $11
+  "updatedAt" = $9,
+  "updatedBy" = $10
 WHERE
   "refuserId" = $1
 RETURNING
   *;
   `;
-
+export const getEmployeeQuery =   `
+SELECT
+  *
+FROM
+  public.users
+WHERE
+  "refuserId" = $1`;
+  
 export const deleteEmployeeImageQuery = `
   `;
 
 export const listEmployeesQuery = `
- SELECT
-  *
+SELECT
+  u.*,
+  ud."refUserEmail",
+  ud."refUsername"
 FROM
   public."users" u
+  LEFT JOIN public."refUserDomain" ud ON CAST (ud."refUserId" AS INTEGER) = u."refuserId"
 WHERE
   u."isDelete" IS NOT true;
   `;
 
 export const getEmployeesQuery = `SELECT
-  *
+  u.*,
+  ud."refUserEmail"
 FROM
-  public."users"
+  public."users" u
+  JOIN public."refUserDomain" ud ON CAST ( ud."refUserId" AS INTEGER) = u."refuserId"
 WHERE
   "refuserId" = $1
   `;
@@ -309,3 +342,20 @@ WHERE
 RETURNING
   *;
   `;
+
+export const getDeletedEmployeeQuery = `SELECT
+  "refCustId",
+  "refFName"
+FROM
+  public."users" 
+WHERE
+  "refuserId" = $1;
+`;
+
+
+
+export const listUserTypeQuery = `SELECT
+  *
+FROM
+  public."refUserType";
+`;

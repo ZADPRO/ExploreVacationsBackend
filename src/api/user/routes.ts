@@ -14,6 +14,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/tourBooking",
           config: {
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.tourBooking,
             validate: validate.tourBooking,
             description: "tour Booking",
@@ -25,6 +26,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/customizeBooking",
           config: {
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.customizeBooking,
             validate: validate.customizeBooking,
             description: "customize Booking",
@@ -36,6 +38,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/uploadCertificate",
           config: {
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.uploadCertificate,
             validate: validate.uploadCertificate,
             description: "Upload certificate",
@@ -53,6 +56,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/userCarBooking",
           config: {
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.userCarBooking,
             validate: validate.userCarBooking,
             description: "car Booking",
@@ -175,11 +179,43 @@ export class userRoutes implements IRoute {
         },
         {
           method: "POST",
-          path: "/api/v1/userRoutes/sendRemainderMail",
+          path: "/api/v1/userRoutes/userSignUp",
+          config: {
+            handler: controller.userSignUp,
+            description: "user SignUp",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/forgotPassword",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
-            handler: controller.sendRemainderMail,
-            description: "send Remainder Mail",
+            handler: controller.forgotPassword,
+            description: "forgot Password",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/tourBrochure",
+          config: {
+            // pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.tourBrochure,
+            description: "tour Brochure",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/userBookingHistory",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.userBookingHistory,
+            description: "userBookingHistory",
             tags: ["api", "Users"],
             auth: false,
           },

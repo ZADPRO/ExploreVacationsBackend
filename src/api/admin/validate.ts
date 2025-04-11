@@ -47,11 +47,11 @@ export default {
       refFName: Joi.string().min(2).max(50).required(),
       refLName: Joi.string().min(2).max(50).required(),
       refDOB: Joi.date().iso().required(),
-      refDesignation: Joi.string().min(2).max(100).required(),
-      refQualification: Joi.string().min(2).max(100).required(),
+      refDesignation: Joi.string().required(),
+      refQualification: Joi.string().required(),
       refProfileImage: Joi.string().optional().allow(null, ""),
       refMoblile: Joi.string().required(),
-      refUserTypeId: Joi.number().integer().required(),
+      // refUserTypeId: Joi.number().integer().required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -75,4 +75,5 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
+  
 };

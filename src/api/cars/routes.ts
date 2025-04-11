@@ -77,7 +77,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateBenifits,
-            validate: validate.updateBenifits,
+            // validate: validate.updateBenifits,
             description: "update Benifits",
             tags: ["api", "Users"],
             auth: false,
@@ -124,7 +124,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateInclude,
-            validate: validate.updateInclude,
+            // validate: validate.updateInclude,
             description: "update include",
             tags: ["api", "Users"],
             auth: false,
@@ -171,7 +171,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.UpdateExclude,
-            validate: validate.UpdateExclude,
+            // validate: validate.UpdateExclude,
             description: "update Exclude",
             tags: ["api", "Users"],
             auth: false,
@@ -276,7 +276,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateFormDetails,
-            validate: validate.updateFormDetails,
+            // validate: validate.updateFormDetails,
             description: "update Form Details",
             tags: ["api", "Users"],
             auth: false,
@@ -311,7 +311,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addCars,
-            validate: validate.addCars,
+            // validate: validate.addCars,
             description: "add Cars ",
             tags: ["api", "Users"],
             auth: false,

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { viewFile } from "./storage";
 
 export const getAdjustedTime = (): string => {
   const serverTime = new Date();
@@ -37,6 +38,22 @@ export const CurrentTime = (): string => {
   const today = new Date();
   return today.toISOString().replace("T", " ").slice(0, 19); // "YYYY-MM-DD HH:mm:ss"
 };
+
+// export const CurrentTime = (): string => {
+//   const systemTime = new Date();
+ 
+//   const options: Intl.DateTimeFormatOptions = {
+//     day: "numeric",
+//     month: "numeric",
+//     year: "numeric",
+//     hour: "numeric",
+//     minute: "numeric",
+//     second: "numeric",
+//     hour12: true,
+//   };
+ 
+//   return new Intl.DateTimeFormat("en-IN", options).format(systemTime);
+// };
 
 export function formatDate(isoDate: any) {
   const date = new Date(isoDate);
@@ -196,7 +213,7 @@ export async function processImages(result: any[]) {
     for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
       if (image[key]) {
         try {
-          const fileBuffer = await fs.promises.readFile(image[key]);
+          const fileBuffer = await viewFile(image[key]);
           image[key] = {
             filename: path.basename(image[key]),
             content: fileBuffer.toString("base64"),

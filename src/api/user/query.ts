@@ -66,18 +66,16 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "refAdultCount", 
         "refChildrenCount", 
         "refInfants", 
-        "refFormDetails", 
         "refOtherRequirements", 
         "createdAt", 
         "createdBy"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
     RETURNING *;
 
 `;
 
 export const listTourQuery = `
-
 WITH
   "location" AS (
     SELECT
@@ -691,3 +689,235 @@ WHERE
 RETURNING
   *;
 `;
+
+export const checkQuery = `SELECT
+  *
+FROM
+  public."refUserDomain"
+WHERE
+  "refUsername" = $1
+LIMIT
+  10;`;
+
+export const getLastCustomerIdQuery = `SELECT
+  COUNT(*)
+FROM
+  public.users u
+WHERE
+  u."refCustId" LIKE 'EV-CUS-%';
+  `;
+
+export const insertUserQuery = `INSERT INTO
+  public.users(
+    "refCustId",
+    "refFName",
+    "refLName",
+    "refDOB",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6)
+RETURNING
+  *;`;
+
+export const insertUserDomainQuery = `INSERT INTO
+  public."refUserDomain" (
+    "refUserId",
+    "refUserEmail",
+    "refUserPassword",
+    "refUserHashedPassword",
+    "refUsername",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7)
+RETURNING
+  *;`;
+
+export const getUsersQuery = `SELECT
+  *
+FROM
+  public.users u
+  LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+WHERE
+  ud."refUserEmail" = $1
+  AND u."refCustId" LIKE 'EV-CUS-%';
+  `;
+
+export const updateUserPasswordQuery = `UPDATE
+  public."refUserDomain"
+SET
+  "refUserPassword" = $3,
+  "refUserHashedPassword" = $4,
+  "updatedAt" = $5,
+  "updatedBy" = $6
+WHERE
+  "refUserEmail" = $1
+  AND "refUserId" = $2
+RETURNING
+  *;
+`;
+
+
+
+export const listTourBrochureQuery = `
+WITH
+  "location" AS (
+    SELECT
+      rp.*,
+      rtd."refItinary",
+      rtd."refItinaryMapPath",
+      rtd."refTravalInclude",
+      rtd."refTravalExclude",
+      rtd."refSpecialNotes",
+      rtd."refTravalOverView",
+      rd.*,
+      rg."refGallery",
+      rc."refCategoryName",
+      ARRAY_AGG(rl."refLocationName") AS "refLocationName"
+    FROM
+      public."refPackage" rp
+      LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+      LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+      LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
+      LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
+      LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(rp."refLocation", '[{}]', '', 'g'),
+          ','
+        )::INTEGER[]
+      )
+    WHERE
+     (rp."isDelete" IS null
+      OR "rp"."isDelete" IS false ) AND rp."refPackageId" = $1
+    GROUP BY
+      rp."refPackageId",
+      rtd."refTravalDataId",
+      rd."refDestinationId",
+      rg."refGallery",
+      rc."refCategoryId"
+  ),
+  "activity" AS (
+    SELECT
+      l."refPackageName",
+      l."refLocationName",
+      l."refDestinationName",
+      ARRAY_AGG(ra."refActivitiesName") AS "Activity",
+      l."refDesignationId",
+      l."refTravalInclude",
+      l."refTravalExclude",
+      l."refPackageId",
+      l."refTravalDataId",
+      l."refItinary",
+      l."refItinaryMapPath",
+      l."refSpecialNotes",
+      l."refTravalOverView",
+      l."refGallery",
+      l."refCategoryName",
+      l."refDurationIday",
+      l."refDurationINight",
+      l."refGroupSize",
+      l."refTourCode",
+      l."refTourPrice",
+      l."refSeasonalPrice",
+      l."refCoverImage"
+    FROM
+      "location" l
+      LEFT JOIN public."refActivities" ra ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(l."refActivity", '[{}]', '', 'g'),
+          ','
+        )::INTEGER[]
+      )
+    GROUP BY
+      l."refPackageName",
+      l."refLocationName",
+      l."refDestinationName",
+      l."refDesignationId",
+      l."refTravalInclude",
+      l."refTravalExclude",
+      l."refPackageId",
+      l."refItinary",
+      l."refItinaryMapPath",
+      l."refSpecialNotes",
+      l."refTravalOverView",
+      l."refTravalDataId",
+      l."refGallery",
+      l."refCategoryName",
+      l."refDurationIday",
+      l."refDurationINight",
+      l."refGroupSize",
+      l."refTourCode",
+      l."refTourPrice",
+      l."refSeasonalPrice",
+      l."refCoverImage"
+  )
+SELECT
+  aa.*,
+  ARRAY_AGG(ti."refTravalInclude") AS "travalInclude",
+  ARRAY_AGG(te."refTravalExclude") AS "travalExclude"
+FROM
+  "activity" aa
+  LEFT JOIN public."refTravalInclude" ti ON CAST(ti."refTravalIncludeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(aa."refTravalInclude", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+  LEFT JOIN public."refTravalExclude" te ON CAST(te."refTravalExcludeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(aa."refTravalExclude", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+GROUP BY
+  aa."refPackageName",
+  aa."refLocationName",
+  aa."refDestinationName",
+  aa."Activity",
+  aa."refDesignationId",
+  aa."refTravalInclude",
+  aa."refTravalExclude",
+  aa."refPackageId",
+  aa."refItinary",
+  aa."refItinaryMapPath",
+  aa."refSpecialNotes",
+  aa."refTravalOverView",
+  aa."refTravalDataId",
+  aa."refGallery",
+  aa."refCategoryName",
+  aa."refDurationIday",
+  aa."refDurationINight",
+  aa."refGroupSize",
+  aa."refTourCode",
+  aa."refTourPrice",
+  aa."refSeasonalPrice",
+  aa."refCoverImage";
+  `;
+
+
+  export const userTourBookingHistoryQuery = `
+  SELECT
+  *
+FROM
+  public."userTourBooking"
+WHERE
+  "refUserId" = $1
+
+  `;
+
+  export const userCarBookingHistoryQuery = `
+  SELECT
+  *
+FROM
+  public."userCarBooking"
+WHERE
+  "refUserId" = $1
+
+  `;
+
+  export const userCarParkingBookingHistoryQuery = `
+
+  `;

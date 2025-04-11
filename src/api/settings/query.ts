@@ -49,6 +49,14 @@ RETURNING
   *;
         `;
 
+export const getdeletedDestinationQuery = `SELECT
+  "refDestinationName"
+FROM
+  public."refDestination"
+WHERE
+  "refDestinationId" = $1;
+`;         
+
 export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" = false
         `;
 
@@ -98,6 +106,14 @@ RETURNING
 
 `;
 
+export const getdeletedLocationQuery  = `SELECT
+  "refLocationName"
+FROM
+  public."refLocation"
+WHERE
+  "refLocationId" = $1;
+`;
+
 // category
 
 export const addCategoryQuery = `INSERT INTO public."refCategory" (
@@ -140,6 +156,14 @@ WHERE
 RETURNING
   *;
 
+`;
+
+export const getdeletedCategoriesQuery = `SELECT
+  "refCategoryName"
+FROM
+  public."refCategory"
+WHERE
+  "refCategoryId" = $1;
 `;
 // activity
 export const addActivitiesQuery = `INSERT INTO
@@ -188,4 +212,12 @@ WHERE
 RETURNING
   *;
 
+`;
+
+export const getdeletedActivityQuery =`SELECT
+  "refActivitiesName"
+FROM
+  public."refActivities"
+WHERE
+  "refActivitiesId" = $1;
 `;

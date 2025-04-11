@@ -28,6 +28,9 @@ import {
   deleteTravalExcludeQuery,
   deleteTravalIncludeQuery,
   getCoverImageRecordQuery,
+  getdeletedExcludeQuery,
+  getdeletedincludeQuery,
+  getdeletedPackageQuery,
   getImageRecordQuery,
   insertGalleryQuery,
   listPackageQuery,
@@ -100,10 +103,12 @@ export class packageRepository {
 
   //  }
   public async addPackageV1(userData: any, tokendata: any): Promise<any> {
+    console.log("tokendata line ----- 103", tokendata);
     const client: PoolClient = await getClient();
+    const refuserId = tokendata.id;
+    console.log("refuserId line ------ 105", refuserId);
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
-
     try {
       await client.query("BEGIN"); // Start transaction
 
@@ -122,19 +127,22 @@ export class packageRepository {
         refItinaryMapPath,
         refSpecialNotes,
         refTravalOverView,
-        refCoverImage
+        refCoverImage,
       } = userData;
 
       // const refLocation = `{${userData.refLocation.join(",")}}`;
-      const refLocation = Array.isArray(userData.refLocation)? `{${userData.refLocation.join(",")}}` : `{${userData.refLocation.split(",").join(",")}}`;
-      const refActivity = Array.isArray(userData.refActivity)? `{${userData.refActivity.join(",")}}` : `{${userData.refActivity.split(",").join(",")}}`;
-      const refTravalInclude = Array.isArray(userData.refTravalInclude)? `{${userData.refTravalInclude.join(",")}}` : `{${userData.refTravalInclude.split(",").join(",")}}`;
-      const refTravalExclude = Array.isArray(userData.refTravalExclude)? `{${userData.refTravalExclude.join(",")}}` : `{${userData.refTravalExclude.split(",").join(",")}}`;
-
-      
-      // const refActivity = `{${userData.refActivity.join(",")}}`;
-      // const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
-      // const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
+      const refLocation = Array.isArray(userData.refLocation)
+        ? `{${userData.refLocation.join(",")}}`
+        : `{${userData.refLocation.split(",").join(",")}}`;
+      const refActivity = Array.isArray(userData.refActivity)
+        ? `{${userData.refActivity.join(",")}}`
+        : `{${userData.refActivity.split(",").join(",")}}`;
+      const refTravalInclude = Array.isArray(userData.refTravalInclude)
+        ? `{${userData.refTravalInclude.join(",")}}`
+        : `{${userData.refTravalInclude.split(",").join(",")}}`;
+      const refTravalExclude = Array.isArray(userData.refTravalExclude)
+        ? `{${userData.refTravalExclude.join(",")}}`
+        : `{${userData.refTravalExclude.split(",").join(",")}}`;
 
       // Insert package details and get refPackageId
       const packageResult = await client.query(addPackageQuery, [
@@ -164,18 +172,20 @@ export class packageRepository {
         "Admin",
       ]);
       // console.log('image', image)
-      
-      //     storedImages.push({
-        //       filename: filename,
-        //       path: imagePath,
-        //       content: imageBase64,
-        //       contentType: "image/jpeg", // Adjust based on file type
-        //     });
-        //   }
-        // }
-        
-        console.log('image------------------------------------------------195', image)
 
+      //     storedImages.push({
+      //       filename: filename,
+      //       path: imagePath,
+      //       content: imageBase64,
+      //       contentType: "image/jpeg", // Adjust based on file type
+      //     });
+      //   }
+      // }
+
+      console.log(
+        "image------------------------------------------------195",
+        image
+      );
 
       const Result = await client.query(addTravalDataQuery, [
         refPackageId,
@@ -186,17 +196,20 @@ export class packageRepository {
         refTravalExclude,
         refSpecialNotes,
         CurrentTime(),
-        "Admin"
+        "Admin",
       ]);
-      console.log("Result--------------------------------------------------------------------------------------", Result);
+      console.log(
+        "Result--------------------------------------------------------------------------------------",
+        Result
+      );
 
       const history = [
-        10, 
-        tokendata.id,
-         "add package", 
-         CurrentTime(),
-          "Admin"
-        ];
+        10,
+        refuserId,
+        `${refPackageName} tour Added`,
+        CurrentTime(),
+        refuserId,
+      ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -205,7 +218,7 @@ export class packageRepository {
         {
           success: true,
           message: "Package and gallery images added successfully",
-          token: token,
+          token: tokens,
           packageData: packageResult.rows[0],
           ResultTravalData: Result,
         },
@@ -219,6 +232,7 @@ export class packageRepository {
         {
           success: false,
           message: "An error occurred while adding the package",
+          tokens: tokens,
           error: String(error),
         },
         true
@@ -228,15 +242,15 @@ export class packageRepository {
     }
   }
 
-  // public async addPackageV1(userData: any, tokendata: any): Promise<any> {
+  // public async UpdatePackageV1(userData: any, tokenData: any): Promise<any> {
   //   const client: PoolClient = await getClient();
-  //   const token = { id: tokendata.id };
+  //   const token = { id: tokenData.id };
   //   const tokens = generateTokenWithExpire(token, true);
-
   //   try {
-  //     await client.query("BEGIN"); // Start transaction
+  //     await client.query("BEGIN");
 
   //     const {
+  //       refPackageId,
   //       refPackageName,
   //       refDesignationId,
   //       refDurationIday,
@@ -246,14 +260,38 @@ export class packageRepository {
   //       refTourCode,
   //       refTourPrice,
   //       refSeasonalPrice,
-  //       images, // Expecting an array of images
+  //       refTravalOverView,
+  //       refItinary,
+  //       refItinaryMapPath,
+  //       refTravalInclude,
+  //       refTravalExclude,
+  //       refSpecialNotes,
+  //       refCoverImage,
   //     } = userData;
+  //     console.log("userData", userData);
 
-  //     const refLocation = `{${userData.refLocation.join(",")}}`;
-  //     const refActivity = `{${userData.refActivity.join(",")}}`;
+  //     if (
+  //       !userData ||
+  //       !Array.isArray(userData.refLocation) ||
+  //       !Array.isArray(userData.refActivity)
+  //     ) {
+  //       throw new Error(
+  //         "Invalid userData: refLocation or refActivity is missing or not an array"
+  //       );
+  //     }
 
-  //     // Insert package details and get refPackageId
-  //     const packageResult = await client.query(addPackageQuery, [
+  //     const refLocation = Array.isArray(userData.refLocation)
+  //       ? `{${userData.refLocation.join(",")}}`
+  //       : "{}";
+  //     const refActivity = Array.isArray(userData.refActivity)
+  //       ? `{${userData.refActivity.join(",")}}`
+  //       : "{}";
+
+  //     console.log("Processed refLocation:", refLocation);
+  //     console.log("Processed refActivity:", refActivity);
+
+  //     const packageDetails = await client.query(updatePackageQuery, [
+  //       refPackageId,
   //       refPackageName,
   //       refDesignationId,
   //       refDurationIday,
@@ -265,89 +303,111 @@ export class packageRepository {
   //       refTourCode,
   //       refTourPrice,
   //       refSeasonalPrice,
+  //       refCoverImage,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
+  //     console.log("packageDetails", packageDetails);
+
+  //     // let storedImages: any[] = [];
+  //     // if (Array.isArray(images) && images.length > 0) {
+  //     //   for (const image of images) {
+  //     //     if (!image || typeof image === "string") continue; // Skip invalid entries
+
+  //     //     console.log(`Processing Image: ${image.hapi?.filename}`);
+
+  //     //     const filename = image.hapi?.filename;
+  //     //     if (!filename) {
+  //     //       console.error("Invalid image: Missing filename");
+  //     //       continue;
+  //     //     }
+
+  //     //     // Store file and get path
+  //     //     const uploadType = 2; // Assuming upload type 2 for gallery
+  //     //     const imagePath = await storeFile(image, uploadType);
+  //     //     console.log(`Stored Image Path: ${imagePath}`);
+
+  //     //     // Convert image to Base64
+  //     //     const imageBuffer = await viewFile(imagePath);
+  //     //     const imageBase64 = imageBuffer.toString("base64");
+
+  //     //     // Store image path in the database
+  //     //     await client.query(insertGalleryQuery, [
+  //     //       refPackageId,
+  //     //       imagePath,
+  //     //       CurrentTime(),
+  //     //       "Admin",
+  //     //     ]);
+
+  //     //     storedImages.push({
+  //     //       filename: filename,
+  //     //       path: imagePath,
+  //     //       content: imageBase64,
+  //     //       contentType: "image/jpeg", // Adjust based on file type
+  //     //     });
+  //     //   }
+  //     // }
+
+  //     const Result = await client.query(updateTravalDataQuery, [
+  //       refPackageId,
+  //       refTravalOverView,
+  //       refItinary,
+  //       refItinaryMapPath,
+  //       refTravalInclude,
+  //       refTravalExclude,
+  //       refSpecialNotes,
   //       CurrentTime(),
   //       "Admin",
   //     ]);
 
-  //     const refPackageId = packageResult.rows[0].refPackageId;
-  //     console.log("Inserted Package ID:", refPackageId);
-
-  //     // Store image paths and convert to base64
-  //     let storedImages: any[] = [];
-  //     if (Array.isArray(images) && images.length > 0) {
-  //       for (const image of images) {
-  //         if (!image || typeof image === "string") continue; // Skip invalid entries
-
-  //         console.log(`Processing Image: ${image.hapi?.filename}`);
-
-  //         const filename = image.hapi?.filename;
-  //         if (!filename) {
-  //           console.error("Invalid image: Missing filename");
-  //           continue;
-  //         }
-
-  //         // Store file and get path
-  //         const uploadType = 2; // Assuming upload type 2 for gallery
-  //         const imagePath = await storeFile(image, uploadType);
-  //         console.log(`Stored Image Path: ${imagePath}`);
-
-  //         // Convert image to Base64
-  //         const imageBuffer = await viewFile(imagePath);
-  //         const imageBase64 = imageBuffer.toString("base64");
-
-  //         // Store image path in the database
-  //         await client.query(insertGalleryQuery, [
-  //           refPackageId,
-  //           imagePath,
-  //           CurrentTime(),
-  //           "Admin",
-  //         ]);
-
-  //         storedImages.push({
-  //           filename: filename,
-  //           path: imagePath,
-  //           content: imageBase64,
-  //           contentType: "image/jpeg", // Adjust based on file type
-  //         });
-  //       }
-  //     }
-
-  //     const history = [10, tokendata.id, "add package", CurrentTime(), "Admin"];
+  //     const history = [
+  //       11,
+  //       tokenData.id,
+  //       "update package ",
+  //       CurrentTime(),
+  //       tokenData.id,
+  //     ];
 
   //     const updateHistory = await client.query(updateHistoryQuery, history);
-  //     await client.query("COMMIT"); // Commit transaction
 
+  //     await client.query("COMMIT");
+
+  //     // Return success response
   //     return encrypt(
   //       {
   //         success: true,
-  //         message: "Package and gallery images added successfully",
-  //         token: token,
-  //         packageData: packageResult.rows[0],
-  //         galleryImages: storedImages,
+  //         message: "package updated successfully",
+  //         token: tokens,
+  //         packageDetails: packageDetails.rows,
   //       },
   //       true
   //     );
-  //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
-  //     console.error("Error adding package:", error);
+  //   } catch (error) {
+  //     console.log(
+  //       "error-----------------------------------------------------271",
+  //       error
+  //     );
+  //     const errorMessage =
+  //       error instanceof Error ? error.message : "An unknown error occurred";
+  //     await client.query("ROLLBACK");
 
+  //     // Return error response
   //     return encrypt(
   //       {
   //         success: false,
-  //         message: "An error occurred while adding the package",
-  //         error: String(error),
+  //         message: "package update failed",
+  //         error: errorMessage,
+  //         token: tokens,
   //       },
   //       true
   //     );
-  //   } finally {
-  //     client.release();
   //   }
   // }
-
   public async UpdatePackageV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokenData.id };
     const tokens = generateTokenWithExpire(token, true);
+
     try {
       await client.query("BEGIN");
 
@@ -370,27 +430,135 @@ export class packageRepository {
         refSpecialNotes,
         refCoverImage,
       } = userData;
-      console.log("userData", userData);
 
-      if (
-        !userData ||
-        !Array.isArray(userData.refLocation) ||
-        !Array.isArray(userData.refActivity)
-      ) {
-        throw new Error(
-          "Invalid userData: refLocation or refActivity is missing or not an array"
+      // if (
+      //   !userData ||
+      //   !Array.isArray(userData.refLocation) ||
+      //   !Array.isArray(userData.refActivity)
+      // ) {
+      //   throw new Error(
+      //     "Invalid userData: refLocation or refActivity is missing or not an array"
+      //   );
+      // }
+
+      const refLocation = `{${userData.refLocation.join(",")}}`;
+      const refActivity = `{${userData.refActivity.join(",")}}`;
+
+      const existingDatas = await client.query(listTourByIdQuery, [
+        refPackageId,
+      ]);
+
+      // if (existingDataQuery.rows.length === 0) {
+      //   throw new Error("Package not found for update");
+      // }
+      // const existingData = existingDataQuery.rows[0];
+
+      // const changes: string[] = [];
+
+      // const compareField = (key: string, label?: string) => {
+      //   const oldValue = existingData[key];
+      //   const newValue = userData[key];
+      //   if (String(oldValue) !== String(newValue)) {
+      //     changes.push(`${label || key}: '${oldValue}' -> '${newValue}'`);
+      //   }
+      // };
+
+      // compareField("refPackageName", "Package Name");
+      // compareField("refDesignationId", "Designation");
+      // compareField("refDurationIday", "Duration Day");
+      // compareField("refDurationINight", "Duration Night");
+      // compareField("refLocation", "Location");
+      // compareField("refCategoryId", "Category");
+      // compareField("refActivity", "Activity");
+      // compareField("refGroupSize", "Group Size");
+      // compareField("refTourCode", "Tour Code");
+      // compareField("refTourPrice", "Tour Price");
+      // compareField("refSeasonalPrice", "Seasonal Price");
+      // compareField("refCoverImage", "Cover Image");
+
+      // const changeLog = changes.length ? `Changes: ${changes.join(", ")}` : "No actual changes";
+
+      const existingData = existingDatas.rows[0];
+
+      if (!existingData)
+        throw new Error(`package with ID ${refPackageId} not found`);
+
+      const changes: string[] = [];
+
+      if (existingData.refPackageName !== refPackageName)
+        changes.push(
+          `PackageName: '${existingData.refPackageName}' : '${refPackageName}'`
         );
-      }
 
-      const refLocation = Array.isArray(userData.refLocation)
-        ? `{${userData.refLocation.join(",")}}`
-        : "{}";
-      const refActivity = Array.isArray(userData.refActivity)
-        ? `{${userData.refActivity.join(",")}}`
-        : "{}";
+      if (existingData.refDesignationId !== refDesignationId)
+        changes.push(
+          `DesignationId: '${existingData.refDesignationId}' : '${refDesignationId}'`
+        );
 
-      console.log("Processed refLocation:", refLocation);
-      console.log("Processed refActivity:", refActivity);
+      if (existingData.refDurationIday !== refDurationIday)
+        changes.push(
+          `Duration In day: '${existingData.refDurationIday}' : '${refDurationIday}'`
+        );
+
+      if (existingData.refDurationINight !== refDurationINight)
+        changes.push(
+          `Duration In Night: '${existingData.refDurationINight}' : '${refDurationINight}'`
+        );
+
+      if (existingData.refCategoryId !== refCategoryId)
+        changes.push(
+          `Category: '${existingData.refCategoryId}' : '${refCategoryId}'`
+        );
+
+      if (existingData.refGroupSize !== refGroupSize)
+        changes.push(
+          `GroupSize: '${existingData.refGroupSize}' : '${refGroupSize}'`
+        );
+
+      if (existingData.refTourCode !== refTourCode)
+        changes.push(
+          `TourCode: '${existingData.refTourCode}' : '${refTourCode}'`
+        );
+
+      if (existingData.refTourPrice !== refTourPrice)
+        changes.push(
+          `TourPrice: '${existingData.refTourPrice}' : '${refTourPrice}'`
+        );
+
+      if (existingData.refSeasonalPrice !== refSeasonalPrice)
+        changes.push(
+          `SeasonalPrice: '${existingData.refSeasonalPrice}' : '${refSeasonalPrice}'`
+        );
+
+      if (existingData.refTravalOverView !== refTravalOverView)
+        changes.push(
+          `TravalOverView: '${existingData.refTravalOverView}' : '${refTravalOverView}'`
+        );
+
+      if (existingData.refItinary !== refItinary)
+        changes.push(`Itinary: '${existingData.refItinary}' : '${refItinary}'`);
+
+      if (existingData.refItinaryMapPath !== refItinaryMapPath)
+        changes.push(`ItinaryMap Image changed`);
+
+      if (existingData.refTravalInclude !== refTravalInclude)
+        changes.push(
+          `TravalInclude: '${existingData.refTravalInclude}' : '${refTravalInclude}'`
+        );
+
+      if (existingData.refTravalExclude !== refTravalExclude)
+        changes.push(
+          `TravalExclude: '${existingData.refTravalExclude}' : '${refTravalExclude}'`
+        );
+
+      if (existingData.refSpecialNotes !== refSpecialNotes)
+        changes.push(
+          `SpecialNotes: '${existingData.refSpecialNotes}' : 'updated for ${refPackageName}'`
+        );
+
+      const changeSummary = changes.length
+        ? `Updated Fields: ${changes.join(", ")}`
+        : "No changes detected";
 
       const packageDetails = await client.query(updatePackageQuery, [
         refPackageId,
@@ -409,46 +577,6 @@ export class packageRepository {
         CurrentTime(),
         "Admin",
       ]);
-      console.log("packageDetails", packageDetails);
-
-      // let storedImages: any[] = [];
-      // if (Array.isArray(images) && images.length > 0) {
-      //   for (const image of images) {
-      //     if (!image || typeof image === "string") continue; // Skip invalid entries
-
-      //     console.log(`Processing Image: ${image.hapi?.filename}`);
-
-      //     const filename = image.hapi?.filename;
-      //     if (!filename) {
-      //       console.error("Invalid image: Missing filename");
-      //       continue;
-      //     }
-
-      //     // Store file and get path
-      //     const uploadType = 2; // Assuming upload type 2 for gallery
-      //     const imagePath = await storeFile(image, uploadType);
-      //     console.log(`Stored Image Path: ${imagePath}`);
-
-      //     // Convert image to Base64
-      //     const imageBuffer = await viewFile(imagePath);
-      //     const imageBase64 = imageBuffer.toString("base64");
-
-      //     // Store image path in the database
-      //     await client.query(insertGalleryQuery, [
-      //       refPackageId,
-      //       imagePath,
-      //       CurrentTime(),
-      //       "Admin",
-      //     ]);
-
-      //     storedImages.push({
-      //       filename: filename,
-      //       path: imagePath,
-      //       content: imageBase64,
-      //       contentType: "image/jpeg", // Adjust based on file type
-      //     });
-      //   }
-      // }
 
       const Result = await client.query(updateTravalDataQuery, [
         refPackageId,
@@ -465,16 +593,14 @@ export class packageRepository {
       const history = [
         11,
         tokenData.id,
-        "update package",
+        changeSummary,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
-
       const updateHistory = await client.query(updateHistoryQuery, history);
 
       await client.query("COMMIT");
 
-      // Return success response
       return encrypt(
         {
           success: true,
@@ -493,7 +619,6 @@ export class packageRepository {
         error instanceof Error ? error.message : "An unknown error occurred";
       await client.query("ROLLBACK");
 
-      // Return error response
       return encrypt(
         {
           success: false,
@@ -503,6 +628,8 @@ export class packageRepository {
         },
         true
       );
+    } finally {
+      client.release();
     }
   }
 
@@ -521,6 +648,9 @@ export class packageRepository {
         "Admin",
       ]);
 
+      const deletedPackage: any = await client.query(getdeletedPackageQuery, [
+        refPackageId,
+      ]);
       // if (result.rowCount === 0) {
       //   await client.query("ROLLBACK");
       //   return encrypt(
@@ -537,9 +667,9 @@ export class packageRepository {
       const history = [
         48, // Unique ID for delete action
         tokendata.id,
-        "delete Package",
+        `${deletedPackage[0]} is Deleted`,
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -741,10 +871,9 @@ export class packageRepository {
     try {
       const result = await executeQuery(listPackageQuery);
 
-      // Ensure result is an array before processing
-      if (!Array.isArray(result)) {
-        throw new Error("Invalid data received from database");
-      }
+      // if (!Array.isArray(result)) {
+      //   throw new Error("Invalid data received from database");
+      // }
 
       // Convert images to Base64 format
 
@@ -764,23 +893,23 @@ export class packageRepository {
       //   }
       // }
 
-      for (const image of result) {
-        for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
-          if (image[key]) {
-            try {
-              const fileBuffer = await fs.promises.readFile(image[key]);
-              image[key] = {
-                filename: path.basename(image[key]),
-                content: fileBuffer.toString("base64"),
-                contentType: "image/jpeg", // Adjust if needed
-              };
-            } catch (error) {
-              console.error(`Error reading ${key} file:`, error);
-              image[key] = null; // Handle missing/unreadable files
-            }
-          }
-        }
-      }
+      // for (const image of result) {
+      //   for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+      //     if (image[key]) {
+      //       try {
+      //         const fileBuffer = await fs.promises.readFile(image[key]);
+      //         image[key] = {
+      //           filename: path.basename(image[key]),
+      //           content: fileBuffer.toString("base64"),
+      //           contentType: "image/jpeg", // Adjust if needed
+      //         };
+      //       } catch (error) {
+      //         console.error(`Error reading ${key} file:`, error);
+      //         image[key] = null; // Handle missing/unreadable files
+      //       }
+      //     }
+      //   }
+      // }
 
       return encrypt(
         {
@@ -891,16 +1020,16 @@ export class packageRepository {
             {
               success: false,
               message: "Image record not found",
-              tokens:tokens
+              tokens: tokens,
             },
             true
           );
         }
       }
-        // filePath = imageRecord[0].refImagePath;
+      // filePath = imageRecord[0].refImagePath;
 
-        // Delete the image record from the database
-        await executeQuery(deleteImageRecordQuery, [userData.refGalleryId]);
+      // Delete the image record from the database
+      await executeQuery(deleteImageRecordQuery, [userData.refGalleryId]);
       // } else {
       //   // filePath = userData.filePath;
       // }
@@ -914,7 +1043,7 @@ export class packageRepository {
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -924,7 +1053,7 @@ export class packageRepository {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -978,9 +1107,11 @@ export class packageRepository {
       const history = [
         41,
         tokendata.id,
-        "add travel includes",
+        `Added travel includes: ${refTravalInclude
+          .map((item: any) => item.refTravalInclude)
+          .join(", ")}`,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
 
       // Commit transaction
@@ -1061,9 +1192,9 @@ export class packageRepository {
       const history = [
         42,
         tokenData.id,
-        "Update travel include",
+        `${refTravalInclude} updated succesfully`,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -1110,6 +1241,14 @@ export class packageRepository {
         "Admin",
       ]);
 
+      const getdeletedinclude: any = await client.query(
+        getdeletedincludeQuery,
+        [refTravalIncludeId]
+      );
+
+      const { refTravalInclude } = getdeletedinclude.rows[0];
+      console.log("refTravalInclude", refTravalInclude);
+
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
         return encrypt(
@@ -1126,10 +1265,11 @@ export class packageRepository {
       const history = [
         43, // Unique ID for delete action
         tokendata.id,
-        "delete travel Include",
+        `${refTravalInclude} deleted succesfully`,
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
+      console.log("history", history);
 
       await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -1201,8 +1341,6 @@ export class packageRepository {
 
       const { refTravalExclude } = userData;
 
-      console.log("Received userData:", userData);
-
       if (!Array.isArray(refTravalExclude) || refTravalExclude.length === 0) {
         return encrypt(
           {
@@ -1229,24 +1367,25 @@ export class packageRepository {
           "Admin",
         ]);
 
-        console.log("Benefit added result:", result);
-
         resultArray.push(result);
       }
-
       // Log history of the action
       const history = [
         44,
         tokendata.id,
-        "add travel Excludes",
+        `Added travel Excludes: ${refTravalExclude
+          .map((item: any) => item.refTravalExclude)
+          .join(", ")}`,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
 
       // Commit transaction
-      await client.query("COMMIT");
 
-      await client.query(updateHistoryQuery, history);
+      const updateHistory = await client.query(updateHistoryQuery, history);
+      console.log("updateHistory", updateHistory);
+
+      await client.query("COMMIT");
 
       // Return success response
       return encrypt(
@@ -1321,9 +1460,9 @@ export class packageRepository {
       const history = [
         45,
         tokenData.id,
-        "Update travel Exclude",
+        `${refTravalExclude} updated succesfully`,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -1382,13 +1521,18 @@ export class packageRepository {
         );
       }
 
+      const getdeletedExclude = await client.query(getdeletedExcludeQuery, [
+        refTravalExcludeId,
+      ]);
+      const { refTravalExclude } = getdeletedExclude.rows[0];
+
       // Insert delete action into history
       const history = [
         46, // Unique ID for delete action
         tokendata.id,
-        "delete travel Exclude",
+        `${refTravalExclude} deleted succesfully`,
         CurrentTime(),
-        "admin",
+        tokendata.id,
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -1452,56 +1596,56 @@ export class packageRepository {
   }
 
   public async uploadCoverImageV1(userData: any, tokendata: any): Promise<any> {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-      try {
-        // Extract the image from userData
-        const image = userData.Image;
-  
-        // Ensure that only one image is provided
-        if (!image) {
-          throw new Error("Please provide an image.");
-        }
-  
-        let filePath: string = "";
-        let storedFiles: any[] = [];
-  
-        // Store the image
-        console.log("Storing image...");
-        filePath = await storeFile(image, 5);
-  
-        // Read the file buffer and convert it to Base64
-        const imageBuffer = await viewFile(filePath);
-        const imageBase64 = imageBuffer.toString("base64");
-  
-        storedFiles.push({
-          filename: path.basename(filePath),
-          content: imageBase64,
-          contentType: "image/jpeg", // Assuming the image is in JPEG format
-        });
-  
-        // Return success response
-        return encrypt(
-          {
-            success: true,
-            message: "Image Stored Successfully",
-            token: tokens,
-            filePath: filePath,
-            files: storedFiles,
-          },
-          true
-        );
-      } catch (error) {
-        console.error("Error occurred:", error);
-        return encrypt(
-          {
-            success: false,
-            message: "Error in Storing the Image",
-            token: tokens,
-          },
-          true
-        );
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the image from userData
+      const image = userData.Image;
+
+      // Ensure that only one image is provided
+      if (!image) {
+        throw new Error("Please provide an image.");
       }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the image
+      console.log("Storing image...");
+      filePath = await storeFile(image, 5);
+
+      // Read the file buffer and convert it to Base64
+      const imageBuffer = await viewFile(filePath);
+      const imageBase64 = imageBuffer.toString("base64");
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: imageBase64,
+        contentType: "image/jpeg", // Assuming the image is in JPEG format
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Image Stored Successfully",
+          token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the Image",
+          token: tokens,
+        },
+        true
+      );
+    }
   }
   public async deleteCoverImageV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
@@ -1519,16 +1663,16 @@ export class packageRepository {
             {
               success: false,
               message: "Image record not found",
-              tokens:tokens
+              tokens: tokens,
             },
             true
           );
         }
       }
-        // filePath = imageRecord[0].refImagePath;
+      // filePath = imageRecord[0].refImagePath;
 
-        // Delete the image record from the database
-        await executeQuery(deleteCoverImageRecordQuery, [userData.refPackageId]);
+      // Delete the image record from the database
+      await executeQuery(deleteCoverImageRecordQuery, [userData.refPackageId]);
       // } else {
       //   // filePath = userData.filePath;
       // }
@@ -1542,7 +1686,7 @@ export class packageRepository {
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -1552,28 +1696,27 @@ export class packageRepository {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens:tokens
+          tokens: tokens,
         },
         true
       );
     }
   }
-  public async  getTourV1(userData: any, tokendata: any): Promise<any> {
+  public async getTourV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-  
       const { refPackageId } = userData;
-  
+
       // Step 1: Execute Queries
       const result1 = await executeQuery(listTourByIdQuery, [refPackageId]);
-      console.log("result1:", result1);
+      console.log("result1: line ------- 1586", result1);
 
       for (const image of result1) {
           for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
             if (image[key]) {
               try {
-                const fileBuffer = await fs.promises.readFile(image[key]);
+                const fileBuffer = await viewFile(image[key]);
                 image[key] = {
                   filename: path.basename(image[key]),
                   content: fileBuffer.toString("base64"),
@@ -1586,12 +1729,13 @@ export class packageRepository {
             }
           }
         }
-              // Step 3: Return success response
+
+      // Step 3: Return success response
       return encrypt(
         {
           success: true,
           message: "Listed Tour successfully",
-          tokens:tokens,
+          tokens: tokens,
           tourDetails: result1,
         },
         true
@@ -1599,13 +1743,13 @@ export class packageRepository {
     } catch (error: unknown) {
       // Log the error for debugging
       console.error("Error in listing tour:", error);
-  
+
       // Step 4: Return error response with a more descriptive error message
       return encrypt(
         {
           success: false,
           message: "An error occurred while listing the tour details.",
-          tokens:tokens,
+          tokens: tokens,
           error: String(error), // Return detailed error for debugging
         },
         true

@@ -16,7 +16,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addPackage,
-            validate: validate.addPackage,
+            // validate: validate.addPackage,
             description: "add Package",
             tags: ["api", "Users"],
             auth: false,

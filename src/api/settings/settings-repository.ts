@@ -25,6 +25,10 @@ import {
   deletecategoryQuery,
   deleteDestinationQuery,
   deletelocationQuery,
+  getdeletedActivityQuery,
+  getdeletedCategoriesQuery,
+  getdeletedDestinationQuery,
+  getdeletedLocationQuery,
   listActivitiesQuery,
   listCategoryQuery,
   listDestinationQuery,
@@ -43,6 +47,7 @@ export class settingsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
+      
       await client.query("BEGIN");
 
       const { refDestination } = userData;
@@ -50,15 +55,15 @@ export class settingsRepository {
       const userResult = await executeQuery(addDestinationQuery, [
         refDestination,
         CurrentTime(),
-        "Admin"
+        tokendata.id
       ]);
 
       const history = [
         2,
         tokendata.id,
-        "add Destination",
+        `${refDestination} added succesfully`,
         CurrentTime(),
-        "vendor",
+        tokendata.id,
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
@@ -114,7 +119,7 @@ export class settingsRepository {
         refDestinationId,
         refDestinationName,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updateDestination = await executeQuery(
@@ -125,9 +130,9 @@ export class settingsRepository {
       const history = [
         3,
         tokenData.id,
-        "update Destination",
+        `${refDestinationName} updated succesfully`,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
@@ -199,7 +204,7 @@ export class settingsRepository {
         const result = await client.query(deleteDestinationQuery, [
           refDestinationId,
           CurrentTime(),
-          "Admin"
+          tokendata.id
         ]);
 
         if (result.rowCount === 0) {
@@ -214,13 +219,16 @@ export class settingsRepository {
             );
         }
 
-        // Insert delete action into history
+          const getdeletedDestination: any = await client.query(getdeletedDestinationQuery, [refDestinationId]);
+
+         const { refDestinationName } = getdeletedDestination.rows[0];
+
         const history = [
             30, // Unique ID for delete action
             tokendata.id,
-            "delete destination",
+            `${refDestinationName} deleted succesfully`,
             CurrentTime(),
-            "admin",
+            tokendata.id,
         ];
 
         await client.query(updateHistoryQuery, history);
@@ -255,8 +263,8 @@ export class settingsRepository {
 
 
   public async addLocationV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
     const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
 
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -290,7 +298,7 @@ export class settingsRepository {
           refLocation,
           refDestinationId,
           CurrentTime(),
-          "Admin",
+          tokendata.id,
         ]);
         console.log("result", result);
 
@@ -301,7 +309,14 @@ export class settingsRepository {
         );
       }
 
-      const history = [4, tokendata.id, "add Location", CurrentTime(), "Admin"];
+      const history = [
+        4, 
+        tokendata.id, 
+        `Added Locations: ${locations.map((item: any) => item.refLocation).join(", ")}`,
+        CurrentTime(), 
+        tokendata.id
+      ];
+      console.log('`Added Locations: ${locations.map((item: any) => item.locations).join(", ")}`', `Added Locations: ${locations.map((item: any) => item.locations).join(", ")}`)
 
       await client.query("COMMIT");
 
@@ -359,20 +374,22 @@ export class settingsRepository {
         refLocationName,
         refDestinationId,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updateDestination = await client.query(updateLocationQuery, params);
+      console.log('updateDestination', updateDestination.rows)
 
       const history = [
         5,
         tokenData.id,
-        "update location",
+        `${refLocationName} updated succesfully`,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
+      console.log('updateHistory', updateHistory)
       await client.query("COMMIT");
 
       return encrypt(
@@ -439,9 +456,9 @@ export class settingsRepository {
         const result = await client.query(deletelocationQuery, [
           refLocationId,
           CurrentTime(),
-          "Admin"
-          
+          tokendata.id
         ]);
+
 
         if (result.rowCount === 0) {
             await client.query("ROLLBACK");
@@ -455,13 +472,20 @@ export class settingsRepository {
             );
         }
 
+           const getdeletedLocation: any = await client.query(
+            getdeletedLocationQuery,
+                [refLocationId]
+              );
+        
+              const { refLocationName } = getdeletedLocation.rows[0];
+
         // Insert delete action into history
         const history = [
             31, 
             tokendata.id,
-            "delete location",
+           `${refLocationName} deleted succesfully`,
             CurrentTime(),
-            "admin",
+            tokendata.id,
         ];
 
         await client.query(updateHistoryQuery, history);
@@ -494,7 +518,6 @@ export class settingsRepository {
     }
   }
 
-
   public async addCategoriesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
@@ -505,15 +528,15 @@ export class settingsRepository {
       const userResult = await client.query(addCategoryQuery, [
         refCategory,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ]);
 
       const history = [
         6,
         tokendata.id,
-        "add Categories",
+        `${refCategory}  added successfully`,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
@@ -562,15 +585,20 @@ export class settingsRepository {
         );
       }
 
-      const params = [refCategoryId, refCategoryName, CurrentTime(), "Admin"];
+      const params = [
+         refCategoryId,
+         refCategoryName, 
+         CurrentTime(), 
+         tokenData.id
+        ];
 
       const updateDestination = await client.query(updateCategoryQuery, params);
       const history = [
         7,
         tokenData.id,
-        "update category",
+        `${refCategoryName} is updated succesfully`,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
@@ -640,7 +668,7 @@ export class settingsRepository {
         const result = await client.query(deletecategoryQuery, [
           refCategoryId,
           CurrentTime(),
-          "Admin"
+          tokendata.id
         ]);
 
         if (result.rowCount === 0) {
@@ -655,13 +683,20 @@ export class settingsRepository {
             );
         }
 
+     const getdeletedCategories: any = await client.query(
+      getdeletedCategoriesQuery,
+        [refCategoryId]
+      );
+
+      const { refCategoryName } = getdeletedCategories.rows[0];
+
         // Insert delete action into history
         const history = [
             32, 
             tokendata.id,
-            "delete category",
+            `${refCategoryName} deleted succesfully`,
             CurrentTime(),
-            "admin",
+            tokendata.id,
         ];
 
         await client.query(updateHistoryQuery, history);
@@ -704,16 +739,16 @@ export class settingsRepository {
       const userResult = await client.query(addActivitiesQuery, [
         refActivity,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ]);
       
       console.log('userResult', userResult)
       const history = [
         8, 
         tokendata.id, 
-        "add activity", 
+        `${refActivity} Activity added succesfully`, 
         CurrentTime(), 
-        "Admin"
+        tokendata.id
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
@@ -770,7 +805,7 @@ export class settingsRepository {
         refActivitiesId,
         refActivitiesName,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updateDestination = await client.query(updateActivityQuery, params);
@@ -778,9 +813,9 @@ export class settingsRepository {
       const history = [
         9,
         tokenData.id,
-        "Update Activities",
+        `${refActivitiesName} Activity updated succesfully`,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -847,7 +882,7 @@ export class settingsRepository {
         const result = await client.query(deleteActivityQuery, [
           refActivitiesId,
           CurrentTime(),
-          "Admin"
+          tokendata.id
         ]);
 
         if (result.rowCount === 0) {
@@ -862,13 +897,20 @@ export class settingsRepository {
             );
         }
 
+         const getdeletedActivity: any = await client.query(
+          getdeletedActivityQuery,
+                [refActivitiesId]
+              );
+        
+              const { refActivitiesName } = getdeletedActivity.rows[0];
+
         // Insert delete action into history
         const history = [
             33, 
             tokendata.id,
-            "delete activity",
+            `${refActivitiesName} Activity deleted succesfully`,
             CurrentTime(),
-            "admin",
+            tokendata.id,
         ];
 
         await client.query(updateHistoryQuery, history);

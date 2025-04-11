@@ -96,6 +96,14 @@ WHERE
   "refPackageId" = $1
 RETURNING *
 `;
+export const getdeletedPackageQuery = `
+SELECT
+  "refPackageName"
+FROM
+  public."refPackage"
+WHERE
+  "refPackageId" = $1
+`;
 
 
 // export const updateTravalDataQuery = `UPDATE
@@ -336,6 +344,13 @@ RETURNING
   *;
 `;
 
+export const getdeletedincludeQuery= `SELECT
+  "refTravalInclude"
+FROM
+  public."refTravalInclude"
+WHERE
+ "refTravalIncludeId"= $1;
+`;
 
 export const listTravalIncludeQuery = `SELECT * FROM public."refTravalInclude"
 WHERE
@@ -386,6 +401,15 @@ RETURNING
   *;
 `;
 
+
+export const getdeletedExcludeQuery= `SELECT
+  "refTravalExclude"
+FROM
+  public."refTravalExclude"
+WHERE
+  "refTravalExcludeId" = $1
+`;
+
 export const listTravalExcludeQuery = `SELECT * FROM public."refTravalExclude"
 WHERE
   "isDelete" = false;
@@ -408,15 +432,150 @@ RETURNING
 `;
 
 
-export const listTourByIdQuery = `SELECT
-  rp.*,
-  rtd.*,
-  rg.*
+// export const listTourByIdQuery = `SELECT
+//   rp.*,
+//   rtd.*,
+//   rg.*
+// FROM
+//   public."refPackage" rp
+//  FULL JOIN public."refTravalData" rtd ON CAST(rtd."refTravalDataId" AS INTEGER) = rp."refTravalDataId"
+//  FULL JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+// WHERE
+//   rp."refPackageId" = $1
+//   AND rp."isDelete" IS NOT true
+// `;
+
+export const listTourByIdQuery = `
+WITH
+  "location" AS (
+    SELECT
+      rp.*,
+      rtd."refItinary",
+      rtd."refItinaryMapPath",
+      rtd."refTravalInclude",
+      rtd."refTravalExclude",
+      rtd."refSpecialNotes",
+      rtd."refTravalOverView",
+      rd.*,
+      rg."refGallery",
+      rc."refCategoryName",
+      ARRAY_AGG(rl."refLocationName") AS "refLocationName"
+    FROM
+      public."refPackage" rp
+      LEFT JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
+      LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+      LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
+      LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
+      LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(rp."refLocation", '[{}]', '', 'g'),
+          ','
+        )::INTEGER[]
+      )
+    WHERE
+     (rp."isDelete" IS null
+      OR "rp"."isDelete" IS false ) AND rp."refPackageId" = $1
+    GROUP BY
+      rp."refPackageId",
+      rtd."refTravalDataId",
+      rd."refDestinationId",
+      rg."refGallery",
+      rc."refCategoryId"
+  ),
+  "activity" AS (
+    SELECT
+      l."refPackageName",
+      l."refLocationName",
+      l."refDestinationName",
+      ARRAY_AGG(ra."refActivitiesName") AS "Activity",
+      l."refDesignationId",
+      l."refTravalInclude",
+      l."refTravalExclude",
+      l."refPackageId",
+      l."refTravalDataId",
+      l."refItinary",
+      l."refItinaryMapPath",
+      l."refSpecialNotes",
+      l."refTravalOverView",
+      l."refGallery",
+      l."refCategoryName",
+      l."refDurationIday",
+      l."refDurationINight",
+      l."refGroupSize",
+      l."refTourCode",
+      l."refTourPrice",
+      l."refSeasonalPrice",
+      l."refCoverImage"
+    FROM
+      "location" l
+      LEFT JOIN public."refActivities" ra ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(l."refActivity", '[{}]', '', 'g'),
+          ','
+        )::INTEGER[]
+      )
+    GROUP BY
+      l."refPackageName",
+      l."refLocationName",
+      l."refDestinationName",
+      l."refDesignationId",
+      l."refTravalInclude",
+      l."refTravalExclude",
+      l."refPackageId",
+      l."refItinary",
+      l."refItinaryMapPath",
+      l."refSpecialNotes",
+      l."refTravalOverView",
+      l."refTravalDataId",
+      l."refGallery",
+      l."refCategoryName",
+      l."refDurationIday",
+      l."refDurationINight",
+      l."refGroupSize",
+      l."refTourCode",
+      l."refTourPrice",
+      l."refSeasonalPrice",
+      l."refCoverImage"
+  )
+SELECT
+  aa.*,
+  ARRAY_AGG(ti."refTravalInclude") AS "travalInclude",
+  ARRAY_AGG(te."refTravalExclude") AS "travalExclude"
 FROM
-  public."refPackage" rp
- FULL JOIN public."refTravalData" rtd ON CAST(rtd."refTravalDataId" AS INTEGER) = rp."refTravalDataId"
- FULL JOIN public."refGallery" rg ON CAST(rg."refPackageId" AS INTEGER) = rp."refPackageId"
-WHERE
-  rp."refPackageId" = $1
-  AND rp."isDelete" IS NOT true
-`;
+  "activity" aa
+  LEFT JOIN public."refTravalInclude" ti ON CAST(ti."refTravalIncludeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(aa."refTravalInclude", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+  LEFT JOIN public."refTravalExclude" te ON CAST(te."refTravalExcludeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(aa."refTravalExclude", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+GROUP BY
+  aa."refPackageName",
+  aa."refLocationName",
+  aa."refDestinationName",
+  aa."Activity",
+  aa."refDesignationId",
+  aa."refTravalInclude",
+  aa."refTravalExclude",
+  aa."refPackageId",
+  aa."refItinary",
+  aa."refItinaryMapPath",
+  aa."refSpecialNotes",
+  aa."refTravalOverView",
+  aa."refTravalDataId",
+  aa."refGallery",
+  aa."refCategoryName",
+  aa."refDurationIday",
+  aa."refDurationINight",
+  aa."refGroupSize",
+  aa."refTourCode",
+  aa."refTourPrice",
+  aa."refSeasonalPrice",
+  aa."refCoverImage";
+  `;

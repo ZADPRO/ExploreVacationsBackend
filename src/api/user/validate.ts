@@ -50,7 +50,7 @@ export default {
       refChildrenCount: Joi.string().required(),
       refInfants: Joi.string().required(),
       refOtherRequirements: Joi.string().required(),
-      refFormDetails: Joi.array().items(Joi.string()).min(1).required(),
+      refFormDetails: Joi.array().items(Joi.string()).min(1).optional(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

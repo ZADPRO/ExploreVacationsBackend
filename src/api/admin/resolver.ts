@@ -44,4 +44,10 @@ export class adminResolver {
   public async deleteEmployeeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.adminRepository.deleteEmployeeV1(user_data, token_data, domain_code);
   }
+  public async listTransactionTypeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.listTransactionTypeV1(user_data, token_data, domain_code);
+  }
+  public async listUserTypeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.listUserTypeV1(user_data, token_data, domain_code);
+  }
 }

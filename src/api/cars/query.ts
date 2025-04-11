@@ -366,6 +366,16 @@ values
   ($1, $2, $3, $4, $5, $6, $7)
   `;
 
+export const getVehicleNameQuery = `SELECT
+  "refVehicleTypeName"
+FROM
+  public."refVehicleType" 
+WHERE
+  "refVehicleTypeId" = $1
+`;
+
+
+
 export const updateCondation = `UPDATE
   public."refTermsAndConditions"
 SET
@@ -435,6 +445,17 @@ WHERE
 RETURNING
   *;
 `;
+
+
+export const getDeletedCarQuery = `SELECT
+  v."refVehicleTypeName"
+FROM
+  public."refCarsTable" ct
+  JOIN public."refVehicleType" v ON CAST(v."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
+WHERE
+  "refCarsId" = $1
+`;
+
 
 export const listCarsQuery = `SELECT
 rc."refCarsId",

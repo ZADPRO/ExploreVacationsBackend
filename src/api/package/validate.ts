@@ -4,7 +4,7 @@ export default {
   addPackage: {
     payload: Joi.object({
       refPackageName: Joi.string().required(),
-      refDesignationId: Joi.number().integer().positive().required(),
+      refDesignationId: Joi.number().integer().required(),
       refDurationIday: Joi.string().required(),
       refDurationINight: Joi.string().required(),
       refCategoryId: Joi.number().integer().positive().required(),

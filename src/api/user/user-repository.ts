@@ -3,12 +3,16 @@ import { PoolClient } from "pg";
 import { storeFile, viewFile, deleteFile } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
-import { formatDate, processImages } from "../../helper/common";
+import {
+  formatDate,
+  generatePassword,
+  processImages,
+} from "../../helper/common";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { buildUpdateQuery, getChanges } from "../../helper/buildquery";
-
+import nodemailer from "nodemailer";
 import {
   generateTokenWithExpire,
   generateTokenWithoutExpire,
@@ -18,32 +22,134 @@ import {
   addCarBookingQuery,
   addcustomizeBookingQuery,
   addTourBookingQuery,
+  checkQuery,
   deleteImageRecordQuery,
   getCarsByIdQuery,
   getImageRecordQuery,
+  getLastCustomerIdQuery,
   getOtherCarsQuery,
+  getUsersQuery,
+  insertUserDomainQuery,
+  insertUserQuery,
   listallTourQuery,
   listCarsQuery,
   listDestinationQuery,
   listOtherTourQuery,
+  listTourBrochureQuery,
   listTourQuery,
   updateHistoryQuery,
+  updateUserPasswordQuery,
+  userCarBookingHistoryQuery,
+  userCarParkingBookingHistoryQuery,
+  userTourBookingHistoryQuery,
 } from "./query";
 import fs from "fs";
 import {
   generateCarBookingEmailContent,
   generateCustomizeTourBookingEmailContent,
-  generateSignupEmailContent,
+  generateforgotPasswordEmailContent,
+  generateReminderEmailContent,
   generateTourBookingEmailContent,
 } from "../../helper/mailcontent";
 import { sendEmail } from "../../helper/mail";
 
 export class userRepository {
+  // public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+
+  //   try {
+  //     await client.query("BEGIN"); // Start transaction
+  //     const {
+  //       refPackageId,
+  //       refUserName,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refPickupDate,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refInfants,
+  //       refOtherRequirements,
+  //     } = userData;
+
+  //     // Insert package details and get refPackageId
+
+  //     const Result = await client.query(addTourBookingQuery, [
+  //       refPackageId,
+  //       refUserName,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refPickupDate,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refInfants,
+  //       refOtherRequirements,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
+
+  //     const main = async () => {
+  //       const mailOptions = {
+  //         to: "indumathi123indumathi@gmail.com",
+  //         subject: "New Tour Booking Received", // Subject of the email
+  //         html: generateTourBookingEmailContent(Result),
+  //       };
+
+  //       // Call the sendEmail function
+  //       try {
+  //         await sendEmail(mailOptions);
+  //       } catch (error) {
+  //         console.error("Failed to send email:", error);
+  //       }
+  //     };
+
+  //     main().catch(console.error);
+
+  //     if (refPickupDate === new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0]) {
+  //       const reminderHtml = generateReminderEmailContent({
+  //         refUserName,
+  //         refPackageId,
+  //         refPickupDate,
+  //         refUserMail,
+  //       });
+
+  //       await sendEmail({
+  //         to: refUserMail,
+  //         subject: "⏰ Your tour is tomorrow!",
+  //         html: reminderHtml,
+  //       });
+  //     }
+
+  //     await client.query("COMMIT"); // Commit transaction
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "tour booking successfully",
+  //         Data: Result.rows[0],
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error tour booking:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while tour booking",
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
   public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
 
     try {
-      await client.query("BEGIN"); // Start transaction
+      await client.query("BEGIN");
 
       const {
         refPackageId,
@@ -57,8 +163,6 @@ export class userRepository {
         refOtherRequirements,
       } = userData;
 
-      // Insert package details and get refPackageId
-
       const Result = await client.query(addTourBookingQuery, [
         refPackageId,
         refUserName,
@@ -70,30 +174,73 @@ export class userRepository {
         refInfants,
         refOtherRequirements,
         CurrentTime(),
-        "Admin",
+        "User",
       ]);
 
-      const main = async () => {
-        const mailOptions = {
-          to: "indumathi123indumathi@gmail.com",
-          subject: "New Tour Booking Received", // Subject of the email
-          html: generateTourBookingEmailContent(Result),
-        };
+      // 1. Admin email
+      const adminMail = {
+        to: "indumathi123indumathi@gmail.com",
+        subject: "New Tour Booking Received",
+        html: generateTourBookingEmailContent(Result),
+      };
+      // await sendEmail(adminMail);
 
-        // Call the sendEmail function
-        try {
-          await sendEmail(mailOptions);
-        } catch (error) {
-          console.error("Failed to send email:", error);
-        }
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAILID,
+          pass: process.env.PASSWORD,
+        },
+      });
+
+      const mailoption = {
+        from: process.env.EMAILID,
+        to: "indumathi123indumathi@gmail.com",
+        subject: "New Tour Booking Received",
+        html: generateTourBookingEmailContent(Result),
       };
 
-      main().catch(console.error);
+      await transporter.sendMail(mailoption);
 
-      // const history = [27, tokendata.id, "tour booking", CurrentTime(), "user"];
+      // 2. User confirmation email with countdown
+      const daysLeft = Math.ceil(
+        (new Date(refPickupDate).getTime() - new Date().getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
 
-      // const updateHistory = await client.query(updateHistoryQuery, history);
-      await client.query("COMMIT"); // Commit transaction
+      const adminmailoption = {
+        from: process.env.EMAILID,
+        to: refUserMail,
+        subject: "✅ Your Tour Has Been Booked!",
+        html: `
+          <h2>Hi ${refUserName},</h2>
+          <p>🎉 Your tour has been successfully booked!</p>
+          <p>Your tour starts on <strong>${refPickupDate}</strong>.</p>
+          <p>🧳 Only <strong>${daysLeft}</strong> day(s) to go!</p>
+          <p>We’ll send you daily reminders so you don’t miss a thing!</p>
+          <br/>
+          <p>Thank you,<br>Team Explore Vacations</p>
+        `,
+      };
+
+      await transporter.sendMail(adminmailoption);
+
+      // const userMail = {
+      //   to: refUserMail,
+      //   subject: "✅ Your Tour Has Been Booked!",
+      //   html: `
+      //     <h2>Hi ${refUserName},</h2>
+      //     <p>🎉 Your tour has been successfully booked!</p>
+      //     <p>Your tour starts on <strong>${refPickupDate}</strong>.</p>
+      //     <p>🧳 Only <strong>${daysLeft}</strong> day(s) to go!</p>
+      //     <p>We’ll send you daily reminders so you don’t miss a thing!</p>
+      //     <br/>
+      //     <p>Thank you,<br>Team Explore Vacations</p>
+      //   `,
+      // };
+      // await sendEmail(userMail);
+
+      await client.query("COMMIT");
 
       return encrypt(
         {
@@ -104,7 +251,7 @@ export class userRepository {
         true
       );
     } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback transaction in case of failure
+      await client.query("ROLLBACK");
       console.error("Error tour booking:", error);
 
       return encrypt(
@@ -120,11 +267,108 @@ export class userRepository {
     }
   }
 
+  // public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+
+  //   try {
+  //     await client.query("BEGIN"); // Start transaction
+
+  //     const {
+  //       refPackageId,
+  //       refUserName,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refArrivalDate,
+  //       refSingleRoom,
+  //       refTwinRoom,
+  //       refTripleRoom,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refVaccinationType,
+  //       refOtherRequirements,
+  //       refVaccinationCertificate,
+  //     } = userData;
+
+  //     // Insert booking details with PDF path
+  //     const Result = await client.query(addcustomizeBookingQuery, [
+  //       refUserName,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refPackageId,
+  //       refArrivalDate,
+  //       refSingleRoom,
+  //       refTwinRoom,
+  //       refTripleRoom,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refVaccinationType,
+  //       refVaccinationCertificate, // Store the file path
+  //       refOtherRequirements,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
+
+  //     console.log('Result', Result.rows)
+  //     const main = async () => {
+  //       const mailOptions = {
+  //         to: "indumathi123indumathi@gmail.com",
+  //         subject: "New customize Tour Booking Received", // Subject of the email
+  //         html: generateCustomizeTourBookingEmailContent(Result.rows[0]),
+  //       };
+
+  //       // Call the sendEmail function
+  //       try {
+  //         await sendEmail(mailOptions);
+  //       } catch (error) {
+  //         console.error("Failed to send email:", error);
+  //       }
+  //     };
+
+  //     main().catch(console.error);
+
+  //     // const history = [
+  //     //   28,
+  //     //   tokendata.id,
+  //     //   "add customize tour booking",
+  //     //   CurrentTime(),
+  //     //   "user",
+  //     // ];
+
+  //     // await client.query(updateHistoryQuery, history);
+
+  //     await client.query("COMMIT"); // Commit transaction
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Customize tour booking added successfully",
+  //         Data: Result.rows[0],
+  //         pdfPath: refVaccinationCertificate, // Returning stored PDF path for confirmation
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error adding customize tour booking:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while adding the customize tour booking",
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+
   public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
 
     try {
-      await client.query("BEGIN"); // Start transaction
+      await client.query("BEGIN");
 
       const {
         refPackageId,
@@ -142,7 +386,6 @@ export class userRepository {
         refVaccinationCertificate,
       } = userData;
 
-      // Insert booking details with PDF path
       const Result = await client.query(addcustomizeBookingQuery, [
         refUserName,
         refUserMail,
@@ -155,53 +398,70 @@ export class userRepository {
         refAdultCount,
         refChildrenCount,
         refVaccinationType,
-        refVaccinationCertificate, // Store the file path
+        refVaccinationCertificate,
         refOtherRequirements,
         CurrentTime(),
-        "Admin",
+        "User",
       ]);
-      
-      console.log('Result', Result.rows)
-      const main = async () => {
+
+      const bookingData = Result.rows[0];
+
+      const sendAdminMail = async () => {
         const mailOptions = {
           to: "indumathi123indumathi@gmail.com",
-          subject: "New customize Tour Booking Received", // Subject of the email
-          html: generateCustomizeTourBookingEmailContent(Result.rows[0]),
+          subject: "New Customize Tour Booking Received",
+          html: generateCustomizeTourBookingEmailContent(bookingData),
         };
-      
-        // Call the sendEmail function
+
         try {
           await sendEmail(mailOptions);
         } catch (error) {
-          console.error("Failed to send email:", error);
+          console.error("Failed to send admin email:", error);
         }
       };
-      
-      main().catch(console.error);
 
-      // const history = [
-      //   28,
-      //   tokendata.id,
-      //   "add customize tour booking",
-      //   CurrentTime(),
-      //   "user",
-      // ];
+      const sendUserConfirmationMail = async () => {
+        const daysLeft = Math.ceil(
+          (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
 
-      // await client.query(updateHistoryQuery, history);
+        const mailOptions = {
+          to: refUserMail,
+          subject: "🌍 Customize Tour Booking Confirmed",
+          html: `
+            <h2>Hello ${refUserName} 👋</h2>
+            <p>Your customized tour request has been received successfully.</p>
+            <p><strong>Arrival Date:</strong> ${refArrivalDate}</p>
+            <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
+            <br>
+            <p>Our team will contact you shortly to finalize the details.</p>
+            <p>Thank you for choosing our service! 😊</p>
+          `,
+        };
 
-      await client.query("COMMIT"); // Commit transaction
+        try {
+          await sendEmail(mailOptions);
+        } catch (error) {
+          console.error("Failed to send confirmation email to user:", error);
+        }
+      };
+
+      await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+
+      await client.query("COMMIT");
 
       return encrypt(
         {
           success: true,
           message: "Customize tour booking added successfully",
-          Data: Result.rows[0],
-          pdfPath: refVaccinationCertificate, // Returning stored PDF path for confirmation
+          Data: bookingData,
+          pdfPath: refVaccinationCertificate,
         },
         true
       );
     } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback transaction in case of failure
+      await client.query("ROLLBACK");
       console.error("Error adding customize tour booking:", error);
 
       return encrypt(
@@ -239,7 +499,7 @@ export class userRepository {
       filePath = await storeFile(pdfFile, 3); // Assuming storeFile handles PDF storage
 
       // Read the file buffer and convert it to Base64
-      const pdfBuffer = await fs.promises.readFile(filePath);
+      const pdfBuffer = await viewFile(filePath);
       const pdfBase64 = pdfBuffer.toString("base64");
 
       storedFiles.push({
@@ -269,6 +529,94 @@ export class userRepository {
       );
     }
   }
+  // public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+
+  //   try {
+  //     await client.query("BEGIN"); // Start transaction
+
+  //     const {
+  //       refCarsId,
+  //       refUserName,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refPickupAddress,
+  //       refSubmissionAddress,
+  //       refPickupDate,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refInfants,
+  //       refOtherRequirements,
+  //     } = userData;
+
+  //     const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
+
+  //     // Insert package details and get refPackageId
+  //     const Result = await client.query(addCarBookingQuery, [
+  //       refCarsId,
+  //       refUserName,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refPickupAddress,
+  //       refSubmissionAddress,
+  //       refPickupDate,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refInfants,
+  //       refFormDetails,
+  //       refOtherRequirements,
+  //       CurrentTime(),
+  //       "Admin",
+  //     ]);
+
+  //     const main = async () => {
+  //       const mailOptions = {
+  //         to: "indumathi123indumathi@gmail.com",
+  //         subject: "New car Booking Received", // Subject of the email
+  //         html: generateCarBookingEmailContent(Result.rows[0]),
+  //       };
+
+  //       // Call the sendEmail function
+  //       try {
+  //         await sendEmail(mailOptions);
+  //       } catch (error) {
+  //         console.error("Failed to send email:", error);
+  //       }
+  //     };
+
+  //     main().catch(console.error);
+
+  //     // const history = [29, tokendata.id, "car booking", CurrentTime(), "user"];
+
+  //     // const updateHistory = await client.query(updateHistoryQuery, history);
+
+  //     await client.query("COMMIT"); // Commit transaction
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "user car booking  added successfully",
+  //         Data: Result.rows[0],
+  //       },
+  //       false
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     console.error("Error adding user car booking:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while adding the user car booking",
+  //         error: String(error),
+  //       },
+  //       false
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+
   public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
 
@@ -289,9 +637,9 @@ export class userRepository {
         refOtherRequirements,
       } = userData;
 
-      const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
+      // const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
 
-      // Insert package details and get refPackageId
+      // Insert booking data
       const Result = await client.query(addCarBookingQuery, [
         refCarsId,
         refUserName,
@@ -303,45 +651,118 @@ export class userRepository {
         refAdultCount,
         refChildrenCount,
         refInfants,
-        refFormDetails,
+        // refFormDetails,
         refOtherRequirements,
         CurrentTime(),
-        "Admin",
+        "User",
       ]);
 
-      const main = async () => {
-        const mailOptions = {
-          to: "indumathi123indumathi@gmail.com",
-          subject: "New car Booking Received", // Subject of the email
-          html: generateCarBookingEmailContent(Result.rows[0]),
-        };
-      
-        // Call the sendEmail function
-        try {
-          await sendEmail(mailOptions);
-        } catch (error) {
-          console.error("Failed to send email:", error);
-        }
+      // const sendAdminMail = async () => {
+      //   const mailOptions = {
+      //     to: "indumathi123indumathi@gmail.com",
+      //     subject: "New Car Booking Received",
+      //     html: generateCarBookingEmailContent(Result.rows[0]),
+      //   };
+
+      //   try {
+      //     await sendEmail(mailOptions);
+      //   } catch (error) {
+      //     console.error("Failed to send admin email:", error);
+      //   }
+      // };
+
+      // // === 2. Send confirmation email to User ===
+      // const sendUserConfirmationMail = async () => {
+      //   const daysLeft = Math.ceil(
+      //     (new Date(refPickupDate).getTime() - new Date().getTime()) /
+      //       (1000 * 60 * 60 * 24)
+      //   );
+
+      //   const mailOptions = {
+      //     to: refUserMail,
+      //     subject: "🚗 Car Booking Confirmed",
+      //     html: `
+      //       <h2>Hello ${refUserName} 👋</h2>
+      //       <p>Your car has been booked successfully with us.</p>
+      //       <p><strong>Pickup Date:</strong> ${refPickupDate}</p>
+      //       <p><strong>Pickup Address:</strong> ${refPickupAddress}</p>
+      //       <p><strong>Drop Address:</strong> ${refSubmissionAddress}</p>
+      //       <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
+      //       <br>
+      //       <p>Thank you for choosing our service! 😊</p>
+      //     `,
+      //   };
+
+      //   try {
+      //     await sendEmail(mailOptions);
+
+      //   } catch (error) {
+      //     console.error("Failed to send confirmation email to user:", error);
+      //   }
+      // };
+
+      // await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+
+      // 1. Admin email
+      const adminMail = {
+        to: "indumathi123indumathi@gmail.com",
+        subject: "New Tour Booking Received",
+        html: generateCarBookingEmailContent(Result),
       };
-      
-      main().catch(console.error);
 
-      // const history = [29, tokendata.id, "car booking", CurrentTime(), "user"];
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAILID,
+          pass: process.env.PASSWORD,
+        },
+      });
 
-      // const updateHistory = await client.query(updateHistoryQuery, history);
+      const mailoption = {
+        from: process.env.EMAILID,
+        to: "indumathi123indumathi@gmail.com",
+        subject: "New Tour Booking Received",
+        html: generateTourBookingEmailContent(Result),
+      };
+
+      await transporter.sendMail(mailoption);
+
+      // 2. User confirmation email with countdown
+      const daysLeft = Math.ceil(
+        (new Date(refPickupDate).getTime() - new Date().getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      const adminmailoption = {
+        from: process.env.EMAILID,
+        to: refUserMail,
+        subject: "🚗 Car Booking Confirmed",
+        html: `
+              <h2>Hello ${refUserName} 👋</h2>
+              <p>Your car has been booked successfully with us.</p>
+              <p><strong>Pickup Date:</strong> ${refPickupDate}</p>
+              <p><strong>Pickup Address:</strong> ${refPickupAddress}</p>
+              <p><strong>Drop Address:</strong> ${refSubmissionAddress}</p>
+              <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
+              <br>
+              <p>Thank you for choosing our service! 😊</p>
+            `,
+      };
+
+      await transporter.sendMail(adminmailoption);
 
       await client.query("COMMIT"); // Commit transaction
 
       return encrypt(
         {
           success: true,
-          message: "user car booking  added successfully",
+          message: "User car booking added successfully",
           Data: Result.rows[0],
         },
-        false
+        true
       );
     } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback transaction in case of failure
+      await client.query("ROLLBACK"); // Rollback transaction
       console.error("Error adding user car booking:", error);
 
       return encrypt(
@@ -350,7 +771,7 @@ export class userRepository {
           message: "An error occurred while adding the user car booking",
           error: String(error),
         },
-        false
+        true
       );
     } finally {
       client.release();
@@ -363,10 +784,8 @@ export class userRepository {
 
       // Step 1: Execute Queries
       const result1 = await executeQuery(listTourQuery, [refPackageId]);
-      console.log("result1:", result1);
 
       const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
-      console.log("result2:", result2);
 
       // Step 2: Process images for both sets of results
       if (result1 && result1.length) {
@@ -410,7 +829,7 @@ export class userRepository {
       for (const image of result) {
         if (image.refCoverImage) {
           try {
-            const fileBuffer = await fs.promises.readFile(image.refCoverImage);
+            const fileBuffer = await viewFile(image.refCoverImage);
             image.refCoverImage = {
               filename: path.basename(image.refCoverImage),
               content: fileBuffer.toString("base64"),
@@ -526,6 +945,7 @@ export class userRepository {
       const DeleteImage = await executeQuery(deleteImageRecordQuery, [
         userData.refTravalDataId,
       ]);
+
       // } else {
       //   // filePath = userData.filePath;
       // }
@@ -562,7 +982,7 @@ export class userRepository {
       for (const image of result) {
         if (image.refCarPath) {
           try {
-            const fileBuffer = await fs.promises.readFile(image.refCarPath);
+            const fileBuffer = await viewFile(image.refCarPath);
             image.refCarPath = {
               filename: path.basename(image.refCarPath),
               content: fileBuffer.toString("base64"),
@@ -606,7 +1026,7 @@ export class userRepository {
       for (const image of result1) {
         if (image.refCarPath) {
           try {
-            const fileBuffer = await fs.promises.readFile(image.refCarPath);
+            const fileBuffer = await viewFile(image.refCarPath);
             image.refCarPath = {
               filename: path.basename(image.refCarPath),
               content: fileBuffer.toString("base64"),
@@ -655,80 +1075,304 @@ export class userRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed  destination ",
+          message: "An unknown error occurred during listed destination ",
           error: String(error),
         },
         true
       );
     }
   }
-  // public async sendRemainderMailV1(userData: any, token_data?: any): Promise<any> {
-  //     const client: PoolClient = await getClient();
-  //     const token = { id: token_data.id }; // Extract token ID
-  //     const tokens = generateTokenWithExpire(token, true);
-  //     try {
-  //       await client.query("BEGIN");
+  public async userSignUpV1(userData: any, token_data?: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    try {
+      await client.query("BEGIN");
+      const {
+        temp_password,
+        refFName,
+        refLName,
+        refDOB,
+        refUserEmail,
+        refMoblile,
+      } = userData;
 
-  //         if ((updateHistory.rowCount ?? 0) > 0) {
-  //           const tokenData = {
-  //             id: newUser.refUserId,
-  //             email: userData.refUserEmail,
-  //           };
-  //           await client.query("COMMIT");
-  //           const main = async () => {
-  //             const mailOptions = {
-  //               to: userData.refUserEmail,
-  //               subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
-  //               html: generateSignupEmailContent(
-  //                 userData.refMoblile,
-  //                 genPassword
-  //               ),
-  //             };
+      const hashedPassword = await bcrypt.hash(temp_password, 10);
 
-  //             // Call the sendEmail function
-  //             try {
-  //               await sendEmail(mailOptions);
-  //             } catch (error) {
-  //               console.error("Failed to send email:", error);
-  //             }
-  //           };
+      const check = [refMoblile];
+      console.log(check);
 
-  //           main().catch(console.error);
-  //           return encrypt(
-  //             {
-  //               success: true,
-  //               message: "User signup successful",
-  //               user: newUser,
-  //               token: tokens,
-  //             },
-  //             true
-  //           );
-  //         }
-  //       }
+      const userCheck = await client.query(checkQuery, check);
 
-  //       await client.query("ROLLBACK");
-  //       return encrypt(
-  //         {
-  //           success: false,
-  //           message: "Signup failed",
-  //           token: tokens,
-  //         },
-  //         true
-  //       );
-  //     } catch (error: unknown) {
-  //       await client.query("ROLLBACK");
-  //       console.error("Error during user signup:", error);
-  //       return encrypt(
-  //         {
-  //           success: false,
-  //           message: "An unexpected error occurred during signup",
-  //           error: error instanceof Error ? error.message : String(error),
-  //         },
-  //         true
-  //       );
-  //     } finally {
-  //       client.release();
-  //     }
-  //  }
-  
+      const userFind = userCheck.rows[0];
+
+      if (userFind) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            message: "Already exists",
+            success: true,
+          },
+          true
+        );
+      }
+
+      const customerPrefix = "EV-CUS-";
+      const baseNumber = 0;
+
+      const lastCustomerResult = await client.query(getLastCustomerIdQuery);
+      let newCustomerId: string;
+
+      if (lastCustomerResult.rows.length > 0) {
+        const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
+        newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      } else {
+        newCustomerId = `${customerPrefix}${(baseNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      }
+
+      // Insert into users table
+      const params = [
+        newCustomerId,
+        refFName,
+        refLName,
+        refDOB,
+        // userData.refUserTypeId,
+        CurrentTime(),
+        3,
+      ];
+      const userResult = await client.query(insertUserQuery, params);
+      const newUser = userResult.rows[0];
+
+      // Insert into userDomain table
+      const domainParams = [
+        newUser.refuserId,
+        refUserEmail,
+        temp_password,
+        hashedPassword,
+        refMoblile,
+        CurrentTime(),
+        "Admin",
+      ];
+
+      const domainResult = await client.query(
+        insertUserDomainQuery,
+        domainParams
+      );
+      // if ((userResult.rowCount ?? 0) > 0 && (domainResult.rowCount ?? 0) > 0) {
+      //   const history = [
+      //     52,
+      //     3,
+      //     `${userData.refFName} user signedUp succcesfully`,
+      //     CurrentTime(),
+      //     3,
+      //   ];
+      //   const updateHistory = await client.query(updateHistoryQuery, history);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "User signed up added successful",
+          user: newUser,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      console.error("Error during User signed up:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An unexpected error occurred during User signed up ",
+          error: error instanceof Error ? error.message : String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async forgotPasswordV1(userData: any, token_data?: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: token_data.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const { emailId } = userData;
+
+      // Validate input
+      if (!emailId) {
+        return encrypt(
+          {
+            success: false,
+            message: "Email ID is missing",
+          },
+          true
+        );
+      }
+
+      // Begin database transaction
+      await client.query("BEGIN");
+
+      // Fetch all mobile numbers associated with the user
+      const Result = await executeQuery(getUsersQuery, [emailId]);
+
+      // Check if any mobile numbers were found
+      if (!Result.length) {
+        return encrypt(
+          {
+            success: false,
+            message: "No found for the user",
+            tokens: tokens,
+          },
+          true
+        );
+      }
+      const genPassword = generatePassword();
+      console.log("genPassword", genPassword);
+      const genHashedPassword = await bcrypt.hash(genPassword, 10);
+      console.log("genHashedPassword", genHashedPassword);
+
+      const updatePassword = await client.query(updateUserPasswordQuery, [
+        emailId,
+        token_data.id,
+        genPassword,
+        genHashedPassword,
+        CurrentTime(),
+        "3",
+      ]);
+
+      console.log("token_data.id", token_data.id);
+      console.log("updatePassword", updatePassword);
+      const tokenData = {
+        id: token_data.id,
+        email: emailId,
+      };
+      await client.query("COMMIT");
+
+      // way 1
+      const main = async () => {
+        const mailOptions = {
+          to: emailId,
+          subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
+          html: generateforgotPasswordEmailContent(emailId, genPassword),
+        };
+
+        // Call the sendEmail function
+        try {
+          await sendEmail(mailOptions);
+        } catch (error) {
+          console.error("Failed to send email:", error);
+        }
+      };
+      main().catch(console.error);
+
+      // // way 2
+      // const mailToUser = {
+      //   to: emailId,
+      //   subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
+      //   html: generateforgotPasswordEmailContent(emailId, genPassword),
+      // };
+
+      // const transporter = nodemailer.createTransport({
+      //   service: "gmail",
+      //   auth: {
+      //     user: process.env.EMAILID,
+      //     pass: process.env.PASSWORD,
+      //   },
+      // });
+
+      // await transporter.sendMail(mailToUser);
+
+
+
+
+      // Return the mobile numbers and email ID in the response
+      return encrypt(
+        {
+          success: true,
+          message: "mail send successfully",
+          emailId,
+          tokens: tokens,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error retrieving user contact info:", error);
+
+      await client.query("ROLLBACK");
+
+      return encrypt(
+        {
+          success: false,
+          message: "Internal server error",
+          tokens: tokens,
+        },
+        true
+      );
+    } finally {
+      client.release(); // Release the client back to the pool
+    }
+  }
+  public async tourBrochureV1(userData: any, tokendata: any): Promise<any> {
+    try {
+      const { refPackageId } = userData;
+
+      const result = await executeQuery(listTourBrochureQuery, [refPackageId]);
+
+      if (result && result.length) {
+        await processImages(result);
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed destination successfully",
+          Details: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed destination ",
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async userBookingHistoryV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+
+      const tourBookingresult = await executeQuery(userTourBookingHistoryQuery, [tokendata.id]);
+      const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [tokendata.id]);
+      const CarParkingBookingresult = await executeQuery(userCarParkingBookingHistoryQuery, [tokendata.id]);
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed userBooking List",
+          token:tokens
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed userBooking List ",
+          error: String(error),
+          token:tokens
+        },
+        true
+      );
+    }
+  }
+
 }

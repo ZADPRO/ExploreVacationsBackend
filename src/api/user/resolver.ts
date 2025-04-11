@@ -45,8 +45,16 @@ export class userResolver {
   public async listDestinationV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.listDestinationV1(user_data, token_data, domain_code);
   }
-  public async sendRemainderMailV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
-    return await this.userRepository.sendRemainderMailV1(user_data, token_data, domain_code);
+  public async userSignUpV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.userSignUpV1(user_data, token_data, domain_code);
   }
-
+  public async forgotPasswordV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.forgotPasswordV1(user_data, token_data, domain_code);
+  }
+  public async tourBrochureV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.tourBrochureV1(user_data, token_data, domain_code);
+  }
+  public async userBookingHistoryV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.userBookingHistoryV1(user_data, token_data, domain_code);
+  }
 }
