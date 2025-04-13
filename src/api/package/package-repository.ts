@@ -1708,10 +1708,11 @@ export class packageRepository {
     try {
       const { refPackageId } = userData;
 
-      // Step 1: Execute Queries
       const result1 = await executeQuery(listTourByIdQuery, [refPackageId]);
       console.log("result1: line ------- 1586", result1);
 
+
+  
       for (const image of result1) {
           for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
             if (image[key]) {
@@ -1730,7 +1731,8 @@ export class packageRepository {
           }
         }
 
-      // Step 3: Return success response
+
+
       return encrypt(
         {
           success: true,
