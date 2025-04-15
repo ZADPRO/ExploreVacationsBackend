@@ -36,7 +36,8 @@ export default {
       refTourCode: Joi.string().required(),
       refTourPrice: Joi.string().required(),
       refSeasonalPrice: Joi.string().required(),
-      images: Joi.array().items(Joi.string()).optional(),
+      // images: Joi.array().items(Joi.string()).optional(),
+      images: Joi.string().required(),
       refItinary: Joi.string().required(),
       refItinaryMapPath: Joi.string().required(),
       refSpecialNotes: Joi.string().required(),
@@ -61,7 +62,7 @@ export default {
       refTravalInclude: Joi.array()
         .items(
           Joi.object({
-            refTravalInclude: Joi.string().required()
+            refTravalInclude: Joi.string().required(),
           })
         )
         .required(),
@@ -70,63 +71,61 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
-  updateTravalInclude:{
-     payload: Joi.object({
-        refTravalIncludeId: Joi.number().integer().required(),
-        refTravalInclude: Joi.string().required(),
-        }),
-        headers: Joi.object({
-          authorization: Joi.string().optional(),
-        }).unknown(),
-  },
-  deleteTravalInclude:{
+  updateTravalInclude: {
     payload: Joi.object({
-        refTravalIncludeId: Joi.number().integer().required(),
-      }),
-      headers: Joi.object({
-        authorization: Joi.string().optional(),
-      }).unknown(),
-  },
-  addTravalExclude:{
-    payload: Joi.object({
-        refTravalExclude: Joi.array()
-          .items(
-            Joi.object({
-                refTravalExclude: Joi.string().required()
-            })
-          )
-          .required(),
-      }),
-      headers: Joi.object({
-        authorization: Joi.string().optional(),
-      }).unknown(),
-  },
-  updateTravalExclude:{
-    payload: Joi.object({
-        refTravalExcludeId: Joi.number().integer().required(),
-        refTravalExclude: Joi.string().required(),
-        }),
-        headers: Joi.object({
-          authorization: Joi.string().optional(),
-        }).unknown(),
-  },
-  deleteTravalExclude:{
-    payload: Joi.object({
-        refTravalExcludeId: Joi.number().integer().required(),
-      }),
-      headers: Joi.object({
-        authorization: Joi.string().optional(),
-      }).unknown(),
-  },
-  getTour:{
-    payload: Joi.object({
-        refPackageId: Joi.number().integer().required()
+      refTravalIncludeId: Joi.number().integer().required(),
+      refTravalInclude: Joi.string().required(),
     }),
     headers: Joi.object({
-        authorization: Joi.string().optional()
+      authorization: Joi.string().optional(),
     }).unknown(),
   },
-  uploadCoverImage:{
-
-  }
+  deleteTravalInclude: {
+    payload: Joi.object({
+      refTravalIncludeId: Joi.number().integer().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  addTravalExclude: {
+    payload: Joi.object({
+      refTravalExclude: Joi.array()
+        .items(
+          Joi.object({
+            refTravalExclude: Joi.string().required(),
+          })
+        )
+        .required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  updateTravalExclude: {
+    payload: Joi.object({
+      refTravalExcludeId: Joi.number().integer().required(),
+      refTravalExclude: Joi.string().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  deleteTravalExclude: {
+    payload: Joi.object({
+      refTravalExcludeId: Joi.number().integer().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  getTour: {
+    payload: Joi.object({
+      refPackageId: Joi.number().integer().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  uploadCoverImage: {},
 };

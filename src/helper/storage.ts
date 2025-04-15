@@ -52,6 +52,9 @@ export const storeFile = async (
   else if (uploadType === 6) {
     uploadDir = path.join(process.cwd(), "./src/assets/employeeProfile");
   }
+  else if (uploadType === 7) {
+    uploadDir = path.join(process.cwd(), "./src/assets/carParkingImage");
+  }
 
   
   else {

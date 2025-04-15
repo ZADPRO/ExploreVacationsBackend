@@ -456,25 +456,6 @@ WHERE
   "refCarsId" = $1
 `;
 
-
-export const listCarsQuery = `SELECT
-rc."refCarsId",
-  rvt."refVehicleTypeName",
-  rc."refPersonCount",
-  rc."refBagCount",
-  rc."refFuelType",
-  rc."refcarManufactureYear",
-  rc."refMileage",
-  rc."refTrasmissionType",
-  rc."refFuleLimit",
-  rc."refCarPath",
-  rc."refCarPrice"
-FROM
-  public."refCarsTable" rc
-  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
-  WHERE rc."isDelete" IS NOT true ;
-      `;
-
 // export const getCarsByIdQuery = `SELECT
 //   rc."refCarsId",
 //   rvt."refVehicleTypeName",
@@ -546,11 +527,64 @@ FROM
 // ;
 //       `;
 
-export const getCarsByIdQuery = `SELECT DISTINCT
+export const listCarsQuery = `SELECT
+rc."refCarsId",
+  rvt."refVehicleTypeName",
+  rc."refPersonCount",
+  rc."refBagCount",
+  rc."refFuelType",
+  rc."refcarManufactureYear",
+  rc."refMileage",
+  rc."refTrasmissionType",
+  rc."refFuleLimit",
+  rc."refCarPath",
+  rc."refCarPrice"
+FROM
+  public."refCarsTable" rc
+  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+  WHERE rc."isDelete" IS NOT true ;
+      `;
+
+
+// export const getCarsByIdQuery = `
+// SELECT DISTINCT
+//   ON (rct."refCarsId") rct.*,
+//   vt.*,
+//   rdd.*,
+//   tc.*
+// FROM
+//   public."refCarsTable" rct
+//   LEFT JOIN public."refVehicleType" vt ON vt."refVehicleTypeId" = rct."refVehicleTypeId"
+//   LEFT JOIN public."refDriverDetails" rdd ON rdd."refDriverDetailsId" = rct."refDriverDetailsId"
+//   LEFT JOIN public."refTermsAndConditions" tc ON tc."refCarsId" = rct."refCarsId"
+// WHERE
+//   rct."refCarsId" = $1
+//   AND (
+//     rct."isDelete" IS null
+//     OR rct."isDelete" IS false
+//   );
+//   `
+//   ;
+
+
+  export const getCarsByIdQuery = `
+SELECT DISTINCT
   ON (rct."refCarsId") rct.*,
+  array_to_json(string_to_array(
+    trim(both '{}' from rct."refExclude"), ','
+  )::int[]) AS "Exclude",
+  array_to_json(string_to_array(
+    trim(both '{}' from rct."refInclude"), ','
+  )::int[]) AS "Include",
+  array_to_json(string_to_array(
+    trim(both '{}' from rct."refBenifits"), ','
+  )::int[]) AS "Benifits",
   vt.*,
   rdd.*,
-  tc.*
+  tc.*,
+  array_to_json(string_to_array(
+    trim(both '{}' from rct."refFormDetails"), ','
+  )::int[]) AS "refFormDetails"
 FROM
   public."refCarsTable" rct
   LEFT JOIN public."refVehicleType" vt ON vt."refVehicleTypeId" = rct."refVehicleTypeId"
@@ -559,8 +593,7 @@ FROM
 WHERE
   rct."refCarsId" = $1
   AND (
-    rct."isDelete" IS null
-    OR rct."isDelete" IS false
-  );
-  `
-  ;
+    rct."isDelete" IS NULL
+    OR rct."isDelete" IS FALSE
+);
+`;

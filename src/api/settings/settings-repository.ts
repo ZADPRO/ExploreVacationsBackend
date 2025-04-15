@@ -32,7 +32,7 @@ import {
   listActivitiesQuery,
   listCategoryQuery,
   listDestinationQuery,
-  listLoacationQuery,
+  listLocationQuery,
   updateActivityQuery,
   updateCategoryQuery,
   updateDestinationQuery,
@@ -206,6 +206,7 @@ export class settingsRepository {
           CurrentTime(),
           tokendata.id
         ]);
+        console.log('result', result)
 
         if (result.rowCount === 0) {
             await client.query("ROLLBACK");
@@ -220,16 +221,18 @@ export class settingsRepository {
         }
 
           const getdeletedDestination: any = await client.query(getdeletedDestinationQuery, [refDestinationId]);
+          console.log('getdeletedDestination', getdeletedDestination)
 
          const { refDestinationName } = getdeletedDestination.rows[0];
 
         const history = [
-            30, // Unique ID for delete action
-            tokendata.id,
-            `${refDestinationName} deleted succesfully`,
-            CurrentTime(),
-            tokendata.id,
+          30, // Unique ID for delete action
+          tokendata.id,
+          `${refDestinationName} deleted succesfully`,
+          CurrentTime(),
+          tokendata.id,
         ];
+        console.log('history', history)
 
         await client.query(updateHistoryQuery, history);
         await client.query("COMMIT"); // Commit transaction
@@ -260,7 +263,6 @@ export class settingsRepository {
         client.release();
     }
   }
-
 
   public async addLocationV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
@@ -368,7 +370,6 @@ export class settingsRepository {
           true
         );
       }
-
       const params = [
         refLocationId,
         refLocationName,
@@ -418,15 +419,16 @@ export class settingsRepository {
       );
     }
   }
+  
   public async listLocationV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const result = await executeQuery(listLoacationQuery);
+      const result = await executeQuery(listLocationQuery);
       return encrypt(
         {
           success: true,
-          message: "Locations added successfully",
+          message: "list location successfully",
           token: tokens,
           result: result,
         },
@@ -436,7 +438,7 @@ export class settingsRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during location addition",
+          message: "An unknown error occurred during location list",
           token: tokens,
           error: String(error),
         },
@@ -452,13 +454,16 @@ export class settingsRepository {
     try {
         await client.query("BEGIN"); // Start transaction
 
-        const { refLocationId } = userData
+        const { refDestinationId } = userData
+        console.log('userData', userData)
+
         const result = await client.query(deletelocationQuery, [
-          refLocationId,
+          refDestinationId,
           CurrentTime(),
           tokendata.id
         ]);
-
+        
+        console.log('result', result)
 
         if (result.rowCount === 0) {
             await client.query("ROLLBACK");
@@ -472,18 +477,17 @@ export class settingsRepository {
             );
         }
 
-           const getdeletedLocation: any = await client.query(
-            getdeletedLocationQuery,
-                [refLocationId]
-              );
-        
-              const { refLocationName } = getdeletedLocation.rows[0];
-
+          //  const getdeletedLocation: any = await client.query(
+          //    getdeletedLocationQuery,
+          //    [refDestinationId]
+          //   );
+            // console.log('getdeletedLocation', getdeletedLocation)
+            
         // Insert delete action into history
         const history = [
             31, 
             tokendata.id,
-           `${refLocationName} deleted succesfully`,
+           `list of location deleted succesfully`,
             CurrentTime(),
             tokendata.id,
         ];

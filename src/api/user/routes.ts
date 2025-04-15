@@ -28,7 +28,7 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.customizeBooking,
-            validate: validate.customizeBooking,
+            // validate: validate.customizeBooking,
             description: "customize Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -40,7 +40,7 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.uploadCertificate,
-            validate: validate.uploadCertificate,
+            // validate: validate.uploadCertificate,
             description: "Upload certificate",
             tags: ["api", "Users"],
             auth: false,
@@ -202,7 +202,6 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/tourBrochure",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.tourBrochure,
             description: "tour Brochure",
             tags: ["api", "Users"],

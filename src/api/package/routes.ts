@@ -28,7 +28,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.UpdatePackage,
-            validate: validate.UpdatePackage,
+            // validate: validate.UpdatePackage,
             description: "update Package",
             tags: ["api", "Users"],
             auth: false,
@@ -103,7 +103,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateTravalInclude,
-            validate: validate.updateTravalInclude,
+            // validate: validate.updateTravalInclude,
             description: "update TravalInclude",
             tags: ["api", "Users"],
             auth: false,
@@ -150,7 +150,7 @@ export class packageRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateTravalExclude,
-            validate: validate.updateTravalExclude,
+            // validate: validate.updateTravalExclude,
             description: "update TravalExclude",
             tags: ["api", "Users"],
             auth: false,

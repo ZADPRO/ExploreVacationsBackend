@@ -425,8 +425,6 @@ export class packageRepository {
         refTravalOverView,
         refItinary,
         refItinaryMapPath,
-        refTravalInclude,
-        refTravalExclude,
         refSpecialNotes,
         refCoverImage,
       } = userData;
@@ -443,6 +441,8 @@ export class packageRepository {
 
       const refLocation = `{${userData.refLocation.join(",")}}`;
       const refActivity = `{${userData.refActivity.join(",")}}`;
+      const refTravalInclude = `{${userData.refTravalInclude.join(",")}}`;
+      const refTravalExclude = `{${userData.refTravalExclude.join(",")}}`;
 
       const existingDatas = await client.query(listTourByIdQuery, [
         refPackageId,
@@ -608,7 +608,7 @@ export class packageRepository {
           token: tokens,
           packageDetails: packageDetails.rows,
         },
-        true
+        false
       );
     } catch (error) {
       console.log(
@@ -626,7 +626,7 @@ export class packageRepository {
           error: errorMessage,
           token: tokens,
         },
-        true
+        false
       );
     } finally {
       client.release();
@@ -1712,7 +1712,6 @@ export class packageRepository {
       console.log("result1: line ------- 1586", result1);
 
 
-  
       for (const image of result1) {
           for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
             if (image[key]) {
@@ -1730,8 +1729,6 @@ export class packageRepository {
             }
           }
         }
-
-
 
       return encrypt(
         {

@@ -39,7 +39,7 @@ export const deleteDestinationQuery = `
             UPDATE
   public."refDestination"
 SET
-  "isDelete" = TRUE,
+  "isDelete" = true,
   "deletedAt" = $2,
   "deletedBy" = $3
   
@@ -90,20 +90,37 @@ WHERE
 
 `;
 
-export const listLoacationQuery = `SELECT * FROM public."refLocation" WHERE "isDelete" = false;
-`;
-
+// export const listLocationQuery = `
+// SELECT
+//   *
+// FROM
+//   public."refLocation"
+// WHERE
+//   "isDelete" IS NOT true;
+// `
+// ;
+export const listLocationQuery = `
+SELECT
+  rl."refLocationId",
+  rl."refLocationName",
+  rl."refDestinationId",
+  rd."refDestinationName"
+FROM
+  public."refLocation" rl
+  LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rl."refDestinationId"
+WHERE
+  rl."isDelete" IS NOT true;`
+;
 export const deletelocationQuery = `UPDATE
   public."refLocation"
 SET
-  "isDelete" = TRUE,
+  "isDelete" = true,
   "deletedAt" = $2,
   "deletedBy" = $3
 WHERE
-  "refLocationId" = $1
+  "refDestinationId" = $1
 RETURNING
   *;
-
 `;
 
 export const getdeletedLocationQuery  = `SELECT

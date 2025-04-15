@@ -37,6 +37,7 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
+  
   updateLocation:{
     payload: Joi.object({
         refLocationId: Joi.number().integer().required(),

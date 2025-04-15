@@ -19,19 +19,19 @@ export default {
   },
   customizeBooking: {
     payload: Joi.object({
-      refPackageId: Joi.number().integer().required(),
-      refUserName: Joi.string().min(1).max(255).required(),
+      refPackageId: Joi.number().integer().optional(),
+      refUserName: Joi.string().required(),
       refUserMail: Joi.string().email().required(),
       refUserMobile: Joi.string().required(), 
-      refArrivalDate: Joi.date().iso().required(), // Ensure the date is in ISO format
+      refArrivalDate: Joi.string().required(),  
       refSingleRoom: Joi.string().required(),
       refTwinRoom: Joi.string().required(),
       refTripleRoom: Joi.string().required(),
       refAdultCount: Joi.string().required(),
       refChildrenCount: Joi.string().required(),
-      refVaccinationType: Joi.string().min(1).max(100).required(),
+      refVaccinationType: Joi.string().required(),
       refOtherRequirements: Joi.string().required(),
-      refVaccinationCertificate: Joi.string().required(),
+      refVaccinationCertificate: Joi.string().optional(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

@@ -1812,18 +1812,27 @@ export class carsRepository {
       } = userData;
       console.log("userData", userData);
 
-      const refBenifits = `{${userData.refBenifits.join(",")}}`;
-      const refInclude = `{${userData.refInclude.join(",")}}`;
-      const refExclude = `{${userData.refExclude.join(",")}}`;
-      const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
+      // const refBenifits = `{${userData.refBenifits.join(",")}}`;
+      // const refInclude = `{${userData.refInclude.join(",")}}`;
+      // const refExclude = `{${userData.refExclude.join(",")}}`;
+      // const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
 
-      // let carImagePath = null;
-      let carImageBase64 = null;
+      const refBenifits = Array.isArray(userData.refBenifits)
+      ? `{${userData.refBenifits.join(",")}}`
+      : "{}";
 
-      // if (carImage) {
-      //   carImagePath = await storetheFile(carImage, 2); // 2 for car images
-      //   carImageBase64 = await convertToBase64(carImagePath);
-      // }
+    const refInclude = Array.isArray(userData.refInclude)
+      ? `{${userData.refInclude.join(",")}}`
+      : "{}";
+
+    const refExclude = Array.isArray(userData.refExclude)
+      ? `{${userData.refExclude.join(",")}}`
+      : "{}";
+
+    const refFormDetails = Array.isArray(userData.refFormDetails)
+      ? `{${userData.refFormDetails.join(",")}}`
+      : "{}";
+      
       const params = [
         refVehicleTypeId,
         refPersonCount,
@@ -1873,7 +1882,6 @@ export class carsRepository {
          tokendata.id
         ]
         ;
-
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
 
@@ -1916,7 +1924,7 @@ export class carsRepository {
             image.refCarPath = {
               filename: path.basename(image.refCarPath),
               content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", // Change based on actual file type if necessary
+              contentType: "image/jpeg", // Change based on actuwal file type if necessary
             };
           } catch (error) {
             console.error("Error reading image file for product ,err");
@@ -2022,9 +2030,7 @@ export class carsRepository {
       ]);
 
 
-      const getDeletedCar = await executeQuery(getDeletedCarQuery,[refCarsId])
-
-      console.log('getDeletedCar line ------ 1997', getDeletedCar)
+      // const getDeletedCar = await executeQuery(getDeletedCarQuery,[refCarsId])
 
       // if (result.rowCount === 0) {
       //   await client.query("ROLLBACK");
@@ -2038,17 +2044,15 @@ export class carsRepository {
       //   );
       // }
 
-      console.log('`${getDeletedCar[0]} deleted Successfully`', `${getDeletedCar[0].refVehicleTypeName} deleted Successfully`)
       // Insert delete action into history
 
       const history = [
         48, // Unique ID for delete action
         tokendata.id,
-        `${getDeletedCar[0].refVehicleTypeName} deleted Successfully`,
+        `car with ${refCarsId} Id deleted Successfully`,
         CurrentTime(), 
         tokendata.id,
       ];
-      console.log('`${getDeletedCar} deleted Successfully`', `${getDeletedCar[0]} deleted Successfully`)
 
       await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction

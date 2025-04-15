@@ -16,7 +16,7 @@ export class settingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addDestination,
-            validate: validate.addDestination,
+            // validate: validate.addDestination,
             description: "add Destination",
             tags: ["api", "Users"],
             auth: false,
@@ -51,7 +51,7 @@ export class settingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.DeleteDestination,
-            validate: validate.DeleteDestination,
+            // validate: validate.DeleteDestination,
             description: "Delete Destination",
             tags: ["api", "Users"],
             auth: false,
@@ -98,7 +98,7 @@ export class settingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteLocation,
-            validate: validate.deleteLocation,
+            // validate: validate.deleteLocation,
             description: "delete Location",
             tags: ["api", "Users"],
             auth: false,

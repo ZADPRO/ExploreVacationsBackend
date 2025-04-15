@@ -54,6 +54,7 @@ import {
 import { sendEmail } from "../../helper/mail";
 
 export class userRepository {
+
   // public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
   //   const client: PoolClient = await getClient();
 
@@ -146,11 +147,12 @@ export class userRepository {
   //   }
   // }
   public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
       await client.query("BEGIN");
-
       const {
         refPackageId,
         refUserName,
@@ -174,7 +176,8 @@ export class userRepository {
         refInfants,
         refOtherRequirements,
         CurrentTime(),
-        "User",
+        tokendata.id,
+        tokendata.id
       ]);
 
       // 1. Admin email
@@ -246,6 +249,7 @@ export class userRepository {
         {
           success: true,
           message: "tour booking successfully",
+          tokens:tokens,
           Data: Result.rows[0],
         },
         true
@@ -258,6 +262,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while tour booking",
+          tokens:tokens,
           error: String(error),
         },
         true
@@ -365,6 +370,8 @@ export class userRepository {
   // }
 
   public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -401,7 +408,9 @@ export class userRepository {
         refVaccinationCertificate,
         refOtherRequirements,
         CurrentTime(),
-        "User",
+        tokendata.id,
+        tokendata.id
+
       ]);
 
       const bookingData = Result.rows[0];
@@ -455,6 +464,7 @@ export class userRepository {
         {
           success: true,
           message: "Customize tour booking added successfully",
+          tokens:tokens,
           Data: bookingData,
           pdfPath: refVaccinationCertificate,
         },
@@ -468,6 +478,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while adding the customize tour booking",
+          tokens:tokens,
           error: String(error),
         },
         true
@@ -481,9 +492,12 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
-      const pdfFile = userData.PdfFile;
+      const pdfFile = userData["PdfFile "] || userData.PdfFile;
+      console.log("userData", userData);
       console.log("pdfFile-------------------------------------", pdfFile);
 
       // Ensure that a PDF file is provided
@@ -513,6 +527,7 @@ export class userRepository {
         {
           success: true,
           message: "PDF Stored Successfully",
+          tokens:tokens,
           filePath: filePath,
           files: storedFiles,
         },
@@ -524,6 +539,7 @@ export class userRepository {
         {
           success: false,
           message: "Error in Storing the PDF",
+          tokens:tokens
         },
         true
       );
@@ -618,6 +634,8 @@ export class userRepository {
   // }
 
   public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -654,7 +672,8 @@ export class userRepository {
         // refFormDetails,
         refOtherRequirements,
         CurrentTime(),
-        "User",
+        tokendata.id,
+        tokendata.id
       ]);
 
       // const sendAdminMail = async () => {
@@ -757,6 +776,7 @@ export class userRepository {
         {
           success: true,
           message: "User car booking added successfully",
+          tokens:tokens,
           Data: Result.rows[0],
         },
         true
@@ -769,6 +789,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while adding the user car booking",
+          tokens:tokens,
           error: String(error),
         },
         true
@@ -824,11 +845,12 @@ export class userRepository {
     try {
       const result = await executeQuery(listallTourQuery);
 
-      console.log("result1", result);
       // Convert images to Base64 format
       for (const image of result) {
+        console.log("image", image);
         if (image.refCoverImage) {
           try {
+            console.log("image -- true part", image);
             const fileBuffer = await viewFile(image.refCoverImage);
             image.refCoverImage = {
               filename: path.basename(image.refCoverImage),
@@ -836,6 +858,7 @@ export class userRepository {
               contentType: "image/jpeg", // Adjust if needed
             };
           } catch (error) {
+            console.log("false part ---");
             console.error("Error reading image file:", error);
             image.refCoverImage = null; // Handle missing/unreadable files
           }
@@ -1286,9 +1309,6 @@ export class userRepository {
 
       // await transporter.sendMail(mailToUser);
 
-
-
-
       // Return the mobile numbers and email ID in the response
       return encrypt(
         {
@@ -1345,20 +1365,25 @@ export class userRepository {
       );
     }
   }
-  public async userBookingHistoryV1(userData: any, tokendata: any): Promise<any> {
+  public async userBookingHistoryV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const token = { id: tokendata.id }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
+      
+      const tourBookingresult = await executeQuery( userTourBookingHistoryQuery,[tokendata.id]);
 
-      const tourBookingresult = await executeQuery(userTourBookingHistoryQuery, [tokendata.id]);
       const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [tokendata.id]);
+
       const CarParkingBookingresult = await executeQuery(userCarParkingBookingHistoryQuery, [tokendata.id]);
 
       return encrypt(
         {
           success: true,
           message: "listed userBooking List",
-          token:tokens
+          token: tokens,
         },
         true
       );
@@ -1368,11 +1393,10 @@ export class userRepository {
           success: false,
           message: "An unknown error occurred during listed userBooking List ",
           error: String(error),
-          token:tokens
+          token: tokens,
         },
         true
       );
     }
   }
-
 }
