@@ -41,7 +41,7 @@ export const CurrentTime = (): string => {
 
 // export const CurrentTime = (): string => {
 //   const systemTime = new Date();
- 
+
 //   const options: Intl.DateTimeFormatOptions = {
 //     day: "numeric",
 //     month: "numeric",
@@ -51,7 +51,7 @@ export const CurrentTime = (): string => {
 //     second: "numeric",
 //     hour12: true,
 //   };
- 
+
 //   return new Intl.DateTimeFormat("en-IN", options).format(systemTime);
 // };
 
@@ -210,9 +210,13 @@ export function base64ToFile(
 // Mark the function as async to use await inside it
 export async function processImages(result: any[]) {
   for (const image of result) {
+    console.log("image", image);
     for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+      console.log("key", key);
       if (image[key]) {
+        console.log("key line 217", key);
         try {
+          console.log("key line 219", key);
           const fileBuffer = await viewFile(image[key]);
           image[key] = {
             filename: path.basename(image[key]),

@@ -25,10 +25,11 @@ export const addTourBookingQuery = `INSERT INTO
     "refInfants",
     "refOtherRequirements",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "refuserId",
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12)
 RETURNING
   *;
 `;
@@ -49,9 +50,10 @@ export const addcustomizeBookingQuery = `
         "refVaccinationCertificate", 
         "refOtherRequirements", 
         "createdAt", 
-        "createdBy"
+        "createdBy",
+        "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) 
     RETURNING *;
 `;
 
@@ -68,9 +70,10 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "refInfants", 
         "refOtherRequirements", 
         "createdAt", 
-        "createdBy"
+        "createdBy",
+        "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
     RETURNING *;
 
 `;
