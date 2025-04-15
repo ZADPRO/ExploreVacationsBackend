@@ -425,7 +425,7 @@ export class carParkingRepository {
           token: tokens,
           carParkingResult: updateResult,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback transaction in case of failure
@@ -437,7 +437,7 @@ export class carParkingRepository {
           message: "An error occurred while updating the car Parking",
           error: String(error),
         },
-        false
+        true
       );
     } finally {
       client.release();
