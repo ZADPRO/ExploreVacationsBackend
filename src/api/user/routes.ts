@@ -14,7 +14,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/tourBooking",
           config: {
-            pre: [{ method: validateToken, assign: "token" }],
+            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.tourBooking,
             validate: validate.tourBooking,
             description: "tour Booking",
@@ -26,7 +26,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/customizeBooking",
           config: {
-            pre: [{ method: validateToken, assign: "token" }],
+            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.customizeBooking,
             // validate: validate.customizeBooking,
             description: "customize Booking",
@@ -38,7 +38,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/uploadCertificate",
           config: {
-            pre: [{ method: validateToken, assign: "token" }],
+            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.uploadCertificate,
             // validate: validate.uploadCertificate,
             description: "Upload certificate",
@@ -56,7 +56,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/userCarBooking",
           config: {
-            pre: [{ method: validateToken, assign: "token" }],
+            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.userCarBooking,
             validate: validate.userCarBooking,
             description: "car Booking",

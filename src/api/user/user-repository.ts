@@ -152,8 +152,8 @@ export class userRepository {
   //   }
   // }
   public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -254,7 +254,7 @@ export class userRepository {
         {
           success: true,
           message: "tour booking successfully",
-          tokens:tokens,
+          // tokens:tokens,
           Data: Result.rows[0],
         },
         true
@@ -267,7 +267,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while tour booking",
-          tokens:tokens,
+          // tokens:tokens,
           error: String(error),
         },
         true
@@ -375,8 +375,8 @@ export class userRepository {
   // }
 
   public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -469,7 +469,7 @@ export class userRepository {
         {
           success: true,
           message: "Customize tour booking added successfully",
-          tokens:tokens,
+          // tokens:tokens,
           Data: bookingData,
           pdfPath: refVaccinationCertificate,
         },
@@ -483,7 +483,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while adding the customize tour booking",
-          tokens:tokens,
+          // tokens:tokens,
           error: String(error),
         },
         true
@@ -497,8 +497,8 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
@@ -532,7 +532,7 @@ export class userRepository {
         {
           success: true,
           message: "PDF Stored Successfully",
-          tokens:tokens,
+          // tokens:tokens,
           filePath: filePath,
           files: storedFiles,
         },
@@ -544,7 +544,7 @@ export class userRepository {
         {
           success: false,
           message: "Error in Storing the PDF",
-          tokens:tokens
+          // tokens:tokens
         },
         true
       );
@@ -639,8 +639,8 @@ export class userRepository {
   // }
 
   public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -781,7 +781,7 @@ export class userRepository {
         {
           success: true,
           message: "User car booking added successfully",
-          tokens:tokens,
+          // tokens:tokens,
           Data: Result.rows[0],
         },
         true
@@ -794,7 +794,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while adding the user car booking",
-          tokens:tokens,
+          // tokens:tokens,
           error: String(error),
         },
         true
