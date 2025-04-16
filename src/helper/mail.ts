@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
-import cron from "node-cron";
+// import cron from "node-cron";
+import cron from "node-cron"
+// 
 import { getClient } from "./db";
 import { CurrentTime } from "./common";
 import { generateReminderEmailContent } from "./mailcontent";

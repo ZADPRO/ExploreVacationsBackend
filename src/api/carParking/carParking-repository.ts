@@ -657,6 +657,8 @@ export class carParkingRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateServiceFeaturesV1(

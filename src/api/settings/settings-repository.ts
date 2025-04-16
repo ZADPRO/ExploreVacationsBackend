@@ -845,6 +845,8 @@ export class settingsRepository {
         },
         true
       );
+    } finally{
+      client.release()
     }
   }
   public async listActivitiesV1(userData: any, tokendata: any): Promise<any> {
