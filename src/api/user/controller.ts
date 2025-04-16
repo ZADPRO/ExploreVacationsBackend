@@ -112,6 +112,38 @@ export class userController {
         .code(500);
     }
   };
+  public uploadPassport = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----upload passport");
+    try {
+      // const decodedToken ={
+      //   id:request.plugins.token.id
+      // }
+      let entity;
+      entity = await this.resolver.uploadPassportV1(request.payload
+        // , decodedToken
+      );
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in upload passport", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
   public userCarBooking = async (
     request: any,
     response: Hapi.ResponseToolkit

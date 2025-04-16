@@ -13,20 +13,26 @@ interface HapiFile {
 }
 
 // Function to generate a unique filename
-const generateUniqueFilename = (originalName: string): string => {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-  let uniqueName = "";
+// const generateUniqueFilename = (originalName: string): string => {
+//   const characters =
+//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+//   let uniqueName = "";
 
-  for (let i = 0; i < 10; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    uniqueName += characters[randomIndex];
-  }
+//   for (let i = 0; i < 10; i++) {
+//     const randomIndex = Math.floor(Math.random() * characters.length);
+//     uniqueName += characters[randomIndex];
+//   }
 
-  const extension = path.extname(originalName); // Get the original file extension
-  return uniqueName + extension; // Append the original extension to the unique name
-};
+//   const extension = path.extname(originalName); // Get the original file extension
+//   return uniqueName + extension; // Append the original extension to the unique name
+// };
+export function generateUniqueFilename(originalName: string): string {
+  const timestamp = Date.now(); // e.g. 1713265479834
+  const random = Math.floor(1000 + Math.random() * 9000); // e.g. 4321
+  const extension = path.extname(originalName); // e.g. ".jpg", ".png"
 
+  return `${timestamp}${random}${extension}`;
+}
 
 // Function to store a file
 export const storeFile = async (
@@ -37,35 +43,31 @@ export const storeFile = async (
 
   // Determine the directory based on the uploadType value
   if (uploadType === 1) {
-    console.log('uploadType', uploadType)
+    console.log("uploadType", uploadType);
 
     uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   } else if (uploadType === 2) {
     uploadDir = path.join(process.cwd(), "./src/assets/cars");
-  }else if (uploadType === 3) {
+  } else if (uploadType === 3) {
     uploadDir = path.join(process.cwd(), "./src/assets/certificate");
-  }else if (uploadType === 4) {
+  } else if (uploadType === 4) {
     uploadDir = path.join(process.cwd(), "./src/assets/map");
-  }else if (uploadType === 5) {
+  } else if (uploadType === 5) {
     uploadDir = path.join(process.cwd(), "./src/assets/coverImage");
-  }
-  else if (uploadType === 6) {
+  } else if (uploadType === 6) {
     uploadDir = path.join(process.cwd(), "./src/assets/employeeProfile");
-  }
-  else if (uploadType === 7) {
+  } else if (uploadType === 7) {
     uploadDir = path.join(process.cwd(), "./src/assets/carParkingImage");
+  } else if (uploadType === 8) {
+    uploadDir = path.join(process.cwd(), "./src/assets/passport");
   }
-
+   else {
+    uploadDir = path.join(process.cwd(), "./src/assets/DOC");
+  }
   
-  else {
-    uploadDir = path.join(
-      process.cwd(),
-      "./src/assets/DOC"
-    );
-  }
 
   // uploadDir = path.join(process.cwd(), "./src/assets/gallery");
-  
+
   const uniqueFilename = generateUniqueFilename(file.hapi.filename);
   const uploadPath = path.join(uploadDir, uniqueFilename);
 
@@ -92,7 +94,6 @@ export const storeFile = async (
   });
 };
 
-
 // Function to view a stored file
 export const viewFile = (filePath: string): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
@@ -109,7 +110,7 @@ export const viewFile = (filePath: string): Promise<Buffer> => {
 };
 
 export const deleteFile = async (filePath: string): Promise<void> => {
-  console.log('filePath line ----------------- 94 \n', filePath)
+  console.log("filePath line ----------------- 94 \n", filePath);
   return new Promise((resolve, reject) => {
     fs.unlink(filePath, (err) => {
       if (err) {
@@ -122,12 +123,10 @@ export const deleteFile = async (filePath: string): Promise<void> => {
   });
 };
 
-
-
 export const convertToBase64 = async (filePath: string): Promise<string> => {
   // Read the image file and convert it to base64
   const imageBuffer = await fs.promises.readFile(filePath);
-  return imageBuffer.toString('base64');
+  return imageBuffer.toString("base64");
 };
 
 export const storetheFile = async (
@@ -151,7 +150,9 @@ export const storetheFile = async (
 
   uploadDir = path.join(process.cwd(), "./src/assets/gallery");
 
-  const uniqueFilename = file.hapi ? generateUniqueFilename(file.hapi.filename) : generateUniqueFilename(file.name);
+  const uniqueFilename = file.hapi
+    ? generateUniqueFilename(file.hapi.filename)
+    : generateUniqueFilename(file.name);
   const uploadPath = path.join(uploadDir, uniqueFilename);
 
   // Create the directory if it doesn't exist

@@ -735,7 +735,10 @@ export class carParkingRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
+  
   }
   public async listServiceFeaturesV1(
     userData: any,

@@ -68,6 +68,46 @@ export function generateTourBookingEmailContent(result: any): string {
   `;
 }
 
+// export function userTourBookingMail ( data:any):string {
+//   return `
+//   <h2>Hi ${data.refUserName},</h2>
+//           <p>🎉 Your tour has been successfully booked!</p>
+//           <p>Your tour starts on <strong>${data.refPickupDate}</strong>.</p>
+//           <p>🧳 Only <strong>${data.daysLeft}</strong> day(s) to go!</p>
+//           <p>We’ll send you daily reminders so you don’t miss a thing!</p>
+//           <br/>
+//           <p>Thank you,<br>Team Explore Vacations</p>
+//   `
+  
+  
+// }
+
+export function userTourBookingMail(data: any): string {
+  return `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4faff; padding: 30px;">
+      <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.1); overflow: hidden;">
+        <div style="background-color: #007bff; color: white; padding: 20px 30px;">
+          <h2 style="margin: 0;">Explore Vacations</h2>
+        </div>
+        <div style="padding: 30px;">
+          <h3 style="color: #007bff;">Hi ${data.refUserName},</h3>
+          <p>🎉 Great news! Your tour <strong>"${data.refPackageName}"</strong> has been successfully booked.</p>
+          <p><strong>Tour Code:</strong> ${data.refTourCustID}</p>
+          <p>Your adventure begins on <strong>${data.refPickupDate}</strong>.</p>
+          <p>🧳 Only <strong>${data.daysLeft}</strong> day(s) left to go!</p>
+          <p>We'll send you daily reminders so you’re fully prepared for the journey ahead.</p>
+
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
+
+          <p>Thank you for choosing <strong>Explore Vacations</strong>!</p>
+          <p>We look forward to giving you an unforgettable experience.</p>
+
+          <p style="margin-top: 30px;">Warm regards,<br/><strong>Team Explore Vacations</strong></p>
+        </div>
+      </div>
+    </div>
+  `;
+}
 
 
 export function generateCustomizeTourBookingEmailContent(data: any): string {

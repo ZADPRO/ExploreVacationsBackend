@@ -32,6 +32,7 @@ import {
   getdeletedincludeQuery,
   getdeletedPackageQuery,
   getImageRecordQuery,
+  gettourIdIdQuery,
   insertGalleryQuery,
   listPackageQuery,
   listTourByIdQuery,
@@ -127,7 +128,7 @@ export class packageRepository {
         refItinaryMapPath,
         refSpecialNotes,
         refTravalOverView,
-        refCoverImage,
+        refCoverImage
       } = userData;
 
       // const refLocation = `{${userData.refLocation.join(",")}}`;
@@ -144,6 +145,23 @@ export class packageRepository {
         ? `{${userData.refTravalExclude.join(",")}}`
         : `{${userData.refTravalExclude.split(",").join(",")}}`;
 
+        const customerPrefix = "EV-TOUR-";
+        const baseNumber = 0;
+  
+        const lastCustomerResult = await client.query(gettourIdIdQuery);
+        let newCustomerId: string;
+  
+        if (lastCustomerResult.rows.length > 0) {
+          const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
+          newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
+            .toString()
+            .padStart(4, "0")}`;
+        } else {
+          newCustomerId = `${customerPrefix}${(baseNumber + 1)
+            .toString()
+            .padStart(4, "0")}`;
+        }
+
       // Insert package details and get refPackageId
       const packageResult = await client.query(addPackageQuery, [
         refPackageName,
@@ -158,8 +176,9 @@ export class packageRepository {
         refTourPrice,
         refSeasonalPrice,
         refCoverImage,
+        newCustomerId,
         CurrentTime(),
-        "Admin",
+        refuserId,
       ]);
 
       const refPackageId = packageResult.rows[0].refPackageId;
@@ -169,8 +188,10 @@ export class packageRepository {
         refPackageId,
         images,
         CurrentTime(),
-        "Admin",
-      ]);
+        refuserId,
+      ]
+    );
+
       // console.log('image', image)
 
       //     storedImages.push({
@@ -182,11 +203,6 @@ export class packageRepository {
       //   }
       // }
 
-      console.log(
-        "image------------------------------------------------195",
-        image
-      );
-
       const Result = await client.query(addTravalDataQuery, [
         refPackageId,
         refTravalOverView,
@@ -196,7 +212,7 @@ export class packageRepository {
         refTravalExclude,
         refSpecialNotes,
         CurrentTime(),
-        "Admin",
+        refuserId,
       ]);
       console.log(
         "Result--------------------------------------------------------------------------------------",
@@ -863,7 +879,6 @@ export class packageRepository {
       );
     }
   }
-
   public async listPackageV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -933,7 +948,6 @@ export class packageRepository {
       );
     }
   }
-
   // public async listPackageV1(userData: any, tokendata: any): Promise<any> {
   //     const token = { id: tokendata.id };
   //     const tokens = generateTokenWithExpire(token, true);
@@ -1003,7 +1017,6 @@ export class packageRepository {
   //         );
   //     }
   // }
-
   public async deleteImageV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1059,7 +1072,6 @@ export class packageRepository {
       );
     }
   }
-
   public async addTravalIncludeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
@@ -1148,6 +1160,8 @@ export class packageRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateTravalIncludeV1(
@@ -1221,6 +1235,8 @@ export class packageRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async deleteTravalIncludeV1(
@@ -1416,6 +1432,8 @@ export class packageRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateTravalExcludeV1(
@@ -1489,6 +1507,8 @@ export class packageRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async deleteTravalExcludeV1(
@@ -1755,4 +1775,6 @@ export class packageRepository {
       );
     }
   }
+
 }
+

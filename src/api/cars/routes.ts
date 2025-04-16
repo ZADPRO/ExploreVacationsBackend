@@ -218,7 +218,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateDriverDetails,
-            validate: validate.updateDriverDetails,
+            // validate: validate.updateDriverDetails,
             description: "update Driver Details",
             tags: ["api", "Users"],
             auth: false,
@@ -311,7 +311,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addCars,
-            // validate: validate.addCars,
+            validate: validate.addCars,
             description: "add Cars ",
             tags: ["api", "Users"],
             auth: false,
@@ -399,7 +399,17 @@ export class carsRoutes implements IRoute {
             auth: false,
           },
         },
-
+        {
+          method: "GET",
+          path: "/api/v1/carsRoutes/getCarType",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getCarType,
+            description: "getCarType",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

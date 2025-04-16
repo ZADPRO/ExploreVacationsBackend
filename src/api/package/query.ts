@@ -1,3 +1,12 @@
+export const gettourIdIdQuery = `
+SELECT
+  COUNT(*)
+FROM
+  public."refPackage"
+WHERE
+  "refTourCustID" LIKE 'EV-TOUR-%';
+`;
+
 export const addPackageQuery = `INSERT INTO
   public."refPackage" (
     "refPackageName",
@@ -12,6 +21,7 @@ export const addPackageQuery = `INSERT INTO
     "refTourPrice",
     "refSeasonalPrice",
     "refCoverImage",
+    "refTourCustID",
     "createdAt",
     "createdBy"
   )
@@ -30,7 +40,8 @@ VALUES
     $11,
     $12,
     $13,
-    $14
+    $14,
+    $15
   )
 RETURNING
   "refPackageId";
@@ -64,6 +75,8 @@ VALUES
 RETURNING
   *;
 `;
+
+
 export const updatePackageQuery = `UPDATE
   public."refPackage"
 SET

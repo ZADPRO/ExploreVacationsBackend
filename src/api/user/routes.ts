@@ -54,6 +54,24 @@ export class userRoutes implements IRoute {
         },
         {
           method: "POST",
+          path: "/api/v1/userRoutes/uploadPassport",
+          config: {
+            // pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.uploadPassport,
+            // validate: validate.uploadCertificate,
+            description: "Upload passport",
+            tags: ["api", "Users"],
+            auth: false,
+            payload: {
+              maxBytes: 10485760,
+              output: "stream",
+              parse: true,
+              multipart: true,
+            },
+          },
+        },
+        {
+          method: "POST",
           path: "/api/v1/userRoutes/userCarBooking",
           config: {
             // pre: [{ method: validateToken, assign: "token" }],

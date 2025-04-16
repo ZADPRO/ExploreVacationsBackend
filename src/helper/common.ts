@@ -167,21 +167,27 @@ export function generateClassDurationString(
   } in ${refMonthDuration} Month${refMonthDuration > 1 ? "s" : ""} Duration`;
 }
 
+// export function generateFileName(): string {
+//   // Generate a random string of 6 alphabets
+//   const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@$*";
+//   const randomChars = Array.from({ length: 6 }, () =>
+//     alphabets.charAt(Math.floor(Math.random() * alphabets.length))
+//   ).join("");
+
+//   // Get current date in DDMMYYYY format
+//   const today = new Date();
+//   const datePart = `${String(today.getDate()).padStart(2, "0")}${String(
+//     today.getMonth() + 1
+//   ).padStart(2, "0")}${today.getFullYear()}`;
+
+//   // Combine random characters with date
+//   return `${randomChars}${datePart}`;
+// }
+
 export function generateFileName(): string {
-  // Generate a random string of 6 alphabets
-  const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@$*";
-  const randomChars = Array.from({ length: 6 }, () =>
-    alphabets.charAt(Math.floor(Math.random() * alphabets.length))
-  ).join("");
-
-  // Get current date in DDMMYYYY format
-  const today = new Date();
-  const datePart = `${String(today.getDate()).padStart(2, "0")}${String(
-    today.getMonth() + 1
-  ).padStart(2, "0")}${today.getFullYear()}`;
-
-  // Combine random characters with date
-  return `${randomChars}${datePart}`;
+  const timestamp = Date.now(); // Milliseconds since Jan 1, 1970
+  const random = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
+  return `${timestamp}${random}`; // e.g., "17132654798341234"
 }
 
 export function base64ToFile(
@@ -211,7 +217,7 @@ export function base64ToFile(
 export async function processImages(result: any[]) {
   for (const image of result) {
     console.log("image", image);
-    for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+    for (const key of ["refGallery", "refItinaryMapPath", "refCoverImage"]) {
       console.log("key", key);
       if (image[key]) {
         console.log("key line 217", key);

@@ -58,6 +58,8 @@ import {
   getImageRecordQuery,
   getVehicleNameQuery,
   getDeletedCarQuery,
+  getCarIdIdQuery,
+  getCarTypeQuery,
 } from "./query";
 import { cli } from "winston/lib/winston/config";
 
@@ -102,6 +104,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateVehicleV1(userData: any, tokenData: any): Promise<any> {
@@ -169,6 +173,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listVehicleV1(userData: any, tokendata: any): Promise<any> {
@@ -356,6 +362,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateBenifitsV1(userData: any, tokenData: any): Promise<any> {
@@ -418,6 +426,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listBenifitsV1(userData: any, tokendata: any): Promise<any> {
@@ -613,6 +623,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateIncludeV1(userData: any, tokenData: any): Promise<any> {
@@ -673,6 +685,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listIncludeV1(userData: any, tokendata: any): Promise<any> {
@@ -854,6 +868,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async UpdateExcludeV1(userData: any, tokenData: any): Promise<any> {
@@ -916,6 +932,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listExcludeV1(userData: any, tokendata: any): Promise<any> {
@@ -1018,6 +1036,8 @@ export class carsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
+      await client.query("BEGIN");
+
       const {
         refDriverName,
         refDriverAge,
@@ -1041,6 +1061,7 @@ export class carsRepository {
       const history = [20, token.id, "Add driver", CurrentTime(), tokendata.id];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT");
 
       return encrypt(
         {
@@ -1052,6 +1073,8 @@ export class carsRepository {
         true
       );
     } catch (error: unknown) {
+      await client.query("ROLLBACK");
+
       return encrypt(
         {
           success: false,
@@ -1061,6 +1084,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateDriverDetailsV1(
@@ -1144,6 +1169,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listDriverDetailsV1(
@@ -1383,6 +1410,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateFormDetailsV1(
@@ -1448,6 +1477,8 @@ export class carsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listFormDetailsV1(userData: any, tokendata: any): Promise<any> {
@@ -1552,7 +1583,7 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN"); // Start transaction
-
+      
       const {
         refVehicleTypeId,
         refPersonCount,
@@ -1562,14 +1593,14 @@ export class carsRepository {
         refMileage,
         refTrasmissionType,
         refFuleLimit,
-        refDriverDetailsId,
         refOtherRequirements,
         refrefRentalAgreement,
         refFuelPolicy,
-        refDriverRequirements,
+        // refDriverRequirements,
         refPaymentTerms,
         carImagePath,
         refCarPrice,
+        refCarTypeId
       } = userData;
 
       const refBenifits = Array.isArray(userData.refBenifits)
@@ -1588,6 +1619,24 @@ export class carsRepository {
         ? `{${userData.refFormDetails.join(",")}}`
         : "{}";
 
+        const customerPrefix = "EV-CAR-";
+        const baseNumber = 0;
+  
+        const lastCustomerResult = await client.query(getCarIdIdQuery);
+        let newCustomerId: string;
+  
+        if (lastCustomerResult.rows.length > 0) {
+          const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
+          newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
+            .toString()
+            .padStart(4, "0")}`;
+        } else {
+          newCustomerId = `${customerPrefix}${(baseNumber + 1)
+            .toString()
+            .padStart(4, "0")}`;
+        }
+
+
       const params = [
         refVehicleTypeId,
         refPersonCount,
@@ -1600,13 +1649,14 @@ export class carsRepository {
         refBenifits,
         refInclude,
         refExclude,
-        refDriverDetailsId,
         refFormDetails,
         refOtherRequirements,
         carImagePath,
         refCarPrice,
+        newCustomerId,
+        refCarTypeId,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
 
       const carsResult = await client.query(addCarsQuery, params);
@@ -1614,10 +1664,10 @@ export class carsRepository {
         carsResult.rows[0].refCarsId,
         refrefRentalAgreement,
         refFuelPolicy,
-        refDriverRequirements,
+        // refDriverRequirements,
         refPaymentTerms,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
 
       await client.query(addCondation, termsPrams);
@@ -1657,6 +1707,7 @@ export class carsRepository {
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback transaction in case of failure
+
       console.error("Error adding car:", error);
 
       return encrypt(
@@ -1782,8 +1833,7 @@ export class carsRepository {
   }
   public async updateCarsV1(
     userData: any,
-    tokendata: any,
-    carImage: any
+    tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
@@ -1801,7 +1851,6 @@ export class carsRepository {
         refMileage,
         refTrasmissionType,
         refFuleLimit,
-        refDriverDetailsId,
         refOtherRequirements,
         refrefRentalAgreement,
         refFuelPolicy,
@@ -1810,7 +1859,6 @@ export class carsRepository {
         refCarPrice,
         carImagePath
       } = userData;
-      console.log("userData", userData);
 
       // const refBenifits = `{${userData.refBenifits.join(",")}}`;
       // const refInclude = `{${userData.refInclude.join(",")}}`;
@@ -1845,7 +1893,6 @@ export class carsRepository {
         refBenifits,
         refInclude,
         refExclude,
-        refDriverDetailsId,
         refFormDetails,
         refOtherRequirements,
         carImagePath, // Updated image path (if provided)
@@ -1862,7 +1909,6 @@ export class carsRepository {
         refCarsId,
         refrefRentalAgreement,
         refFuelPolicy,
-        refDriverRequirements,
         refPaymentTerms,
         CurrentTime(),
         "Admin",
@@ -1872,12 +1918,19 @@ export class carsRepository {
 
       const updatedCar = updateResult.rows[0];
       console.log("Updated car ID:", updatedCar.refCarsId);
+    
+      const getVehicleName: any = await executeQuery(getVehicleNameQuery, [
+        refVehicleTypeId,
+      ]);
 
+      console.log("getVehicleName", getVehicleName);
+
+      const vehicleName = getVehicleName[0]?.refVehicleTypeName || "Vehicle";
       // Log history of the action
       const history = [
         26, 
         tokendata.id, 
-        `${refCarsId}car updated Succesfully`,
+        `${vehicleName} car data updated Succesfully`,
          CurrentTime(), 
          tokendata.id
         ]
@@ -2082,6 +2135,34 @@ export class carsRepository {
     } finally {
       client.release();
     }
+  }
+  public async getCarTypeV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const result = await executeQuery(getCarTypeQuery);
+      return encrypt(
+        {
+          success: true,
+          message: "CarType listed successfully",
+          token: tokens,
+          Data: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in listed carType:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while listed carType",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } 
   }
   
 }

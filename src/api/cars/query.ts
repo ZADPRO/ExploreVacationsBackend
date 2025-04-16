@@ -324,6 +324,16 @@ RETURNING
 
 // cars
 
+
+export const getCarIdIdQuery = `SELECT
+COUNT(*)
+FROM
+public."refCarsTable"
+WHERE
+"refCarCustId" LIKE 'EV-CAR-%'; 
+`;
+
+
 export const addCarsQuery = `INSERT INTO
   public."refCarsTable" (
     "refVehicleTypeId",
@@ -337,17 +347,18 @@ export const addCarsQuery = `INSERT INTO
     "refBenifits",
     "refInclude",
     "refExclude",
-    "refDriverDetailsId",
     "refFormDetails",
     "refOtherRequirements",
     "refCarPath",
     "refCarPrice",
+    "refCarCustId",
+    "refCarTypeId",
     "createdAt",
     "createdBy",
     "isDelete"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, false) 
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, false) 
 RETURNING
   *;
 `;
@@ -357,13 +368,12 @@ export const addCondation = `INSERT INTO
     "refCarsId",
     "refRentalAgreement",
     "refFuelPolicy",
-    "refDriverRequirements",
     "refPaymentTerms",
     "createdAt",
     "createdBy"
   )
 values
-  ($1, $2, $3, $4, $5, $6, $7)
+  ($1, $2, $3, $4, $5, $6)
   `;
 
 export const getVehicleNameQuery = `SELECT
@@ -381,10 +391,9 @@ export const updateCondation = `UPDATE
 SET
   "refRentalAgreement" = $2,
   "refFuelPolicy" = $3,
-  "refDriverRequirements" = $4,
-  "refPaymentTerms" = $5,
-  "updatedAt" = $6,
-  "createdBy" = $7
+  "refPaymentTerms" = $4,
+  "updatedAt" = $5,
+  "createdBy" = $6
 WHERE
   "refCarsId" = $1
 RETURNING
@@ -423,14 +432,13 @@ export const updateCarsQuery = `
           "refBenifits" = $9,
           "refInclude" = $10,
           "refExclude" = $11,
-          "refDriverDetailsId" = $12,
-          "refFormDetails" = $13,
-          "refOtherRequirements" = $14,
-          "refCarPath" = $15,
-          "refCarPrice" = $16,
-          "updatedAt" = $17,
-          "updatedBy" = $18
-        WHERE "refCarsId" = $19
+          "refFormDetails" = $12,
+          "refOtherRequirements" = $13,
+          "refCarPath" = $14,
+          "refCarPrice" = $15,
+          "updatedAt" = $16,
+          "updatedBy" = $17
+        WHERE "refCarsId" = $18
         RETURNING *;
       `;
 
@@ -527,9 +535,12 @@ WHERE
 // ;
 //       `;
 
-export const listCarsQuery = `SELECT
+export const listCarsQuery = `
+SELECT
 rc."refCarsId",
   rvt."refVehicleTypeName",
+  ct."refCarTypeName",
+  rc."refCarCustId",
   rc."refPersonCount",
   rc."refBagCount",
   rc."refFuelType",
@@ -542,8 +553,11 @@ rc."refCarsId",
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
-  WHERE rc."isDelete" IS NOT true ;
-      `;
+  LEFT JOIN public."refCarType" ct ON CAST(ct."refCarTypeId" AS INTEGER) = rc."refCarTypeId"
+  WHERE rc."isDelete" IS NOT true 
+  ;
+      
+  `;
 
 
 // export const getCarsByIdQuery = `
@@ -567,9 +581,10 @@ FROM
 //   ;
 
 
-  export const getCarsByIdQuery = `
+export const getCarsByIdQuery = `
 SELECT DISTINCT
   ON (rct."refCarsId") rct.*,
+  ct."refCarTypeName",
   array_to_json(string_to_array(
     trim(both '{}' from rct."refExclude"), ','
   )::int[]) AS "Exclude",
@@ -579,8 +594,7 @@ SELECT DISTINCT
   array_to_json(string_to_array(
     trim(both '{}' from rct."refBenifits"), ','
   )::int[]) AS "Benifits",
-  vt.*,
-  rdd.*,
+  vt."refVehicleTypeName",
   tc.*,
   array_to_json(string_to_array(
     trim(both '{}' from rct."refFormDetails"), ','
@@ -588,7 +602,7 @@ SELECT DISTINCT
 FROM
   public."refCarsTable" rct
   LEFT JOIN public."refVehicleType" vt ON vt."refVehicleTypeId" = rct."refVehicleTypeId"
-  LEFT JOIN public."refDriverDetails" rdd ON rdd."refDriverDetailsId" = rct."refDriverDetailsId"
+  LEFT JOIN public."refCarType" ct ON ct."refCarTypeId"= rct."refCarTypeId"
   LEFT JOIN public."refTermsAndConditions" tc ON tc."refCarsId" = rct."refCarsId"
 WHERE
   rct."refCarsId" = $1
@@ -596,4 +610,11 @@ WHERE
     rct."isDelete" IS NULL
     OR rct."isDelete" IS FALSE
 );
+`;
+
+export const getCarTypeQuery =`
+SELECT
+  *
+FROM
+  public."refCarType"
 `;

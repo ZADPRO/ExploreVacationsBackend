@@ -90,6 +90,8 @@ export class settingsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async UpdateDestinationV1(
@@ -159,6 +161,8 @@ export class settingsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listDestinationV1(userData: any, tokenData: any): Promise<any> {
@@ -345,6 +349,8 @@ export class settingsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateLocationV1(userData: any, tokenData: any): Promise<any> {
@@ -417,6 +423,8 @@ export class settingsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   
@@ -527,6 +535,8 @@ export class settingsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
+      await client.query("BEGIN");
+
       const { refCategory } = userData;
 
       const userResult = await client.query(addCategoryQuery, [
@@ -544,6 +554,7 @@ export class settingsRepository {
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT");
 
       return encrypt(
         {
@@ -555,6 +566,8 @@ export class settingsRepository {
         true
       );
     } catch (error: unknown) {
+      await client.query("ROLLBACK");
+
       return encrypt(
         {
           success: false,
@@ -564,6 +577,8 @@ export class settingsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateCategoriesV1(userData: any, tokenData: any): Promise<any> {
@@ -572,6 +587,8 @@ export class settingsRepository {
     const token = { id: tokenData.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
+      await client.query("BEGIN");
+
       const { refCategoryId, refCategoryName } = userData;
 
       const checkResult = await executeQuery(checkCategoryQuery, [
@@ -632,6 +649,8 @@ export class settingsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async listCategoriesV1(userData: any, tokendata: any): Promise<any> {
@@ -779,6 +798,8 @@ export class settingsRepository {
         },
         true
       );
+    }finally {
+      client.release();
     }
   }
   public async updateActivitiesV1(userData: any, tokenData: any): Promise<any> {

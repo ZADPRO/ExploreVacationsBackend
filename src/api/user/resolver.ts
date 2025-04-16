@@ -21,6 +21,9 @@ export class userResolver {
   public async uploadCertificateV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.uploadCertificateV1(user_data, token_data, domain_code);
   }
+  public async uploadPassportV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.uploadPassportV1(user_data, token_data, domain_code);
+  }
   public async getAllTourV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.getAllTourV1(user_data, token_data, domain_code);
   }

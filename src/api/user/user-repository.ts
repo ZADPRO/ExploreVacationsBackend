@@ -28,6 +28,7 @@ import {
   getImageRecordQuery,
   getLastCustomerIdQuery,
   getOtherCarsQuery,
+  getPackageNameQuery,
   getUsersQuery,
   insertUserDomainQuery,
   insertUserQuery,
@@ -55,11 +56,11 @@ import {
   generateforgotPasswordEmailContent,
   generateReminderEmailContent,
   generateTourBookingEmailContent,
+  userTourBookingMail,
 } from "../../helper/mailcontent";
 import { sendEmail } from "../../helper/mail";
 
 export class userRepository {
-
   // public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
   //   const client: PoolClient = await getClient();
 
@@ -181,34 +182,33 @@ export class userRepository {
         refInfants,
         refOtherRequirements,
         CurrentTime(),
-        tokendata.id,
-        tokendata.id
+        "user",
+        // tokendata.id,
+        // tokendata.id
       ]);
+      const getPackageName:any = await executeQuery(getPackageNameQuery,[refPackageId])
+     
+      console.log('getPackageName', getPackageName)
 
-      // 1. Admin email
-      const adminMail = {
-        to: "indumathi123indumathi@gmail.com",
-        subject: "New Tour Booking Received",
-        html: generateTourBookingEmailContent(Result),
+      // if (!getPackageName.rows.length) {
+      //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
+      // }
+      const {refPackageName, refTourCustID}= getPackageName[0];
+
+      const main = async () => {
+        const adminMail = {
+          to: "indumathi123indumathi@gmail.com",
+          subject: "New Tour Booking Received",
+          html: generateTourBookingEmailContent(Result),
+        };
+
+        try {
+          await sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for Admin", error);
+        }
       };
-      // await sendEmail(adminMail);
-
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAILID,
-          pass: process.env.PASSWORD,
-        },
-      });
-
-      const mailoption = {
-        from: process.env.EMAILID,
-        to: "indumathi123indumathi@gmail.com",
-        subject: "New Tour Booking Received",
-        html: generateTourBookingEmailContent(Result),
-      };
-
-      await transporter.sendMail(mailoption);
+      main().catch(console.error);
 
       // 2. User confirmation email with countdown
       const daysLeft = Math.ceil(
@@ -216,22 +216,29 @@ export class userRepository {
           (1000 * 60 * 60 * 24)
       );
 
-      const adminmailoption = {
-        from: process.env.EMAILID,
-        to: refUserMail,
-        subject: "✅ Your Tour Has Been Booked!",
-        html: `
-          <h2>Hi ${refUserName},</h2>
-          <p>🎉 Your tour has been successfully booked!</p>
-          <p>Your tour starts on <strong>${refPickupDate}</strong>.</p>
-          <p>🧳 Only <strong>${daysLeft}</strong> day(s) to go!</p>
-          <p>We’ll send you daily reminders so you don’t miss a thing!</p>
-          <br/>
-          <p>Thank you,<br>Team Explore Vacations</p>
-        `,
+      const userMailData = {
+        daysLeft: daysLeft,
+        refPickupDate: refPickupDate,
+        refUserName: refUserName,
+        refPackageName:refPackageName,
+        refTourCustID:refTourCustID
       };
+      
+      console.log('userMailData', userMailData)
+      const main1 = async () => {
+        const adminMail = {
+          to: refUserMail,
+          subject: "✅ Your Tour Has Been Booked!",
+          html: userTourBookingMail(userMailData),
+        };
 
-      await transporter.sendMail(adminmailoption);
+        try {
+          await sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for User", error);
+        }
+      };
+      main1().catch(console.error);
 
       // const userMail = {
       //   to: refUserMail,
@@ -276,7 +283,6 @@ export class userRepository {
       client.release();
     }
   }
-
   // public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
   //   const client: PoolClient = await getClient();
 
@@ -413,55 +419,146 @@ export class userRepository {
         refVaccinationCertificate,
         refOtherRequirements,
         CurrentTime(),
-        tokendata.id,
-        tokendata.id
-
+        "user",
+        // tokendata.id,
+        // tokendata.id,
       ]);
 
+      const getPackageName:any = await executeQuery(getPackageNameQuery,[refPackageId])
+     
+      console.log('getPackageName', getPackageName)
+
+      // if (!getPackageName.rows.length) {
+      //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
+      // }
+      const {refPackageName, refTourCustID}= getPackageName[0];
+
+
       const bookingData = Result.rows[0];
+   
+      //way 1
 
-      const sendAdminMail = async () => {
-        const mailOptions = {
+      // const sendAdminMail = async () => {
+      //   const mailOptions = {
+      //     to: "indumathi123indumathi@gmail.com",
+      //     subject: "New Customize Tour Booking Received",
+      //     html: generateCustomizeTourBookingEmailContent(bookingData),
+      //   };
+
+      //   try {
+      //     await sendEmail(mailOptions);
+      //   } catch (error) {
+      //     console.error("Failed to send admin email:", error);
+      //   }
+      // };
+
+      // const sendUserConfirmationMail = async () => {
+      //   const daysLeft = Math.ceil(
+      //     (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+      //       (1000 * 60 * 60 * 24)
+      //   );
+
+      //   // way 1
+      //   const mailOptions = {
+      //     to: refUserMail,
+      //     subject: "🌍 Customize Tour Booking Confirmed",
+      //     html: `
+      //       <h2>Hello ${refUserName} 👋</h2>
+      //       <p>Your customized tour request has been received successfully.</p>
+      //       <p><strong>Arrival Date:</strong> ${refArrivalDate}</p>
+      //       <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
+      //       <br>
+      //       <p>Our team will contact you shortly to finalize the details.</p>
+      //       <p>Thank you for choosing our service! 😊</p>
+      //     `,
+      //   };
+
+      //   try {
+      //     await sendEmail(mailOptions);
+      //   } catch (error) {
+      //     console.error("Failed to send confirmation email to user:", error);
+      //   }
+      // };
+
+      // await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+
+      // way 2
+
+
+      const daysLeft = Math.ceil(
+        (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      const main = async () => {
+        const adminMail = {
           to: "indumathi123indumathi@gmail.com",
-          subject: "New Customize Tour Booking Received",
-          html: generateCustomizeTourBookingEmailContent(bookingData),
+          subject: "New Tour Booking Received",
+          html:  generateCustomizeTourBookingEmailContent(bookingData),
         };
 
         try {
-          await sendEmail(mailOptions);
+          await sendEmail(adminMail);
         } catch (error) {
-          console.error("Failed to send admin email:", error);
+          console.log("Error in sending the Mail for Admin", error);
         }
       };
+      main().catch(console.error)
 
-      const sendUserConfirmationMail = async () => {
-        const daysLeft = Math.ceil(
-          (new Date(refArrivalDate).getTime() - new Date().getTime()) /
-            (1000 * 60 * 60 * 24)
-        );
-
-        const mailOptions = {
+      const main1 = async () => {
+        const adminMail = {
           to: refUserMail,
-          subject: "🌍 Customize Tour Booking Confirmed",
+          subject: "✅ Your Tour Has Been Booked!",
           html: `
-            <h2>Hello ${refUserName} 👋</h2>
-            <p>Your customized tour request has been received successfully.</p>
-            <p><strong>Arrival Date:</strong> ${refArrivalDate}</p>
-            <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
-            <br>
-            <p>Our team will contact you shortly to finalize the details.</p>
-            <p>Thank you for choosing our service! 😊</p>
-          `,
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+              <h1 style="margin: 0;">Explore Vacations</h1>
+              <p style="margin: 0;">Your journey starts here ✈️</p>
+            </div>
+            <div style="padding: 30px; background-color: #f9f9f9;">
+              <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
+              <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
+              
+              <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+                <tr>
+                  <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
+                  <td style="padding: 8px 0;">${refPackageName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0;"><strong>🆔 Tour ID:</strong></td>
+                  <td style="padding: 8px 0;">${refTourCustID}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0;"><strong>📅 Arrival Date:</strong></td>
+                  <td style="padding: 8px 0;">${refArrivalDate}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+                  <td style="padding: 8px 0;">${daysLeft} day(s)</td>
+                </tr>
+              </table>
+        
+              <p style="margin-top: 25px; font-size: 16px; color: #333;">
+                Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
+              </p>
+              
+              <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+            </div>
+            <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+              &copy; ${new Date().getFullYear()} Explore Vacations. All rights reserved.
+            </div>
+          </div>
+        `,
+        
         };
 
         try {
-          await sendEmail(mailOptions);
+          await sendEmail(adminMail);
         } catch (error) {
-          console.error("Failed to send confirmation email to user:", error);
+          console.log("Error in sending the Mail for User", error);
         }
       };
-
-      await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+      main1().catch(console.error)
 
       await client.query("COMMIT");
 
@@ -550,6 +647,64 @@ export class userRepository {
       );
     }
   }
+  public async uploadPassportV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the PDF file from userData
+      const pdfFile = userData["PdfFile "] || userData.PdfFile;
+      console.log("userData", userData);
+      console.log("pdfFile-------------------------------------", pdfFile);
+
+      // Ensure that a PDF file is provided
+      if (!pdfFile) {
+        throw new Error("Please provide a PDF file.");
+      }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the PDF file
+      console.log("Storing PDF...");
+      filePath = await storeFile(pdfFile, 8); // Assuming storeFile handles PDF storage
+
+      // Read the file buffer and convert it to Base64
+      const pdfBuffer = await viewFile(filePath);
+      const pdfBase64 = pdfBuffer.toString("base64");
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: pdfBase64,
+        contentType: "application/pdf",
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "PDF Stored Successfully",
+          // tokens:tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the PDF",
+          // tokens:tokens
+        },
+        true
+      );
+    }
+  }
+  
   // public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
   //   const client: PoolClient = await getClient();
 
@@ -677,8 +832,9 @@ export class userRepository {
         // refFormDetails,
         refOtherRequirements,
         CurrentTime(),
-        tokendata.id,
-        tokendata.id
+        "user",
+        // tokendata.id,
+        // tokendata.id,
       ]);
 
       // const sendAdminMail = async () => {
@@ -848,36 +1004,71 @@ export class userRepository {
   }
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
-      const result = await executeQuery(listallTourQuery);
+      const result1 = await executeQuery(listallTourQuery);
 
       // Convert images to Base64 format
-      for (const image of result) {
-        console.log("image", image);
-        if (image.refCoverImage) {
-          try {
-            console.log("image -- true part", image);
-            const fileBuffer = await viewFile(image.refCoverImage);
-            image.refCoverImage = {
-              filename: path.basename(image.refCoverImage),
-              content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", // Adjust if needed
-            };
-          } catch (error) {
-            console.log("false part ---");
-            console.error("Error reading image file:", error);
-            image.refCoverImage = null; // Handle missing/unreadable files
+      // for (const image of result) {
+      //   console.log("image", image);
+      //   if (image.refCoverImage) {
+      //     try {
+      //       console.log("image -- true part", image);
+      //       const fileBuffer = await viewFile(image.refCoverImage);
+      //       image.refCoverImage = {
+      //         filename: path.basename(image.refCoverImage),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg", // Adjust if needed
+      //       };
+      //     } catch (error) {
+      //       console.log("false part ---");
+      //       console.error("Error reading image file:", error);
+      //       image.refCoverImage = null; // Handle missing/unreadable files
+      //     }
+      //   }
+      // }
+
+      // if (result1 && result1.length) {
+      //   await processImages(result1);
+      // }
+
+      for (const image of result1) {
+        for (const key of [
+          "refGallery",
+          "refItinaryMapPath",
+          "refCoverImage",
+        ]) {
+          console.log("********************", key + "(()()()()(", image[key]);
+          if (image[key]) {
+            try {
+              console.log("key line 219", key);
+              const fileBuffer = await viewFile(image[key]);
+              image[key] = {
+                filename: path.basename(image[key]),
+                content: fileBuffer.toString("base64"),
+                contentType: "image/jpeg", // Adjust if needed based on the image type
+              };
+            } catch (error) {
+              console.error(`Error reading ${key} file:`, error);
+              image[key] = null; // Handle missing/unreadable files
+            }
           }
         }
-      }
 
-      return encrypt(
-        {
-          success: true,
-          message: "listed Tour successfully",
-          tourDetails: result,
-        },
-        true
-      );
+
+        console.log(result1)
+
+        
+
+        
+
+        return encrypt(
+          {
+            success: true,
+            message: "listed Tour successfully",
+            tourDetails: result1,
+          },
+          true
+        );
+      }
     } catch (error: unknown) {
       return encrypt(
         {
@@ -903,15 +1094,14 @@ export class userRepository {
       //                    image.parkingSlotImage = {
       //                      filename: path.basename(image.parkingSlotImage),
       //                      content: fileBuffer.toString("base64"),
-      //                      contentType: "image/jpeg", 
+      //                      contentType: "image/jpeg",
       //                    };
       //                  } catch (error) {
       //                    console.error("Error reading image file for product ,err");
-      //                    image.parkingSlotImage = null; 
+      //                    image.parkingSlotImage = null;
       //                  }
       //                }
       //              }
-
 
       // Step 3: Return success response
       return encrypt(
@@ -939,30 +1129,29 @@ export class userRepository {
   }
   public async getCarParkingV1(userData: any, tokendata: any): Promise<any> {
     try {
-      const {refCarParkingId} = userData
+      const { refCarParkingId } = userData;
       // Step 1: Execute Queries
-      const result1 = await executeQuery(listCarParkingByIdQuery,[
-        refCarParkingId
+      const result1 = await executeQuery(listCarParkingByIdQuery, [
+        refCarParkingId,
       ]);
 
       // Step 2: Process images results if needed
 
-       for (const image of result1) {
-                     if (image.parkingSlotImage) {
-                       try {
-                         const fileBuffer = await viewFile(image.parkingSlotImage);
-                         image.parkingSlotImage = {
-                           filename: path.basename(image.parkingSlotImage),
-                           content: fileBuffer.toString("base64"),
-                           contentType: "image/jpeg", 
-                         };
-                       } catch (error) {
-                         console.error("Error reading image file for product ,err");
-                         image.parkingSlotImage = null; 
-                       }
-                     }
-                   }
-
+      for (const image of result1) {
+        if (image.parkingSlotImage) {
+          try {
+            const fileBuffer = await viewFile(image.parkingSlotImage);
+            image.parkingSlotImage = {
+              filename: path.basename(image.parkingSlotImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg",
+            };
+          } catch (error) {
+            console.error("Error reading image file for product ,err");
+            image.parkingSlotImage = null;
+          }
+        }
+      }
 
       // Step 3: Return success response
       return encrypt(
@@ -1219,7 +1408,7 @@ export class userRepository {
         refLName,
         refDOB,
         refUserEmail,
-        refMoblile
+        refMoblile,
       } = userData;
 
       const hashedPassword = await bcrypt.hash(temp_password, 10);
@@ -1470,16 +1659,12 @@ export class userRepository {
       );
     }
   }
-  public async profileDataV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async profileDataV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
-      
-      const profileData = await executeQuery( profileDataQuery,[tokendata.id]);
-      
+      const profileData = await executeQuery(profileDataQuery, [tokendata.id]);
+
       return encrypt(
         {
           success: true,
@@ -1507,7 +1692,6 @@ export class userRepository {
     const token = { id: tokendata.id }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
-    
       const {
         refFName,
         refLName,
@@ -1515,30 +1699,28 @@ export class userRepository {
         refMoblile,
         refUserEmail,
         refUserPassword,
-      } = userData
+      } = userData;
 
       const genHashedPassword = await bcrypt.hash(refUserPassword, 10);
 
-      const profileData = await executeQuery( updateProfileDataQuery,[
+      const profileData = await executeQuery(updateProfileDataQuery, [
         refFName,
         refLName,
         refDOB,
         refMoblile,
         CurrentTime(),
         tokendata.id,
-        tokendata.id
+        tokendata.id,
       ]);
-      
-      const domainData = await executeQuery( updatedomainDataQuery,[
+
+      const domainData = await executeQuery(updatedomainDataQuery, [
         refUserEmail,
         refUserPassword,
         genHashedPassword,
         CurrentTime(),
         tokendata.id,
-        tokendata.id
+        tokendata.id,
       ]);
-
-
 
       return encrypt(
         {
@@ -1561,7 +1743,6 @@ export class userRepository {
     }
   }
 
-
   public async userBookingHistoryV1(
     userData: any,
     tokendata: any
@@ -1569,12 +1750,19 @@ export class userRepository {
     const token = { id: tokendata.id }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
-      
-      const tourBookingresult = await executeQuery( userTourBookingHistoryQuery,[tokendata.id]);
+      const tourBookingresult = await executeQuery(
+        userTourBookingHistoryQuery,
+        [tokendata.id]
+      );
 
-      const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [tokendata.id]);
+      const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [
+        tokendata.id,
+      ]);
 
-      const CarParkingBookingresult = await executeQuery(userCarParkingBookingHistoryQuery, [tokendata.id]);
+      const CarParkingBookingresult = await executeQuery(
+        userCarParkingBookingHistoryQuery,
+        [tokendata.id]
+      );
 
       return encrypt(
         {
