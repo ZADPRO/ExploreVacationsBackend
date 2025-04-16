@@ -15,7 +15,15 @@ export class carParkingResolver {
   public async updateCarParkingV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.carParkingRepository.updateCarParkingV1(user_data, token_data, domain_code);
   }
-
+  public async listCarParkingV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carParkingRepository.listCarParkingV1(user_data, token_data, domain_code);
+  }
+  public async getCarParkingV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carParkingRepository.getCarParkingV1(user_data, token_data, domain_code);
+  }
+  public async deleteCarParkingV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.carParkingRepository.deleteCarParkingV1(user_data, token_data, domain_code);
+  }
 
 
   public async addServiceFeaturesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {

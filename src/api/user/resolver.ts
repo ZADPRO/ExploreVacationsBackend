@@ -24,6 +24,13 @@ export class userResolver {
   public async getAllTourV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.getAllTourV1(user_data, token_data, domain_code);
   }
+  public async listCarParkingV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.listCarParkingV1(user_data, token_data, domain_code);
+  }
+  public async getCarParkingV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.getCarParkingV1(user_data, token_data, domain_code);
+  }
+
   // public async addTravalDataV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
   //   return await this.userRepository.addTravalDataV1(user_data, token_data, domain_code);
   // }
@@ -54,6 +61,13 @@ export class userResolver {
   public async tourBrochureV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.tourBrochureV1(user_data, token_data, domain_code);
   }
+  public async profileDataV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.profileDataV1(user_data, token_data, domain_code);
+  }
+  public async UpdateprofileDataV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.UpdateprofileDataV1(user_data, token_data, domain_code);
+  }
+
   public async userBookingHistoryV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.userBookingHistoryV1(user_data, token_data, domain_code);
   }

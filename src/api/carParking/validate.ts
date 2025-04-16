@@ -61,4 +61,21 @@ export default {
         authorization: Joi.string().optional(),
       }).unknown(),
     },
+
+    getCarParking:{
+      payload: Joi.object({
+        refCarParkingId:Joi.number().integer().required()
+      }),
+      headers: Joi.object({
+        authorization: Joi.string().optional(),
+      }).unknown(),
+    },
+    deleteCarParking:{
+      payload: Joi.object({
+        refCarParkingId:Joi.number().integer().required()
+      }),
+      headers: Joi.object({
+        authorization: Joi.string().optional(),
+      }).unknown(),
+    }
 }

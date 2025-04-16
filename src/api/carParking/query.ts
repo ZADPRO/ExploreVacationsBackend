@@ -113,10 +113,83 @@ RETURNING *;
 
 `;
 
+export const listCarParkingQuery = `
+SELECT
+  cp.*,
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+FROM
+  public."refCarParkingTable" cp
+  LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  cp."isDelete" IS NOT true
+GROUP BY
+  cp."refCarParkingId"
+`;
+
+//car parking with [{"id":1,"name":"WiFi Included"}]
+
+// export const getCarParkingQuery = `
+// SELECT
+//   cp.*,
+//   JSON_AGG(
+//     JSON_BUILD_OBJECT(
+//       'id',
+//       rf."refServiceFeaturesId",
+//       'name',
+//       rf."refServiceFeatures"
+//     )
+//   ) AS "refServiceFeaturesList",
+//   array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+// FROM
+//   public."refCarParkingTable" cp
+//   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+//     string_to_array(
+//       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+//       ','
+//     )::INTEGER[]
+//   )
+// WHERE
+//   cp."refCarParkingId" = $1
+//   AND cp."isDelete" IS NOT true
+// GROUP BY
+//   cp."refCarParkingId"
+// `;
 
 
-
-
+export const getCarParkingQuery = `SELECT
+  cp.*,
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+FROM
+  public."refCarParkingTable" cp
+  LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  cp."refCarParkingId" = $1
+  AND cp."isDelete" IS NOT true
+GROUP BY
+  cp."refCarParkingId"
+`;
+export const deleteCarParkingQuery =`
+UPDATE
+  public."refCarParkingTable"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refCarParkingId" = $1
+RETURNING
+  *;
+`;
 export const getParkingImageRecordQuery = `SELECT
   *
 FROM

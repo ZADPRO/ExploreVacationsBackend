@@ -655,6 +655,46 @@ GROUP BY
   cd."refVehicleTypeId";
 `;
 
+export const listCarParkingQuery =`
+SELECT
+  cp.*,
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+FROM
+  public."refCarParkingTable" cp
+  LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  cp."isDelete" IS NOT true
+GROUP BY
+  cp."refCarParkingId"
+`;
+
+export const listCarParkingByIdQuery = `SELECT
+  cp.*,
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+FROM
+  public."refCarParkingTable" cp
+  LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  cp."refCarParkingId" = $1 AND 
+  cp."isDelete" IS NOT true
+
+GROUP BY
+  cp."refCarParkingId"
+`;
+
+
+
+
 export const getOtherCarsQuery = `SELECT
 rc."refCarsId",
   rvt."refVehicleTypeName",
@@ -716,11 +756,12 @@ export const insertUserQuery = `INSERT INTO
     "refFName",
     "refLName",
     "refDOB",
+    "refMoblile",
     "createdAt",
     "createdBy"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6)
+  ($1, $2, $3, $4, $5, $6, $7)
 RETURNING
   *;`;
 
@@ -900,6 +941,47 @@ GROUP BY
   aa."refCoverImage";
   `;
 
+export const profileDataQuery = `SELECT
+  u.*,
+  ud."refUserEmail",
+  ud."refUserHashedPassword",
+  ud."refUsername"
+FROM
+  public."users" u
+  LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+WHERE
+  u."refuserId" = $1
+  AND u."isDelete" IS NOT true
+`;
+
+export const updateProfileDataQuery = `UPDATE
+  public."users"
+SET
+  "refFName" = $1,
+  "refLName" = $2,
+  "refDOB" = $3,
+  "refMoblile" = $4,
+  "updatedAt" = $5,
+  "updatedBy" = $6
+  WHERE "refuserId" = $7
+RETURNING
+  *;
+
+`;
+export const updatedomainDataQuery = `
+UPDATE
+  public."refUserDomain"
+SET
+  "refUserEmail" = $1,
+  "refUserPassword" = $2,
+  "refUserHashedPassword" = $3,
+  "updatedAt" = $4,
+  "updatedBy" = $5
+   WHERE "refuserId" = $6
+RETURNING
+  *;
+
+`;
 
   export const userTourBookingHistoryQuery = `
   SELECT
@@ -924,3 +1006,5 @@ WHERE
   export const userCarParkingBookingHistoryQuery = `
 
   `;
+
+

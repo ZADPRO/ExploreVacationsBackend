@@ -32,12 +32,17 @@ import {
   insertUserDomainQuery,
   insertUserQuery,
   listallTourQuery,
+  listCarParkingByIdQuery,
+  listCarParkingQuery,
   listCarsQuery,
   listDestinationQuery,
   listOtherTourQuery,
   listTourBrochureQuery,
   listTourQuery,
+  profileDataQuery,
+  updatedomainDataQuery,
   updateHistoryQuery,
+  updateProfileDataQuery,
   updateUserPasswordQuery,
   userCarBookingHistoryQuery,
   userCarParkingBookingHistoryQuery,
@@ -884,6 +889,105 @@ export class userRepository {
       );
     }
   }
+  public async listCarParkingV1(userData: any, tokendata: any): Promise<any> {
+    try {
+      // Step 1: Execute Queries
+      const result1 = await executeQuery(listCarParkingQuery);
+
+      // Step 2: Process images results if needed
+
+      //  for (const image of result1) {
+      //                if (image.parkingSlotImage) {
+      //                  try {
+      //                    const fileBuffer = await viewFile(image.parkingSlotImage);
+      //                    image.parkingSlotImage = {
+      //                      filename: path.basename(image.parkingSlotImage),
+      //                      content: fileBuffer.toString("base64"),
+      //                      contentType: "image/jpeg", 
+      //                    };
+      //                  } catch (error) {
+      //                    console.error("Error reading image file for product ,err");
+      //                    image.parkingSlotImage = null; 
+      //                  }
+      //                }
+      //              }
+
+
+      // Step 3: Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Listed car parikng successfully",
+          tourDetails: result1,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      // Log the error for debugging
+      console.error("Error in listing car parikng:", error);
+
+      // Step 4: Return error response with a more descriptive error message
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while listing the car parikng details.",
+          error: String(error), // Return detailed error for debugging
+        },
+        true
+      );
+    }
+  }
+  public async getCarParkingV1(userData: any, tokendata: any): Promise<any> {
+    try {
+      const {refCarParkingId} = userData
+      // Step 1: Execute Queries
+      const result1 = await executeQuery(listCarParkingByIdQuery,[
+        refCarParkingId
+      ]);
+
+      // Step 2: Process images results if needed
+
+       for (const image of result1) {
+                     if (image.parkingSlotImage) {
+                       try {
+                         const fileBuffer = await viewFile(image.parkingSlotImage);
+                         image.parkingSlotImage = {
+                           filename: path.basename(image.parkingSlotImage),
+                           content: fileBuffer.toString("base64"),
+                           contentType: "image/jpeg", 
+                         };
+                       } catch (error) {
+                         console.error("Error reading image file for product ,err");
+                         image.parkingSlotImage = null; 
+                       }
+                     }
+                   }
+
+
+      // Step 3: Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "get car parikng successfully",
+          tourDetails: result1,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      // Log the error for debugging
+      console.error("Error in getting car parikng:", error);
+
+      // Step 4: Return error response with a more descriptive error message
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while geting the car parikng details.",
+          error: String(error), // Return detailed error for debugging
+        },
+        true
+      );
+    }
+  }
 
   public async uploadMapV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
@@ -1115,7 +1219,7 @@ export class userRepository {
         refLName,
         refDOB,
         refUserEmail,
-        refMoblile,
+        refMoblile
       } = userData;
 
       const hashedPassword = await bcrypt.hash(temp_password, 10);
@@ -1161,6 +1265,7 @@ export class userRepository {
         refFName,
         refLName,
         refDOB,
+        refMoblile,
         // userData.refUserTypeId,
         CurrentTime(),
         3,
@@ -1365,6 +1470,98 @@ export class userRepository {
       );
     }
   }
+  public async profileDataV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      
+      const profileData = await executeQuery( profileDataQuery,[tokendata.id]);
+      
+      return encrypt(
+        {
+          success: true,
+          message: "listed userBooking List",
+          token: tokens,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed userBooking List ",
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async UpdateprofileDataV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+    
+      const {
+        refFName,
+        refLName,
+        refDOB,
+        refMoblile,
+        refUserEmail,
+        refUserPassword,
+      } = userData
+
+      const genHashedPassword = await bcrypt.hash(refUserPassword, 10);
+
+      const profileData = await executeQuery( updateProfileDataQuery,[
+        refFName,
+        refLName,
+        refDOB,
+        refMoblile,
+        CurrentTime(),
+        tokendata.id,
+        tokendata.id
+      ]);
+      
+      const domainData = await executeQuery( updatedomainDataQuery,[
+        refUserEmail,
+        refUserPassword,
+        genHashedPassword,
+        CurrentTime(),
+        tokendata.id,
+        tokendata.id
+      ]);
+
+
+
+      return encrypt(
+        {
+          success: true,
+          message: "profile update successfully",
+          token: tokens,
+        },
+        false
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during profile update ",
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+
+
   public async userBookingHistoryV1(
     userData: any,
     tokendata: any

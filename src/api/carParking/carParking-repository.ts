@@ -19,11 +19,14 @@ import {
   addParkingQuery,
   addServiceFeaturesQuery,
   checkServiceFeaturesQuery,
+  deleteCarParkingQuery,
   deleteParkingImageRecordQuery,
   deleteServiceFeaturesQuery,
+  getCarParkingQuery,
   getdeletedFeatureQuery,
   getParkingImageRecordQuery,
   listCarParkingByIdQuery,
+  listCarParkingQuery,
   listServiceFeaturesQuery,
   updateCarParkingQuery,
   updateHistoryQuery,
@@ -442,6 +445,141 @@ export class carParkingRepository {
     } finally {
       client.release();
     }
+  }
+  public async listCarParkingV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery(listCarParkingQuery);
+      return encrypt(
+        {
+          success: true,
+          message: "list car parking successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during car parking",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async getCarParkingV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+     const {refCarParkingId} = userData
+       const result = await executeQuery(getCarParkingQuery,[refCarParkingId]);
+       
+       for (const image of result) {
+               if (image.parkingSlotImage) {
+                 try {
+                   const fileBuffer = await viewFile(image.parkingSlotImage);
+                   image.parkingSlotImage = {
+                     filename: path.basename(image.parkingSlotImage),
+                     content: fileBuffer.toString("base64"),
+                     contentType: "image/jpeg", 
+                   };
+                 } catch (error) {
+                   console.error("Error reading image file for product ,err");
+                   image.parkingSlotImage = null; 
+                 }
+               }
+             }
+       
+      return encrypt(
+        {
+          success: true,
+          message: "list car parking successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during car parking",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async deleteCarParkingV1(userData: any, tokendata: any): Promise<any> {
+      const client: PoolClient = await getClient();
+      const token = { id: tokendata.id };
+      const tokens = generateTokenWithExpire(token, true);
+  
+      try {
+        await client.query("BEGIN"); // Start transaction
+        const { refCarParkingId } = userData;
+        const result = await client.query(deleteCarParkingQuery, [
+          refCarParkingId,
+          CurrentTime(),
+          tokendata.id,
+        ]);
+
+        if (result.rows.length === 0) {
+          throw new Error(`No record found to delete with ID ${refCarParkingId}`);
+        }
+        
+        const deletedData:any = result.rows[0];
+        const refParkingName = deletedData.refParkingName;
+        
+        const history = [
+          57, // Unique ID for delete action
+          tokendata.id,
+          `${refParkingName} Parking deleted Successfully`,
+          CurrentTime(), 
+          tokendata.id,
+        ];
+  
+        await client.query(updateHistoryQuery, history);
+        await client.query("COMMIT"); // Commit transaction
+  
+        return encrypt(
+          {
+            success: true,
+            message: "car deleted successfully",
+            token: tokens,
+            deletedData: result.rows[0], // Return deleted record for reference
+          },
+          true
+        );
+      } catch (error: unknown) {
+        await client.query("ROLLBACK"); // Rollback on error
+        console.error("Error deleting car:", error);
+  
+        return encrypt(
+          {
+            success: false,
+            message: "An error occurred while deleting the Vehicle",
+            tokens: tokens,
+            error: String(error),
+          },
+          true
+        );
+      } finally {
+        client.release();
+      }
   }
 
   public async addServiceFeaturesV1(

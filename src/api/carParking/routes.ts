@@ -63,6 +63,41 @@ export class carParkingRoutes implements IRoute {
           },
         },
         {
+          method: "GET",
+          path: "/api/v1/carParkingRoutes/listCarParking",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listCarParking,
+            description: "list CarParking",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/carParkingRoutes/getCarParking",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getCarParking,
+            validate: validate.getCarParking,
+            description: "get CarParking",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/carParkingRoutes/deleteCarParking",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCarParking,
+            validate: validate.deleteCarParking,
+            description: "delete CarParking",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
           method: "POST",
           path: "/api/v1/carParkingRoutes/addServiceFeatures",
           config: {

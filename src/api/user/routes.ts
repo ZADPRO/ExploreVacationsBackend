@@ -117,6 +117,26 @@ export class userRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "GET",
+          path: "/api/v1/userRoutes/listCarParking",
+          config: {
+            handler: controller.listCarParking,
+            description: "listCarParking",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/getCarParking",
+          config: {
+            handler: controller.getCarParking,
+            description: "getCarParking",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
         // {
         //   method: "POST",
         //   path: "/api/v1/userRoutes/addTravalData",
@@ -209,6 +229,30 @@ export class userRoutes implements IRoute {
           },
         },
         {
+          method: "GET",
+          path: "/api/v1/userRoutes/profileData",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.profileData,
+            // validate: validate.getCarById,
+            description: "profileData",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/UpdateprofileData",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.UpdateprofileData,
+            // validate: validate.UpdateprofileData,
+            description: "UpdateprofileData",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
           method: "POST",
           path: "/api/v1/userRoutes/userBookingHistory",
           config: {
@@ -219,6 +263,7 @@ export class userRoutes implements IRoute {
             auth: false,
           },
         },
+
       ]);
       resolve(true);
     });
