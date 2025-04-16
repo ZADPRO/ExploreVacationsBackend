@@ -24,6 +24,7 @@ import {
   addTourBookingQuery,
   checkQuery,
   deleteImageRecordQuery,
+  getcarNameQuery,
   getCarsByIdQuery,
   getImageRecordQuery,
   getLastCustomerIdQuery,
@@ -54,8 +55,8 @@ import {
   generateCarBookingEmailContent,
   generateCustomizeTourBookingEmailContent,
   generateforgotPasswordEmailContent,
-  generateReminderEmailContent,
   generateTourBookingEmailContent,
+  userCarEmailContent,
   userTourBookingMail,
 } from "../../helper/mailcontent";
 import { sendEmail } from "../../helper/mail";
@@ -186,14 +187,16 @@ export class userRepository {
         // tokendata.id,
         // tokendata.id
       ]);
-      const getPackageName:any = await executeQuery(getPackageNameQuery,[refPackageId])
-     
-      console.log('getPackageName', getPackageName)
+      const getPackageName: any = await executeQuery(getPackageNameQuery, [
+        refPackageId,
+      ]);
+
+      console.log("getPackageName", getPackageName);
 
       // if (!getPackageName.rows.length) {
       //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
       // }
-      const {refPackageName, refTourCustID}= getPackageName[0];
+      const { refPackageName, refTourCustID } = getPackageName[0];
 
       const main = async () => {
         const adminMail = {
@@ -220,11 +223,11 @@ export class userRepository {
         daysLeft: daysLeft,
         refPickupDate: refPickupDate,
         refUserName: refUserName,
-        refPackageName:refPackageName,
-        refTourCustID:refTourCustID
+        refPackageName: refPackageName,
+        refTourCustID: refTourCustID,
       };
-      
-      console.log('userMailData', userMailData)
+
+      console.log("userMailData", userMailData);
       const main1 = async () => {
         const adminMail = {
           to: refUserMail,
@@ -402,6 +405,7 @@ export class userRepository {
         refVaccinationType,
         refOtherRequirements,
         refVaccinationCertificate,
+        refPassPort,
       } = userData;
 
       const Result = await client.query(addcustomizeBookingQuery, [
@@ -418,99 +422,54 @@ export class userRepository {
         refVaccinationType,
         refVaccinationCertificate,
         refOtherRequirements,
+        refPassPort,
         CurrentTime(),
         "user",
         // tokendata.id,
         // tokendata.id,
       ]);
 
-      const getPackageName:any = await executeQuery(getPackageNameQuery,[refPackageId])
-     
-      console.log('getPackageName', getPackageName)
+      const getPackageName: any = await executeQuery(getPackageNameQuery, [
+        refPackageId,
+      ]);
+
+      console.log("getPackageName", getPackageName);
 
       // if (!getPackageName.rows.length) {
       //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
       // }
-      const {refPackageName, refTourCustID}= getPackageName[0];
-
+      const { refPackageName, refTourCustID } = getPackageName[0];
 
       const bookingData = Result.rows[0];
-   
+
       //way 1
 
-      // const sendAdminMail = async () => {
-      //   const mailOptions = {
-      //     to: "indumathi123indumathi@gmail.com",
-      //     subject: "New Customize Tour Booking Received",
-      //     html: generateCustomizeTourBookingEmailContent(bookingData),
-      //   };
-
-      //   try {
-      //     await sendEmail(mailOptions);
-      //   } catch (error) {
-      //     console.error("Failed to send admin email:", error);
-      //   }
-      // };
-
-      // const sendUserConfirmationMail = async () => {
-      //   const daysLeft = Math.ceil(
-      //     (new Date(refArrivalDate).getTime() - new Date().getTime()) /
-      //       (1000 * 60 * 60 * 24)
-      //   );
-
-      //   // way 1
-      //   const mailOptions = {
-      //     to: refUserMail,
-      //     subject: "🌍 Customize Tour Booking Confirmed",
-      //     html: `
-      //       <h2>Hello ${refUserName} 👋</h2>
-      //       <p>Your customized tour request has been received successfully.</p>
-      //       <p><strong>Arrival Date:</strong> ${refArrivalDate}</p>
-      //       <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
-      //       <br>
-      //       <p>Our team will contact you shortly to finalize the details.</p>
-      //       <p>Thank you for choosing our service! 😊</p>
-      //     `,
-      //   };
-
-      //   try {
-      //     await sendEmail(mailOptions);
-      //   } catch (error) {
-      //     console.error("Failed to send confirmation email to user:", error);
-      //   }
-      // };
-
-      // await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
-
-      // way 2
-
-
-      const daysLeft = Math.ceil(
-        (new Date(refArrivalDate).getTime() - new Date().getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-
-      const main = async () => {
-        const adminMail = {
+      const sendAdminMail = async () => {
+        const mailOptions = {
           to: "indumathi123indumathi@gmail.com",
-          subject: "New Tour Booking Received",
-          html:  generateCustomizeTourBookingEmailContent(bookingData),
+          subject: "New Customize Tour Booking Received",
+          html: generateCustomizeTourBookingEmailContent(bookingData),
         };
 
         try {
-          await sendEmail(adminMail);
+          await sendEmail(mailOptions);
         } catch (error) {
-          console.log("Error in sending the Mail for Admin", error);
+          console.error("Failed to send admin email:", error);
         }
       };
-      main().catch(console.error)
 
-      const main1 = async () => {
-        const adminMail = {
+      const sendUserConfirmationMail = async () => {
+        const daysLeft = Math.ceil(
+          (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+
+        // way 1
+        const mailOptions = {
           to: refUserMail,
-          subject: "✅ Your Tour Has Been Booked!",
+          subject: "🌍 Customize Tour Booking Confirmed",
           html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
               <h1 style="margin: 0;">Explore Vacations</h1>
               <p style="margin: 0;">Your journey starts here ✈️</p>
@@ -548,17 +507,92 @@ export class userRepository {
               &copy; ${new Date().getFullYear()} Explore Vacations. All rights reserved.
             </div>
           </div>
-        `,
-        
+          `,
         };
 
         try {
-          await sendEmail(adminMail);
+          await sendEmail(mailOptions);
         } catch (error) {
-          console.log("Error in sending the Mail for User", error);
+          console.error("Failed to send confirmation email to user:", error);
         }
       };
-      main1().catch(console.error)
+
+      await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+
+      // way 2
+
+      // const daysLeft = Math.ceil(
+      //   (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+      //     (1000 * 60 * 60 * 24)
+      // );
+
+      // const main = async () => {
+      //   const adminMail = {
+      //     to: "indumathi123indumathi@gmail.com",
+      //     subject: "New Customize Tour Booking Received",
+      //     html:  generateCustomizeTourBookingEmailContent(bookingData),
+      //   };
+
+      //   try {
+      //     await sendEmail(adminMail);
+      //   } catch (error) {
+      //     console.log("Error in sending the Mail for Admin", error);
+      //   }
+      // };
+      // main().catch(console.error)
+
+      // const main1 = async () => {
+      //   const adminMail = {
+      //     to: refUserMail,
+      //     subject: "✅ Your Tour Has Been Booked!",
+      //     html: `
+      //     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      //       <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+      //         <h1 style="margin: 0;">Explore Vacations</h1>
+      //         <p style="margin: 0;">Your journey starts here ✈️</p>
+      //       </div>
+      //       <div style="padding: 30px; background-color: #f9f9f9;">
+      //         <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
+      //         <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
+
+      //         <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+      //           <tr>
+      //             <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
+      //             <td style="padding: 8px 0;">${refPackageName}</td>
+      //           </tr>
+      //           <tr>
+      //             <td style="padding: 8px 0;"><strong>🆔 Tour ID:</strong></td>
+      //             <td style="padding: 8px 0;">${refTourCustID}</td>
+      //           </tr>
+      //           <tr>
+      //             <td style="padding: 8px 0;"><strong>📅 Arrival Date:</strong></td>
+      //             <td style="padding: 8px 0;">${refArrivalDate}</td>
+      //           </tr>
+      //           <tr>
+      //             <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+      //             <td style="padding: 8px 0;">${daysLeft} day(s)</td>
+      //           </tr>
+      //         </table>
+
+      //         <p style="margin-top: 25px; font-size: 16px; color: #333;">
+      //           Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
+      //         </p>
+
+      //         <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+      //       </div>
+      //       <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+      //         &copy; ${new Date().getFullYear()} Explore Vacations. All rights reserved.
+      //       </div>
+      //     </div>
+      //   `,
+      //   };
+      //   try {
+      //     await sendEmail(adminMail);
+      //   } catch (error) {
+      //     console.log("Error in sending the Mail for User", error);
+      //   }
+      // };
+      // main1().catch(console.error)
 
       await client.query("COMMIT");
 
@@ -647,10 +681,7 @@ export class userRepository {
       );
     }
   }
-  public async uploadPassportV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async uploadPassportV1(userData: any, tokendata: any): Promise<any> {
     // const token = { id: tokendata.id };
     // const tokens = generateTokenWithExpire(token, true);
     try {
@@ -704,7 +735,7 @@ export class userRepository {
       );
     }
   }
-  
+
   // public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
   //   const client: PoolClient = await getClient();
 
@@ -818,7 +849,7 @@ export class userRepository {
       // const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
 
       // Insert booking data
-      const Result = await client.query(addCarBookingQuery, [
+      const Result: any = await client.query(addCarBookingQuery, [
         refCarsId,
         refUserName,
         refUserMail,
@@ -837,75 +868,76 @@ export class userRepository {
         // tokendata.id,
       ]);
 
-      // const sendAdminMail = async () => {
-      //   const mailOptions = {
-      //     to: "indumathi123indumathi@gmail.com",
-      //     subject: "New Car Booking Received",
-      //     html: generateCarBookingEmailContent(Result.rows[0]),
-      //   };
-
-      //   try {
-      //     await sendEmail(mailOptions);
-      //   } catch (error) {
-      //     console.error("Failed to send admin email:", error);
-      //   }
+      //way 1
+      // const adminMail = {
+      //   to: "indumathi123indumathi@gmail.com",
+      //   subject: "New Tour Booking Received",
+      //   html: generateCarBookingEmailContent(Result),
       // };
 
-      // // === 2. Send confirmation email to User ===
-      // const sendUserConfirmationMail = async () => {
-      //   const daysLeft = Math.ceil(
-      //     (new Date(refPickupDate).getTime() - new Date().getTime()) /
-      //       (1000 * 60 * 60 * 24)
-      //   );
+      // const transporter = nodemailer.createTransport({
+      //   service: "gmail",
+      //   auth: {
+      //     user: process.env.EMAILID,
+      //     pass: process.env.PASSWORD,
+      //   },
+      // });
 
-      //   const mailOptions = {
-      //     to: refUserMail,
-      //     subject: "🚗 Car Booking Confirmed",
-      //     html: `
-      //       <h2>Hello ${refUserName} 👋</h2>
-      //       <p>Your car has been booked successfully with us.</p>
-      //       <p><strong>Pickup Date:</strong> ${refPickupDate}</p>
-      //       <p><strong>Pickup Address:</strong> ${refPickupAddress}</p>
-      //       <p><strong>Drop Address:</strong> ${refSubmissionAddress}</p>
-      //       <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
-      //       <br>
-      //       <p>Thank you for choosing our service! 😊</p>
-      //     `,
-      //   };
-
-      //   try {
-      //     await sendEmail(mailOptions);
-
-      //   } catch (error) {
-      //     console.error("Failed to send confirmation email to user:", error);
-      //   }
+      // const mailoption = {
+      //   from: process.env.EMAILID,
+      //   to: "indumathi123indumathi@gmail.com",
+      //   subject: "New Tour Booking Received",
+      //   html: generateTourBookingEmailContent(Result),
       // };
 
-      // await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+      // await transporter.sendMail(mailoption);
 
-      // 1. Admin email
-      const adminMail = {
-        to: "indumathi123indumathi@gmail.com",
-        subject: "New Tour Booking Received",
-        html: generateCarBookingEmailContent(Result),
+      // // 2. User confirmation email with countdown
+      // const daysLeft = Math.ceil(
+      //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
+      //     (1000 * 60 * 60 * 24)
+      // );
+
+      // const adminmailoption = {
+      //   from: process.env.EMAILID,
+      //   to: refUserMail,
+      //   subject: "🚗 Car Booking Confirmed",
+      //   html: `
+      //         <h2>Hello ${refUserName} 👋</h2>
+      //         <p>Your car has been booked successfully with us.</p>
+      //         <p><strong>Pickup Date:</strong> ${refPickupDate}</p>
+      //         <p><strong>Pickup Address:</strong> ${refPickupAddress}</p>
+      //         <p><strong>Drop Address:</strong> ${refSubmissionAddress}</p>
+      //         <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
+      //         <br>
+      //         <p>Thank you for choosing our service! 😊</p>
+      //       `,
+      // };
+
+      // await transporter.sendMail(adminmailoption);
+
+      //way 2
+      const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
+
+      console.log("getCarName", getCarName);
+
+      const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
+        getCarName[0];
+
+      const main = async () => {
+        const adminMail = {
+          // to: "indumathi123indumathi@gmail.com",
+          to: "keerthana2005keethukeethu@gmail.com",
+          subject: "New car Booking Received",
+          html: generateCarBookingEmailContent(Result),
+        };
+        try {
+          await sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for Admin", error);
+        }
       };
-
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAILID,
-          pass: process.env.PASSWORD,
-        },
-      });
-
-      const mailoption = {
-        from: process.env.EMAILID,
-        to: "indumathi123indumathi@gmail.com",
-        subject: "New Tour Booking Received",
-        html: generateTourBookingEmailContent(Result),
-      };
-
-      await transporter.sendMail(mailoption);
+      main().catch(console.error);
 
       // 2. User confirmation email with countdown
       const daysLeft = Math.ceil(
@@ -913,23 +945,31 @@ export class userRepository {
           (1000 * 60 * 60 * 24)
       );
 
-      const adminmailoption = {
-        from: process.env.EMAILID,
-        to: refUserMail,
-        subject: "🚗 Car Booking Confirmed",
-        html: `
-              <h2>Hello ${refUserName} 👋</h2>
-              <p>Your car has been booked successfully with us.</p>
-              <p><strong>Pickup Date:</strong> ${refPickupDate}</p>
-              <p><strong>Pickup Address:</strong> ${refPickupAddress}</p>
-              <p><strong>Drop Address:</strong> ${refSubmissionAddress}</p>
-              <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
-              <br>
-              <p>Thank you for choosing our service! 😊</p>
-            `,
+      const userMailData = {
+        daysLeft: daysLeft,
+        refPickupDate: refPickupDate,
+        refUserName: refUserName,
+        refCarTypeName: refCarTypeName,
+        refVehicleTypeName: refVehicleTypeName,
+        refCarCustId: refCarCustId,
+        refCarPrice: refCarPrice,
       };
 
-      await transporter.sendMail(adminmailoption);
+      console.log("userMailData", userMailData);
+      const main1 = async () => {
+        const adminMail = {
+          to: refUserMail,
+          subject: "✅ Your car Has Been Booked!",
+          html: userCarEmailContent(userMailData),
+        };
+
+        try {
+          await sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for User", error);
+        }
+      };
+      main1().catch(console.error);
 
       await client.query("COMMIT"); // Commit transaction
 
@@ -1053,12 +1093,7 @@ export class userRepository {
           }
         }
 
-
-        console.log(result1)
-
-        
-
-        
+        console.log(result1);
 
         return encrypt(
           {

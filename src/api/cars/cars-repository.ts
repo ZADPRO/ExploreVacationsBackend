@@ -1854,10 +1854,11 @@ export class carsRepository {
         refOtherRequirements,
         refrefRentalAgreement,
         refFuelPolicy,
-        refDriverRequirements,
+        // refDriverRequirements,
         refPaymentTerms,
         refCarPrice,
-        carImagePath
+        carImagePath,
+        refCarTypeId
       } = userData;
 
       // const refBenifits = `{${userData.refBenifits.join(",")}}`;
@@ -1897,6 +1898,7 @@ export class carsRepository {
         refOtherRequirements,
         carImagePath, // Updated image path (if provided)
         refCarPrice,
+        refCarTypeId,
         CurrentTime(),
         "Admin",
         refCarsId, // Specify the car to be updated by `refCarsId`

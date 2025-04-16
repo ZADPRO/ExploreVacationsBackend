@@ -59,10 +59,11 @@ export const addcustomizeBookingQuery = `
         "refVaccinationType", 
         "refVaccinationCertificate", 
         "refOtherRequirements", 
+        "refPassPort",
         "createdAt", 
         "createdBy"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,$16) 
     RETURNING *;
 `;
 
@@ -84,6 +85,20 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
     RETURNING *;
 
+`;
+
+export const getcarNameQuery = `
+SELECT
+  vt."refVehicleTypeName",
+  cc."refCarTypeName",
+  ct."refCarCustId",
+  ct."refCarPrice"
+FROM
+  public."refCarsTable" ct
+  LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
+  LEFT JOIN public."refCarType" cc ON CAST(cc."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
+WHERE
+  ct."refCarsId" = $1;
 `;
 
 export const listTourQuery = `

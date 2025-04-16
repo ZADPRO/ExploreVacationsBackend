@@ -419,6 +419,7 @@ RETURNING
 `;
 
 export const updateCarsQuery = `
+
         UPDATE public."refCarsTable"
         SET 
           "refVehicleTypeId" = $1,
@@ -436,9 +437,10 @@ export const updateCarsQuery = `
           "refOtherRequirements" = $13,
           "refCarPath" = $14,
           "refCarPrice" = $15,
-          "updatedAt" = $16,
-          "updatedBy" = $17
-        WHERE "refCarsId" = $18
+          "refCarTypeId" = $16,
+          "updatedAt" = $17,
+          "updatedBy" = $18
+        WHERE "refCarsId" = $19
         RETURNING *;
       `;
 

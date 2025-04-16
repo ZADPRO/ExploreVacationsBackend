@@ -4,7 +4,7 @@ import cron from "node-cron"
 // 
 import { getClient } from "./db";
 import { CurrentTime } from "./common";
-import { generateReminderEmailContent } from "./mailcontent";
+// import { generateReminderEmailContent } from "./mailcontent";
 
 interface MailOptions {
   to: string;
