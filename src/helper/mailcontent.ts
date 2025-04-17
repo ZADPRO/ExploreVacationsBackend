@@ -17,7 +17,6 @@ export const generateSignupEmailContent = (
     `;
 };
 
-
 export function generateTourBookingEmailContent(result: any): string {
   const data = result.rows[0];
 
@@ -80,10 +79,8 @@ export function generateTourBookingEmailContent(result: any): string {
 //           <br/>
 //           <p>Thank you,<br>Team Explore Vacations</p>
 //   `
-  
-  
-// }
 
+// }
 
 export function userTourBookingMail(data: any): string {
   return `
@@ -111,7 +108,6 @@ export function userTourBookingMail(data: any): string {
     </div>
   `;
 }
-
 
 export function generateCustomizeTourBookingEmailContent(data: any): string {
   console.log("data", data); // This should now log the actual row
@@ -177,7 +173,6 @@ export function generateCustomizeTourBookingEmailContent(data: any): string {
   `;
 }
 
-
 // export function generateCarBookingEmailContent(data: any): string {
 //   console.log("data", data); // This should now log the actual row
 
@@ -223,7 +218,7 @@ export function generateCustomizeTourBookingEmailContent(data: any): string {
 //           <tr>
 //             <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Infants</td>
 //             <td style="padding: 8px;">${data.refInfants}</td>
-//           </tr> 
+//           </tr>
 //           <tr>
 //             <td style="padding: 8px; font-weight: bold; background-color: #f8f8f8;">Other Requirements</td>
 //             <td style="padding: 8px;">${data.refOtherRequirements}</td>
@@ -255,7 +250,129 @@ export interface AdminCarBookingMailData {
   refOtherRequirements?: string;
 }
 
-export const generateCarBookingEmailContent = (data: AdminCarBookingMailData): string => {
+// export const generateCarBookingEmailContent = (data: any): string => {
+//   console.log("data line 254", data);
+//   let firstName;
+//   if (Array.isArray(data) && data.length > 0 && data[0]) {
+//     firstName = data[0].refUserName;
+//     const mobile = data[0].refUserMobile;
+//     console.log("First Name:", firstName);
+//     console.log("Mobile:", mobile);
+//   } else {
+//     console.error("No valid data found:", data);
+//   }
+
+//   return `
+//     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto; border: 1px solid #dcdcdc; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden;">
+//       <div style="background-color: #007BFF; color: white; padding: 20px; text-align: center;">
+//         <h2 style="margin: 0;">🚘 New Car Booking - Explore Vacations</h2>
+//       </div>
+
+//       <div style="padding: 30px; background-color: #f7f9fc;">
+//         <h3 style="color: #007BFF;">Customer Information</h3>
+//         <table style="width: 100%; font-size: 15px; color: #333;">
+//           <tr><td><strong>Name:</strong></td><td>${firstName}</td></tr>
+//           <tr><td><strong>Email:</strong></td><td>${
+//             data.refUserMail
+//           }</td></tr>
+//           <tr><td><strong>Mobile:</strong></td><td>${
+//             data.refUserMobile
+//           }</td></tr>
+//         </table>
+
+//         <h3 style="color: #007BFF; margin-top: 25px;">Booking Details</h3>
+//         <table style="width: 100%; font-size: 15px; color: #333;">
+//           <tr><td><strong>Booking ID:</strong></td><td>${
+//             data.refCarCustId
+//           }</td></tr>
+//           <tr><td><strong>Pickup Address:</strong></td><td>${
+//             data.refPickupAddress
+//           }</td></tr>
+//           <tr><td><strong>Drop Address:</strong></td><td>${
+//             data.refSubmissionAddress
+//           }</td></tr>
+//           <tr><td><strong>Pickup Date:</strong></td><td>${
+//             data.refPickupDate
+//           }</td></tr>
+//           <tr><td><strong>Vehicle Type:</strong></td><td>${
+//             data.refVehicleTypeName
+//           }</td></tr>
+//           <tr><td><strong>Car Category:</strong></td><td>${
+//             data.refCarTypeName
+//           }</td></tr>
+//           <tr><td><strong>Adults:</strong></td><td>${
+//             data.refAdultCount
+//           }</td></tr>
+//           <tr><td><strong>Children:</strong></td><td>${
+//             data.refChildrenCount
+//           }</td></tr>
+//           <tr><td><strong>Infants:</strong></td><td>${
+//             data.refInfants
+//           }</td></tr>
+//           <tr><td><strong>Other Requirements:</strong></td><td>${
+//             data.refOtherRequirements || "N/A"
+//           }</td></tr>
+//           <tr><td><strong>Price:</strong></td><td>₹${
+//             data.refCarPrice
+//           }</td></tr>
+//         </table>
+
+//         <p style="margin-top: 30px; font-size: 16px; color: #333;">Please follow up with the customer to confirm and finalize the booking.</p>
+
+//         <p style="margin-top: 30px; color: #007BFF; font-size: 16px;"><strong>Explore Vacations Admin Panel</strong></p>
+//       </div>
+
+//       <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center;">
+//         &copy; ${CurrentTime()} Explore Vacations | Admin Notification
+//       </div>
+//     </div>
+//   `;
+// };
+
+export const generateCarBookingEmailContent = (data: any): string => {
+  console.log("data line 254", data);
+
+  let firstName,
+    email,
+    mobile,
+    bookingId,
+    pickupAddress,
+    dropAddress,
+    pickupDate,
+    vehicleType,
+    carCategory,
+    adults,
+    children,
+    infants,
+    otherRequirements,
+    price;
+
+  if (Array.isArray(data) && data.length > 0 && data[0]) {
+    const bookingData = data[0]; // Extract the first element for easier access
+    firstName = bookingData.refUserName;
+    email = bookingData.refUserMail;
+    mobile = bookingData.refUserMobile;
+    bookingId = bookingData.refCarCustId;
+    console.log('bookingId', bookingId)
+    pickupAddress = bookingData.refPickupAddress;
+    dropAddress = bookingData.refSubmissionAddress;
+    pickupDate = bookingData.refPickupDate;
+    vehicleType = bookingData.refVehicleTypeName;
+    console.log('vehicleType', vehicleType)
+    carCategory = bookingData.refCarTypeName;
+    console.log('carCategory', carCategory)
+    adults = bookingData.refAdultCount;
+    children = bookingData.refChildrenCount;
+    infants = bookingData.refInfants;
+    otherRequirements = bookingData.refOtherRequirements || "N/A";
+    price = bookingData.refCarPrice;
+    console.log('price', price)
+
+  } else {
+
+    console.error("No valid data found:", data);
+  }
+
   return `
     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto; border: 1px solid #dcdcdc; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden;">
       <div style="background-color: #007BFF; color: white; padding: 20px; text-align: center;">
@@ -265,38 +382,31 @@ export const generateCarBookingEmailContent = (data: AdminCarBookingMailData): s
       <div style="padding: 30px; background-color: #f7f9fc;">
         <h3 style="color: #007BFF;">Customer Information</h3>
         <table style="width: 100%; font-size: 15px; color: #333;">
-          <tr><td><strong>Name:</strong></td><td>${data.refUserName}</td></tr>
-          <tr><td><strong>Email:</strong></td><td>${data.refUserMail}</td></tr>
-          <tr><td><strong>Mobile:</strong></td><td>${data.refUserMobile}</td></tr>
+          <tr><td><strong>Name:</strong></td><td>${firstName}</td></tr>
+          <tr><td><strong>Email:</strong></td><td>${email}</td></tr>
+          <tr><td><strong>Mobile:</strong></td><td>${mobile}</td></tr>
         </table>
 
         <h3 style="color: #007BFF; margin-top: 25px;">Booking Details</h3>
         <table style="width: 100%; font-size: 15px; color: #333;">
-          <tr><td><strong>Booking ID:</strong></td><td>${data.refCarCustId}</td></tr>
-          <tr><td><strong>Pickup Address:</strong></td><td>${data.refPickupAddress}</td></tr>
-          <tr><td><strong>Drop Address:</strong></td><td>${data.refSubmissionAddress}</td></tr>
-          <tr><td><strong>Pickup Date:</strong></td><td>${data.refPickupDate}</td></tr>
-          <tr><td><strong>Vehicle Type:</strong></td><td>${data.refVehicleTypeName}</td></tr>
-          <tr><td><strong>Car Category:</strong></td><td>${data.refCarTypeName}</td></tr>
-          <tr><td><strong>Adults:</strong></td><td>${data.refAdultCount}</td></tr>
-          <tr><td><strong>Children:</strong></td><td>${data.refChildrenCount}</td></tr>
-          <tr><td><strong>Infants:</strong></td><td>${data.refInfants}</td></tr>
-          <tr><td><strong>Other Requirements:</strong></td><td>${data.refOtherRequirements || 'N/A'}</td></tr>
-          <tr><td><strong>Price:</strong></td><td>₹${data.refCarPrice}</td></tr>
+          <tr><td><strong>Pickup Address:</strong></td><td>${pickupAddress}</td></tr>
+          <tr><td><strong>Drop Address:</strong></td><td>${dropAddress}</td></tr>
+          <tr><td><strong>Pickup Date:</strong></td><td>${pickupDate}</td></tr>
+          <tr><td><strong>Adults:</strong></td><td>${adults}</td></tr>
+          <tr><td><strong>Children:</strong></td><td>${children}</td></tr>
+          <tr><td><strong>Infants:</strong></td><td>${infants}</td></tr>
+          <tr><td><strong>Other Requirements:</strong></td><td>${otherRequirements}</td></tr>
         </table>
+       <p style="margin-top: 30px; font-size: 16px; color: #333;">Please follow up with the customer to confirm and finalize the booking.</p>
 
-        <p style="margin-top: 30px; font-size: 16px; color: #333;">Please follow up with the customer to confirm and finalize the booking.</p>
-
-        <p style="margin-top: 30px; color: #007BFF; font-size: 16px;"><strong>Explore Vacations Admin Panel</strong></p>
-      </div>
-
-      <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center;">
-        &copy; ${CurrentTime()} Explore Vacations | Admin Notification
-      </div>
-    </div>
-  `;
+         <p style="margin-top: 30px; color: #007BFF; font-size: 16px;"><strong>Explore Vacations Admin Panel</strong></p>
+       </div>
+       <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center;">
+         &copy; ${CurrentTime()} Explore Vacations | Admin Notification
+       </div>
+     </div>
+   `;
 };
-
 
 export interface UserMailData {
   daysLeft: number;
@@ -363,7 +473,7 @@ interface TourReminderUser {
   refUserName: string;
   refPackageId: string;
   refPickupDate: string;
-  refUserMail:string;
+  refUserMail: string;
 }
 
 // export const generateReminderEmailContent = (user: TourReminderUser): string => {
@@ -391,7 +501,10 @@ interface TourReminderUser {
 //   `;
 // };
 
-export const generateforgotPasswordEmailContent= (emailId: string, newPassword: string): string => {
+export const generateforgotPasswordEmailContent = (
+  emailId: string,
+  newPassword: string
+): string => {
   return `
     <div style="font-family: Arial, sans-serif;">
       <h2>Password Reset</h2>
@@ -404,4 +517,4 @@ export const generateforgotPasswordEmailContent= (emailId: string, newPassword: 
       <p>Regards,<br>Team</p>
     </div>
   `;
-}
+};

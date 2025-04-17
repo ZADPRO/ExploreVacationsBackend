@@ -76,7 +76,7 @@ export class userRoutes implements IRoute {
           config: {
             // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.userCarBooking,
-            validate: validate.userCarBooking,
+            // validate: validate.userCarBooking,
             description: "car Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -115,7 +115,7 @@ export class userRoutes implements IRoute {
           },
         },
         {
-          method: "GET",
+          method: "POST",
           path: "/api/v1/userRoutes/getAllCar",
           config: {
             handler: controller.getAllCar,

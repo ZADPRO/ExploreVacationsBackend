@@ -51,6 +51,10 @@ export default {
       refInfants: Joi.string().required(),
       refOtherRequirements: Joi.string().required(),
       refFormDetails: Joi.array().items(Joi.string()).min(1).optional(),
+      refDriverName: Joi.string().required(),
+      refDriverAge: Joi.string().required(),
+      refDriverMail: Joi.string().required(),
+      refDriverMobile: Joi.string().required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

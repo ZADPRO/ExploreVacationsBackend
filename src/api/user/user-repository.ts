@@ -24,6 +24,7 @@ import {
   addTourBookingQuery,
   checkQuery,
   deleteImageRecordQuery,
+  drivarDetailsQuery,
   getcarNameQuery,
   getCarsByIdQuery,
   getImageRecordQuery,
@@ -214,8 +215,14 @@ export class userRepository {
       main().catch(console.error);
 
       // 2. User confirmation email with countdown
+      // const daysLeft = Math.ceil(
+      //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
+      //     (1000 * 60 * 60 * 24)
+      // );
+
       const daysLeft = Math.ceil(
-        (new Date(refPickupDate).getTime() - new Date().getTime()) /
+        (new Date(refPickupDate).getTime() -
+          new Date(CurrentTime()).getTime()) /
           (1000 * 60 * 60 * 24)
       );
 
@@ -444,32 +451,114 @@ export class userRepository {
 
       //way 1
 
-      const sendAdminMail = async () => {
-        const mailOptions = {
+      // const sendAdminMail = async () => {
+      //   const mailOptions = {
+      //     to: "indumathi123indumathi@gmail.com",
+      //     subject: "New Customize Tour Booking Received",
+      //     html: generateCustomizeTourBookingEmailContent(bookingData),
+      //   };
+
+      //   try {
+      //     await sendEmail(mailOptions);
+      //   } catch (error) {
+      //     console.error("Failed to send admin email:", error);
+      //   }
+      // };
+
+      // const sendUserConfirmationMail = async () => {
+      //   const daysLeft = Math.ceil(
+      //     (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+      //       (1000 * 60 * 60 * 24)
+      //   );
+
+      //   // way 1
+      //   const mailOptions = {
+      //     to: refUserMail,
+      //     subject: "🌍 Customize Tour Booking Confirmed",
+      //     html: `
+      //    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      //   <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+      //     <h1 style="margin: 0;">Explore Vacations</h1>
+      //     <p style="margin: 0;">Your journey starts here ✈️</p>
+      //   </div>
+      //   <div style="padding: 30px; background-color: #f9f9f9;">
+      //     <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
+      //     <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
+
+      //     <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+      //       <tr>
+      //         <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
+      //         <td style="padding: 8px 0;">${refPackageName}</td>
+      //       </tr>
+      //       <tr>
+      //         <td style="padding: 8px 0;"><strong>🆔 Tour ID:</strong></td>
+      //         <td style="padding: 8px 0;">${refTourCustID}</td>
+      //       </tr>
+      //       <tr>
+      //         <td style="padding: 8px 0;"><strong>📅 Arrival Date:</strong></td>
+      //         <td style="padding: 8px 0;">${refArrivalDate}</td>
+      //       </tr>
+      //       <tr>
+      //         <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+      //         <td style="padding: 8px 0;">${daysLeft} day(s)</td>
+      //       </tr>
+      //     </table>
+
+      //     <p style="margin-top: 25px; font-size: 16px; color: #333;">
+      //       Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
+      //     </p>
+
+      //     <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+      //   </div>
+      //   <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+      //     &copy; ${new Date().getFullYear()} Explore Vacations. All rights reserved.
+      //   </div>
+      // </div>
+      //     `,
+      //   };
+
+      //   try {
+      //     await sendEmail(mailOptions);
+      //   } catch (error) {
+      //     console.error("Failed to send confirmation email to user:", error);
+      //   }
+      // };
+
+      // await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+
+      // way 2
+
+      // const daysLeft = Math.ceil(
+      //   (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+      //     (1000 * 60 * 60 * 24)
+      // );
+
+      const daysLeft = Math.ceil(
+        (new Date(refArrivalDate).getTime() -
+          new Date(CurrentTime()).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+      const main = async () => {
+        const adminMail = {
           to: "indumathi123indumathi@gmail.com",
           subject: "New Customize Tour Booking Received",
-          html: generateCustomizeTourBookingEmailContent(bookingData),
+          html: generateCustomizeTourBookingEmailContent(Result),
         };
 
         try {
-          await sendEmail(mailOptions);
+          await sendEmail(adminMail);
         } catch (error) {
-          console.error("Failed to send admin email:", error);
+          console.log("Error in sending the Mail for Admin", error);
         }
       };
+      main().catch(console.error);
 
-      const sendUserConfirmationMail = async () => {
-        const daysLeft = Math.ceil(
-          (new Date(refArrivalDate).getTime() - new Date().getTime()) /
-            (1000 * 60 * 60 * 24)
-        );
-
-        // way 1
-        const mailOptions = {
+      const main1 = async () => {
+        const adminMail = {
           to: refUserMail,
-          subject: "🌍 Customize Tour Booking Confirmed",
+          subject: "✅ Your Tour Has Been Booked!",
           html: `
-             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
               <h1 style="margin: 0;">Explore Vacations</h1>
               <p style="margin: 0;">Your journey starts here ✈️</p>
@@ -504,95 +593,17 @@ export class userRepository {
               <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
             </div>
             <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
-              &copy; ${new Date().getFullYear()} Explore Vacations. All rights reserved.
+              &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
             </div>
-          </div>
-          `,
+          </div> `,
         };
-
         try {
-          await sendEmail(mailOptions);
+          await sendEmail(adminMail);
         } catch (error) {
-          console.error("Failed to send confirmation email to user:", error);
+          console.log("Error in sending the Mail for User", error);
         }
       };
-
-      await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
-
-      // way 2
-
-      // const daysLeft = Math.ceil(
-      //   (new Date(refArrivalDate).getTime() - new Date().getTime()) /
-      //     (1000 * 60 * 60 * 24)
-      // );
-
-      // const main = async () => {
-      //   const adminMail = {
-      //     to: "indumathi123indumathi@gmail.com",
-      //     subject: "New Customize Tour Booking Received",
-      //     html:  generateCustomizeTourBookingEmailContent(bookingData),
-      //   };
-
-      //   try {
-      //     await sendEmail(adminMail);
-      //   } catch (error) {
-      //     console.log("Error in sending the Mail for Admin", error);
-      //   }
-      // };
-      // main().catch(console.error)
-
-      // const main1 = async () => {
-      //   const adminMail = {
-      //     to: refUserMail,
-      //     subject: "✅ Your Tour Has Been Booked!",
-      //     html: `
-      //     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-      //       <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
-      //         <h1 style="margin: 0;">Explore Vacations</h1>
-      //         <p style="margin: 0;">Your journey starts here ✈️</p>
-      //       </div>
-      //       <div style="padding: 30px; background-color: #f9f9f9;">
-      //         <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
-      //         <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
-
-      //         <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
-      //           <tr>
-      //             <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
-      //             <td style="padding: 8px 0;">${refPackageName}</td>
-      //           </tr>
-      //           <tr>
-      //             <td style="padding: 8px 0;"><strong>🆔 Tour ID:</strong></td>
-      //             <td style="padding: 8px 0;">${refTourCustID}</td>
-      //           </tr>
-      //           <tr>
-      //             <td style="padding: 8px 0;"><strong>📅 Arrival Date:</strong></td>
-      //             <td style="padding: 8px 0;">${refArrivalDate}</td>
-      //           </tr>
-      //           <tr>
-      //             <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
-      //             <td style="padding: 8px 0;">${daysLeft} day(s)</td>
-      //           </tr>
-      //         </table>
-
-      //         <p style="margin-top: 25px; font-size: 16px; color: #333;">
-      //           Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
-      //         </p>
-
-      //         <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
-      //       </div>
-      //       <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
-      //         &copy; ${new Date().getFullYear()} Explore Vacations. All rights reserved.
-      //       </div>
-      //     </div>
-      //   `,
-      //   };
-      //   try {
-      //     await sendEmail(adminMail);
-      //   } catch (error) {
-      //     console.log("Error in sending the Mail for User", error);
-      //   }
-      // };
-      // main1().catch(console.error)
+      main1().catch(console.error);
 
       await client.query("COMMIT");
 
@@ -844,6 +855,10 @@ export class userRepository {
         refChildrenCount,
         refInfants,
         refOtherRequirements,
+        refDriverName,
+        refDriverAge,
+        refDriverMail,
+        refDriverMobile,
       } = userData;
 
       // const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
@@ -868,82 +883,20 @@ export class userRepository {
         // tokendata.id,
       ]);
 
+      console.log("Result", Result.rows);
       //way 1
-      // const adminMail = {
-      //   to: "indumathi123indumathi@gmail.com",
-      //   subject: "New Tour Booking Received",
-      //   html: generateCarBookingEmailContent(Result),
-      // };
 
-      // const transporter = nodemailer.createTransport({
-      //   service: "gmail",
-      //   auth: {
-      //     user: process.env.EMAILID,
-      //     pass: process.env.PASSWORD,
-      //   },
-      // });
-
-      // const mailoption = {
-      //   from: process.env.EMAILID,
-      //   to: "indumathi123indumathi@gmail.com",
-      //   subject: "New Tour Booking Received",
-      //   html: generateTourBookingEmailContent(Result),
-      // };
-
-      // await transporter.sendMail(mailoption);
-
-      // // 2. User confirmation email with countdown
-      // const daysLeft = Math.ceil(
-      //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
-      //     (1000 * 60 * 60 * 24)
-      // );
-
-      // const adminmailoption = {
-      //   from: process.env.EMAILID,
-      //   to: refUserMail,
-      //   subject: "🚗 Car Booking Confirmed",
-      //   html: `
-      //         <h2>Hello ${refUserName} 👋</h2>
-      //         <p>Your car has been booked successfully with us.</p>
-      //         <p><strong>Pickup Date:</strong> ${refPickupDate}</p>
-      //         <p><strong>Pickup Address:</strong> ${refPickupAddress}</p>
-      //         <p><strong>Drop Address:</strong> ${refSubmissionAddress}</p>
-      //         <p><strong>Days left:</strong> ${daysLeft} day(s)</p>
-      //         <br>
-      //         <p>Thank you for choosing our service! 😊</p>
-      //       `,
-      // };
-
-      // await transporter.sendMail(adminmailoption);
-
-      //way 2
+      const daysLeft = Math.ceil(
+        (new Date(refPickupDate).getTime() -
+          new Date(CurrentTime()).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
       const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
 
       console.log("getCarName", getCarName);
 
       const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
         getCarName[0];
-
-      const main = async () => {
-        const adminMail = {
-          // to: "indumathi123indumathi@gmail.com",
-          to: "keerthana2005keethukeethu@gmail.com",
-          subject: "New car Booking Received",
-          html: generateCarBookingEmailContent(Result),
-        };
-        try {
-          await sendEmail(adminMail);
-        } catch (error) {
-          console.log("Error in sending the Mail for Admin", error);
-        }
-      };
-      main().catch(console.error);
-
-      // 2. User confirmation email with countdown
-      const daysLeft = Math.ceil(
-        (new Date(refPickupDate).getTime() - new Date().getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
 
       const userMailData = {
         daysLeft: daysLeft,
@@ -955,21 +908,204 @@ export class userRepository {
         refCarPrice: refCarPrice,
       };
 
-      console.log("userMailData", userMailData);
-      const main1 = async () => {
-        const adminMail = {
-          to: refUserMail,
-          subject: "✅ Your car Has Been Booked!",
-          html: userCarEmailContent(userMailData),
-        };
-
-        try {
-          await sendEmail(adminMail);
-        } catch (error) {
-          console.log("Error in sending the Mail for User", error);
-        }
+      const adminMail = {
+        to: "indumathi123indumathi@gmail.com",
+        subject: "New car Booking Received",
+        html: generateCarBookingEmailContent(Result),
       };
-      main1().catch(console.error);
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAILID,
+          pass: process.env.PASSWORD,
+        },
+      });
+
+      const mailoption = {
+        from: process.env.EMAILID,
+        to: "indumathi123indumathi@gmail.com",
+        subject: "New car Booking Received",
+        html: generateCarBookingEmailContent(Result.rows),
+      };
+
+      await transporter.sendMail(mailoption);
+
+      // 2. User confirmation email with countdown
+
+      const adminmailoption = {
+        from: process.env.EMAILID,
+        to: refUserMail,
+        subject: "🚗 Car Booking Confirmed",
+        html: `
+               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      <div style="background-color:rgba(0, 123, 255, 0.66); padding: 20px; color: white; text-align: center;">
+      <h1 style="margin: 0;">Explore Vacations</h1>
+      <p style="margin: 0;">Ride into comfort 🚗</p>
+    </div>
+    <div style="padding: 30px; background-color: #f9f9f9;">
+      <h2 style="color: #007BFF;">Hello ${userMailData.refUserName} 👋</h2>
+      <p style="font-size: 16px; color: #333;">Your car booking has been <strong>successfully received</strong>.</p>
+
+      <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+        <tr>
+          <td style="padding: 8px 0;"><strong>🆔 Booking ID:</strong></td>
+          <td style="padding: 8px 0;">${userMailData.refCarCustId}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>🚘 Vehicle Type:</strong></td>
+          <td style="padding: 8px 0;">${userMailData.refVehicleTypeName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>🏷️ Car Category:</strong></td>
+          <td style="padding: 8px 0;">${userMailData.refCarTypeName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
+          <td style="padding: 8px 0;">${userMailData.refPickupDate}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+          <td style="padding: 8px 0;">${userMailData.daysLeft} day(s)</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>💰 Price:</strong></td>
+          <td style="padding: 8px 0;">₹${userMailData.refCarPrice}</td>
+        </tr>
+      </table>
+
+      <p style="margin-top: 25px; font-size: 16px; color: #333;">
+        Our team will contact you soon to finalize your ride details.
+      </p>
+      
+      <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+    </div>
+    <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+      &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
+    </div>
+  </div>
+             `,
+      };
+
+      await transporter.sendMail(adminmailoption);
+
+      // //way 2
+
+      // const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
+
+      // console.log("getCarName", getCarName);
+
+      // const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
+      //   getCarName[0];
+
+      // const main = async () => {
+      //   const adminMail = {
+      //     to: "indumathi123indumathi@gmail.com",
+      //     // to: "keerthana2005keethukeethu@gmail.com",
+      //     subject: "New car Booking Received",
+      //     html: generateCarBookingEmailContent(Result),
+      //   };
+      //   try {
+      //     await sendEmail(adminMail);
+      //   } catch (error) {
+      //     console.log("Error in sending the Mail for Admin", error);
+      //   }
+      // };
+      // main().catch(console.error);
+
+      // // 2. User confirmation email with countdown
+
+      // // const daysLeft = Math.ceil(
+      // //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
+      // //     (1000 * 60 * 60 * 24)
+      // // );
+
+      // const daysLeft = Math.ceil(
+      //   (new Date(refPickupDate).getTime() - new Date(CurrentTime()).getTime()) /
+      //     (1000 * 60 * 60 * 24)
+      // );
+
+      // const userMailData = {
+      //   daysLeft: daysLeft,
+      //   refPickupDate: refPickupDate,
+      //   refUserName: refUserName,
+      //   refCarTypeName: refCarTypeName,
+      //   refVehicleTypeName: refVehicleTypeName,
+      //   refCarCustId: refCarCustId,
+      //   refCarPrice: refCarPrice,
+      // };
+
+      // console.log("userMailData", userMailData);
+      // const main1 = async () => {
+      //   const adminMail = {
+      //     to: refUserMail,
+      //     subject: "✅ Your car Has Been Booked!",
+      //     // html: userCarEmailContent(userMailData),
+      //     html:` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      // <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+      //   <h1 style="margin: 0;">Explore Vacations</h1>
+      //   <p style="margin: 0;">Ride into comfort 🚗</p>
+      // </div>
+      // <div style="padding: 30px; background-color: #f9f9f9;">
+      //   <h2 style="color: #007BFF;">Hello ${userMailData.refUserName} 👋</h2>
+      //   <p style="font-size: 16px; color: #333;">Your car booking has been <strong>successfully received</strong>.</p>
+
+      //   <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+      //     <tr>
+      //   <td style="padding: 8px 0;"><strong>🆔 Booking ID:</strong></td>
+      //   <td style="padding: 8px 0;">${userMailData.refCarCustId}</td>
+      // </tr>
+      // <tr>
+      //   <td style="padding: 8px 0;"><strong>🚘 Vehicle Type:</strong></td>
+      //   <td style="padding: 8px 0;">${userMailData.refVehicleTypeName}</td>
+      // </tr>
+      // <tr>
+      //   <td style="padding: 8px 0;"><strong>🏷️ Car Category:</strong></td>
+      //   <td style="padding: 8px 0;">${userMailData.refCarTypeName}</td>
+      // </tr>
+      // <tr>
+      //   <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
+      //   <td style="padding: 8px 0;">${userMailData.refPickupDate}</td>
+      // </tr>
+      // <tr>
+      //   <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+      //   <td style="padding: 8px 0;">${userMailData.daysLeft} day(s)</td>
+      // </tr>
+      // <tr>
+      //   <td style="padding: 8px 0;"><strong>💰 Price:</strong></td>
+      //   <td style="padding: 8px 0;">₹${userMailData.refCarPrice}</td>
+      //       </tr>
+      //     </table>
+
+      //     <p style="margin-top: 25px; font-size: 16px; color: #333;">
+      //       Our team will contact you soon to finalize your ride details.
+      //     </p>
+
+      //     <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+      //   </div>
+      //   <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+      //     &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
+      //   </div>
+      // </div>`
+      //     };
+
+      //   try {
+      //     await sendEmail(adminMail);
+      //   } catch (error) {
+      //     console.log("Error in sending the Mail for User", error);
+      //   }
+      // };
+      // main1().catch(console.error);
+
+      const drivarDetails = await client.query(drivarDetailsQuery, [
+        refDriverName,
+        refDriverAge,
+        refDriverMail,
+        refDriverMobile,
+        CurrentTime(),
+        "user",
+        // tokendata.id,
+      ]);
 
       await client.query("COMMIT"); // Commit transaction
 
@@ -979,6 +1115,7 @@ export class userRepository {
           message: "User car booking added successfully",
           // tokens:tokens,
           Data: Result.rows[0],
+          drivarDetails: drivarDetails,
         },
         true
       );
@@ -1009,12 +1146,69 @@ export class userRepository {
 
       const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
 
-      // Step 2: Process images for both sets of results
-      if (result1 && result1.length) {
-        await processImages(result1);
-      }
-      if (result2 && result2.length) {
-        await processImages(result2);
+      // // Step 2: Process images for both sets of results
+      // if (result1 && result1.length) {
+      //   await processImages(result1);
+      // }
+      // if (result2 && result2.length) {
+      //   await processImages(result2);
+      // }
+
+      for (const image of result1) {
+        const galleryValue = image["refGallery"];
+        if (galleryValue) {
+          try {
+            // If it's a string in the format: {"path1","path2",...}
+            const galleryPaths =
+              typeof galleryValue === "string"
+                ? galleryValue
+                    .replace(/^{|}$/g, "") // Remove starting and ending curly braces
+                    .split(/","?/) // Split paths by "," or just "
+                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove surrounding quotes
+                : galleryValue;
+
+            image["refGallery"] = await Promise.all(
+              galleryPaths.map(async (imgPath: string) => {
+                try {
+                  const fileBuffer = await viewFile(imgPath);
+                  return {
+                    filename: path.basename(imgPath),
+                    content: fileBuffer.toString("base64"),
+                    contentType: "image/jpeg",
+                  };
+                } catch (err) {
+                  console.error(
+                    `Error reading gallery image from ${imgPath}:`,
+                    err
+                  );
+                  return null;
+                }
+              })
+            ).then((results) => results.filter(Boolean)); // Filter out failed
+          } catch (error) {
+            console.error("Error processing refGallery:", error);
+            image["refGallery"] = [];
+          }
+        }
+
+        // Handle single image fields
+        for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+          const value = image[key];
+
+          if (value) {
+            try {
+              const fileBuffer = await viewFile(value);
+              image[key] = {
+                filename: path.basename(value),
+                content: fileBuffer.toString("base64"),
+                contentType: "image/jpeg",
+              };
+            } catch (error) {
+              console.error(`Error processing ${key}:`, error);
+              image[key] = null;
+            }
+          }
+        }
       }
 
       // Step 3: Return success response
@@ -1023,7 +1217,7 @@ export class userRepository {
           success: true,
           message: "Listed Tour successfully",
           tourDetails: result1,
-          othertourDetails: result2,
+          // othertourDetails: result2,
         },
         true
       );
@@ -1042,68 +1236,265 @@ export class userRepository {
       );
     }
   }
+  // public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
+  //   try {
+  //     const result1 = await executeQuery(listallTourQuery);
+
+  //     //  //way 1
+  //     //     for (const image of result1) {
+  //     //       for (const key of [
+  //     //         "refGallery",
+  //     //         "refItinaryMapPath",
+  //     //         "refCoverImage",
+  //     //       ]) {
+  //     //         console.log("********************", key + "(()()()()(", image[key]);
+  //     //         if (image[key]) {
+  //     //           try {
+  //     //             console.log("key line 219", key);
+  //     //             const fileBuffer = await viewFile(image[key]);
+  //     //             image[key] = {
+  //     //               filename: path.basename(image[key]),
+  //     //               content: fileBuffer.toString("base64"),
+  //     //               contentType: "image/jpeg", // Adjust if needed based on the image type
+  //     //             };
+  //     //           } catch (error) {
+  //     //             console.error(`Error reading ${key} file:`, error);
+  //     //             image[key] = null; // Handle missing/unreadable files
+  //     //           }
+  //     //         }
+  //     //       }
+
+  //     //way 2
+
+  //     for (const image of result1) {
+  //       for (const key of [
+  //         "refGallery",
+  //         "refItinaryMapPath",
+  //         "refCoverImage",
+  //       ]) {
+  //         const value = image[key];
+
+  //         if (value) {
+  //           try {
+  //             if (key === "refGallery") {
+  //               // Handle multiple image paths (as comma-separated string or array)
+  //               const paths = Array.isArray(value)
+  //                 ? value
+  //                 : value.split(",").map((p: string) => p.trim());
+
+  //               image[key] = await Promise.all(
+  //                 paths.map(async (imgPath: string) => {
+  //                   try {
+  //                     const fileBuffer = await viewFile(imgPath);
+  //                     return {
+  //                       filename: path.basename(imgPath),
+  //                       content: fileBuffer.toString("base64"),
+  //                       contentType: "image/jpeg", // Update as needed
+  //                     };
+  //                   } catch (err) {
+  //                     console.error(
+  //                       `Error reading image from ${imgPath}:`,
+  //                       err
+  //                     );
+  //                     return null;
+  //                   }
+  //                 })
+  //               );
+  //             } else {
+  //               // Handle single image path
+  //               const fileBuffer = await viewFile(value);
+  //               image[key] = {
+  //                 filename: path.basename(value),
+  //                 content: fileBuffer.toString("base64"),
+  //                 contentType: "image/jpeg", // Update as needed
+  //               };
+  //             }
+  //           } catch (error) {
+  //             console.error(`Error processing ${key}:`, error);
+  //             image[key] = null;
+  //           }
+  //         }
+  //       }
+  //     }
+
+  //     // way 3
+
+  //     // for (const image of result1) {
+  //     //   //  Handle refGallery (Multiple Images)
+  //     //   if (image.refGallery) {
+  //     //     try {
+  //     //       const paths = Array.isArray(image.refGallery)
+  //     //         ? image.refGallery
+  //     //         : image.refGallery.split(",").map((p: string) => p.trim());
+
+  //     //       image.refGallery = await Promise.all(
+  //     //         paths.map(async (imgPath: string) => {
+  //     //           try {
+  //     //             const fileBuffer = await viewFile(imgPath);
+  //     //             return {
+  //     //               filename: path.basename(imgPath),
+  //     //               content: fileBuffer.toString("base64"),
+  //     //               contentType: "image/jpeg", // Adjust based on file type
+  //     //             };
+  //     //           } catch (err) {
+  //     //             console.error(`Error reading image from ${imgPath}:`, err);
+  //     //             return null;
+  //     //           }
+  //     //         })
+  //     //       ).then((imgs) => imgs.filter(Boolean)); // Remove nulls if any
+  //     //     } catch (error) {
+  //     //       console.error("Error processing refGallery:", error);
+  //     //       image.refGallery = [];
+  //     //     }
+  //     //   }
+
+  //     // ✅ Handle Single Image Fields
+  //     //   for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+  //     //     const value = image[key];
+  //     //     if (value) {
+  //     //       try {
+  //     //         const fileBuffer = await viewFile(value);
+  //     //         image[key] = {
+  //     //           filename: path.basename(value),
+  //     //           content: fileBuffer.toString("base64"),
+  //     //           contentType: "image/jpeg", // Adjust as needed
+  //     //         };
+  //     //       } catch (error) {
+  //     //         console.error(`Error reading ${key} file:`, error);
+  //     //         image[key] = null;
+  //     //       }
+  //     //     }
+  //     //   }
+  //     // }
+
+  //     console.log(result1);
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "listed Tour successfully",
+  //         tourDetails: result1,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An unknown error occurred during listed  Tour ",
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
+
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
       const result1 = await executeQuery(listallTourQuery);
-
-      // Convert images to Base64 format
-      // for (const image of result) {
-      //   console.log("image", image);
-      //   if (image.refCoverImage) {
-      //     try {
-      //       console.log("image -- true part", image);
-      //       const fileBuffer = await viewFile(image.refCoverImage);
-      //       image.refCoverImage = {
-      //         filename: path.basename(image.refCoverImage),
-      //         content: fileBuffer.toString("base64"),
-      //         contentType: "image/jpeg", // Adjust if needed
-      //       };
-      //     } catch (error) {
-      //       console.log("false part ---");
-      //       console.error("Error reading image file:", error);
-      //       image.refCoverImage = null; // Handle missing/unreadable files
-      //     }
-      //   }
-      // }
-
-      // if (result1 && result1.length) {
-      //   await processImages(result1);
-      // }
-
       for (const image of result1) {
-        for (const key of [
-          "refGallery",
-          "refItinaryMapPath",
-          "refCoverImage",
-        ]) {
-          console.log("********************", key + "(()()()()(", image[key]);
-          if (image[key]) {
-            try {
-              console.log("key line 219", key);
-              const fileBuffer = await viewFile(image[key]);
-              image[key] = {
-                filename: path.basename(image[key]),
-                content: fileBuffer.toString("base64"),
-                contentType: "image/jpeg", // Adjust if needed based on the image type
-              };
-            } catch (error) {
-              console.error(`Error reading ${key} file:`, error);
-              image[key] = null; // Handle missing/unreadable files
-            }
+        // Handle gallery images
+
+        // const galleryValue = image["refGallery"];
+        // if (galleryValue) {
+        //   try {
+        //     const parsedGallery =
+        //       typeof galleryValue === "string"
+        //         ? JSON.parse(galleryValue.replace(/\\/g, "\\\\")) // Escape backslashes for Windows paths
+        //         : galleryValue;
+
+        //     const galleryPaths = Object.keys(parsedGallery);
+
+        //     image["refGallery"] = await Promise.all(
+        //       galleryPaths.map(async (imgPath: string) => {
+        //         try {
+        //           const fileBuffer = await viewFile(imgPath);
+        //           return {
+        //             filename: path.basename(imgPath),
+        //             content: fileBuffer.toString("base64"),
+        //             contentType: "image/jpeg",
+        //           };
+        //         } catch (err) {
+        //           console.error(
+        //             `Error reading gallery image from ${imgPath}:`,
+        //             err
+        //           );
+        //           return null;
+        //         }
+        //       })
+        //     ).then((results) => results.filter(Boolean)); // Remove failed ones
+        //   } catch (error) {
+        //     console.error("Error processing refGallery:", error);
+        //     image["refGallery"] = [];
+        //   }
+        // }
+
+        const galleryValue = image["refGallery"];
+        if (galleryValue) {
+          try {
+            // If it's a string in the format: {"path1","path2",...}
+            const galleryPaths =
+              typeof galleryValue === "string"
+                ? galleryValue
+                    .replace(/^{|}$/g, "") // Remove starting and ending curly braces
+                    .split(/","?/) // Split paths by "," or just "
+                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove surrounding quotes
+                : galleryValue;
+
+            image["refGallery"] = await Promise.all(
+              galleryPaths.map(async (imgPath: string) => {
+                try {
+                  const fileBuffer = await viewFile(imgPath);
+                  return {
+                    filename: path.basename(imgPath),
+                    content: fileBuffer.toString("base64"),
+                    contentType: "image/jpeg",
+                  };
+                } catch (err) {
+                  console.error(
+                    `Error reading gallery image from ${imgPath}:`,
+                    err
+                  );
+                  return null;
+                }
+              })
+            ).then((results) => results.filter(Boolean)); // Filter out failed
+          } catch (error) {
+            console.error("Error processing refGallery:", error);
+            image["refGallery"] = [];
           }
         }
 
-        console.log(result1);
+        // Handle single image fields
+        for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+          const value = image[key];
 
-        return encrypt(
-          {
-            success: true,
-            message: "listed Tour successfully",
-            tourDetails: result1,
-          },
-          true
-        );
+          if (value) {
+            try {
+              const fileBuffer = await viewFile(value);
+              image[key] = {
+                filename: path.basename(value),
+                content: fileBuffer.toString("base64"),
+                contentType: "image/jpeg",
+              };
+            } catch (error) {
+              console.error(`Error processing ${key}:`, error);
+              image[key] = null;
+            }
+          }
+        }
       }
+
+      console.log(result1);
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed Tour successfully",
+          tourDetails: result1,
+        },
+        true
+      );
     } catch (error: unknown) {
       return encrypt(
         {
@@ -1328,7 +1719,8 @@ export class userRepository {
   }
   public async getAllCarV1(userData: any, tokendata: any): Promise<any> {
     try {
-      const result = await executeQuery(listCarsQuery);
+      const { refCarTypeId } = userData;
+      const result = await executeQuery(listCarsQuery, [refCarTypeId]);
 
       for (const image of result) {
         if (image.refCarPath) {
@@ -1371,8 +1763,8 @@ export class userRepository {
       const result1 = await executeQuery(getCarsByIdQuery, [refCarsId]);
       console.log("result1", result1);
 
-      const result2 = await executeQuery(getOtherCarsQuery, [refCarsId]);
-      console.log("result2", result2);
+      // const result2 = await executeQuery(getOtherCarsQuery, [refCarsId]);
+      // console.log("result2", result2);
 
       for (const image of result1) {
         if (image.refCarPath) {
@@ -1395,7 +1787,7 @@ export class userRepository {
           success: true,
           message: "listed car successfully",
           tourDetails: result1,
-          othertourDetails: result2,
+          // othertourDetails: result2,
         },
         true
       );

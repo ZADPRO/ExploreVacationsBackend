@@ -1970,6 +1970,7 @@ export class carsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
+      // const {refCarTypeId} = userData
       const result = await executeQuery(listCarsQuery);
 
       for (const image of result) {

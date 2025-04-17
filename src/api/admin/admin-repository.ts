@@ -262,15 +262,17 @@ export class adminRepository {
     try {
       const { TransactionType, updatedAt } = userData;
 
-      const date = updatedAt
-        ? updatedAt
-        : (() => {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, "0");
-            const month = String(now.getMonth() + 1).padStart(2, "0");
-            const year = now.getFullYear();
-            return `${day}/${month}/${year}`; // Format: 'DD/MM/YYYY'
-          })();
+      // const date = updatedAt
+      //   ? updatedAt
+      //   : (() => {
+      //       const now = new Date();
+      //       const day = String(now.getDate()).padStart(2, "0");
+      //       const month = String(now.getMonth() + 1).padStart(2, "0");
+      //       const year = now.getFullYear();
+      //       return `${day}/${month}/${year}`; // Format: 'DD/MM/YYYY'
+      //     })();
+
+      const date = updatedAt ? updatedAt : CurrentTime();
 
       // const result = await executeQuery(listAuditPageQuery, [
       //   date,

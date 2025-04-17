@@ -104,6 +104,7 @@ export class packageRepository {
 
   //  }
   public async addPackageV1(userData: any, tokendata: any): Promise<any> {
+    console.log("userData line 107 --------- ", userData);
     console.log("tokendata line ----- 103", tokendata);
     const client: PoolClient = await getClient();
     const refuserId = tokendata.id;
@@ -128,7 +129,7 @@ export class packageRepository {
         refItinaryMapPath,
         refSpecialNotes,
         refTravalOverView,
-        refCoverImage
+        refCoverImage,
       } = userData;
 
       // const refLocation = `{${userData.refLocation.join(",")}}`;
@@ -145,22 +146,22 @@ export class packageRepository {
         ? `{${userData.refTravalExclude.join(",")}}`
         : `{${userData.refTravalExclude.split(",").join(",")}}`;
 
-        const customerPrefix = "EV-TOUR-";
-        const baseNumber = 0;
-  
-        const lastCustomerResult = await client.query(gettourIdIdQuery);
-        let newCustomerId: string;
-  
-        if (lastCustomerResult.rows.length > 0) {
-          const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
-          newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
-            .toString()
-            .padStart(4, "0")}`;
-        } else {
-          newCustomerId = `${customerPrefix}${(baseNumber + 1)
-            .toString()
-            .padStart(4, "0")}`;
-        }
+      const customerPrefix = "EV-TOUR-";
+      const baseNumber = 0;
+
+      const lastCustomerResult = await client.query(gettourIdIdQuery);
+      let newCustomerId: string;
+
+      if (lastCustomerResult.rows.length > 0) {
+        const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
+        newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      } else {
+        newCustomerId = `${customerPrefix}${(baseNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      }
 
       // Insert package details and get refPackageId
       const packageResult = await client.query(addPackageQuery, [
@@ -183,14 +184,36 @@ export class packageRepository {
 
       const refPackageId = packageResult.rows[0].refPackageId;
 
-      // Store image path in the database
-      const image = await client.query(insertGalleryQuery, [
-        refPackageId,
-        images,
-        CurrentTime(),
-        refuserId,
-      ]
-    );
+      //   // Store image path in the database
+      //   const image = await client.query(insertGalleryQuery, [
+      //     refPackageId,
+      //     images,
+      //     CurrentTime(),
+      //     refuserId,
+      //   ]
+      // );
+
+      // if (Array.isArray(images)) {
+      //   for (const imgPath of images) {
+      //     await client.query(insertGalleryQuery, [
+      //       refPackageId,
+      //       imgPath,
+      //       CurrentTime(),
+      //       refuserId,
+      //     ]);
+      //   }
+      // }
+
+      //     let parsedImages = [];
+
+      // if (typeof images === "string") {
+      //   try {
+      //     parsedImages = Object.keys(JSON.parse(images.replace(/\\/g, "\\\\")));
+      //   } catch (e) {
+      //     console.error("Invalid image paths format in `images`");
+      //     parsedImages = [];
+      //   }
+      // }
 
       // console.log('image', image)
 
@@ -202,6 +225,38 @@ export class packageRepository {
       //     });
       //   }
       // }
+
+      if (images) {
+        console.log("images", images);
+        let parsedImages: string[] = [];
+
+        // If `images` is a stringified object like: {"path1": "", "path2": ""}
+        if (typeof images === "string") {
+          try {
+            const temp = JSON.parse(images.replace(/\\/g, "\\\\"));
+            parsedImages = Object.keys(temp);
+          } catch (e) {
+            console.error("Failed to parse images:", e);
+          }
+        } else if (Array.isArray(images)) {
+          parsedImages = images;
+          console.log("parsedImages", parsedImages);
+        }
+
+        // Insert each image path into the gallery table
+        for (const imgPath of parsedImages) {
+          try {
+            await client.query(insertGalleryQuery, [
+              refPackageId,
+              imgPath,
+              CurrentTime(),
+              refuserId,
+            ]);
+          } catch (err) {
+            console.error(`Failed to insert gallery image ${imgPath}:`, err);
+          }
+        }
+      }
 
       const Result = await client.query(addTravalDataQuery, [
         refPackageId,
@@ -1160,7 +1215,7 @@ export class packageRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1235,7 +1290,7 @@ export class packageRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1432,7 +1487,7 @@ export class packageRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1507,7 +1562,7 @@ export class packageRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1731,24 +1786,23 @@ export class packageRepository {
       const result1 = await executeQuery(listTourByIdQuery, [refPackageId]);
       console.log("result1: line ------- 1586", result1);
 
-
       for (const image of result1) {
-          for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
-            if (image[key]) {
-              try {
-                const fileBuffer = await viewFile(image[key]);
-                image[key] = {
-                  filename: path.basename(image[key]),
-                  content: fileBuffer.toString("base64"),
-                  contentType: "image/jpeg", // Adjust if needed
-                };
-              } catch (error) {
-                console.error(`Error reading ${key} file:`, error);
-                image[key] = null; // Handle missing/unreadable files
-              }
+        for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+          if (image[key]) {
+            try {
+              const fileBuffer = await viewFile(image[key]);
+              image[key] = {
+                filename: path.basename(image[key]),
+                content: fileBuffer.toString("base64"),
+                contentType: "image/jpeg", // Adjust if needed
+              };
+            } catch (error) {
+              console.error(`Error reading ${key} file:`, error);
+              image[key] = null; // Handle missing/unreadable files
             }
           }
         }
+      }
 
       return encrypt(
         {
@@ -1775,6 +1829,4 @@ export class packageRepository {
       );
     }
   }
-
 }
-
