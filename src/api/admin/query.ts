@@ -359,3 +359,17 @@ export const listUserTypeQuery = `SELECT
 FROM
   public."refUserType";
 `;
+
+export const dashBoardQuery =`
+SELECT
+  (SELECT COUNT(*) FROM public."userTourBooking") AS "tourBookingCount",
+  (SELECT COUNT(*) FROM public."userCarBooking") AS "carBookingCount",
+  -- (SELECT COUNT(*) FROM public."userCarParkingBooking") AS "carParkingBookingCount",
+  (SELECT COUNT(*) FROM public."customizeTourBooking") AS "customizeTourBookingCount",
+  (SELECT COUNT(*) FROM public."refCarsTable") AS "carCount",
+  (SELECT COUNT(*) FROM public."refPackage") AS "tourCount",
+  (SELECT COUNT(*) FROM public."refCarParkingTable") AS "CarParkingCount",
+  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-EMP-%') AS "EmployeeCount",
+  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-CUS-%') AS "logInClientCount",
+  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-CUS-%') AS "logInClientCount";
+`;

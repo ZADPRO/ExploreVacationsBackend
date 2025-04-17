@@ -1264,23 +1264,37 @@ RETURNING
 `;
 
   export const userTourBookingHistoryQuery = `
-  SELECT
-  *
+SELECT
+  tb.*,
+  rp."refPackageName",
+  rp."refDurationIday",
+  rp."refDurationINight",
+  rp."refTourCode",
+  rp."refTourPrice"
 FROM
-  public."userTourBooking"
+  public."userTourBooking" tb
+  LEFT JOIN public."refPackage" rp ON CAST(rp."refPackageId" AS INTEGER) = tb."refPackageId"
 WHERE
-  "refUserId" = $1
-
+  tb."refuserId" = $1
   `;
 
   export const userCarBookingHistoryQuery = `
-  SELECT
-  *
+SELECT
+  cb.*,
+  vt."refVehicleTypeName",
+  ct."refPersonCount",
+  ct."refBagCount",
+  ct."refCarPath",
+  ct."refCarPrice",
+  ct."refCarCustId",
+  rc."refCarTypeName"
 FROM
-  public."userCarBooking"
+  public."userCarBooking" cb
+  LEFT JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = cb."refCarsId"
+  LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
+  LEFT JOIN public."refCarType" rc ON CAST(rc."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
 WHERE
-  "refUserId" = $1
-
+  cb."refuserId" = $1
   `;
 
   export const userCarParkingBookingHistoryQuery = `

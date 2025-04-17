@@ -12,7 +12,9 @@ import {
   generateTokenWithoutExpire,
 } from "../../helper/token";
 import {
+ 
   checkQuery,
+  dashBoardQuery,
   deleteEmployeeImageQuery,
   deleteEmployeesQuery,
   getDeletedEmployeeQuery,
@@ -29,6 +31,7 @@ import {
   listTransactionTypeQuery,
   listUserTypeQuery,
   selectUserByLogin,
+
   updateEmployeeQuery,
   updateHistoryQuery,
 } from "./query";
@@ -1012,6 +1015,34 @@ export class adminRepository {
         {
           success: false,
           message: "An unknown error occurred during listed userType ",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+
+  public async dashBoardV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const dashBoard = await executeQuery(dashBoardQuery);
+  
+      return encrypt(
+        {
+          success: true,
+          message: "listed dashboard successfully",
+          token: tokens,
+          dashBoard: dashBoard,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed dashboard ",
           token: tokens,
           error: String(error),
         },

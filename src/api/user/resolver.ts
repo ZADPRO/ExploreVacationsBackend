@@ -71,7 +71,13 @@ export class userResolver {
     return await this.userRepository.UpdateprofileDataV1(user_data, token_data, domain_code);
   }
 
-  public async userBookingHistoryV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
-    return await this.userRepository.userBookingHistoryV1(user_data, token_data, domain_code);
+  public async tourBookingHistoryV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.tourBookingHistoryV1(user_data, token_data, domain_code);
+  }
+  public async carBookingHistoryV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.carBookingHistoryV1(user_data, token_data, domain_code);
+  }
+  public async carParkingHistoryV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.carParkingHistoryV1(user_data, token_data, domain_code);
   }
 }

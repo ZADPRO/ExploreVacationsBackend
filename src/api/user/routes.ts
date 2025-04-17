@@ -271,12 +271,34 @@ export class userRoutes implements IRoute {
           },
         },
         {
-          method: "POST",
-          path: "/api/v1/userRoutes/userBookingHistory",
+          method: "GET",
+          path: "/api/v1/userRoutes/tourBookingHistory",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
-            handler: controller.userBookingHistory,
-            description: "userBookingHistory",
+            handler: controller.tourBookingHistory,
+            description: "tourBookingHistory",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/userRoutes/carBookingHistory",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.carBookingHistory,
+            description: "carBookingHistory",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/userRoutes/carParkingHistory",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.carParkingHistory,
+            description: "carParkingHistory",
             tags: ["api", "Users"],
             auth: false,
           },

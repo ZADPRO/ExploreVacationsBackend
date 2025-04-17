@@ -2170,7 +2170,7 @@ export class userRepository {
     }
   }
 
-  public async userBookingHistoryV1(
+  public async tourBookingHistoryV1(
     userData: any,
     tokendata: any
   ): Promise<any> {
@@ -2181,6 +2181,34 @@ export class userRepository {
         userTourBookingHistoryQuery,
         [tokendata.id]
       );
+      return encrypt(
+        {
+          success: true,
+          message: "listed user tour Booking List",
+          token: tokens,
+          tourBookingresult:tourBookingresult
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed user tour Booking List ",
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async carBookingHistoryV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    try {
 
       const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [
         tokendata.id,
@@ -2194,8 +2222,9 @@ export class userRepository {
       return encrypt(
         {
           success: true,
-          message: "listed userBooking List",
+          message: "listed user car Booking List",
           token: tokens,
+          CarBookingresult:CarBookingresult
         },
         true
       );
@@ -2203,7 +2232,41 @@ export class userRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed userBooking List ",
+          message: "An unknown error occurred during listed user car Booking List ",
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async carParkingHistoryV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+    
+      const CarParkingBookingresult = await executeQuery(
+        userCarParkingBookingHistoryQuery,
+        [tokendata.id]
+      );
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed user car parking Booking List",
+          token: tokens,
+          CarParkingBookingresult:CarParkingBookingresult
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed user car parking Booking List ",
           error: String(error),
           token: tokens,
         },

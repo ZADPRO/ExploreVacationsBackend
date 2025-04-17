@@ -176,6 +176,17 @@ export class adminRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "GET",
+          path: "/api/v1/adminRoutes/dashBoard",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.dashBoard,
+            description: "dashBoard",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
 
       ]);
       resolve(true);

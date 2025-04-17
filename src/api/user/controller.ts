@@ -692,18 +692,18 @@ export class userController {
 
 
 
-  public userBookingHistory = async (
+  public tourBookingHistory = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----user Booking History");
+    logger.info("Router-----tourBookingHistory");
     try {
       const decodedToken ={
         id:request.plugins.token.id
       }
       let entity;
 
-      entity = await this.resolver.userBookingHistoryV1(request.payload,decodedToken);
+      entity = await this.resolver.tourBookingHistoryV1(request.payload,decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -711,7 +711,69 @@ export class userController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in user Booking History", error);
+      logger.error("Error in tourBookingHistory", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public carBookingHistory = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----carBookingHistory");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.carBookingHistoryV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in carBookingHistory", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public carParkingHistory = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----carParkingHistory");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.carParkingHistoryV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in carParkingHistory", error);
       return response
         .response({
           success: false,

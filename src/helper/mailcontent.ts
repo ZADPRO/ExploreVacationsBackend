@@ -386,7 +386,6 @@ export const generateCarBookingEmailContent = (data: any): string => {
           <tr><td><strong>Email:</strong></td><td>${email}</td></tr>
           <tr><td><strong>Mobile:</strong></td><td>${mobile}</td></tr>
         </table>
-
         <h3 style="color: #007BFF; margin-top: 25px;">Booking Details</h3>
         <table style="width: 100%; font-size: 15px; color: #333;">
           <tr><td><strong>Pickup Address:</strong></td><td>${pickupAddress}</td></tr>
