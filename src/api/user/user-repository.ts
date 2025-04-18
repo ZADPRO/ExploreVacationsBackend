@@ -1146,63 +1146,93 @@ export class userRepository {
 
       const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
 
-      // // Step 2: Process images for both sets of results
-      // if (result1 && result1.length) {
-      //   await processImages(result1);
-      // }
-      // if (result2 && result2.length) {
-      //   await processImages(result2);
+     
+
+      // for (const image of result1) {
+      //   const galleryValue = image["refGallery"];
+      //   if (galleryValue) {
+      //     try {
+      //       // If it's a string in the format: {"path1","path2",...}
+      //       const galleryPaths =
+      //         typeof galleryValue === "string"
+      //           ? galleryValue
+      //               .replace(/^{|}$/g, "") // Remove starting and ending curly braces
+      //               .split(/","?/) // Split paths by "," or just "
+      //               .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove surrounding quotes
+      //           : galleryValue;
+
+      //       image["refGallery"] = await Promise.all(
+      //         galleryPaths.map(async (imgPath: string) => {
+      //           try {
+      //             const fileBuffer = await viewFile(imgPath);
+      //             return {
+      //               filename: path.basename(imgPath),
+      //               content: fileBuffer.toString("base64"),
+      //               contentType: "image/jpeg",
+      //             };
+      //           } catch (err) {
+      //             console.error(
+      //               `Error reading gallery image from ${imgPath}:`,
+      //               err
+      //             );
+      //             return null;
+      //           }
+      //         })
+      //       ).then((results) => results.filter(Boolean)); // Filter out failed
+      //     } catch (error) {
+      //       console.error("Error processing refGallery:", error);
+      //       image["refGallery"] = [];
+      //     }
+      //   }
+
+      //   // Handle single image fields
+      //   for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+      //     const value = image[key];
+
+      //     if (value) {
+      //       try {
+      //         const fileBuffer = await viewFile(value);
+      //         image[key] = {
+      //           filename: path.basename(value),
+      //           content: fileBuffer.toString("base64"),
+      //           contentType: "image/jpeg",
+      //         };
+      //       } catch (error) {
+      //         console.error(`Error processing ${key}:`, error);
+      //         image[key] = null;
+      //       }
+      //     }
+      //   }
       // }
 
       for (const image of result1) {
+        // Handle gallery images
         const galleryValue = image["refGallery"];
         if (galleryValue) {
           try {
-            // If it's a string in the format: {"path1","path2",...}
             const galleryPaths =
               typeof galleryValue === "string"
                 ? galleryValue
-                    .replace(/^{|}$/g, "") // Remove starting and ending curly braces
-                    .split(/","?/) // Split paths by "," or just "
-                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove surrounding quotes
+                    .replace(/^{|}$/g, "") // Remove {}
+                    .split(/","?/) // Split by "," or "
+                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
                 : galleryValue;
-
-            image["refGallery"] = await Promise.all(
-              galleryPaths.map(async (imgPath: string) => {
-                try {
-                  const fileBuffer = await viewFile(imgPath);
-                  return {
-                    filename: path.basename(imgPath),
-                    content: fileBuffer.toString("base64"),
-                    contentType: "image/jpeg",
-                  };
-                } catch (err) {
-                  console.error(
-                    `Error reading gallery image from ${imgPath}:`,
-                    err
-                  );
-                  return null;
-                }
-              })
-            ).then((results) => results.filter(Boolean)); // Filter out failed
+      
+            image["refGallery"] = galleryPaths.map((imgPath: string) =>
+              path.basename(imgPath)
+            );
           } catch (error) {
             console.error("Error processing refGallery:", error);
             image["refGallery"] = [];
           }
         }
-
+      
         // Handle single image fields
         for (const key of ["refItinaryMapPath", "refCoverImage"]) {
           const value = image[key];
-
           if (value) {
             try {
-              const fileBuffer = await viewFile(value);
-              image[key] = {
-                filename: path.basename(value),
-                content: fileBuffer.toString("base64"),
-                contentType: "image/jpeg",
-              };
+              image[key] = path.basename(value);
             } catch (error) {
               console.error(`Error processing ${key}:`, error);
               image[key] = null;
@@ -1210,6 +1240,7 @@ export class userRepository {
           }
         }
       }
+    
 
       // Step 3: Return success response
       return encrypt(
@@ -1237,6 +1268,7 @@ export class userRepository {
     }
   }
   // public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
+
   //   try {
   //     const result1 = await executeQuery(listallTourQuery);
 
@@ -1392,91 +1424,91 @@ export class userRepository {
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
       const result1 = await executeQuery(listallTourQuery);
+      // for (const image of result1) {
+      //   const galleryValue = image["refGallery"];
+      //   if (galleryValue) {
+      //     try {
+      //       // If it's a string in the format: {"path1","path2",...}
+      //       const galleryPaths =
+      //         typeof galleryValue === "string"
+      //           ? galleryValue
+      //               .replace(/^{|}$/g, "") // Remove starting and ending curly braces
+      //               .split(/","?/) // Split paths by "," or just "
+      //               .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove surrounding quotes
+      //           : galleryValue;
+
+      //       image["refGallery"] = await Promise.all(
+      //         galleryPaths.map(async (imgPath: string) => {
+      //           try {
+      //             const fileBuffer = await viewFile(imgPath);
+      //             return {
+      //               filename: path.basename(imgPath),
+      //               content: fileBuffer.toString("base64"),
+      //               contentType: "image/jpeg",
+      //             };
+      //           } catch (err) {
+      //             console.error(
+      //               `Error reading gallery image from ${imgPath}:`,
+      //               err
+      //             );
+      //             return null;
+      //           }
+      //         })
+      //       ).then((results) => results.filter(Boolean)); // Filter out failed
+      //     } catch (error) {
+      //       console.error("Error processing refGallery:", error);
+      //       image["refGallery"] = [];
+      //     }
+      //   }
+
+      //   // Handle single image fields
+      //   for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+      //     const value = image[key];
+
+      //     if (value) {
+      //       try {
+      //         const fileBuffer = await viewFile(value);
+      //         image[key] = {
+      //           filename: path.basename(value),
+      //           content: fileBuffer.toString("base64"),
+      //           contentType: "image/jpeg",
+      //         };
+      //       } catch (error) {
+      //         console.error(`Error processing ${key}:`, error);
+      //         image[key] = null;
+      //       }
+      //     }
+      //   }
+      // }
+
       for (const image of result1) {
         // Handle gallery images
-
-        // const galleryValue = image["refGallery"];
-        // if (galleryValue) {
-        //   try {
-        //     const parsedGallery =
-        //       typeof galleryValue === "string"
-        //         ? JSON.parse(galleryValue.replace(/\\/g, "\\\\")) // Escape backslashes for Windows paths
-        //         : galleryValue;
-
-        //     const galleryPaths = Object.keys(parsedGallery);
-
-        //     image["refGallery"] = await Promise.all(
-        //       galleryPaths.map(async (imgPath: string) => {
-        //         try {
-        //           const fileBuffer = await viewFile(imgPath);
-        //           return {
-        //             filename: path.basename(imgPath),
-        //             content: fileBuffer.toString("base64"),
-        //             contentType: "image/jpeg",
-        //           };
-        //         } catch (err) {
-        //           console.error(
-        //             `Error reading gallery image from ${imgPath}:`,
-        //             err
-        //           );
-        //           return null;
-        //         }
-        //       })
-        //     ).then((results) => results.filter(Boolean)); // Remove failed ones
-        //   } catch (error) {
-        //     console.error("Error processing refGallery:", error);
-        //     image["refGallery"] = [];
-        //   }
-        // }
-
         const galleryValue = image["refGallery"];
         if (galleryValue) {
           try {
-            // If it's a string in the format: {"path1","path2",...}
             const galleryPaths =
               typeof galleryValue === "string"
                 ? galleryValue
-                    .replace(/^{|}$/g, "") // Remove starting and ending curly braces
-                    .split(/","?/) // Split paths by "," or just "
-                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove surrounding quotes
+                    .replace(/^{|}$/g, "") // Remove {}
+                    .split(/","?/) // Split by "," or "
+                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
                 : galleryValue;
-
-            image["refGallery"] = await Promise.all(
-              galleryPaths.map(async (imgPath: string) => {
-                try {
-                  const fileBuffer = await viewFile(imgPath);
-                  return {
-                    filename: path.basename(imgPath),
-                    content: fileBuffer.toString("base64"),
-                    contentType: "image/jpeg",
-                  };
-                } catch (err) {
-                  console.error(
-                    `Error reading gallery image from ${imgPath}:`,
-                    err
-                  );
-                  return null;
-                }
-              })
-            ).then((results) => results.filter(Boolean)); // Filter out failed
+      
+            image["refGallery"] = galleryPaths.map((imgPath: string) =>
+              path.basename(imgPath)
+            );
           } catch (error) {
             console.error("Error processing refGallery:", error);
             image["refGallery"] = [];
           }
         }
-
+      
         // Handle single image fields
         for (const key of ["refItinaryMapPath", "refCoverImage"]) {
           const value = image[key];
-
           if (value) {
             try {
-              const fileBuffer = await viewFile(value);
-              image[key] = {
-                filename: path.basename(value),
-                content: fileBuffer.toString("base64"),
-                contentType: "image/jpeg",
-              };
+              image[key] = path.basename(value);
             } catch (error) {
               console.error(`Error processing ${key}:`, error);
               image[key] = null;
@@ -1484,7 +1516,7 @@ export class userRepository {
           }
         }
       }
-
+      
       console.log(result1);
 
       return encrypt(
@@ -1528,6 +1560,18 @@ export class userRepository {
       //                  }
       //                }
       //              }
+
+      for (const image of result1) {
+        if (image.parkingSlotImage) {
+          try {
+            image.parkingSlotImage = path.basename(image.parkingSlotImage);
+          } catch (error) {
+            console.error("Error extracting filename for parkingSlotImage:", error);
+            image.parkingSlotImage = null;
+          }
+        }
+      }
+      
 
       // Step 3: Return success response
       return encrypt(
@@ -1603,7 +1647,6 @@ export class userRepository {
       );
     }
   }
-
   public async uploadMapV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1722,21 +1765,34 @@ export class userRepository {
       const { refCarTypeId } = userData;
       const result = await executeQuery(listCarsQuery, [refCarTypeId]);
 
+      // for (const image of result) {
+      //   if (image.refCarPath) {
+      //     try {
+      //       const fileBuffer = await viewFile(image.refCarPath);
+      //       image.refCarPath = {
+      //         filename: path.basename(image.refCarPath),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg", // Adjust if needed
+      //       };
+            
+      //     } catch (error) {
+      //       console.error("Error reading image file:", error);
+      //       image.refCarPath = null; // Handle missing/unreadable files
+      //     }
+      //   }
+      // }
+
       for (const image of result) {
         if (image.refCarPath) {
           try {
-            const fileBuffer = await viewFile(image.refCarPath);
-            image.refCarPath = {
-              filename: path.basename(image.refCarPath),
-              content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", // Adjust if needed
-            };
+            image.refCarPath = path.basename(image.refCarPath);
           } catch (error) {
-            console.error("Error reading image file:", error);
-            image.refCarPath = null; // Handle missing/unreadable files
+            console.error("Error extracting filename from refCarPath:", error);
+            image.refCarPath = null;
           }
         }
       }
+      
       return encrypt(
         {
           success: true,
@@ -1766,22 +1822,34 @@ export class userRepository {
       // const result2 = await executeQuery(getOtherCarsQuery, [refCarsId]);
       // console.log("result2", result2);
 
+      // for (const image of result1) {
+      //   if (image.refCarPath) {
+      //     try {
+      //       const fileBuffer = await viewFile(image.refCarPath);
+      //       image.refCarPath = {
+      //         filename: path.basename(image.refCarPath),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg", // Adjust if needed
+      //       };
+      //     } catch (error) {
+      //       console.error("Error reading image file:", error);
+      //       image.refCarPath = null; // Handle missing/unreadable files
+      //     }
+      //   }
+      // }
+
+
       for (const image of result1) {
         if (image.refCarPath) {
           try {
-            const fileBuffer = await viewFile(image.refCarPath);
-            image.refCarPath = {
-              filename: path.basename(image.refCarPath),
-              content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", // Adjust if needed
-            };
+            image.refCarPath = path.basename(image.refCarPath);
           } catch (error) {
-            console.error("Error reading image file:", error);
-            image.refCarPath = null; // Handle missing/unreadable files
+            console.error("Error extracting filename from refCarPath:", error);
+            image.refCarPath = null;
           }
         }
       }
-
+      
       return encrypt(
         {
           success: true,
