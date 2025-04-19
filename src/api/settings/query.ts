@@ -13,6 +13,16 @@ RETURNING
   *;
 `;
 
+export const checkDestinationQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refDestination"
+WHERE
+  "refDestinationName" = $1
+  AND "isDelete" IS NOT true;
+`;
+
 export const addDestinationQuery = `INSERT INTO public."refDestination" (
     "refDestinationName",
     "createdAt",
@@ -76,6 +86,17 @@ VALUES
   ($1, $2, $3, $4, false)
 RETURNING
   *;
+`;
+
+export const checkduplicateQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refLocation"
+WHERE
+  "refLocation" = $1 AND "isDelete" IS NOT true
+LIMIT
+  10;
 `;
 
 export const updateLocationQuery = `UPDATE
@@ -143,6 +164,19 @@ export const addCategoryQuery = `INSERT INTO public."refCategory" (
   RETURNING *;
 `;
 
+export const checkDuplicateCategoryQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refCategory"
+WHERE
+  "refCategoryName" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
+
+`;
+
 // export const checkCategoryQuery = `SELECT COUNT(*) AS count FROM public."refCategory" WHERE "refCategoryId" = $1
 // `;
 
@@ -194,6 +228,18 @@ VALUES
   ($1, $2, $3, false)
 RETURNING
   *;
+`;
+
+export const checkActivityQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refActivities"
+WHERE
+  "refActivitiesName" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
 `;
 
 export const checkActivitiesQuery = `SELECT

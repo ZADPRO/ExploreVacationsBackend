@@ -14,7 +14,7 @@ RETURNING
 
 export const addParkingQuery = `INSERT INTO
   public."refCarParkingTable"  (
-    "refParkingType",
+    "refParkingTypeId",
     "refParkingName",
     "refAssociatedAirport",
     "refLocation",
@@ -66,11 +66,14 @@ RETURNING
   *;
 `;
 
-export const listCarParkingByIdQuery = `SELECT
+export const listCarParkingByIdQuery = `
+SELECT
   cp.*,
+  pt."refParkingTypeName",
   array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
 FROM
   public."refCarParkingTable" cp
+  LEFT JOIN public."refParkingType" pt ON CAST(pt."refParkingTypeId" AS INTEGER) = cp."refParkingTypeId"
   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
@@ -80,10 +83,13 @@ FROM
 WHERE
   cp."refCarParkingId" = $1
 GROUP BY
-  cp."refCarParkingId"
+  cp."refCarParkingId",
+  pt."refParkingTypeId"
+  ;
 `;
 
-export const updateCarParkingQuery = `UPDATE public."refCarParkingTable"
+export const updateCarParkingQuery = `
+UPDATE public."refCarParkingTable"
         SET 
           "refParkingType" = $2,
           "refParkingName" = $3,
@@ -116,9 +122,11 @@ RETURNING *;
 export const listCarParkingQuery = `
 SELECT
   cp.*,
+  pt."refParkingTypeName",
   array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
 FROM
   public."refCarParkingTable" cp
+  LEFT JOIN public."refParkingType" pt ON CAST (pt."refParkingTypeId" AS INTEGER) = cp."refParkingTypeId"
   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
@@ -128,7 +136,9 @@ FROM
 WHERE
   cp."isDelete" IS NOT true
 GROUP BY
-  cp."refCarParkingId"
+  cp."refCarParkingId",
+  pt."refParkingTypeId";
+  
 `;
 
 //car parking with [{"id":1,"name":"WiFi Included"}]
@@ -208,6 +218,20 @@ WHERE
 RETURNING
   *;
 `;
+
+
+export const checkduplicateQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refServiceFeatures"
+WHERE
+  "refServiceFeatures" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
+`;
+
 export const addServiceFeaturesQuery = `INSERT INTO
   public."refServiceFeatures" (
     "refServiceFeatures",
@@ -242,6 +266,8 @@ SELECT
   *
 FROM
   public."refServiceFeatures"
+WHERE
+  "isDelete" IS NOT true
   `;
 
   export const deleteServiceFeaturesQuery = `UPDATE

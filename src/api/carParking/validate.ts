@@ -4,7 +4,7 @@ export default {
     addCarParking:{
          
         payload: Joi.object({
-          refParkingType: Joi.string().required(),
+          refParkingTypeId:Joi.number().integer().required(),
           refParkingName: Joi.string().required(),
           refAssociatedAirport: Joi.string().required(),
           refLocation: Joi.string().required(),

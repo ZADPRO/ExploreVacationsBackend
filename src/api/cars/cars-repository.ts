@@ -60,6 +60,12 @@ import {
   getDeletedCarQuery,
   getCarIdIdQuery,
   getCarTypeQuery,
+  checkVehicleTypeNameQuery,
+  checkduplicateQuery,
+  checkduplicateIncludeNameQuery,
+  checkduplicateExcludeQuery,
+  checkduplicateFormDetailsQuery,
+  getVehicleQuery,
 } from "./query";
 import { cli } from "winston/lib/winston/config";
 
@@ -73,14 +79,32 @@ export class carsRepository {
       const { refVehicleTypeName } = userData;
       console.log("userData", userData);
 
+      const check: any = await executeQuery(checkVehicleTypeNameQuery, [
+        refVehicleTypeName,
+      ]);
+
+      const count = Number(check[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate VehicleType Name found: "${refVehicleTypeName}" already exists.`
+        );
+      }
+
       const vehicleResult = await client.query(addVehicleQuery, [
         refVehicleTypeName,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ]);
 
       console.log("vehicleResult", vehicleResult.rows);
-      const history = [12, tokendata.id, "add Vehicle", CurrentTime(), tokendata.id];
+      const history = [
+        12,
+        tokendata.id,
+        `${refVehicleTypeName} vehicle added successfully`,
+        CurrentTime(),
+        tokendata.id,
+      ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT");
@@ -104,7 +128,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -136,7 +160,7 @@ export class carsRepository {
         refVehicleTypeId,
         refVehicleTypeName,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updatevehicle = await client.query(updateVehicleQuery, params);
@@ -144,7 +168,7 @@ export class carsRepository {
       const history = [
         13,
         tokenData.id,
-        "Update vehicle",
+        `${refVehicleTypeName} vehicle updated successfully`,
         CurrentTime(),
         tokenData.id,
       ];
@@ -173,7 +197,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -216,7 +240,7 @@ export class carsRepository {
       const result = await client.query(deleteVehicleQuery, [
         refVehicleTypeId,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ]);
 
       if (result.rowCount === 0) {
@@ -230,12 +254,20 @@ export class carsRepository {
           true
         );
       }
+      const getresult: any = await client.query(getVehicleQuery, [
+        refVehicleTypeId,
+      ]);
 
+      console.log("getresult", getresult);
+
+      const { refVehicleTypeName } = getresult[0];
+
+      console.log("refVehicleTypeName", refVehicleTypeName);
       // Insert delete action into history
       const history = [
         34, // Unique ID for delete action
         tokendata.id,
-        "delete Vehicle",
+        `${refVehicleTypeName} Vehicle deleted successfully`,
         CurrentTime(),
         tokendata.id,
       ];
@@ -296,6 +328,23 @@ export class carsRepository {
         );
       }
 
+      const duplicateCheck: any = await client.query(checkduplicateQuery, [
+        refBenifitsName,
+      ]);
+
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `Benifits Name "${refBenifitsName}" already exists for the selected destination.`,
+            token: tokens,
+          },
+          true
+        );
+      }
+
       let resultArray: any[] = [];
 
       // Loop through each benefit and add it to the database
@@ -322,10 +371,19 @@ export class carsRepository {
       const history = [
         14, // History type ID for "add benefits"
         tokendata.id, // User ID
-        "add benefits", // Action name
+        `Added Benefits: ${refBenifitsName
+          .map((item: any) => item.benefitName)
+          .join(", ")}`,
         CurrentTime(), // Timestamp of the action
         tokendata.id, // Performed by
       ];
+
+      console.log(
+        '`Added Benefits: ${refBenifitsName.map((item: any) => item.benefitName).join(", ")}`,',
+        `Added Benefits: ${refBenifitsName
+          .map((item: any) => item.benefitName)
+          .join(", ")}`
+      );
 
       // Commit transaction
       await client.query("COMMIT");
@@ -362,7 +420,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -397,7 +455,7 @@ export class carsRepository {
       const history = [
         15,
         tokenData.id,
-        "Update benifits",
+       `${refBenifitsName} benifits updated successfully`,
         CurrentTime(),
         tokenData.id,
       ];
@@ -426,7 +484,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -483,6 +541,8 @@ export class carsRepository {
           true
         );
       }
+
+
 
       // Insert delete action into history
       const history = [
@@ -550,6 +610,22 @@ export class carsRepository {
         );
       }
       console.log("line ------ 537");
+      const duplicateCheck: any = await client.query(
+        checkduplicateIncludeNameQuery,
+        [refIncludeName]
+      );
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `Include Name "${refIncludeName}" already exists`,
+            token: tokens,
+          },
+          true
+        );
+      }
 
       let resultArray: any[] = [];
 
@@ -560,9 +636,6 @@ export class carsRepository {
         if (!refIncludeName) {
           continue;
         }
-        console.log("line ------ 550");
-        console.log("refIncludeName line ------ 551", refIncludeName);
-        console.log("CurrentTime() line -------- 552", CurrentTime());
 
         const result = await client.query(addIncludeQuery, [
           refIncludeName,
@@ -623,7 +696,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -685,7 +758,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -805,6 +878,22 @@ export class carsRepository {
         );
       }
 
+      const duplicateCheck: any = await client.query(
+        checkduplicateExcludeQuery,
+        [refExcludeName]
+      );
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: ` Exclude Name "${refExcludeName}" already exists for the selected destination.`,
+            token: tokens,
+          },
+          true
+        );
+      }
       let resultArray: any[] = [];
 
       for (const exclude of refExcludeName) {
@@ -868,7 +957,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -932,7 +1021,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1084,7 +1173,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1169,7 +1258,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1346,6 +1435,23 @@ export class carsRepository {
         );
       }
 
+      const duplicateCheck = await client.query(
+        checkduplicateFormDetailsQuery,
+        [refFormDetails]
+      );
+
+      if ((duplicateCheck.rowCount ?? 0) > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `ref Form Details "${refFormDetails}" already exists for the selected destination.`,
+            token: tokens,
+          },
+          true
+        );
+      }
+
       let resultArray: any[] = [];
 
       for (const form of refFormDetails) {
@@ -1410,7 +1516,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1477,7 +1583,7 @@ export class carsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -1583,7 +1689,7 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN"); // Start transaction
-      
+
       const {
         refVehicleTypeId,
         refPersonCount,
@@ -1600,7 +1706,7 @@ export class carsRepository {
         refPaymentTerms,
         carImagePath,
         refCarPrice,
-        refCarTypeId
+        refCarTypeId,
       } = userData;
 
       const refBenifits = Array.isArray(userData.refBenifits)
@@ -1619,23 +1725,22 @@ export class carsRepository {
         ? `{${userData.refFormDetails.join(",")}}`
         : "{}";
 
-        const customerPrefix = "EV-CAR-";
-        const baseNumber = 0;
-  
-        const lastCustomerResult = await client.query(getCarIdIdQuery);
-        let newCustomerId: string;
-  
-        if (lastCustomerResult.rows.length > 0) {
-          const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
-          newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
-            .toString()
-            .padStart(4, "0")}`;
-        } else {
-          newCustomerId = `${customerPrefix}${(baseNumber + 1)
-            .toString()
-            .padStart(4, "0")}`;
-        }
+      const customerPrefix = "EV-CAR-";
+      const baseNumber = 0;
 
+      const lastCustomerResult = await client.query(getCarIdIdQuery);
+      let newCustomerId: string;
+
+      if (lastCustomerResult.rows.length > 0) {
+        const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
+        newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      } else {
+        newCustomerId = `${customerPrefix}${(baseNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      }
 
       const params = [
         refVehicleTypeId,
@@ -1691,7 +1796,6 @@ export class carsRepository {
         CurrentTime(),
         tokendata.id,
       ];
-
 
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -1831,10 +1935,7 @@ export class carsRepository {
       );
     }
   }
-  public async updateCarsV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async updateCarsV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1858,7 +1959,7 @@ export class carsRepository {
         refPaymentTerms,
         refCarPrice,
         carImagePath,
-        refCarTypeId
+        refCarTypeId,
       } = userData;
 
       // const refBenifits = `{${userData.refBenifits.join(",")}}`;
@@ -1867,21 +1968,21 @@ export class carsRepository {
       // const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
 
       const refBenifits = Array.isArray(userData.refBenifits)
-      ? `{${userData.refBenifits.join(",")}}`
-      : "{}";
+        ? `{${userData.refBenifits.join(",")}}`
+        : "{}";
 
-    const refInclude = Array.isArray(userData.refInclude)
-      ? `{${userData.refInclude.join(",")}}`
-      : "{}";
+      const refInclude = Array.isArray(userData.refInclude)
+        ? `{${userData.refInclude.join(",")}}`
+        : "{}";
 
-    const refExclude = Array.isArray(userData.refExclude)
-      ? `{${userData.refExclude.join(",")}}`
-      : "{}";
+      const refExclude = Array.isArray(userData.refExclude)
+        ? `{${userData.refExclude.join(",")}}`
+        : "{}";
 
-    const refFormDetails = Array.isArray(userData.refFormDetails)
-      ? `{${userData.refFormDetails.join(",")}}`
-      : "{}";
-      
+      const refFormDetails = Array.isArray(userData.refFormDetails)
+        ? `{${userData.refFormDetails.join(",")}}`
+        : "{}";
+
       const params = [
         refVehicleTypeId,
         refPersonCount,
@@ -1920,7 +2021,7 @@ export class carsRepository {
 
       const updatedCar = updateResult.rows[0];
       console.log("Updated car ID:", updatedCar.refCarsId);
-    
+
       const getVehicleName: any = await executeQuery(getVehicleNameQuery, [
         refVehicleTypeId,
       ]);
@@ -1930,13 +2031,12 @@ export class carsRepository {
       const vehicleName = getVehicleName[0]?.refVehicleTypeName || "Vehicle";
       // Log history of the action
       const history = [
-        26, 
-        tokendata.id, 
+        26,
+        tokendata.id,
         `${vehicleName} car data updated Succesfully`,
-         CurrentTime(), 
-         tokendata.id
-        ]
-        ;
+        CurrentTime(),
+        tokendata.id,
+      ];
       const updateHistory = await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
 
@@ -2041,11 +2141,11 @@ export class carsRepository {
             image.refCarPath = {
               filename: path.basename(image.refCarPath),
               content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", 
+              contentType: "image/jpeg",
             };
           } catch (error) {
             console.error("Error reading image file for product ,err");
-            image.refCarPath = null; 
+            image.refCarPath = null;
           }
         }
       }
@@ -2085,7 +2185,6 @@ export class carsRepository {
         "Admin",
       ]);
 
-
       // const getDeletedCar = await executeQuery(getDeletedCarQuery,[refCarsId])
 
       // if (result.rowCount === 0) {
@@ -2106,7 +2205,7 @@ export class carsRepository {
         48, // Unique ID for delete action
         tokendata.id,
         `car with ${refCarsId} Id deleted Successfully`,
-        CurrentTime(), 
+        CurrentTime(),
         tokendata.id,
       ];
 
@@ -2165,7 +2264,6 @@ export class carsRepository {
         },
         true
       );
-    } 
+    }
   }
-  
 }

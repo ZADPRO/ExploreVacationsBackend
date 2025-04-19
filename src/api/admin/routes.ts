@@ -187,6 +187,42 @@ export class adminRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/deleteCarBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCarBookings,
+            validate: validate.deleteCarBookings,
+            description: "deleteCarBookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/deleteTourBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteTourBookings,
+            validate: validate.deleteTourBookings,
+            description: "deleteTourBookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/deleteCustomizeTourBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCustomizeTourBookings,
+            validate: validate.deleteCustomizeTourBookings,
+            description: "deleteCustomizeTourBookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
 
       ]);
       resolve(true);

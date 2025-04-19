@@ -18,6 +18,7 @@ import { CurrentTime } from "../../helper/common";
 import {
   addParkingQuery,
   addServiceFeaturesQuery,
+  checkduplicateQuery,
   checkServiceFeaturesQuery,
   deleteCarParkingQuery,
   deleteParkingImageRecordQuery,
@@ -43,7 +44,7 @@ export class carParkingRepository {
       await client.query("BEGIN"); // Start transaction
 
       const {
-        refParkingType,
+        refParkingTypeId,
         refParkingName,
         refAssociatedAirport,
         refLocation,
@@ -69,7 +70,7 @@ export class carParkingRepository {
         : `{${userData.ServiceFeatures.split(",").join(",")}}`;
 
       const parkingResult = await client.query(addParkingQuery, [
-        refParkingType,
+        refParkingTypeId,
         refParkingName,
         refAssociatedAirport,
         refLocation,
@@ -254,7 +255,7 @@ export class carParkingRepository {
 
       const {
         refCarParkingId,
-        refParkingType,
+        refParkingTypeId,
         refParkingName,
         refAssociatedAirport,
         refLocation,
@@ -276,12 +277,12 @@ export class carParkingRepository {
       } = userData;
 
       const ServiceFeatures = `{${userData.ServiceFeatures.join(",")}}`;
-      console.log('ServiceFeatures', ServiceFeatures)
+      console.log("ServiceFeatures", ServiceFeatures);
 
       const existingDatas = await client.query(listCarParkingByIdQuery, [
         refCarParkingId,
       ]);
-      console.log('existingDatas', existingDatas)
+      console.log("existingDatas", existingDatas);
 
       const existingData = existingDatas.rows[0];
 
@@ -290,9 +291,9 @@ export class carParkingRepository {
 
       const changes: string[] = [];
 
-      if (existingData.refParkingType !== refParkingType)
+      if (existingData.refParkingType !== refParkingTypeId)
         changes.push(
-          `ParkingType: '${existingData.refParkingType}' : '${refParkingType}'`
+          `ParkingType: '${existingData.refParkingType}' : '${refParkingTypeId}'`
         );
 
       if (existingData.refParkingName !== refParkingName)
@@ -379,12 +380,12 @@ export class carParkingRepository {
         changes.push(`Status: '${existingData.refStatus}' : '${refStatus}'`);
 
       const changeSummary = changes.length
-      ? `Updated Fields: ${changes.join(", ")}`
-      : "No changes detected";
+        ? `Updated Fields: ${changes.join(", ")}`
+        : "No changes detected";
 
       const params = [
         refCarParkingId,
-        refParkingType,
+        refParkingTypeId,
         refParkingName,
         refAssociatedAirport,
         refLocation,
@@ -446,10 +447,7 @@ export class carParkingRepository {
       client.release();
     }
   }
-  public async listCarParkingV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async listCarParkingV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -475,32 +473,41 @@ export class carParkingRepository {
       );
     }
   }
-  public async getCarParkingV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async getCarParkingV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-     const {refCarParkingId} = userData
-       const result = await executeQuery(getCarParkingQuery,[refCarParkingId]);
-       
-       for (const image of result) {
-               if (image.parkingSlotImage) {
-                 try {
-                   const fileBuffer = await viewFile(image.parkingSlotImage);
-                   image.parkingSlotImage = {
-                     filename: path.basename(image.parkingSlotImage),
-                     content: fileBuffer.toString("base64"),
-                     contentType: "image/jpeg", 
-                   };
-                 } catch (error) {
-                   console.error("Error reading image file for product ,err");
-                   image.parkingSlotImage = null; 
-                 }
-               }
-             }
-       
+      const { refCarParkingId } = userData;
+      const result = await executeQuery(getCarParkingQuery, [refCarParkingId]);
+
+      // for (const image of result) {
+      //   if (image.parkingSlotImage) {
+      //     try {
+      //       const fileBuffer = await viewFile(image.parkingSlotImage);
+      //       image.parkingSlotImage = {
+      //         filename: path.basename(image.parkingSlotImage),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg",
+      //       };
+      //     } catch (error) {
+      //       console.error("Error reading image file for product ,err");
+      //       image.parkingSlotImage = null;
+      //     }
+      //   }
+      // }
+
+            for (const image of result) {
+              if (image.parkingSlotImage) {
+                try {
+                  image.parkingSlotImage = path.basename(image.parkingSlotImage);
+                } catch (error) {
+                  console.error("Error extracting filename from parkingSlotImage:", error);
+                  image.parkingSlotImage = null;
+                }
+              }
+            }
+            
+
       return encrypt(
         {
           success: true,
@@ -509,7 +516,6 @@ export class carParkingRepository {
           result: result,
         },
         true
-
       );
     } catch (error: unknown) {
       return encrypt(
@@ -524,62 +530,62 @@ export class carParkingRepository {
     }
   }
   public async deleteCarParkingV1(userData: any, tokendata: any): Promise<any> {
-      const client: PoolClient = await getClient();
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-  
-      try {
-        await client.query("BEGIN"); // Start transaction
-        const { refCarParkingId } = userData;
-        const result = await client.query(deleteCarParkingQuery, [
-          refCarParkingId,
-          CurrentTime(),
-          tokendata.id,
-        ]);
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
 
-        if (result.rows.length === 0) {
-          throw new Error(`No record found to delete with ID ${refCarParkingId}`);
-        }
-        
-        const deletedData:any = result.rows[0];
-        const refParkingName = deletedData.refParkingName;
-        
-        const history = [
-          57, // Unique ID for delete action
-          tokendata.id,
-          `${refParkingName} Parking deleted Successfully`,
-          CurrentTime(), 
-          tokendata.id,
-        ];
-  
-        await client.query(updateHistoryQuery, history);
-        await client.query("COMMIT"); // Commit transaction
-  
-        return encrypt(
-          {
-            success: true,
-            message: "car deleted successfully",
-            token: tokens,
-            deletedData: result.rows[0], // Return deleted record for reference
-          },
-          true
-        );
-      } catch (error: unknown) {
-        await client.query("ROLLBACK"); // Rollback on error
-        console.error("Error deleting car:", error);
-  
-        return encrypt(
-          {
-            success: false,
-            message: "An error occurred while deleting the Vehicle",
-            tokens: tokens,
-            error: String(error),
-          },
-          true
-        );
-      } finally {
-        client.release();
+    try {
+      await client.query("BEGIN"); // Start transaction
+      const { refCarParkingId } = userData;
+      const result = await client.query(deleteCarParkingQuery, [
+        refCarParkingId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      if (result.rows.length === 0) {
+        throw new Error(`No record found to delete with ID ${refCarParkingId}`);
       }
+
+      const deletedData: any = result.rows[0];
+      const refParkingName = deletedData.refParkingName;
+
+      const history = [
+        57, // Unique ID for delete action
+        tokendata.id,
+        `${refParkingName} Parking deleted Successfully`,
+        CurrentTime(),
+        tokendata.id,
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "car deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting car:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Vehicle",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
   }
 
   public async addServiceFeaturesV1(
@@ -600,6 +606,24 @@ export class carParkingRepository {
           {
             success: false,
             message: "No Service Features provided",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      const duplicateCheck: any = await client.query(checkduplicateQuery, [
+        ServiceFeatures,
+      ]);
+
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `ServiceFeatures "${ServiceFeatures}" already exists `,
             token: tokens,
           },
           true
@@ -657,7 +681,7 @@ export class carParkingRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -735,10 +759,9 @@ export class carParkingRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
-  
   }
   public async listServiceFeaturesV1(
     userData: any,

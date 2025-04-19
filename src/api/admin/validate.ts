@@ -75,5 +75,29 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
-  
+  deleteCarBookings: {
+    payload: Joi.object({
+      userCarBookingId: Joi.number().integer().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  deleteTourBookings: {
+    payload: Joi.object({
+      userTourBookingId: Joi.number().integer().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  deleteCustomizeTourBookings: {
+    payload: Joi.object({
+      customizeTourBookingId: Joi.number().integer().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  }
+
 };

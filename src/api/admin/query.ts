@@ -482,3 +482,42 @@ SELECT
   (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-CUS-%') AS "logInClientCount",
   (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-CUS-%') AS "logInClientCount";
 `;
+
+export const deleteCarBookingsQuery = `
+UPDATE
+  public."userCarBooking"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "userCarBookingId" = $1
+RETURNING
+  *;
+`;
+
+export const deleteTourBookingsQuery = `
+UPDATE
+  public."userTourBooking"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "userTourBookingId" = $1
+RETURNING
+  *;
+`;
+
+export const deleteCustomizeTourBookingsQuery = `
+UPDATE
+  public."customizeTourBooking"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "customizeTourBookingId" = $1
+RETURNING
+  *;
+`;

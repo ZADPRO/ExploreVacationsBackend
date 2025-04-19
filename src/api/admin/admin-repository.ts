@@ -15,8 +15,11 @@ import {
  
   checkQuery,
   dashBoardQuery,
+  deleteCarBookingsQuery,
+  deleteCustomizeTourBookingsQuery,
   deleteEmployeeImageQuery,
   deleteEmployeesQuery,
+  deleteTourBookingsQuery,
   getDeletedEmployeeQuery,
   getEmployeeQuery,
   getEmployeesQuery,
@@ -173,6 +176,7 @@ export class adminRepository {
       );
     }
   }
+  
   public async listCustomizeTourBookingsV1(
     userData: any,
     tokendata: any
@@ -1048,6 +1052,204 @@ export class adminRepository {
         },
         true
       );
+    }
+  }
+  public async deleteCarBookingsV1(userData: any, tokendata: any): Promise<any> {
+      const client: PoolClient = await getClient();
+      const token = { id: tokendata.id };
+      const tokens = generateTokenWithExpire(token, true);
+  
+      try {
+        await client.query("BEGIN"); // Start transaction
+  
+        const { userCarBookingId } = userData;
+        const result = await client.query(deleteCarBookingsQuery, [
+          userCarBookingId,
+          CurrentTime(),
+          tokendata.id,
+        ]);
+  
+        if (result.rowCount === 0) {
+          await client.query("ROLLBACK");
+          return encrypt(
+            {
+              success: false,
+              message: "car booking not found or already deleted",
+              token: tokens,
+            },
+            true
+          );
+        }
+  
+        // Insert delete action into history
+        // const history = [
+        //   36, // Unique ID for delete action
+        //   tokendata.id,
+        //   "delete Include",
+        //   CurrentTime(),
+        //   tokendata.id,
+        // ];
+  
+        // await client.query(updateHistoryQuery, history);
+
+        await client.query("COMMIT"); // Commit transaction
+  
+        return encrypt(
+          {
+            success: true,
+            message: "car booking deleted successfully",
+            token: tokens,
+            deletedData: result.rows[0], // Return deleted record for reference
+          },
+          true
+        );
+      } catch (error: unknown) {
+        await client.query("ROLLBACK"); // Rollback on error
+        console.error("Error deleting car booking:", error);
+  
+        return encrypt(
+          {
+            success: false,
+            message: "An error occurred while deleting the car booking",
+            tokens: tokens,
+            error: String(error),
+          },
+          true
+        );
+      } finally {
+        client.release();
+      }
+  }
+  public async deleteTourBookingsV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { userTourBookingId } = userData;
+      const result = await client.query(deleteTourBookingsQuery, [
+        userTourBookingId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "tour booking not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      // const history = [
+      //   36, // Unique ID for delete action
+      //   tokendata.id,
+      //   "delete Include",
+      //   CurrentTime(),
+      //   tokendata.id,
+      // ];
+
+      // await client.query(updateHistoryQuery, history);
+
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "tour booking deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting car booking:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the car booking",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async deleteCustomizeTourBookingsV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { customizeTourBookingId } = userData;
+      const result = await client.query(deleteCustomizeTourBookingsQuery, [
+        customizeTourBookingId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "Customize tour booking not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      // Insert delete action into history
+      // const history = [
+      //   36, // Unique ID for delete action
+      //   tokendata.id,
+      //   "delete Include",
+      //   CurrentTime(),
+      //   tokendata.id,
+      // ];
+
+      // await client.query(updateHistoryQuery, history);
+
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "Customize tour booking deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting Customize tour booking:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Customize tour booking",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
     }
   }
 }

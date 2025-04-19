@@ -53,4 +53,13 @@ export class adminResolver {
   public async dashBoardV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.adminRepository.dashBoardV1(user_data, token_data, domain_code);
   }
+  public async deleteCarBookingsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.deleteCarBookingsV1(user_data, token_data, domain_code);
+  }
+  public async deleteTourBookingsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.deleteTourBookingsV1(user_data, token_data, domain_code);
+  }
+  public async deleteCustomizeTourBookingsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.deleteCustomizeTourBookingsV1(user_data, token_data, domain_code);
+  }
 }

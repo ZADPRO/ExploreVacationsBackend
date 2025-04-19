@@ -18,7 +18,11 @@ import {
   addDestinationQuery,
   addLocationQuery,
   checkActivitiesQuery,
+  checkActivityQuery,
   checkCategoryQuery,
+  checkDestinationQuery,
+  checkDuplicateCategoryQuery,
+  checkduplicateQuery,
   checkLocationQuery,
   checkQuery,
   deleteActivityQuery,
@@ -47,15 +51,28 @@ export class settingsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      
       await client.query("BEGIN");
+      console.log("userData", userData);
 
       const { refDestination } = userData;
+
+      const check: any = await executeQuery(checkDestinationQuery, [
+        refDestination,
+      ]);
+      console.log("check", check);
+
+      const count = Number(check[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate destination found: "${refDestination}" already exists.`
+        );
+      }
 
       const userResult = await executeQuery(addDestinationQuery, [
         refDestination,
         CurrentTime(),
-        tokendata.id
+        tokendata.id,
       ]);
 
       const history = [
@@ -90,7 +107,7 @@ export class settingsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -161,7 +178,7 @@ export class settingsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -196,75 +213,81 @@ export class settingsRepository {
       );
     }
   }
-  public async DeleteDestinationV1(userData: any, tokendata: any): Promise<any> {
+  public async DeleteDestinationV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
-        await client.query("BEGIN"); // Start transaction
+      await client.query("BEGIN"); // Start transaction
 
-        const { refDestinationId } = userData
-        const result = await client.query(deleteDestinationQuery, [
-          refDestinationId,
-          CurrentTime(),
-          tokendata.id
-        ]);
-        console.log('result', result)
+      const { refDestinationId } = userData;
+      const result = await client.query(deleteDestinationQuery, [
+        refDestinationId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+      console.log("result", result);
 
-        if (result.rowCount === 0) {
-            await client.query("ROLLBACK");
-            return encrypt(
-                {
-                    success: false,
-                    message: "Destination not found or already deleted",
-                    tokens:tokens
-                },
-                true
-            );
-        }
-
-          const getdeletedDestination: any = await client.query(getdeletedDestinationQuery, [refDestinationId]);
-          console.log('getdeletedDestination', getdeletedDestination)
-
-         const { refDestinationName } = getdeletedDestination.rows[0];
-
-        const history = [
-          30, // Unique ID for delete action
-          tokendata.id,
-          `${refDestinationName} deleted succesfully`,
-          CurrentTime(),
-          tokendata.id,
-        ];
-        console.log('history', history)
-
-        await client.query(updateHistoryQuery, history);
-        await client.query("COMMIT"); // Commit transaction
-
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
         return encrypt(
-            {
-                success: true,
-                message: "Destination deleted successfully",
-                tokens:tokens,
-                deletedData: result.rows[0], // Return deleted record for reference
-            },
-            true
+          {
+            success: false,
+            message: "Destination not found or already deleted",
+            tokens: tokens,
+          },
+          true
         );
+      }
+
+      const getdeletedDestination: any = await client.query(
+        getdeletedDestinationQuery,
+        [refDestinationId]
+      );
+      console.log("getdeletedDestination", getdeletedDestination);
+
+      const { refDestinationName } = getdeletedDestination.rows[0];
+
+      const history = [
+        30, // Unique ID for delete action
+        tokendata.id,
+        `${refDestinationName} deleted succesfully`,
+        CurrentTime(),
+        tokendata.id,
+      ];
+      console.log("history", history);
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "Destination deleted successfully",
+          tokens: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
     } catch (error: unknown) {
-        await client.query("ROLLBACK"); // Rollback on error
-        console.error("Error deleting destination:", error);
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting destination:", error);
 
-        return encrypt(
-            {
-                success: false,
-                message: "An error occurred while deleting the destination",
-                tokens:tokens,
-                error: String(error),
-            },
-            true
-        );
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the destination",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
     } finally {
-        client.release();
+      client.release();
     }
   }
 
@@ -300,6 +323,22 @@ export class settingsRepository {
           continue;
         }
 
+        // const duplicateCheck = await client.query(checkduplicateQuery, [
+        //   refLocation
+        // ]);
+
+        const duplicateCheck: any = await client.query(checkduplicateQuery, [
+          refLocation,
+        ]);
+
+        const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+
+        if (count > 0) {
+          throw new Error(
+            `Duplicate location found: "${refLocation}" already exists.`
+          );
+        }
+
         const result = await client.query(addLocationQuery, [
           refLocation,
           refDestinationId,
@@ -316,13 +355,20 @@ export class settingsRepository {
       }
 
       const history = [
-        4, 
-        tokendata.id, 
-        `Added Locations: ${locations.map((item: any) => item.refLocation).join(", ")}`,
-        CurrentTime(), 
-        tokendata.id
+        4,
+        tokendata.id,
+        `Added Locations: ${locations
+          .map((item: any) => item.refLocation)
+          .join(", ")}`,
+        CurrentTime(),
+        tokendata.id,
       ];
-      console.log('`Added Locations: ${locations.map((item: any) => item.locations).join(", ")}`', `Added Locations: ${locations.map((item: any) => item.locations).join(", ")}`)
+      console.log(
+        '`Added Locations: ${locations.map((item: any) => item.locations).join(", ")}`',
+        `Added Locations: ${locations
+          .map((item: any) => item.locations)
+          .join(", ")}`
+      );
 
       await client.query("COMMIT");
 
@@ -349,7 +395,7 @@ export class settingsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -385,7 +431,7 @@ export class settingsRepository {
       ];
 
       const updateDestination = await client.query(updateLocationQuery, params);
-      console.log('updateDestination', updateDestination.rows)
+      console.log("updateDestination", updateDestination.rows);
 
       const history = [
         5,
@@ -396,7 +442,7 @@ export class settingsRepository {
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
-      console.log('updateHistory', updateHistory)
+      console.log("updateHistory", updateHistory);
       await client.query("COMMIT");
 
       return encrypt(
@@ -423,11 +469,10 @@ export class settingsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
-  
   public async listLocationV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -460,73 +505,73 @@ export class settingsRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-        await client.query("BEGIN"); // Start transaction
+      await client.query("BEGIN"); // Start transaction
 
-        const { refDestinationId } = userData
-        console.log('userData', userData)
+      const { refDestinationId } = userData;
+      console.log("userData", userData);
 
-        const result = await client.query(deletelocationQuery, [
-          refDestinationId,
-          CurrentTime(),
-          tokendata.id
-        ]);
-        
-        console.log('result', result)
+      const result = await client.query(deletelocationQuery, [
+        refDestinationId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
 
-        if (result.rowCount === 0) {
-            await client.query("ROLLBACK");
-            return encrypt(
-                {
-                    success: false,
-                    message: "location not found or already deleted",
-                    token:tokens
-                },
-                true
-            );
-        }
+      console.log("result", result);
 
-          //  const getdeletedLocation: any = await client.query(
-          //    getdeletedLocationQuery,
-          //    [refDestinationId]
-          //   );
-            // console.log('getdeletedLocation', getdeletedLocation)
-            
-        // Insert delete action into history
-        const history = [
-            31, 
-            tokendata.id,
-           `list of location deleted succesfully`,
-            CurrentTime(),
-            tokendata.id,
-        ];
-
-        await client.query(updateHistoryQuery, history);
-        await client.query("COMMIT"); // Commit transaction
-
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
         return encrypt(
-            {
-                success: true,
-                message: "location deleted successfully",
-                token:tokens,
-                deletedData: result.rows[0], // Return deleted record for reference
-            },
-            true
+          {
+            success: false,
+            message: "location not found or already deleted",
+            token: tokens,
+          },
+          true
         );
+      }
+
+      //  const getdeletedLocation: any = await client.query(
+      //    getdeletedLocationQuery,
+      //    [refDestinationId]
+      //   );
+      // console.log('getdeletedLocation', getdeletedLocation)
+
+      // Insert delete action into history
+      const history = [
+        31,
+        tokendata.id,
+        `list of location deleted succesfully`,
+        CurrentTime(),
+        tokendata.id,
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "location deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
     } catch (error: unknown) {
-        await client.query("ROLLBACK"); // Rollback on error
-        console.error("Error deleting location:", error);
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting location:", error);
 
-        return encrypt(
-            {
-                success: false,
-                message: "An error occurred while deleting the location",
-                token:tokens,
-                error: String(error),
-            },
-            true
-        );
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the location",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
     } finally {
-        client.release();
+      client.release();
     }
   }
 
@@ -545,6 +590,16 @@ export class settingsRepository {
         tokendata.id,
       ]);
 
+      const check: any = await client.query(checkDuplicateCategoryQuery, [
+        refCategory,
+      ]);
+      const count = Number(check[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate category found: "${refCategory}" already exists.`
+        );
+      }
       const history = [
         6,
         tokendata.id,
@@ -577,7 +632,7 @@ export class settingsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -607,11 +662,11 @@ export class settingsRepository {
       }
 
       const params = [
-         refCategoryId,
-         refCategoryName, 
-         CurrentTime(), 
-         tokenData.id
-        ];
+        refCategoryId,
+        refCategoryName,
+        CurrentTime(),
+        tokenData.id,
+      ];
 
       const updateDestination = await client.query(updateCategoryQuery, params);
       const history = [
@@ -649,7 +704,7 @@ export class settingsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -685,70 +740,70 @@ export class settingsRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-        await client.query("BEGIN"); // Start transaction
+      await client.query("BEGIN"); // Start transaction
 
-        const { refCategoryId } = userData
-        const result = await client.query(deletecategoryQuery, [
-          refCategoryId,
-          CurrentTime(),
-          tokendata.id
-        ]);
+      const { refCategoryId } = userData;
+      const result = await client.query(deletecategoryQuery, [
+        refCategoryId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
 
-        if (result.rowCount === 0) {
-            await client.query("ROLLBACK");
-            return encrypt(
-                {
-                    success: false,
-                    message: "category not found or already deleted",
-                    token:tokens
-                },
-                true
-            );
-        }
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "category not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
 
-     const getdeletedCategories: any = await client.query(
-      getdeletedCategoriesQuery,
+      const getdeletedCategories: any = await client.query(
+        getdeletedCategoriesQuery,
         [refCategoryId]
       );
 
       const { refCategoryName } = getdeletedCategories.rows[0];
 
-        // Insert delete action into history
-        const history = [
-            32, 
-            tokendata.id,
-            `${refCategoryName} deleted succesfully`,
-            CurrentTime(),
-            tokendata.id,
-        ];
+      // Insert delete action into history
+      const history = [
+        32,
+        tokendata.id,
+        `${refCategoryName} deleted succesfully`,
+        CurrentTime(),
+        tokendata.id,
+      ];
 
-        await client.query(updateHistoryQuery, history);
-        await client.query("COMMIT"); // Commit transaction
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
 
-        return encrypt(
-            {
-                success: true,
-                message: "category deleted successfully",
-                token:tokens,
-                deletedData: result.rows[0], // Return deleted record for reference
-            },
-            true
-        );
+      return encrypt(
+        {
+          success: true,
+          message: "category deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
     } catch (error: unknown) {
-        await client.query("ROLLBACK"); // Rollback on error
-        console.error("Error deleting category:", error);
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting category:", error);
 
-        return encrypt(
-            {
-                success: false,
-                message: "An error occurred while deleting the category",
-                token:tokens,
-                error: String(error),
-            },
-            true
-        );
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the category",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
     } finally {
-        client.release();
+      client.release();
     }
   }
 
@@ -764,14 +819,22 @@ export class settingsRepository {
         CurrentTime(),
         tokendata.id,
       ]);
-      
-      console.log('userResult', userResult)
+
+      const check: any = await executeQuery(checkActivityQuery, [refActivity]);
+      const count = Number(check[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate Activity found: "${refActivity}" already exists.`
+        );
+      }
+      console.log("userResult", userResult);
       const history = [
-        8, 
-        tokendata.id, 
-        `${refActivity} Activity added succesfully`, 
-        CurrentTime(), 
-        tokendata.id
+        8,
+        tokendata.id,
+        `${refActivity} Activity added succesfully`,
+        CurrentTime(),
+        tokendata.id,
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
@@ -798,7 +861,7 @@ export class settingsRepository {
         },
         true
       );
-    }finally {
+    } finally {
       client.release();
     }
   }
@@ -813,7 +876,7 @@ export class settingsRepository {
       const checkResult = await executeQuery(checkActivitiesQuery, [
         refActivitiesId,
       ]);
-      console.log('checkResult', checkResult)
+      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -856,7 +919,7 @@ export class settingsRepository {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
-        await client.query("ROLLBACK");
+      await client.query("ROLLBACK");
       return encrypt(
         {
           success: false,
@@ -866,8 +929,8 @@ export class settingsRepository {
         },
         true
       );
-    } finally{
-      client.release()
+    } finally {
+      client.release();
     }
   }
   public async listActivitiesV1(userData: any, tokendata: any): Promise<any> {
@@ -903,70 +966,70 @@ export class settingsRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-        await client.query("BEGIN"); // Start transaction
+      await client.query("BEGIN"); // Start transaction
 
-        const { refActivitiesId } = userData
-        const result = await client.query(deleteActivityQuery, [
-          refActivitiesId,
-          CurrentTime(),
-          tokendata.id
-        ]);
+      const { refActivitiesId } = userData;
+      const result = await client.query(deleteActivityQuery, [
+        refActivitiesId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
 
-        if (result.rowCount === 0) {
-            await client.query("ROLLBACK");
-            return encrypt(
-                {
-                    success: false,
-                    message: "activity not found or already deleted",
-                    token:tokens
-                },
-                true
-            );
-        }
-
-         const getdeletedActivity: any = await client.query(
-          getdeletedActivityQuery,
-                [refActivitiesId]
-              );
-        
-              const { refActivitiesName } = getdeletedActivity.rows[0];
-
-        // Insert delete action into history
-        const history = [
-            33, 
-            tokendata.id,
-            `${refActivitiesName} Activity deleted succesfully`,
-            CurrentTime(),
-            tokendata.id,
-        ];
-
-        await client.query(updateHistoryQuery, history);
-        await client.query("COMMIT"); // Commit transaction
-
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
         return encrypt(
-            {
-                success: true,
-                message: "activity deleted successfully",
-                token:tokens,
-                deletedData: result.rows[0], // Return deleted record for reference
-            },
-            true
+          {
+            success: false,
+            message: "activity not found or already deleted",
+            token: tokens,
+          },
+          true
         );
+      }
+
+      const getdeletedActivity: any = await client.query(
+        getdeletedActivityQuery,
+        [refActivitiesId]
+      );
+
+      const { refActivitiesName } = getdeletedActivity.rows[0];
+
+      // Insert delete action into history
+      const history = [
+        33,
+        tokendata.id,
+        `${refActivitiesName} Activity deleted succesfully`,
+        CurrentTime(),
+        tokendata.id,
+      ];
+
+      await client.query(updateHistoryQuery, history);
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "activity deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
     } catch (error: unknown) {
-        await client.query("ROLLBACK"); // Rollback on error
-        console.error("Error deleting activity:", error);
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting activity:", error);
 
-        return encrypt(
-            {
-                success: false,
-                message: "An error occurred while deleting the activity",
-                token:tokens,
-                error: String(error),
-            },
-            true
-        );
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the activity",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
     } finally {
-        client.release();
+      client.release();
     }
   }
 }

@@ -1,3 +1,15 @@
+export const checkVehicleTypeNameQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refVehicleType"
+WHERE
+  "refVehicleTypeName" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
+`;
+
 export const addVehicleQuery = `INSERT INTO
   public."refVehicleType" (
     "refVehicleTypeName",
@@ -50,7 +62,29 @@ RETURNING
   *;
 `;
 
+export const getVehicleQuery = `
+SELECT
+  "refVehicleTypeName"
+FROM
+  public."refVehicleType"
+WHERE
+  "refVehicleTypeId" = $1
+
+`;
+
 // benifits
+export const checkduplicateQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refBenifits"
+WHERE
+  "refBenifitsName" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
+`;
+
 export const addBenifitsQuery = `INSERT INTO public."refBenifits"  (
     "refBenifitsName",
     "createdAt",
@@ -81,7 +115,8 @@ WHERE
 `;
 
 
-export const deletebenifitsQuery = `UPDATE
+export const deletebenifitsQuery = `
+UPDATE
   public."refBenifits"
 SET
   "isDelete" = TRUE,
@@ -94,6 +129,19 @@ RETURNING
 `;
 
 //include
+
+export const checkduplicateIncludeNameQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refInclude"
+WHERE
+  "refIncludeName" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
+
+`;
 export const addIncludeQuery = `INSERT INTO public."refInclude"(
     "refIncludeName",
     "createdAt",
@@ -154,6 +202,17 @@ RETURNING
   *;
 `;
 
+export const checkduplicateExcludeQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refExclude"
+WHERE
+  "refExcludeName" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
+`;
 export const checkExcludeQuery = `SELECT COUNT(*) AS count 
 FROM public."refExclude" WHERE "refExcludeId" = $1
   AND "isDelete" = false
@@ -269,6 +328,18 @@ RETURNING
 `;
 
 // FormDetails
+
+export const checkduplicateFormDetailsQuery = `
+SELECT
+  COUNT(*) AS "count"
+FROM
+  public."refFormDetails"
+WHERE
+  "refFormDetails" = $1
+  AND "isDelete" IS NOT true
+LIMIT
+  10;
+`;
 
 export const addFormDetailsQuery = `INSERT INTO
   public."refFormDetails" (
