@@ -24,6 +24,7 @@ import {
   deleteParkingImageRecordQuery,
   deleteServiceFeaturesQuery,
   getCarParkingQuery,
+  getCarParkingTypeQuery,
   getdeletedFeatureQuery,
   getParkingImageRecordQuery,
   listCarParkingByIdQuery,
@@ -63,6 +64,7 @@ export class carParkingRepository {
         description,
         parkingSlotImage,
         refStatus,
+        refCarParkingTypeId
       } = userData;
 
       const ServiceFeatures = Array.isArray(userData.ServiceFeatures)
@@ -90,6 +92,7 @@ export class carParkingRepository {
         description,
         parkingSlotImage,
         refStatus,
+        refCarParkingTypeId,
         CurrentTime(),
         tokendata.id,
       ]);
@@ -274,6 +277,7 @@ export class carParkingRepository {
         description,
         parkingSlotImage,
         refStatus,
+        refCarParkingTypeId
       } = userData;
 
       const ServiceFeatures = `{${userData.ServiceFeatures.join(",")}}`;
@@ -405,6 +409,7 @@ export class carParkingRepository {
         description,
         parkingSlotImage,
         refStatus,
+        refCarParkingTypeId,
         CurrentTime(),
         tokendata.id,
       ];
@@ -585,6 +590,35 @@ export class carParkingRepository {
       );
     } finally {
       client.release();
+    }
+  }
+  public async getCarParkingTypeV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery(getCarParkingTypeQuery);
+      return encrypt(
+        {
+          success: true,
+          message: "list CarParkingType successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during get CarParkingType",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
     }
   }
 

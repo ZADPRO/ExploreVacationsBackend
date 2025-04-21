@@ -67,7 +67,12 @@ WHERE
   "refDestinationId" = $1;
 `;         
 
-export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" = false
+export const listDestinationQuery = `SELECT
+  *
+FROM
+  public."refDestination"
+WHERE
+  "isDelete" IS NOT true;
         `;
 
 // location

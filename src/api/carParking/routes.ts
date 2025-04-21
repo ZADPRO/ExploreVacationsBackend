@@ -143,6 +143,19 @@ export class carParkingRoutes implements IRoute {
             tags: ["api", "Users"],
             auth: false,
           },
+          
+        },
+        {
+          method: "GET",
+          path: "/api/v1/carParkingRoutes/getCarParkingType",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getCarParkingType,
+            description: "getCarParkingType",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+          
         },
       ]);
       resolve(true);

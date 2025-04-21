@@ -34,6 +34,7 @@ export const addParkingQuery = `INSERT INTO
     "description",
     "parkingSlotImage",
     "refStatus",
+    "refCarParkingTypeId",
     "createdAt",
     "createdBy"
   )
@@ -60,7 +61,8 @@ VALUES
     $19,
     $20,
     $21,
-    $22
+    $22,
+    $23
   )
 RETURNING
   *;
@@ -91,7 +93,7 @@ GROUP BY
 export const updateCarParkingQuery = `
 UPDATE public."refCarParkingTable"
         SET 
-          "refParkingType" = $2,
+          "refParkingTypeId" = $2,
           "refParkingName" = $3,
           "refAssociatedAirport" = $4,
           "refLocation" = $5,
@@ -111,22 +113,24 @@ UPDATE public."refCarParkingTable"
           "description" = $19,
           "parkingSlotImage" = $20,
           "refStatus" = $21,
-          "updatedAt" = $22,
-          "updatedBy" = $23
+          "refCarParkingTypeId"= $22,
+          "updatedAt" = $23,
+          "updatedBy" = $24
         WHERE 
 "refCarParkingId" = $1      
 RETURNING *;
-
 `;
 
 export const listCarParkingQuery = `
 SELECT
   cp.*,
   pt."refParkingTypeName",
-  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList",
+  ct."refCarParkingTypeName"
 FROM
   public."refCarParkingTable" cp
-  LEFT JOIN public."refParkingType" pt ON CAST (pt."refParkingTypeId" AS INTEGER) = cp."refParkingTypeId"
+  LEFT JOIN public."refParkingType" pt ON CAST(pt."refParkingTypeId" AS INTEGER) = cp."refParkingTypeId"
+  LEFT JOIN public."refCarParkingType" ct ON CAST(ct."refCarParkingTypeId" AS INTEGER) = cp."refCarParkingTypeId"
   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
@@ -137,7 +141,8 @@ WHERE
   cp."isDelete" IS NOT true
 GROUP BY
   cp."refCarParkingId",
-  pt."refParkingTypeId";
+  pt."refParkingTypeId",
+  ct."refCarParkingTypeName";
   
 `;
 
@@ -219,6 +224,12 @@ RETURNING
   *;
 `;
 
+export const getCarParkingTypeQuery =`
+SELECT
+  *
+FROM
+  public."refCarParkingType"
+`;
 
 export const checkduplicateQuery = `
 SELECT

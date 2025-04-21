@@ -18,14 +18,14 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----tour Booking");
     try {
-
-      // const decodedToken ={
-      //   id:request.plugins.token.id
-      // }
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      console.log('decodedToken', decodedToken)
       let entity;
 
       entity = await this.resolver.tourBookingV1(request.payload
-        // , decodedToken
+        , decodedToken
       );
 
       if (entity.success) {
@@ -52,14 +52,14 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----customize Booking");
     try {
-      // const decodedToken ={
-      //   id:request.plugins.token.id
-      // }
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
      
       let entity;
 
       entity = await this.resolver.customizeBookingV1(request.payload
-        // , decodedToken
+        , decodedToken
       );
 
       if (entity.success) {
@@ -86,12 +86,12 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----upload Certificate");
     try {
-      // const decodedToken ={
-      //   id:request.plugins.token.id
-      // }
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
       let entity;
       entity = await this.resolver.uploadCertificateV1(request.payload
-        // , decodedToken
+        , decodedToken
       );
 
       if (entity.success) {
@@ -118,12 +118,12 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----upload passport");
     try {
-      // const decodedToken ={
-      //   id:request.plugins.token.id
-      // }
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
       let entity;
       entity = await this.resolver.uploadPassportV1(request.payload
-        // , decodedToken
+        , decodedToken
       );
 
       if (entity.success) {
@@ -150,13 +150,13 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----car Booking");
     try {
-      // const decodedToken ={
-      //   id:request.plugins.token.id
-      // }
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
       let entity;
 
       entity = await this.resolver.userCarBookingV1(request.payload
-        // , decodedToken
+        , decodedToken
       );
 
       if (entity.success) {
@@ -487,7 +487,6 @@ export class userController {
   ): Promise<any> => {
     logger.info("Router-----getCarParking");
     try {
-      
       let entity;
 
       entity = await this.resolver.getCarParkingV1(request.payload);
@@ -516,10 +515,8 @@ export class userController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info("Router-----list Destination");
-    try {
-      
+    try {      
       let entity;
-
       entity = await this.resolver.listDestinationV1(request.payload);
 
       if (entity.success) {
@@ -691,7 +688,6 @@ export class userController {
   };
 
 
-
   public tourBookingHistory = async (
     request: any,
     response: Hapi.ResponseToolkit
@@ -785,5 +781,92 @@ export class userController {
         .code(500);
     }
   };
+  public listAssociateAirport = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----list Associate Airport");
+    try {
+      
+      let entity;
+      entity = await this.resolver.listAssociateAirportV1(request.payload);
 
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in list Associate Airport", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public listParkingType = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----listParkingType");
+    try {
+      
+      let entity;
+      entity = await this.resolver.listParkingTypeV1(request.payload);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in listParkingType", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public addUserAddress = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----addUserAddress");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.addUserAddressV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in addUserAddress", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+ 
 }

@@ -80,4 +80,14 @@ export class userResolver {
   public async carParkingHistoryV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.carParkingHistoryV1(user_data, token_data, domain_code);
   }
+  public async listAssociateAirportV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.listAssociateAirportV1(user_data, token_data, domain_code);
+  }
+  public async listParkingTypeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.listParkingTypeV1(user_data, token_data, domain_code);
+  }
+  public async addUserAddressV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.addUserAddressV1(user_data, token_data, domain_code);
+  }
+ 
 }

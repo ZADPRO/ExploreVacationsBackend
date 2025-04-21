@@ -3,7 +3,6 @@ import { Client, PoolClient } from "pg";
 import { storeFile, viewFile, deleteFile } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
-import { formatDate } from "../../helper/common";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { buildUpdateQuery, getChanges } from "../../helper/buildquery";
@@ -96,6 +95,7 @@ export class settingsRepository {
         true
       );
     } catch (error: unknown) {
+      console.log('error', error)
       await client.query("ROLLBACK");
 
       return encrypt(

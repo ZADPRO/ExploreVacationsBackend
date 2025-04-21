@@ -49,17 +49,15 @@ export class adminRepository {
 
     try {
       const params = [user_data.login];
-      console.log("params line ------ 25", params);
       const users:any = await client.query(selectUserByLogin, params);
       console.log("users", users);
 
-      
       if (users.rows.length > 0) {
         const user = users.rows[0];
 
-        console.log("User data:", user);
-        console.log("User hashed password:", user.refUserHashedPassword); // Correct field name
-        console.log("Entered password:", user_data.password);
+        // console.log("User data:", user);
+        // console.log("User hashed password:", user.refUserHashedPassword); // Correct field name
+        // console.log("Entered password:", user_data.password);
 
         if (!user.refUserHashedPassword) {
           console.error("Error: User has no hashed password stored.");
@@ -400,7 +398,7 @@ export class adminRepository {
         userData.refMoblile,
         userData.refUserTypeId,
         CurrentTime(),
-        "Admin",
+        token_data.id
       ];
       const userResult = await client.query(insertUserQuery, params);
       const newUser = userResult.rows[0];
@@ -413,7 +411,7 @@ export class adminRepository {
         genHashedPassword,
         userData.refMoblile,
         CurrentTime(),
-        "Admin",
+        token_data.id,
       ];
 
       const domainResult = await client.query(
@@ -713,6 +711,7 @@ export class adminRepository {
         refQualification,
         refProfileImage,
         refMoblile,
+        refUserTypeId
       } = userData;
   
       const existingEmployeeRes = await client.query(
@@ -757,8 +756,9 @@ export class adminRepository {
         refQualification,
         refProfileImage,
         refMoblile,
+        refUserTypeId,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
       await client.query(updateEmployeeQuery, updateParams);
   
@@ -1012,7 +1012,7 @@ export class adminRepository {
           token: tokens,
           result: result,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       return encrypt(
@@ -1068,7 +1068,8 @@ export class adminRepository {
           CurrentTime(),
           tokendata.id,
         ]);
-  
+        
+        console.log('result', result)
         if (result.rowCount === 0) {
           await client.query("ROLLBACK");
           return encrypt(

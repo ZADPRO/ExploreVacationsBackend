@@ -25,11 +25,12 @@ export const addTourBookingQuery = `INSERT INTO
     "refInfants",
     "refOtherRequirements",
     "createdAt",
-    "createdBy"
+    "createdBy",
+    "refuserId"
     
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11 )
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
 RETURNING
   *;
 `;
@@ -61,9 +62,10 @@ export const addcustomizeBookingQuery = `
         "refOtherRequirements", 
         "refPassPort",
         "createdAt", 
-        "createdBy"
+        "createdBy",
+        "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,$16) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) 
     RETURNING *;
 `;
 
@@ -80,9 +82,10 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "refInfants", 
         "refOtherRequirements", 
         "createdAt", 
-        "createdBy"
+        "createdBy",
+        "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
     RETURNING *;
 
 `;
@@ -908,23 +911,37 @@ GROUP BY
   cd."refCarTypeName";
 `;
 
+// export const listCarParkingQuery =`
+// SELECT
+//   cp.*,
+//   array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+// FROM
+//   public."refCarParkingTable" cp
+//   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+//     string_to_array(
+//       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+//       ','
+//     )::INTEGER[]
+//   )
+// WHERE
+//   cp."isDelete" IS NOT true
+// GROUP BY
+//   cp."refCarParkingId"
+// `;
+
 export const listCarParkingQuery =`
 SELECT
-  cp.*,
-  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+  *
 FROM
-  public."refCarParkingTable" cp
-  LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
-  )
+  public."refCarParkingTable" AS cp
 WHERE
-  cp."isDelete" IS NOT true
-GROUP BY
-  cp."refCarParkingId"
+  cp."refCarParkingId" = $1
+  AND $2 BETWEEN cp."MinimumBookingDuration" AND cp."MaximumBookingDuration"
+  AND cp."refAssociatedAirport" = $3
+  AND cp."refCarParkingTypeId" = $4
+  AND cp."isDelete" IS NOT true;
 `;
+
 
 export const listCarParkingByIdQuery = `SELECT
   cp.*,
@@ -986,14 +1003,28 @@ RETURNING
   *;
 `;
 
-export const checkQuery = `SELECT
+// export const checkQuery = `
+// SELECT
+//   *
+// FROM
+//   public."refUserDomain"
+// WHERE
+//   "refUsername" = $1
+//   OR "refUserEmail" = $1
+// LIMIT
+//   10;
+//   `;
+
+export const checkQuery = `
+SELECT
   *
 FROM
   public."refUserDomain"
 WHERE
   "refUsername" = $1
-LIMIT
-  10;`;
+  OR "refUserEmail" = $2
+LIMIT 1;
+`;
 
 export const getLastCustomerIdQuery = `SELECT
   COUNT(*)
@@ -1018,7 +1049,8 @@ VALUES
 RETURNING
   *;`;
 
-export const insertUserDomainQuery = `INSERT INTO
+export const insertUserDomainQuery = `
+INSERT INTO
   public."refUserDomain" (
     "refUserId",
     "refUserEmail",
@@ -1194,14 +1226,21 @@ GROUP BY
   aa."refCoverImage";
   `;
 
-export const profileDataQuery = `SELECT
+export const profileDataQuery = `
+SELECT
   u.*,
   ud."refUserEmail",
   ud."refUserHashedPassword",
-  ud."refUsername"
+  ud."refUsername",
+  ua."refUserAddress",
+  ua."refUserCity",
+  ua."refUserState",
+  ua."refUserCountry",
+  ua."refUserZipCode"
 FROM
   public."users" u
   LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refUserAddress" ua ON CAST(ua."refUserId" AS INTEGER) = u."refuserId"
 WHERE
   u."refuserId" = $1
   AND u."isDelete" IS NOT true
@@ -1219,7 +1258,6 @@ SET
   WHERE "refuserId" = $7
 RETURNING
   *;
-
 `;
 export const updatedomainDataQuery = `
 UPDATE
@@ -1230,10 +1268,27 @@ SET
   "refUserHashedPassword" = $3,
   "updatedAt" = $4,
   "updatedBy" = $5
-   WHERE "refuserId" = $6
+   WHERE "refUserId" = $6
 RETURNING
   *;
 
+`;
+
+export const updateAddressDataQuery = `
+UPDATE
+  public."refUserAddress"
+SET
+  "refUserAddress" = $1,
+  "refUserCity" = $2,
+  "refUserState" = $3,
+  "refUserCountry" = $4,
+  "refUserZipCode" = $5,
+  "updatedAt" = $6,
+  "updatedBy" = $7
+WHERE
+  "refUserId" = $8
+RETURNING
+  *;
 `;
 
   export const userTourBookingHistoryQuery = `
@@ -1273,5 +1328,39 @@ WHERE
   export const userCarParkingBookingHistoryQuery = `
 
   `;
+
+
+export const listAssociateAirportQuery = `
+SELECT
+  "refAssociatedAirport"
+FROM
+  public."refCarParkingTable"
+WHERE
+  "isDelete" IS NOT true;
+`;
+export const listParkingTypeQuery  =`
+SELECT
+  *
+FROM
+  public."refCarParkingType"
+`;
+
+export const insertUserAddressQuery = `
+INSERT INTO
+  public."refUserAddress" (
+    "refUserId",
+    "refUserAddress",
+    "refUserCity",
+    "refUserState",
+    "refUserCountry",
+    "refUserZipCode",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING
+  *;
+`;
 
 

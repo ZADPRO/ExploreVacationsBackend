@@ -14,7 +14,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/tourBooking",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.tourBooking,
             validate: validate.tourBooking,
             description: "tour Booking",
@@ -26,7 +26,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/customizeBooking",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.customizeBooking,
             // validate: validate.customizeBooking,
             description: "customize Booking",
@@ -38,7 +38,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/uploadCertificate",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.uploadCertificate,
             // validate: validate.uploadCertificate,
             description: "Upload certificate",
@@ -56,7 +56,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/uploadPassport",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.uploadPassport,
             // validate: validate.uploadCertificate,
             description: "Upload passport",
@@ -74,7 +74,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/userCarBooking",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.userCarBooking,
             // validate: validate.userCarBooking,
             description: "car Booking",
@@ -109,7 +109,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/getAllTour",
           config: {
             handler: controller.getAllTour,
-            description: "getAllTour",
+            description: "get AllTour",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -119,7 +119,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/getAllCar",
           config: {
             handler: controller.getAllCar,
-            description: "getAllCar",
+            description: "get All Car",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -130,17 +130,18 @@ export class userRoutes implements IRoute {
           config: {
             handler: controller.getCarById,
             validate: validate.getCarById,
-            description: "getCarById",
+            description: "get CarById",
             tags: ["api", "Users"],
             auth: false,
           },
         },
         {
-          method: "GET",
+          method: "POST",
           path: "/api/v1/userRoutes/listCarParking",
           config: {
             handler: controller.listCarParking,
-            description: "listCarParking",
+            // validate: validate.listCarParking,
+            description: "list CarParking",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -150,7 +151,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/getCarParking",
           config: {
             handler: controller.getCarParking,
-            description: "getCarParking",
+            description: "get CarParking",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -210,7 +211,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/listDestination",
           config: {
             handler: controller.listDestination,
-            description: "listDestination",
+            description: "list Destination",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -252,8 +253,7 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.profileData,
-            // validate: validate.getCarById,
-            description: "profileData",
+            description: "profile Data",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -264,8 +264,8 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.UpdateprofileData,
-            // validate: validate.UpdateprofileData,
-            description: "UpdateprofileData",
+            validate: validate.UpdateprofileData,
+            description: "Update profile Data",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -276,7 +276,7 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.tourBookingHistory,
-            description: "tourBookingHistory",
+            description: "tour Booking History",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -287,7 +287,7 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.carBookingHistory,
-            description: "carBookingHistory",
+            description: "carBooking History",
             tags: ["api", "Users"],
             auth: false,
           },
@@ -298,12 +298,55 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.carParkingHistory,
-            description: "carParkingHistory",
+            description: "carParking History",
             tags: ["api", "Users"],
             auth: false,
           },
         },
-
+        {
+          method: "GET",
+          path: "/api/v1/userRoutes/listAssociateAirport",
+          config: {
+            handler: controller.listAssociateAirport,
+            description: "list Associate Airport",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/userRoutes/listParkingType",
+          config: {
+            handler: controller.listParkingType,
+            description: "list ParkingType",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        // {
+        //   method: "GET",
+        //   path: "/api/v1/userRoutes/carParkingHistory",
+        //   config: {
+        //     pre: [{ method: validateToken, assign: "token" }],
+        //     handler: controller.carParkingHistory,
+        //     description: "carParking History",
+        //     tags: ["api", "Users"],
+        //     auth: false,
+        //   },
+        // },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/addUserAddress",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.addUserAddress,
+            validate: validate.addUserAddress,
+            description: "addUserAddress",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        
       ]);
       resolve(true);
     });

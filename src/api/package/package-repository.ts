@@ -3,7 +3,6 @@ import { PoolClient } from "pg";
 import { storeFile, viewFile, deleteFile } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
-import { formatDate } from "../../helper/common";
 import fs from "fs";
 
 import bcrypt from "bcryptjs";
@@ -1784,26 +1783,61 @@ export class packageRepository {
       const { refPackageId } = userData;
 
       const result1 = await executeQuery(listTourByIdQuery, [refPackageId]);
-      console.log("result1: line ------- 1586", result1);
 
-      for (const image of result1) {
-        for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
-          if (image[key]) {
-            try {
-              const fileBuffer = await viewFile(image[key]);
-              image[key] = {
-                filename: path.basename(image[key]),
-                content: fileBuffer.toString("base64"),
-                contentType: "image/jpeg", // Adjust if needed
-              };
-            } catch (error) {
-              console.error(`Error reading ${key} file:`, error);
-              image[key] = null; // Handle missing/unreadable files
+      // for (const image of result1) {
+      //   for (const key of ["refGallery", "refItenaryMap", "refCoverImage"]) {
+      //     if (image[key]) {
+      //       try {
+      //         const fileBuffer = await viewFile(image[key]);
+      //         image[key] = {
+      //           filename: path.basename(image[key]),
+      //           content: fileBuffer.toString("base64"),
+      //           contentType: "image/jpeg", // Adjust if needed
+      //         };
+      //       } catch (error) {
+      //         console.error(`Error reading ${key} file:`, error);
+      //         image[key] = null; // Handle missing/unreadable files
+      //       }
+      //     }
+      //   }
+      // }
+
+       for (const image of result1) {
+              // Handle gallery images
+              const galleryValue = image["refGallery"];
+              if (galleryValue) {
+                try {
+                  const galleryPaths =
+                    typeof galleryValue === "string"
+                      ? galleryValue
+                          .replace(/^{|}$/g, "") // Remove {}
+                          .split(/","?/) // Split by "," or "
+                          .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
+                      : galleryValue;
+            
+                  image["refGallery"] = galleryPaths.map((imgPath: string) =>
+                    path.basename(imgPath)
+                  );
+                } catch (error) {
+                  console.error("Error processing refGallery:", error);
+                  image["refGallery"] = [];
+                }
+              }
+            
+              // Handle single image fields
+              for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+                const value = image[key];
+                if (value) {
+                  try {
+                    image[key] = path.basename(value);
+                  } catch (error) {
+                    console.error(`Error processing ${key}:`, error);
+                    image[key] = null;
+                  }
+                }
+              }
             }
-          }
-        }
-      }
-
+           
       return encrypt(
         {
           success: true,

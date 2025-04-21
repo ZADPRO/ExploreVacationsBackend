@@ -4,10 +4,10 @@ export default {
   tourBooking: {
     payload: Joi.object({
       refPackageId: Joi.number().integer().required(),
-      refUserName: Joi.string().min(1).max(255).required(),
-      refUserMail: Joi.string().email().required(),
+      refUserName: Joi.string().required(),
+      refUserMail: Joi.string().required(),
       refUserMobile: Joi.string().required(),
-      refPickupDate: Joi.date().iso().required(),
+      refPickupDate: Joi.string().required(),
       refAdultCount: Joi.string().required(),
       refChildrenCount: Joi.string().required(),
       refInfants: Joi.string().required(),
@@ -87,4 +87,38 @@ export default {
       }).unknown(),
     }),
   },
+  addUserAddress: {
+    payload: Joi.object({
+      refUserAddress: Joi.string().required(),
+      refUserCity: Joi.string().required(),
+      refUserState: Joi.string().required(),
+      refUserCountry: Joi.string().required(),
+      refUserZipCode: Joi.string().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+
+  UpdateprofileData:{
+    payload: Joi.object({
+      refFName: Joi.string().required(),
+      refLName: Joi.string().required(),
+      refDOB: Joi.string().required(),
+      refMoblile: Joi.string().required(),
+      refUserEmail: Joi.string().required(),
+      refUserPassword: Joi.string().required(),
+      refUserAddress: Joi.string().required(),
+      refUserCity: Joi.string().required(),
+      refUserState: Joi.string().required(),
+      refUserCountry: Joi.string().required(),
+      refUserZipCode: Joi.string().required(),
+
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  }
+
+
 };

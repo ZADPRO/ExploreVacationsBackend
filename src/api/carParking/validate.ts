@@ -1,8 +1,7 @@
 import * as Joi from "joi";
 
 export default {
-    addCarParking:{
-         
+    addCarParking:{   
         payload: Joi.object({
           refParkingTypeId:Joi.number().integer().required(),
           refParkingName: Joi.string().required(),
@@ -23,7 +22,8 @@ export default {
           instructions: Joi.string().required(),
           description: Joi.string().required(),
           parkingSlotImage: Joi.string().required(),
-          refStatus: Joi.boolean().required()
+          refStatus: Joi.boolean().required(),
+          refCarParkingTypeId:Joi.number().integer().required(),
         }),
         
      headers: Joi.object({
@@ -34,7 +34,7 @@ export default {
      updateCarParking:{
        payload: Joi.object({
         refCarParkingId:Joi.number().integer().required(),
-        refParkingType: Joi.string().required(),
+        refParkingTypeId: Joi.number().integer().required(),
         refParkingName: Joi.string().required(),
         refAssociatedAirport: Joi.string().required(),
         refLocation: Joi.string().required(),
@@ -50,11 +50,12 @@ export default {
         isCancellationAllowed: Joi.boolean().required(),
         isRescheduleAllowed: Joi.boolean().required(),
         ServiceFeatures: Joi.array().items(Joi.string()).required(),
-        
         instructions: Joi.string().required(),
         description: Joi.string().required(),
         parkingSlotImage: Joi.string().required(),
-        refStatus: Joi.boolean().required()
+        refStatus: Joi.boolean().required(),
+        refCarParkingTypeId:Joi.number().integer().required(),
+
       }),
       
    headers: Joi.object({

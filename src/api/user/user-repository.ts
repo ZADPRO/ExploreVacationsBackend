@@ -3,11 +3,7 @@ import { PoolClient } from "pg";
 import { storeFile, viewFile, deleteFile } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
-import {
-  formatDate,
-  generatePassword,
-  processImages,
-} from "../../helper/common";
+import { generatePassword, processImages } from "../../helper/common";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -32,17 +28,21 @@ import {
   getOtherCarsQuery,
   getPackageNameQuery,
   getUsersQuery,
+  insertUserAddressQuery,
   insertUserDomainQuery,
   insertUserQuery,
   listallTourQuery,
+  listAssociateAirportQuery,
   listCarParkingByIdQuery,
   listCarParkingQuery,
   listCarsQuery,
   listDestinationQuery,
   listOtherTourQuery,
+  listParkingTypeQuery,
   listTourBrochureQuery,
   listTourQuery,
   profileDataQuery,
+  updateAddressDataQuery,
   updatedomainDataQuery,
   updateHistoryQuery,
   updateProfileDataQuery,
@@ -155,8 +155,9 @@ export class userRepository {
   //   }
   // }
   public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
-    // const tokens = generateTokenWithExpire(token, true);
+    const token = { id: tokendata.id };
+    console.log("tokendata.id", tokendata.id);
+    const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -173,6 +174,9 @@ export class userRepository {
         refOtherRequirements,
       } = userData;
 
+
+      console.log(' line --------- 178', )
+
       const Result = await client.query(addTourBookingQuery, [
         refPackageId,
         refUserName,
@@ -184,15 +188,15 @@ export class userRepository {
         refInfants,
         refOtherRequirements,
         CurrentTime(),
-        "user",
-        // tokendata.id,
-        // tokendata.id
+        tokendata.id,
+        tokendata.id,
       ]);
+      console.log('Result line ----- 191', Result)
       const getPackageName: any = await executeQuery(getPackageNameQuery, [
         refPackageId,
       ]);
 
-      console.log("getPackageName", getPackageName);
+      console.log("getPackageName line ---- 195", getPackageName);
 
       // if (!getPackageName.rows.length) {
       //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
@@ -271,7 +275,7 @@ export class userRepository {
         {
           success: true,
           message: "tour booking successfully",
-          // tokens:tokens,
+          tokens: tokens,
           Data: Result.rows[0],
         },
         true
@@ -284,7 +288,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while tour booking",
-          // tokens:tokens,
+          tokens: tokens,
           error: String(error),
         },
         true
@@ -293,6 +297,7 @@ export class userRepository {
       client.release();
     }
   }
+
   // public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
   //   const client: PoolClient = await getClient();
 
@@ -391,8 +396,8 @@ export class userRepository {
   // }
 
   public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
-    // const tokens = generateTokenWithExpire(token, true);
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -431,9 +436,8 @@ export class userRepository {
         refOtherRequirements,
         refPassPort,
         CurrentTime(),
-        "user",
-        // tokendata.id,
-        // tokendata.id,
+        tokendata.id,
+        tokendata.id,
       ]);
 
       const getPackageName: any = await executeQuery(getPackageNameQuery, [
@@ -528,11 +532,6 @@ export class userRepository {
 
       // way 2
 
-      // const daysLeft = Math.ceil(
-      //   (new Date(refArrivalDate).getTime() - new Date().getTime()) /
-      //     (1000 * 60 * 60 * 24)
-      // );
-
       const daysLeft = Math.ceil(
         (new Date(refArrivalDate).getTime() -
           new Date(CurrentTime()).getTime()) /
@@ -611,7 +610,7 @@ export class userRepository {
         {
           success: true,
           message: "Customize tour booking added successfully",
-          // tokens:tokens,
+          tokens: tokens,
           Data: bookingData,
           pdfPath: refVaccinationCertificate,
         },
@@ -625,7 +624,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while adding the customize tour booking",
-          // tokens:tokens,
+          tokens: tokens,
           error: String(error),
         },
         true
@@ -634,13 +633,12 @@ export class userRepository {
       client.release();
     }
   }
-
   public async uploadCertificateV1(
     userData: any,
     tokendata: any
   ): Promise<any> {
-    // const token = { id: tokendata.id };
-    // const tokens = generateTokenWithExpire(token, true);
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
@@ -674,7 +672,7 @@ export class userRepository {
         {
           success: true,
           message: "PDF Stored Successfully",
-          // tokens:tokens,
+          tokens: tokens,
           filePath: filePath,
           files: storedFiles,
         },
@@ -686,15 +684,15 @@ export class userRepository {
         {
           success: false,
           message: "Error in Storing the PDF",
-          // tokens:tokens
+          tokens: tokens,
         },
         true
       );
     }
   }
   public async uploadPassportV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
-    // const tokens = generateTokenWithExpire(token, true);
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
@@ -728,7 +726,7 @@ export class userRepository {
         {
           success: true,
           message: "PDF Stored Successfully",
-          // tokens:tokens,
+          tokens: tokens,
           filePath: filePath,
           files: storedFiles,
         },
@@ -740,7 +738,7 @@ export class userRepository {
         {
           success: false,
           message: "Error in Storing the PDF",
-          // tokens:tokens
+          tokens: tokens,
         },
         true
       );
@@ -836,8 +834,8 @@ export class userRepository {
   // }
 
   public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
-    // const tokens = generateTokenWithExpire(token, true);
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
@@ -878,9 +876,8 @@ export class userRepository {
         // refFormDetails,
         refOtherRequirements,
         CurrentTime(),
-        "user",
-        // tokendata.id,
-        // tokendata.id,
+        tokendata.id,
+        tokendata.id,
       ]);
 
       console.log("Result", Result.rows);
@@ -1103,8 +1100,7 @@ export class userRepository {
         refDriverMail,
         refDriverMobile,
         CurrentTime(),
-        "user",
-        // tokendata.id,
+        tokendata.id,
       ]);
 
       await client.query("COMMIT"); // Commit transaction
@@ -1113,7 +1109,7 @@ export class userRepository {
         {
           success: true,
           message: "User car booking added successfully",
-          // tokens:tokens,
+          tokens: tokens,
           Data: Result.rows[0],
           drivarDetails: drivarDetails,
         },
@@ -1127,7 +1123,7 @@ export class userRepository {
         {
           success: false,
           message: "An error occurred while adding the user car booking",
-          // tokens:tokens,
+          tokens: tokens,
           error: String(error),
         },
         true
@@ -1145,8 +1141,6 @@ export class userRepository {
       const result1 = await executeQuery(listTourQuery, [refPackageId]);
 
       const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
-
-     
 
       // for (const image of result1) {
       //   const galleryValue = image["refGallery"];
@@ -1217,7 +1211,7 @@ export class userRepository {
                     .split(/","?/) // Split by "," or "
                     .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
                 : galleryValue;
-      
+
             image["refGallery"] = galleryPaths.map((imgPath: string) =>
               path.basename(imgPath)
             );
@@ -1226,7 +1220,7 @@ export class userRepository {
             image["refGallery"] = [];
           }
         }
-      
+
         // Handle single image fields
         for (const key of ["refItinaryMapPath", "refCoverImage"]) {
           const value = image[key];
@@ -1240,7 +1234,6 @@ export class userRepository {
           }
         }
       }
-    
 
       // Step 3: Return success response
       return encrypt(
@@ -1420,7 +1413,6 @@ export class userRepository {
   //     );
   //   }
   // }
-
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
       const result1 = await executeQuery(listallTourQuery);
@@ -1493,7 +1485,7 @@ export class userRepository {
                     .split(/","?/) // Split by "," or "
                     .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
                 : galleryValue;
-      
+
             image["refGallery"] = galleryPaths.map((imgPath: string) =>
               path.basename(imgPath)
             );
@@ -1502,7 +1494,7 @@ export class userRepository {
             image["refGallery"] = [];
           }
         }
-      
+
         // Handle single image fields
         for (const key of ["refItinaryMapPath", "refCoverImage"]) {
           const value = image[key];
@@ -1516,7 +1508,7 @@ export class userRepository {
           }
         }
       }
-      
+
       console.log(result1);
 
       return encrypt(
@@ -1538,40 +1530,58 @@ export class userRepository {
       );
     }
   }
+
   public async listCarParkingV1(userData: any, tokendata: any): Promise<any> {
     try {
-      // Step 1: Execute Queries
-      const result1 = await executeQuery(listCarParkingQuery);
+      const {
+        travelStartDate,
+        travelEndDate,
+        refCarParkingId,
+        refAssociatedAirport,
+        refCarParkingTypeId
+      } = userData;
 
-      // Step 2: Process images results if needed
+      if (!travelStartDate || !travelEndDate) {
+        throw new Error("travelStartDate and travelEndDate are required.");
+      }
+      // Convert to proper Date objects
+      const startDate = new Date(travelStartDate);
+      const endDate = new Date(travelEndDate);
 
-      //  for (const image of result1) {
-      //                if (image.parkingSlotImage) {
-      //                  try {
-      //                    const fileBuffer = await viewFile(image.parkingSlotImage);
-      //                    image.parkingSlotImage = {
-      //                      filename: path.basename(image.parkingSlotImage),
-      //                      content: fileBuffer.toString("base64"),
-      //                      contentType: "image/jpeg",
-      //                    };
-      //                  } catch (error) {
-      //                    console.error("Error reading image file for product ,err");
-      //                    image.parkingSlotImage = null;
-      //                  }
-      //                }
-      //              }
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new Error(
+          "Invalid date format for travelStartDate or travelEndDate."
+        );
+      }
+
+      // Calculate duration in days
+      const bookingDuration = Math.ceil(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      if (bookingDuration <= 0) {
+        throw new Error("travelEndDate must be after travelStartDate.");
+      }
+      const result1 = await executeQuery(listCarParkingQuery, [
+        bookingDuration,
+        refCarParkingId,
+        refAssociatedAirport,
+        refCarParkingTypeId
+      ]);
 
       for (const image of result1) {
         if (image.parkingSlotImage) {
           try {
             image.parkingSlotImage = path.basename(image.parkingSlotImage);
           } catch (error) {
-            console.error("Error extracting filename for parkingSlotImage:", error);
+            console.error(
+              "Error extracting filename for parkingSlotImage:",
+              error
+            );
             image.parkingSlotImage = null;
           }
         }
       }
-      
 
       // Step 3: Return success response
       return encrypt(
@@ -1580,7 +1590,7 @@ export class userRepository {
           message: "Listed car parikng successfully",
           tourDetails: result1,
         },
-        true
+        false
       );
     } catch (error: unknown) {
       // Log the error for debugging
@@ -1593,10 +1603,11 @@ export class userRepository {
           message: "An error occurred while listing the car parikng details.",
           error: String(error), // Return detailed error for debugging
         },
-        true
+        false
       );
     }
   }
+
   public async getCarParkingV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refCarParkingId } = userData;
@@ -1774,7 +1785,7 @@ export class userRepository {
       //         content: fileBuffer.toString("base64"),
       //         contentType: "image/jpeg", // Adjust if needed
       //       };
-            
+
       //     } catch (error) {
       //       console.error("Error reading image file:", error);
       //       image.refCarPath = null; // Handle missing/unreadable files
@@ -1792,7 +1803,7 @@ export class userRepository {
           }
         }
       }
-      
+
       return encrypt(
         {
           success: true,
@@ -1838,7 +1849,6 @@ export class userRepository {
       //   }
       // }
 
-
       for (const image of result1) {
         if (image.refCarPath) {
           try {
@@ -1849,7 +1859,7 @@ export class userRepository {
           }
         }
       }
-      
+
       return encrypt(
         {
           success: true,
@@ -1905,13 +1915,18 @@ export class userRepository {
         refUserEmail,
         refMoblile,
       } = userData;
+      console.log('userData', userData)
 
       const hashedPassword = await bcrypt.hash(temp_password, 10);
 
-      const check = [refMoblile];
+      const check = 
+      [refMoblile,
+        refUserEmail
+      ];
       console.log(check);
 
       const userCheck = await client.query(checkQuery, check);
+      console.log('userCheck', userCheck)
 
       const userFind = userCheck.rows[0];
 
@@ -1925,7 +1940,6 @@ export class userRepository {
           true
         );
       }
-
       const customerPrefix = "EV-CUS-";
       const baseNumber = 0;
 
@@ -1955,6 +1969,7 @@ export class userRepository {
         3,
       ];
       const userResult = await client.query(insertUserQuery, params);
+      console.log('userResult', userResult)
       const newUser = userResult.rows[0];
 
       // Insert into userDomain table
@@ -1965,13 +1980,14 @@ export class userRepository {
         hashedPassword,
         refMoblile,
         CurrentTime(),
-        "Admin",
+        3,
       ];
 
       const domainResult = await client.query(
         insertUserDomainQuery,
         domainParams
       );
+      console.log('domainResult', domainResult)
       // if ((userResult.rowCount ?? 0) > 0 && (domainResult.rowCount ?? 0) > 0) {
       //   const history = [
       //     52,
@@ -2007,6 +2023,7 @@ export class userRepository {
       client.release();
     }
   }
+  
   public async forgotPasswordV1(userData: any, token_data?: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: token_data.id }; // Extract token ID
@@ -2053,7 +2070,7 @@ export class userRepository {
         genPassword,
         genHashedPassword,
         CurrentTime(),
-        "3",
+        token_data.id,
       ]);
 
       console.log("token_data.id", token_data.id);
@@ -2163,8 +2180,9 @@ export class userRepository {
       return encrypt(
         {
           success: true,
-          message: "listed userBooking List",
+          message: "listed profileData successfully",
           token: tokens,
+          profileData:profileData
         },
         true
       );
@@ -2172,7 +2190,7 @@ export class userRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed userBooking List ",
+          message: "An unknown error occurred during listed profileData",
           error: String(error),
           token: tokens,
         },
@@ -2185,6 +2203,7 @@ export class userRepository {
     tokendata: any
   ): Promise<any> {
     const token = { id: tokendata.id }; // Extract token ID
+    console.log("tokendata.id", tokendata.id);
     const tokens = generateTokenWithExpire(token, true);
     try {
       const {
@@ -2194,7 +2213,13 @@ export class userRepository {
         refMoblile,
         refUserEmail,
         refUserPassword,
+        refUserAddress,
+        refUserCity,
+        refUserState,
+        refUserCountry,
+        refUserZipCode,
       } = userData;
+      console.log("userData", userData);
 
       const genHashedPassword = await bcrypt.hash(refUserPassword, 10);
 
@@ -2207,6 +2232,7 @@ export class userRepository {
         tokendata.id,
         tokendata.id,
       ]);
+      console.log("profileData", profileData);
 
       const domainData = await executeQuery(updatedomainDataQuery, [
         refUserEmail,
@@ -2216,6 +2242,19 @@ export class userRepository {
         tokendata.id,
         tokendata.id,
       ]);
+      console.log("domainData", domainData);
+
+      const addressData = await executeQuery(updateAddressDataQuery, [
+        refUserAddress,
+        refUserCity,
+        refUserState,
+        refUserCountry,
+        refUserZipCode,
+        CurrentTime(),
+        tokendata.id,
+        tokendata.id,
+      ]);
+      console.log("addressData", addressData);
 
       return encrypt(
         {
@@ -2223,9 +2262,10 @@ export class userRepository {
           message: "profile update successfully",
           token: tokens,
         },
-        false
+        true
       );
     } catch (error: unknown) {
+      console.log("error", error);
       return encrypt(
         {
           success: false,
@@ -2254,7 +2294,7 @@ export class userRepository {
           success: true,
           message: "listed user tour Booking List",
           token: tokens,
-          tourBookingresult:tourBookingresult
+          tourBookingresult: tourBookingresult,
         },
         true
       );
@@ -2262,7 +2302,8 @@ export class userRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed user tour Booking List ",
+          message:
+            "An unknown error occurred during listed user tour Booking List ",
           error: String(error),
           token: tokens,
         },
@@ -2277,22 +2318,21 @@ export class userRepository {
     const token = { id: tokendata.id }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
-
       const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [
-        tokendata.id,
+        tokendata.id
       ]);
 
-      const CarParkingBookingresult = await executeQuery(
-        userCarParkingBookingHistoryQuery,
-        [tokendata.id]
-      );
+      // const CarParkingBookingresult = await executeQuery(
+      //   userCarParkingBookingHistoryQuery,
+      //   [tokendata.id]
+      // );
 
       return encrypt(
         {
           success: true,
           message: "listed user car Booking List",
           token: tokens,
-          CarBookingresult:CarBookingresult
+          CarBookingresult: CarBookingresult,
         },
         true
       );
@@ -2300,7 +2340,8 @@ export class userRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed user car Booking List ",
+          message:
+            "An unknown error occurred during listed user car Booking List ",
           error: String(error),
           token: tokens,
         },
@@ -2315,7 +2356,6 @@ export class userRepository {
     const token = { id: tokendata.id }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
-    
       const CarParkingBookingresult = await executeQuery(
         userCarParkingBookingHistoryQuery,
         [tokendata.id]
@@ -2326,7 +2366,7 @@ export class userRepository {
           success: true,
           message: "listed user car parking Booking List",
           token: tokens,
-          CarParkingBookingresult:CarParkingBookingresult
+          CarParkingBookingresult: CarParkingBookingresult,
         },
         true
       );
@@ -2334,7 +2374,8 @@ export class userRepository {
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed user car parking Booking List ",
+          message:
+            "An unknown error occurred during listed user car parking Booking List ",
           error: String(error),
           token: tokens,
         },
@@ -2342,4 +2383,108 @@ export class userRepository {
       );
     }
   }
+  public async listAssociateAirportV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    try {
+      const result = await executeQuery(listAssociateAirportQuery);
+      return encrypt(
+        {
+          success: true,
+          message: "listed Associate Airport successfully",
+          Details: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed Associate Airport ",
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async listParkingTypeV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    try {
+      const result = await executeQuery(listParkingTypeQuery);
+      return encrypt(
+        {
+          success: true,
+          message: "listed Parking Type successfully",
+          Details: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed Parking Type ",
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async addUserAddressV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    const client: PoolClient = await getClient();
+    try {
+      await client.query("BEGIN");
+      const {
+        refUserAddress,
+        refUserCity,
+        refUserState,
+        refUserCountry,
+        refUserZipCode,
+      } = userData;
+
+      // Insert into users table
+      const params = [
+        tokendata.id,
+        refUserAddress,
+        refUserCity,
+        refUserState,
+        refUserCountry,
+        refUserZipCode,
+        CurrentTime(),
+        tokendata.id,
+      ];
+      const addressResult = await client.query(insertUserAddressQuery, params);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "User Address added successful",
+          address: addressResult,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      console.error("Error during User Address addition:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An unexpected error occurred during User Address addition ",
+          error: error instanceof Error ? error.message : String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
 }
+

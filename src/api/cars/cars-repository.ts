@@ -2134,22 +2134,33 @@ export class carsRepository {
 
       const result = await executeQuery(getCarsByIdQuery, [refCarsId]);
 
-      for (const image of result) {
-        if (image.refCarPath) {
-          try {
-            const fileBuffer = await viewFile(image.refCarPath);
-            image.refCarPath = {
-              filename: path.basename(image.refCarPath),
-              content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg",
-            };
-          } catch (error) {
-            console.error("Error reading image file for product ,err");
-            image.refCarPath = null;
-          }
-        }
-      }
+      // for (const image of result) {
+      //   if (image.refCarPath) {
+      //     try {
+      //       const fileBuffer = await viewFile(image.refCarPath);
+      //       image.refCarPath = {
+      //         filename: path.basename(image.refCarPath),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg",
+      //       };
+      //     } catch (error) {
+      //       console.error("Error reading image file for product ,err");
+      //       image.refCarPath = null;
+      //     }
+      //   }
+      // }
 
+       for (const image of result) {
+              if (image.refCarPath) {
+                try {
+                  image.refCarPath = path.basename(image.refCarPath);
+                } catch (error) {
+                  console.error("Error extracting filename from refCarPath:", error);
+                  image.refCarPath = null;
+                }
+              }
+            }
+            
       return encrypt(
         {
           success: true,
