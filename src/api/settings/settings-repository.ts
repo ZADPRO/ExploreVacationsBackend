@@ -133,6 +133,18 @@ export class settingsRepository {
           true
         );
       }
+      const check: any = await executeQuery(checkDestinationQuery, [
+        refDestinationName,
+      ]);
+      console.log("check", check);
+
+      const count = Number(check[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate destination found: "${refDestinationName}" already exists.`
+        );
+      }
 
       const params = [
         refDestinationId,
@@ -422,6 +434,17 @@ export class settingsRepository {
           true
         );
       }
+      const duplicateCheck: any = await client.query(checkduplicateQuery, [
+        refLocationName,
+      ]);
+
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate location found: "${refLocationName}" already exists.`
+        );
+      }
       const params = [
         refLocationId,
         refLocationName,
@@ -591,9 +614,12 @@ export class settingsRepository {
       ]);
 
       const check: any = await client.query(checkDuplicateCategoryQuery, [
-        refCategory,
+        refCategory
       ]);
-      const count = Number(check[0]?.count || 0); // safely convert to number
+      console.log('check', check.rows[0].count)
+      const count = Number(check.rows[0].count || 0); // safely convert to number
+
+      console.log('count', count)
 
       if (count > 0) {
         throw new Error(
@@ -660,7 +686,19 @@ export class settingsRepository {
           true
         );
       }
+      const check: any = await client.query(checkDuplicateCategoryQuery, [
+        refCategoryName
+      ]);
+      console.log('check', check.rows[0].count)
+      const count = Number(check.rows[0].count || 0); // safely convert to number
 
+      console.log('count', count)
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate category found: "${refCategoryName}" already exists.`
+        );
+      }
       const params = [
         refCategoryId,
         refCategoryName,
@@ -888,7 +926,14 @@ export class settingsRepository {
           true
         );
       }
+      const check: any = await executeQuery(checkActivityQuery, [refActivitiesName]);
+      const count = Number(check[0]?.count || 0); // safely convert to number
 
+      if (count > 0) {
+        throw new Error(
+          `Duplicate Activity found: "${refActivitiesName}" already exists.`
+        );
+      }
       const params = [
         refActivitiesId,
         refActivitiesName,

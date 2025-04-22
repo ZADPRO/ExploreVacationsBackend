@@ -374,6 +374,33 @@ WHERE
   ctb."isDelete" IS NOT true
 `;
 
+export const listParkingBookingsQuery  =`
+SELECT
+  cp.*,
+  pt.*,
+  pa."refParkingTypeName",
+  cpt."refCarParkingTypeName",
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+FROM
+  public."userCarParkingBooking" cp
+  LEFT JOIN public."refCarParkingTable" pt ON CAST(pt."refCarParkingId" AS INTEGER) = cp."refCarParkingId"
+  LEFT JOIN public."refParkingType" pa ON CAST(pa."refParkingTypeId" AS INTEGER) = pt."refParkingTypeId"
+  LEFT JOIN public."refCarParkingType" cpt ON CAST(cpt."refCarParkingTypeId" AS INTEGER) = pt."refCarParkingTypeId"
+LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(pt."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+ WHERE cp."isDelete" IS NOT true
+
+GROUP BY 
+cp."carParkingBookingId",
+pt."refCarParkingId",
+pa."refParkingTypeName",
+cpt."refCarParkingTypeName"
+
+`;
 export const listAuditPageQuery = `SELECT
   th.*,
   td."refTransactionHistory",
@@ -531,16 +558,15 @@ FROM
 
 export const dashBoardQuery =`
 SELECT
-  (SELECT COUNT(*) FROM public."userTourBooking") AS "tourBookingCount",
-  (SELECT COUNT(*) FROM public."userCarBooking") AS "carBookingCount",
-  -- (SELECT COUNT(*) FROM public."userCarParkingBooking") AS "carParkingBookingCount",
-  (SELECT COUNT(*) FROM public."customizeTourBooking") AS "customizeTourBookingCount",
-  (SELECT COUNT(*) FROM public."refCarsTable") AS "carCount",
-  (SELECT COUNT(*) FROM public."refPackage") AS "tourCount",
-  (SELECT COUNT(*) FROM public."refCarParkingTable") AS "CarParkingCount",
-  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-EMP-%') AS "EmployeeCount",
-  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-CUS-%') AS "logInClientCount",
-  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-CUS-%') AS "logInClientCount";
+  (SELECT COUNT(*) FROM public."userTourBooking" WHERE "isDelete" IS NOT true) AS "tourBookingCount",
+  (SELECT COUNT(*) FROM public."userCarBooking" WHERE "isDelete" IS NOT true) AS "carBookingCount",
+  (SELECT COUNT(*) FROM public."userCarParkingBooking" WHERE "isDelete" IS NOT true) AS "carParkingBookingCount",
+  (SELECT COUNT(*) FROM public."customizeTourBooking" WHERE "isDelete" IS NOT true) AS "customizeTourBookingCount",
+  (SELECT COUNT(*) FROM public."refCarsTable" WHERE "isDelete" IS NOT true) AS "carCount",
+  (SELECT COUNT(*) FROM public."refPackage" WHERE "isDelete" IS NOT true) AS "tourCount",
+  (SELECT COUNT(*) FROM public."refCarParkingTable" WHERE "isDelete" IS NOT true) AS "CarParkingCount",
+  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-EMP-%' AND "isDelete" IS NOT true ) AS "EmployeeCount",
+  (SELECT COUNT(*) FROM public."users" WHERE "refCustId" LIKE 'EV-CUS-%' AND "isDelete" IS NOT true) AS "logInClientCount";
 `;
 
 export const deleteCarBookingsQuery = `
@@ -572,13 +598,17 @@ RETURNING
 
 export const deleteCustomizeTourBookingsQuery = `
 UPDATE
-  public."customizeTourBooking"
+  public."userCarParkingBooking"
 SET
   "isDelete" = true,
   "deletedAt" = $2,
   "deletedBy" = $3
 WHERE
-  "customizeTourBookingId" = $1
+  "carParkingBookingId" = $1
 RETURNING
   *;
+`;
+
+export const deleteCarParkingBookingsQuery = `
+
 `;

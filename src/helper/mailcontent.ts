@@ -517,3 +517,72 @@ export const generateforgotPasswordEmailContent = (
     </div>
   `;
 };
+
+
+
+export function userCarParkingBookingMail(userMailData: any): string {
+  return `
+  <div style="font-family: Arial, sans-serif; background-color: #f4f8fb; padding: 20px; color: #333;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+      <div style="background-color: #007bff; color: #ffffff; padding: 20px; text-align: center;">
+        <h1>🚗 Booking Confirmed!</h1>
+        <p>Thanks for choosing <strong>Explore Vacations</strong></p>
+      </div>
+
+      <div style="padding: 20px;">
+        <p>Hi <strong>${userMailData.refUserName}</strong>,</p>
+        <p>We’re excited to confirm your car parking booking at <strong>${userMailData.refParkingName}</strong>.</p>
+
+        <table style="width: 100%; margin-top: 10px; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0;"><strong>Customer ID:</strong></td>
+            <td style="padding: 8px 0;">${userMailData.refParkingCustId}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong>Pickup Date:</strong></td>
+            <td style="padding: 8px 0;">${userMailData.refPickupDate}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong>Days Left:</strong></td>
+            <td style="padding: 8px 0;">${userMailData.daysLeft} day(s)</td>
+          </tr>
+        </table>
+
+        <p style="margin-top: 20px;">We’ll be ready and waiting. If you have any questions, feel free to contact us!</p>
+
+        <p style="margin-top: 20px;">Safe travels! 🌍</p>
+        <p style="color: #007bff; font-weight: bold;">— The Explore Vacations Team</p>
+      </div>
+
+      <div style="background-color: #e3f0ff; padding: 15px; text-align: center; font-size: 12px; color: #555;">
+        © ${CurrentTime()} Explore Vacations. All rights reserved.
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+
+export function generateCarParkingBookingEmailContent(result: any): string {
+  const booking = result.rows[0];
+  return `
+    <h2>🚗 New Car Parking Booking</h2>
+    <p><strong>User ID:</strong> ${booking.refuserId}</p>
+    <p><strong>Travel Start Date:</strong> ${booking.travelStartDate}</p>
+    <p><strong>Travel End Date:</strong> ${booking.travelEndDate}</p>
+    <p><strong>Vehicle Model:</strong> ${booking.VehicleModel}</p>
+    <p><strong>Vehicle Number:</strong> ${booking.vehicleNumber}</p>
+    <p><strong>Parking Location ID:</strong> ${booking.refCarParkingId}</p>
+    <p><strong>Return Flight Number:</strong> ${booking.returnFlightNumber}</p>
+    <p><strong>Return Flight Location:</strong> ${booking.returnFlightLocation}</p>
+    <p><strong>Who Will Handover:</strong> ${booking.WhoWillHandover ? 'Self' : 'Someone else'}</p>
+    ${
+      !booking.WhoWillHandover
+        ? `<p><strong>Handover Name:</strong> ${booking.HandoverPersonName}</p>
+           <p><strong>Handover Phone:</strong> ${booking.HandoverPersonPhone}</p>
+           <p><strong>Handover Email:</strong> ${booking.HandoverPersonEmail}</p>`
+        : ''
+    }
+    <p><strong>Booking Time:</strong> ${booking.createdAt}</p>
+  `;
+}

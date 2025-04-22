@@ -633,9 +633,10 @@ export class userController {
       const decodedToken ={
         id:request.plugins.token.id
       }
+      console.log('decodedToken', decodedToken)
       let entity;
 
-      entity = await this.resolver.profileDataV1(request.payload,decodedToken );
+      entity = await this.resolver.profileDataV1(request.payload, decodedToken );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -857,6 +858,37 @@ export class userController {
 
     } catch (error) {
       logger.error("Error in addUserAddress", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public carParkingBooking = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info("Router-----car Parking Booking");
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.carParkingBookingV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in car Parking Booking", error);
       return response
         .response({
           success: false,

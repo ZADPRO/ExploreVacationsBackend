@@ -49,8 +49,6 @@ export const CurrentTime = (): string => {
   return `${timeParts.year}-${timeParts.month}-${timeParts.day} ${timeParts.hour}:${timeParts.minute}:${timeParts.second}`;
 };
 
-
-
 // export function generateFileName(): string {
 //   // Generate a random string of 6 alphabets
 //   const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@$*";

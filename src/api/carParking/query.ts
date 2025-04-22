@@ -12,6 +12,15 @@ RETURNING
   *;
 `;
 
+export const getCarParkingIdQuery = `
+SELECT
+COUNT(*)
+FROM
+public."refCarParkingTable"
+WHERE
+"refParkingCustId" LIKE 'EV-PAR-%';
+`;
+
 export const addParkingQuery = `INSERT INTO
   public."refCarParkingTable"  (
     "refParkingTypeId",
@@ -35,6 +44,7 @@ export const addParkingQuery = `INSERT INTO
     "parkingSlotImage",
     "refStatus",
     "refCarParkingTypeId",
+    "refParkingCustId",
     "createdAt",
     "createdBy"
   )
@@ -62,7 +72,8 @@ VALUES
     $20,
     $21,
     $22,
-    $23
+    $23,
+    $24
   )
 RETURNING
   *;
@@ -229,6 +240,13 @@ SELECT
   *
 FROM
   public."refCarParkingType"
+`;
+
+export const listCarParkingTypeQuery = `
+SELECT
+  *
+FROM
+  public."refParkingType"
 `;
 
 export const checkduplicateQuery = `

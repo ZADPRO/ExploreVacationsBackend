@@ -42,8 +42,7 @@ FROM
   public."refPackage"
 WHERE
   "refPackageId" = $1;
-`
-;
+`;
 
 export const addcustomizeBookingQuery = `
     INSERT INTO public."customizeTourBooking" (
@@ -104,8 +103,7 @@ WHERE
   ct."refCarsId" = $1;
 `;
 
-
-export const drivarDetailsQuery =`
+export const drivarDetailsQuery = `
 INSERT INTO
   public."refDriverDetails" (
     "refDriverName",
@@ -367,7 +365,6 @@ GROUP BY
 
 `;
 
-
 // export const listallTourQuery = `
 // WITH
 //   "location" AS (
@@ -500,10 +497,10 @@ GROUP BY
 //   aa."refTourCode",
 //   aa."refTourPrice",
 //   aa."refSeasonalPrice",
-//   aa."refCoverImage"; 
+//   aa."refCoverImage";
 //   `;
 
-  export const listallTourQuery = `
+export const listallTourQuery = `
   WITH
   base AS (
     SELECT
@@ -611,7 +608,6 @@ ORDER BY
   "refPackageId";
   
   `;
-
 
 // export const addTravalDataQuery = `INSERT INTO
 //   public."refTravalData" (
@@ -911,43 +907,107 @@ GROUP BY
   cd."refCarTypeName";
 `;
 
-// export const listCarParkingQuery =`
+// export const listCarParkingQuery = `
 // SELECT
 //   cp.*,
-//   array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+//   pt."refParkingTypeName",
+//   cpt."refCarParkingTypeName",
+//   cpb."travelStartDate",
+//   cpb."travelEndDate",
+//   array_agg(DISTINCT rf."refServiceFeatures") AS "ServiceFeaturesList"
 // FROM
-//   public."refCarParkingTable" cp
-//   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+//   public."refCarParkingTable" AS cp
+//   LEFT JOIN public."refParkingType" pt ON pt."refParkingTypeId" = cp."refParkingTypeId"
+//   LEFT JOIN public."userCarParkingBooking" cpb ON cpb."refCarParkingId" = cp."refCarParkingId"
+//   LEFT JOIN public."refCarParkingType" cpt ON cpt."refCarParkingTypeId" = cp."refCarParkingTypeId"
+//   LEFT JOIN public."refServiceFeatures" rf ON rf."refServiceFeaturesId" = ANY (
 //     string_to_array(
 //       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
 //       ','
-//     )::INTEGER[]
+//     )::int[]
 //   )
 // WHERE
-//   cp."isDelete" IS NOT true
+//   $1::TEXT BETWEEN cp."MinimumBookingDuration" AND cp."MaximumBookingDuration"
+//   AND NOT (
+//     cpb."travelStartDate" <= $2::TEXT
+//     AND cpb."travelEndDate" >= $1::TEXT
+//   )
+//   AND cp."refAssociatedAirport" = $3
+//   AND cp."refCarParkingTypeId" = $4
+//   AND cp."refParkingTypeId" = $5
+//   AND cp."isDelete" IS NOT true
 // GROUP BY
-//   cp."refCarParkingId"
+//   cp."refCarParkingId",
+//   cp."MinimumBookingDuration",
+//   cp."MaximumBookingDuration",
+//   cp."refParkingTypeId",
+//   cp."refCarParkingTypeId",
+//   cp."refAssociatedAirport",
+//   cp."isDelete",
+//   pt."refParkingTypeName",
+//   cpt."refCarParkingTypeName",
+//   cpb."travelStartDate",
+//   cpb."travelEndDate"
+
 // `;
 
-export const listCarParkingQuery =`
+export const listCarParkingQuery = `
 SELECT
-  *
+  cp.*,
+  pt."refParkingTypeName",
+  cpt."refCarParkingTypeName",
+  cpb."travelStartDate",
+  cpb."travelEndDate",
+  array_agg(DISTINCT rf."refServiceFeatures") AS "ServiceFeaturesList"
 FROM
   public."refCarParkingTable" AS cp
+  LEFT JOIN public."refParkingType" pt ON pt."refParkingTypeId" = cp."refParkingTypeId"
+  LEFT JOIN public."userCarParkingBooking" cpb ON cpb."refCarParkingId" = cp."refCarParkingId"
+  LEFT JOIN public."refCarParkingType" cpt ON cpt."refCarParkingTypeId" = cp."refCarParkingTypeId"
+  LEFT JOIN public."refServiceFeatures" rf ON rf."refServiceFeaturesId" = ANY (
+    string_to_array(
+      regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::int[]
+  )
 WHERE
-  cp."refCarParkingId" = $1
-  AND $2 BETWEEN cp."MinimumBookingDuration" AND cp."MaximumBookingDuration"
+  $1::date BETWEEN cp."MinimumBookingDuration"::date AND cp."MaximumBookingDuration"::date
+  AND (
+  cpb."travelStartDate"::date IS NULL OR
+  NOT (
+    cpb."travelStartDate"::date <= $2::date AND
+    cpb."travelEndDate"::date >= $1::date
+  )
+)
   AND cp."refAssociatedAirport" = $3
   AND cp."refCarParkingTypeId" = $4
-  AND cp."isDelete" IS NOT true;
+  AND cp."refParkingTypeId" = $5
+  AND cp."isDelete" IS NOT true
+GROUP BY
+  cp."refCarParkingId",
+  cp."MinimumBookingDuration",
+  cp."MaximumBookingDuration",
+  cp."refParkingTypeId",
+  cp."refCarParkingTypeId",
+  cp."refAssociatedAirport",
+  cp."isDelete",
+  pt."refParkingTypeName",
+  cpt."refCarParkingTypeName",
+  cpb."travelStartDate",
+  cpb."travelEndDate"
+
+  
 `;
-
-
-export const listCarParkingByIdQuery = `SELECT
+export const listCarParkingByIdQuery = `
+SELECT
   cp.*,
-  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+  pt."refParkingTypeName",
+  cpt."refCarParkingTypeName",
+  array_agg(rf."refServiceFeatures") AS "ServiceFeaturesList"
 FROM
-  public."refCarParkingTable" cp
+  public."refCarParkingTable" AS cp
+  LEFT JOIN public."refParkingType" pt ON CAST(pt."refParkingTypeId" AS INTEGER) = cp."refParkingTypeId"
+  LEFT JOIN public."refCarParkingType" cpt ON CAST(cpt."refCarParkingTypeId" AS INTEGER) = cp."refCarParkingTypeId"
   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
@@ -955,15 +1015,13 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  cp."refCarParkingId" = $1 AND 
-  cp."isDelete" IS NOT true
-
+  cp."refCarParkingId" = $1
+  AND cp."isDelete" IS NOT true
 GROUP BY
-  cp."refCarParkingId"
+  cp."refCarParkingId",
+  pt."refParkingTypeName",
+  cpt."refCarParkingTypeId";
 `;
-
-
-
 
 export const getOtherCarsQuery = `SELECT
 rc."refCarsId",
@@ -1088,8 +1146,6 @@ WHERE
 RETURNING
   *;
 `;
-
-
 
 export const listTourBrochureQuery = `
 WITH
@@ -1291,7 +1347,7 @@ RETURNING
   *;
 `;
 
-  export const userTourBookingHistoryQuery = `
+export const userTourBookingHistoryQuery = `
 SELECT
   tb.*,
   rp."refPackageName",
@@ -1306,7 +1362,7 @@ WHERE
   tb."refuserId" = $1
   `;
 
-  export const userCarBookingHistoryQuery = `
+export const userCarBookingHistoryQuery = `
 SELECT
   cb.*,
   vt."refVehicleTypeName",
@@ -1325,10 +1381,32 @@ WHERE
   cb."refuserId" = $1
   `;
 
-  export const userCarParkingBookingHistoryQuery = `
+export const userCarParkingBookingHistoryQuery = `
+SELECT
+  cp.*,
+  pt.*,
+  pa."refParkingTypeName",
+  cpt."refCarParkingTypeName",
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+FROM
+  public."userCarParkingBooking" cp
+  LEFT JOIN public."refCarParkingTable" pt ON CAST(pt."refCarParkingId" AS INTEGER) = cp."refCarParkingId"
+  LEFT JOIN public."refParkingType" pa ON CAST(pa."refParkingTypeId" AS INTEGER) = pt."refParkingTypeId"
+  LEFT JOIN public."refCarParkingType" cpt ON CAST(cpt."refCarParkingTypeId" AS INTEGER) = pt."refCarParkingTypeId"
+LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(pt."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+ WHERE cp."isDelete" IS NOT true AND cp."refuserId" = $1
 
+GROUP BY 
+cp."carParkingBookingId",
+pt."refCarParkingId",
+pa."refParkingTypeName",
+cpt."refCarParkingTypeName"
   `;
-
 
 export const listAssociateAirportQuery = `
 SELECT
@@ -1338,11 +1416,18 @@ FROM
 WHERE
   "isDelete" IS NOT true;
 `;
-export const listParkingTypeQuery  =`
+export const listParkingTypeQuery = `
 SELECT
   *
 FROM
   public."refCarParkingType"
+`;
+
+export const listCarParkingTypeQuery = `
+SELECT
+  *
+FROM
+  public."refParkingType"
 `;
 
 export const insertUserAddressQuery = `
@@ -1363,4 +1448,66 @@ RETURNING
   *;
 `;
 
+export const insertcarParkingBookingQuery = `
+INSERT INTO
+  public."userCarParkingBooking" (
+    "refuserId",
+    "travelStartDate",
+    "travelEndDate",
+    "refCarParkingId",
+    "returnFlightNumber",
+    "returnFlightLocation",
+    "VehicleModel",
+    "vehicleNumber",
+            "refHandOverTime",
+        "refReturnTime",
+    "WhoWillHandover",
+    "HandoverPersonName",
+    "HandoverPersonPhone",
+    "HandoverPersonEmail",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    $7,
+    $8,
+    $9,
+    $10,
+    $11,
+    $12,
+    $13,
+    $14,
+    $15,
+    $16
+  )
+RETURNING
+  *;
+`;
 
+export const getUserResultQuery = `
+SELECT
+  u.*,
+  d.*
+FROM
+  public."users" u
+  LEFT JOIN public."refUserDomain" d ON CAST (d."refUserId" AS INTEGER ) = u."refuserId"
+WHERE
+  u."refuserId" = $1 AND u."isDelete" IS NOT true
+`;
+
+export const getParkingResultQuery = `
+SELECT
+  *
+FROM
+  public."refCarParkingTable"
+WHERE
+  "refCarParkingId" = $1
+`
+;

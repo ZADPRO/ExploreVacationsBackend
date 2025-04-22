@@ -22,8 +22,8 @@ export default {
       refPackageId: Joi.number().integer().optional(),
       refUserName: Joi.string().required(),
       refUserMail: Joi.string().email().required(),
-      refUserMobile: Joi.string().required(), 
-      refArrivalDate: Joi.string().required(),  
+      refUserMobile: Joi.string().required(),
+      refArrivalDate: Joi.string().required(),
       refSingleRoom: Joi.string().required(),
       refTwinRoom: Joi.string().required(),
       refTripleRoom: Joi.string().required(),
@@ -100,7 +100,7 @@ export default {
     }).unknown(),
   },
 
-  UpdateprofileData:{
+  UpdateprofileData: {
     payload: Joi.object({
       refFName: Joi.string().required(),
       refLName: Joi.string().required(),
@@ -113,12 +113,60 @@ export default {
       refUserState: Joi.string().required(),
       refUserCountry: Joi.string().required(),
       refUserZipCode: Joi.string().required(),
-
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
     }).unknown(),
-  }
+  },
+  listCarParking: {
+    payload: Joi.object({
+      travelStartDate: Joi.string().required(),
+      travelEndDate: Joi.string().required(),
+      refAssociatedAirport: Joi.string().required(),
+      refCarParkingTypeId: Joi.number().integer().required(),
+      refParkingTypeId: Joi.number().integer().required(),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+  carParkingBooking: {
+    payload: Joi.object({
+      travelStartDate: Joi.string().required(),
+      travelEndDate: Joi.string().required(),
+      refCarParkingId: Joi.number()
+        .integer()
+        .required(),
+      returnFlightNumber: Joi.string().required(),
+      returnFlightLocation: Joi.string()
+        .required(),
+      VehicleModel: Joi.string().required(),
+      vehicleNumber: Joi.string().required(),
+      refHandOverTime: Joi.string().required(),
+      refReturnTime: Joi.string().required(),
+      WhoWillHandover: Joi.boolean().required(),
 
+      HandoverPersonName: Joi.alternatives().conditional("WhoWillHandover", {
+        is: false,
+        then: Joi.string().required(),
+        otherwise: Joi.forbidden(),
+      }),
 
+      HandoverPersonPhone: Joi.alternatives().conditional("WhoWillHandover", {
+        is: false,
+        then: Joi.string()
+          .required(),
+        otherwise: Joi.forbidden(),
+      }),
+
+      HandoverPersonEmail: Joi.alternatives().conditional("WhoWillHandover", {
+        is: false,
+        then: Joi.string().email().required(),
+        otherwise: Joi.forbidden(),
+      }),
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
 };

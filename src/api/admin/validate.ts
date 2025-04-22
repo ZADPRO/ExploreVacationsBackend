@@ -93,11 +93,19 @@ export default {
   },
   deleteCustomizeTourBookings: {
     payload: Joi.object({
-      customizeTourBookingId: Joi.number().integer().required(),
+      customizeTourBookingId: Joi.number().integer().required()
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
     }).unknown(),
-  }
+  },
+  deleteCarParkingBookings: {
+    payload: Joi.object({
+      carParkingBookingId: Joi.number().integer().required()
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
 
 };

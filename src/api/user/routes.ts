@@ -140,7 +140,7 @@ export class userRoutes implements IRoute {
           path: "/api/v1/userRoutes/listCarParking",
           config: {
             handler: controller.listCarParking,
-            // validate: validate.listCarParking,
+            validate: validate.listCarParking,
             description: "list CarParking",
             tags: ["api", "Users"],
             auth: false,
@@ -346,7 +346,18 @@ export class userRoutes implements IRoute {
             auth: false,
           },
         },
-        
+        {
+          method: "GET",
+          path: "/api/v1/userRoutes/carParkingBooking",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.carParkingBooking,
+            // validate: validate.carParkingBooking,
+            description: "carParking Booking",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

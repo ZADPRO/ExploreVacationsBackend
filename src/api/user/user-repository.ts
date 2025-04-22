@@ -27,7 +27,10 @@ import {
   getLastCustomerIdQuery,
   getOtherCarsQuery,
   getPackageNameQuery,
+  getParkingResultQuery,
+  getUserResultQuery,
   getUsersQuery,
+  insertcarParkingBookingQuery,
   insertUserAddressQuery,
   insertUserDomainQuery,
   insertUserQuery,
@@ -35,6 +38,7 @@ import {
   listAssociateAirportQuery,
   listCarParkingByIdQuery,
   listCarParkingQuery,
+  listCarParkingTypeQuery,
   listCarsQuery,
   listDestinationQuery,
   listOtherTourQuery,
@@ -54,13 +58,16 @@ import {
 import fs from "fs";
 import {
   generateCarBookingEmailContent,
+  generateCarParkingBookingEmailContent,
   generateCustomizeTourBookingEmailContent,
   generateforgotPasswordEmailContent,
   generateTourBookingEmailContent,
   userCarEmailContent,
+  userCarParkingBookingMail,
   userTourBookingMail,
 } from "../../helper/mailcontent";
 import { sendEmail } from "../../helper/mail";
+import { cli } from "winston/lib/winston/config";
 
 export class userRepository {
   // public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
@@ -174,8 +181,7 @@ export class userRepository {
         refOtherRequirements,
       } = userData;
 
-
-      console.log(' line --------- 178', )
+      console.log(" line --------- 178");
 
       const Result = await client.query(addTourBookingQuery, [
         refPackageId,
@@ -191,7 +197,7 @@ export class userRepository {
         tokendata.id,
         tokendata.id,
       ]);
-      console.log('Result line ----- 191', Result)
+      console.log("Result line ----- 191", Result);
       const getPackageName: any = await executeQuery(getPackageNameQuery, [
         refPackageId,
       ]);
@@ -211,7 +217,7 @@ export class userRepository {
         };
 
         try {
-          await sendEmail(adminMail);
+          sendEmail(adminMail);
         } catch (error) {
           console.log("Error in sending the Mail for Admin", error);
         }
@@ -247,7 +253,7 @@ export class userRepository {
         };
 
         try {
-          await sendEmail(adminMail);
+          sendEmail(adminMail);
         } catch (error) {
           console.log("Error in sending the Mail for User", error);
         }
@@ -545,7 +551,7 @@ export class userRepository {
         };
 
         try {
-          await sendEmail(adminMail);
+          sendEmail(adminMail);
         } catch (error) {
           console.log("Error in sending the Mail for Admin", error);
         }
@@ -597,7 +603,7 @@ export class userRepository {
           </div> `,
         };
         try {
-          await sendEmail(adminMail);
+          sendEmail(adminMail);
         } catch (error) {
           console.log("Error in sending the Mail for User", error);
         }
@@ -840,7 +846,6 @@ export class userRepository {
 
     try {
       await client.query("BEGIN"); // Start transaction
-
       const {
         refCarsId,
         refUserName,
@@ -926,7 +931,7 @@ export class userRepository {
         html: generateCarBookingEmailContent(Result.rows),
       };
 
-      await transporter.sendMail(mailoption);
+      transporter.sendMail(mailoption);
 
       // 2. User confirmation email with countdown
 
@@ -984,7 +989,7 @@ export class userRepository {
              `,
       };
 
-      await transporter.sendMail(adminmailoption);
+      transporter.sendMail(adminmailoption);
 
       // //way 2
 
@@ -1536,38 +1541,27 @@ export class userRepository {
       const {
         travelStartDate,
         travelEndDate,
-        refCarParkingId,
         refAssociatedAirport,
-        refCarParkingTypeId
+        refCarParkingTypeId,
+        refParkingTypeId,
       } = userData;
 
       if (!travelStartDate || !travelEndDate) {
         throw new Error("travelStartDate and travelEndDate are required.");
       }
       // Convert to proper Date objects
-      const startDate = new Date(travelStartDate);
-      const endDate = new Date(travelEndDate);
+      // const startDate = new Date(travelStartDate);
+      // const endDate = new Date(travelEndDate);
 
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        throw new Error(
-          "Invalid date format for travelStartDate or travelEndDate."
-        );
-      }
-
-      // Calculate duration in days
-      const bookingDuration = Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      if (bookingDuration <= 0) {
-        throw new Error("travelEndDate must be after travelStartDate.");
-      }
       const result1 = await executeQuery(listCarParkingQuery, [
-        bookingDuration,
-        refCarParkingId,
+        travelStartDate,
+        travelEndDate,
         refAssociatedAirport,
-        refCarParkingTypeId
+        refCarParkingTypeId,
+        refParkingTypeId,
       ]);
+
+      console.log("result1", result1);
 
       for (const image of result1) {
         if (image.parkingSlotImage) {
@@ -1588,9 +1582,9 @@ export class userRepository {
         {
           success: true,
           message: "Listed car parikng successfully",
-          tourDetails: result1,
+          carParkingDetails: result1,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       // Log the error for debugging
@@ -1603,7 +1597,7 @@ export class userRepository {
           message: "An error occurred while listing the car parikng details.",
           error: String(error), // Return detailed error for debugging
         },
-        false
+        true
       );
     }
   }
@@ -1915,18 +1909,15 @@ export class userRepository {
         refUserEmail,
         refMoblile,
       } = userData;
-      console.log('userData', userData)
+      console.log("userData", userData);
 
       const hashedPassword = await bcrypt.hash(temp_password, 10);
 
-      const check = 
-      [refMoblile,
-        refUserEmail
-      ];
+      const check = [refMoblile, refUserEmail];
       console.log(check);
 
       const userCheck = await client.query(checkQuery, check);
-      console.log('userCheck', userCheck)
+      console.log("userCheck", userCheck);
 
       const userFind = userCheck.rows[0];
 
@@ -1969,7 +1960,7 @@ export class userRepository {
         3,
       ];
       const userResult = await client.query(insertUserQuery, params);
-      console.log('userResult', userResult)
+      console.log("userResult", userResult);
       const newUser = userResult.rows[0];
 
       // Insert into userDomain table
@@ -1987,7 +1978,7 @@ export class userRepository {
         insertUserDomainQuery,
         domainParams
       );
-      console.log('domainResult', domainResult)
+      console.log("domainResult", domainResult);
       // if ((userResult.rowCount ?? 0) > 0 && (domainResult.rowCount ?? 0) > 0) {
       //   const history = [
       //     52,
@@ -2023,7 +2014,7 @@ export class userRepository {
       client.release();
     }
   }
-  
+
   public async forgotPasswordV1(userData: any, token_data?: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: token_data.id }; // Extract token ID
@@ -2173,6 +2164,7 @@ export class userRepository {
   }
   public async profileDataV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id }; // Extract token ID
+    console.log('tokendata.id', tokendata.id)
     const tokens = generateTokenWithExpire(token, true);
     try {
       const profileData = await executeQuery(profileDataQuery, [tokendata.id]);
@@ -2182,7 +2174,7 @@ export class userRepository {
           success: true,
           message: "listed profileData successfully",
           token: tokens,
-          profileData:profileData
+          profileData: profileData,
         },
         true
       );
@@ -2319,7 +2311,7 @@ export class userRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [
-        tokendata.id
+        tokendata.id,
       ]);
 
       // const CarParkingBookingresult = await executeQuery(
@@ -2408,17 +2400,17 @@ export class userRepository {
       );
     }
   }
-  public async listParkingTypeV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async listParkingTypeV1(userData: any, tokendata: any): Promise<any> {
     try {
-      const result = await executeQuery(listParkingTypeQuery);
+      const result1 = await executeQuery(listParkingTypeQuery);
+
+      const result2 = await executeQuery(listCarParkingTypeQuery);
       return encrypt(
         {
           success: true,
           message: "listed Parking Type successfully",
-          Details: result,
+          vehicleType: result1,
+          parkingType: result2,
         },
         true
       );
@@ -2485,6 +2477,156 @@ export class userRepository {
       client.release();
     }
   }
+  public async carParkingBookingV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    const client: PoolClient = await getClient();
+    try {
+      await client.query("BEGIN");
+      const {
+        travelStartDate,
+        travelEndDate,
+        refCarParkingId,
+        returnFlightNumber,
+        returnFlightLocation,
+        VehicleModel,
+        vehicleNumber,
+        refHandOverTime,
+        refReturnTime,
+        WhoWillHandover,
+        HandoverPersonName,
+        HandoverPersonPhone,
+        HandoverPersonEmail,
+      } = userData;
 
+      // Conditionally handle handover details
+      const handoverName =
+        WhoWillHandover === false ? HandoverPersonName : null;
+      const handoverPhone =
+        WhoWillHandover === false ? HandoverPersonPhone : null;
+      const handoverEmail =
+        WhoWillHandover === false ? HandoverPersonEmail : null;
+
+      // Insert into users table
+      const params = [
+        tokendata.id,
+        travelStartDate,
+        travelEndDate,
+        refCarParkingId,
+        returnFlightNumber,
+        returnFlightLocation,
+        VehicleModel,
+        vehicleNumber,
+        refHandOverTime,
+        refReturnTime,
+        WhoWillHandover,
+        handoverName,
+        handoverPhone,
+        handoverEmail,
+        CurrentTime(),
+        tokendata.id,
+      ];
+
+      const Result = await client.query(insertcarParkingBookingQuery, params);
+
+      // const getUserResult:any = await client.query(getUserResultQuery,[tokendata.id])
+      // console.log('getUserResult', getUserResult)
+      // const {refUserEmail, refFName } = getUserResult[0];
+
+      const getUserResult: any = await client.query(getUserResultQuery, [
+        tokendata.id,
+      ]);
+
+      if (!getUserResult.rows || getUserResult.rows.length === 0) {
+        throw new Error(`No user found with id ${tokendata.id}`);
+      }
+
+      const { refUserEmail, refFName } = getUserResult.rows[0];
+      
+      const getParkingResult: any = await client.query(getParkingResultQuery, [
+        refCarParkingId,
+      ]);
+      console.log("getParkingResult", getParkingResult);
+      const { refParkingName, refParkingCustId } = getParkingResult[0];
+
+      const main = async () => {
+        const adminMail = {
+          to: "indumathi123indumathi@gmail.com",
+          subject: "New Car parking Booking Received",
+          html: generateCarParkingBookingEmailContent(Result),
+        };
+
+        try {
+          sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for Admin", error);
+        }
+      };
+      main().catch(console.error);
+
+      // 2. User confirmation email with countdown
+      // const daysLeft = Math.ceil(
+      //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
+      //     (1000 * 60 * 60 * 24)
+      // );
+
+      const daysLeft = Math.ceil(
+        (new Date(travelStartDate).getTime() -
+          new Date(CurrentTime()).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      const userMailData = {
+        daysLeft: daysLeft,
+        refPickupDate: travelStartDate,
+        refUserName: refFName,
+        refParkingName: refParkingName,
+        refParkingCustId: refParkingCustId,
+      };
+
+      console.log("userMailData", userMailData);
+      const main1 = async () => {
+        const adminMail = {
+          to: refUserEmail,
+          subject: "✅ Your CarParking Has Been Booked!",
+          html: userCarParkingBookingMail(userMailData),
+        };
+
+        try {
+          sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for User", error);
+        }
+      };
+      main1().catch(console.error);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "car ParkingBooking added successful",
+          Result: Result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      console.error("Error during car ParkingBooking addition:", error);
+      return encrypt(
+        {
+          success: false,
+          message:
+            "An unexpected error occurred during User car Parking Booking ",
+          error: error instanceof Error ? error.message : String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
 }
-

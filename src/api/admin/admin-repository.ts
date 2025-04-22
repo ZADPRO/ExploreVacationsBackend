@@ -16,6 +16,7 @@ import {
   checkQuery,
   dashBoardQuery,
   deleteCarBookingsQuery,
+  deleteCarParkingBookingsQuery,
   deleteCustomizeTourBookingsQuery,
   deleteEmployeeImageQuery,
   deleteEmployeesQuery,
@@ -30,6 +31,7 @@ import {
   listCarBookingsQuery,
   listCustomizeTourBookingsQuery,
   listEmployeesQuery,
+  listParkingBookingsQuery,
   listTourBookingsQuery,
   listTransactionTypeQuery,
   listUserTypeQuery,
@@ -93,6 +95,7 @@ export class adminRepository {
             {
               success: true,
               message: "Login successful",
+              userId:user.refUserId,
               token: generateTokenWithExpire(tokenData, true),
             },
             true
@@ -225,41 +228,38 @@ export class adminRepository {
       );
     }
   }
-  // public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
+  public async listParkingBookingsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery(listParkingBookingsQuery);
 
-  //     const{
-  //        TransactionType,
-  //        updatedAt
-  //     }= userData
-  //     const result = await executeQuery(listAuditPageQuery,[
-  //       TransactionType,
-  //       updatedAt
-  //     ]);
+      return encrypt(
+        {
+          success: true,
+          message: "listed Parking Bookings successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message:
+            "An unknown error occurred during listed car Parking Bookings",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
 
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "listed audit page successfully",
-  //         token: tokens,
-  //         result: result,
-  //       },
-  //       false
-  //     );
-  //   } catch (error: unknown) {
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An unknown error occurred during listed audit bookings",
-  //         token: tokens,
-  //         error: String(error),
-  //       },
-  //       false
-  //     );
-  //   }
-  // }
   public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -625,75 +625,7 @@ export class adminRepository {
       client.release();
     }
   }
-  // public async updateEmployeeV1(userData: any, tokendata: any): Promise<any> {
-  //   const client: PoolClient = await getClient();
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
-  //     await client.query("BEGIN");
-
-  //     const {
-  //       refuserId,
-  //       refFName,
-  //       refLName,
-  //       refDOB,
-  //       refDesignation,
-  //       refQualification,
-  //       refProfileImage,
-  //       refMoblile,
-  //       refUserTypeId,
-  //     } = userData;
-
-  //     const params = [
-  //       refuserId,
-  //       refFName,
-  //       refLName,
-  //       refDOB,
-  //       refDesignation,
-  //       refQualification,
-  //       refProfileImage,
-  //       refMoblile,
-  //       // refUserTypeId,
-  //       CurrentTime(),
-  //       "Admin",
-  //     ];
-  //     const updateResult = await client.query(updateEmployeeQuery, params);
-  //     // Log history of the action
-  //     const history = [
-  //       50,
-  //       tokendata.id,
-  //       "update employee",
-  //       CurrentTime(),
-  //       tokendata.id,
-  //     ];
-
-  //     const updateHistory = await client.query(updateHistoryQuery, history);
-  //     await client.query("COMMIT"); // Commit transaction
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "employee updated successfully",
-  //         token: tokens,
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
-  //     console.error("Error updating employee:", error);
-
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An error occurred while updating the employee",
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   } finally {
-  //     client.release();
-  //   }
-  // }
+ 
   public async updateEmployeeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
@@ -889,56 +821,7 @@ export class adminRepository {
       );
     }
   }
-  // public async deleteEmployeeV1(userData: any, tokendata: any): Promise<any> {
-  //   const client: PoolClient = await getClient();
-
-  //   const token = { id: tokendata.id };
-
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
-  //     const result = await client.query(deleteEmployeesQuery, [
-  //       userData.refuserId,
-  //       CurrentTime(),
-  //       "Admin",
-  //     ]);
-      
-  //     const getDeletedEmployee: any = await client.query(getDeletedEmployeeQuery,[userData.refuserId]);
-
-  //     const employeeName = `${getDeletedEmployee[0].refFName}, (${getDeletedEmployee[0].refCustId})`;
-  //     console.log('employeeName', employeeName)
-
-  //     const history = [
-  //       51,
-  //       tokendata.id,
-  //       `${employeeName} has been deleted.`,
-  //       CurrentTime(),
-  //       tokendata.id,
-  //     ];
-
-  //     const updateHistory = await client.query(updateHistoryQuery, history);
-  //     console.log('updateHistory', updateHistory)
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "get Employee successfully",
-  //         token: tokens,
-  //         result: result,
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An unknown error occurred during get Employee ",
-  //         token: tokens,
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   }
-  // }
+ 
   public async deleteEmployeeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
@@ -1031,14 +914,16 @@ export class adminRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const dashBoard = await executeQuery(dashBoardQuery);
+      const dashBoard:any = await executeQuery(dashBoardQuery);
+     
+      console.log('dashBoard', dashBoard)
   
       return encrypt(
         {
           success: true,
           message: "listed dashboard successfully",
-          token: tokens,
           dashBoard: dashBoard,
+          token: tokens
         },
         true
       );
@@ -1244,6 +1129,62 @@ export class adminRepository {
         {
           success: false,
           message: "An error occurred while deleting the Customize tour booking",
+          tokens: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async deleteCarParkingBookingsV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { carParkingBookingId } = userData;
+      const result = await client.query(deleteCarParkingBookingsQuery, [
+        carParkingBookingId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: " CarParking booking not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "CarParking Booking deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting Car Parking Bookings", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the Car Parking Booking",
           tokens: tokens,
           error: String(error),
         },

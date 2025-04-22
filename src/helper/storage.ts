@@ -62,12 +62,9 @@ export const storeFile = async (
     uploadDir = path.join(process.cwd(), "./src/assets/passport");
   }
    else {
-    uploadDir = path.join(process.cwd(), "./src/assets/DOC");
+    throw new Error(`Invalid upload type: ${uploadType}. Allowed values are 1 to 8.`);
   }
   
-
-  // uploadDir = path.join(process.cwd(), "./src/assets/gallery");
-
   const uniqueFilename = generateUniqueFilename(file.hapi.filename);
   const uploadPath = path.join(uploadDir, uniqueFilename);
 

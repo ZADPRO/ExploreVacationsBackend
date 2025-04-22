@@ -23,12 +23,14 @@ import {
   deleteCarParkingQuery,
   deleteParkingImageRecordQuery,
   deleteServiceFeaturesQuery,
+  getCarParkingIdQuery,
   getCarParkingQuery,
   getCarParkingTypeQuery,
   getdeletedFeatureQuery,
   getParkingImageRecordQuery,
   listCarParkingByIdQuery,
   listCarParkingQuery,
+  listCarParkingTypeQuery,
   listServiceFeaturesQuery,
   updateCarParkingQuery,
   updateHistoryQuery,
@@ -64,13 +66,28 @@ export class carParkingRepository {
         description,
         parkingSlotImage,
         refStatus,
-        refCarParkingTypeId
+        refCarParkingTypeId,
       } = userData;
 
       const ServiceFeatures = Array.isArray(userData.ServiceFeatures)
         ? `{${userData.ServiceFeatures.join(",")}}`
         : `{${userData.ServiceFeatures.split(",").join(",")}}`;
+const customerPrefix = "EV-PAR-";
+      const baseNumber = 0;
 
+      const lastCustomerResult = await client.query(getCarParkingIdQuery);
+      let newCustomerId: string;
+
+      if (lastCustomerResult.rows.length > 0) {
+        const lastNumber = parseInt(lastCustomerResult.rows[0].count, 10);
+        newCustomerId = `${customerPrefix}${(baseNumber + lastNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      } else {
+        newCustomerId = `${customerPrefix}${(baseNumber + 1)
+          .toString()
+          .padStart(4, "0")}`;
+      }
       const parkingResult = await client.query(addParkingQuery, [
         refParkingTypeId,
         refParkingName,
@@ -93,6 +110,7 @@ export class carParkingRepository {
         parkingSlotImage,
         refStatus,
         refCarParkingTypeId,
+        newCustomerId,
         CurrentTime(),
         tokendata.id,
       ]);
@@ -277,7 +295,7 @@ export class carParkingRepository {
         description,
         parkingSlotImage,
         refStatus,
-        refCarParkingTypeId
+        refCarParkingTypeId,
       } = userData;
 
       const ServiceFeatures = `{${userData.ServiceFeatures.join(",")}}`;
@@ -501,17 +519,19 @@ export class carParkingRepository {
       //   }
       // }
 
-            for (const image of result) {
-              if (image.parkingSlotImage) {
-                try {
-                  image.parkingSlotImage = path.basename(image.parkingSlotImage);
-                } catch (error) {
-                  console.error("Error extracting filename from parkingSlotImage:", error);
-                  image.parkingSlotImage = null;
-                }
-              }
-            }
-            
+      for (const image of result) {
+        if (image.parkingSlotImage) {
+          try {
+            image.parkingSlotImage = path.basename(image.parkingSlotImage);
+          } catch (error) {
+            console.error(
+              "Error extracting filename from parkingSlotImage:",
+              error
+            );
+            image.parkingSlotImage = null;
+          }
+        }
+      }
 
       return encrypt(
         {
@@ -599,13 +619,17 @@ export class carParkingRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const result = await executeQuery(getCarParkingTypeQuery);
+      const result1 = await executeQuery(getCarParkingTypeQuery);
+      console.log('result1', result1)
+      // const result2 = await executeQuery(listCarParkingTypeQuery);
+
       return encrypt(
         {
           success: true,
           message: "list CarParkingType successfully",
           token: tokens,
-          result: result,
+          vehicleType: result1,
+          // parkingType: result2
         },
         true
       );
@@ -740,6 +764,23 @@ export class carParkingRepository {
           {
             success: false,
             message: "ServiceFeatures ID not found",
+            token: tokens,
+          },
+          true
+        );
+      }
+      const duplicateCheck: any = await client.query(checkduplicateQuery, [
+        refServiceFeatures,
+      ]);
+
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `ServiceFeatures "${refServiceFeatures}" already exists `,
             token: tokens,
           },
           true

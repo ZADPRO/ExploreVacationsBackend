@@ -56,6 +56,17 @@ export class adminRoutes implements IRoute {
           },
         },
         {
+          method: "GET",
+          path: "/api/v1/adminRoutes/listParkingBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listParkingBookings,
+            description: "listParkingBookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
           method: "POST",
           path: "/api/v1/adminRoutes/listAuditPage",
           config: {
@@ -219,6 +230,18 @@ export class adminRoutes implements IRoute {
             handler: controller.deleteCustomizeTourBookings,
             validate: validate.deleteCustomizeTourBookings,
             description: "deleteCustomizeTourBookings",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/deleteCarParkingBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteCarParkingBookings,
+            validate: validate.deleteCarParkingBookings,
+            description: "deleteCarParkingBookings",
             tags: ["api", "Users"],
             auth: false,
           },

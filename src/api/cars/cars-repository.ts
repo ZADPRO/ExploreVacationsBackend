@@ -155,6 +155,17 @@ export class carsRepository {
           true
         );
       }
+      const check: any = await executeQuery(checkVehicleTypeNameQuery, [
+        refVehicleTypeName,
+      ]);
+
+      const count = Number(check[0]?.count || 0); // safely convert to number
+
+      if (count > 0) {
+        throw new Error(
+          `Duplicate VehicleType Name found: "${refVehicleTypeName}" already exists.`
+        );
+      }
 
       const params = [
         refVehicleTypeId,
@@ -448,6 +459,22 @@ export class carsRepository {
         );
       }
 
+      const duplicateCheck: any = await client.query(checkduplicateQuery, [
+        refBenifitsName,
+      ]);
+
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `Benifits Name "${refBenifitsName}" already exists for the selected destination.`,
+            token: tokens,
+          },
+          true
+        );
+      }
       const params = [refBenifitsId, refBenifitsName, CurrentTime(), "Admin"];
 
       const updateBenifits = await client.query(updateBenifitsQuery, params);
@@ -721,7 +748,22 @@ export class carsRepository {
           true
         );
       }
-
+      const duplicateCheck: any = await client.query(
+        checkduplicateIncludeNameQuery,
+        [refIncludeName]
+      );
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `Include Name "${refIncludeName}" already exists`,
+            token: tokens,
+          },
+          true
+        );
+      }
       const params = [refIncludeId, refIncludeName, CurrentTime(), "Admin"];
 
       const updateInclude = await client.query(updateIncludeQuery, params);
@@ -984,7 +1026,22 @@ export class carsRepository {
           true
         );
       }
-
+      const duplicateCheck: any = await client.query(
+        checkduplicateExcludeQuery,
+        [refExcludeName]
+      );
+      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: ` Exclude Name "${refExcludeName}" already exists for the selected destination.`,
+            token: tokens,
+          },
+          true
+        );
+      }
       const params = [refExcludeId, refExcludeName, CurrentTime(), "Admin"];
 
       const update = await client.query(updateExcludeQuery, params);
