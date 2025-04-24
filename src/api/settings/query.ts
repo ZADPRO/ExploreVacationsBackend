@@ -242,9 +242,7 @@ FROM
   public."refActivities"
 WHERE
   "refActivitiesName" = $1
-  AND "isDelete" IS NOT true
-LIMIT
-  10;
+  AND "isDelete" IS NOT true;
 `;
 
 export const checkActivitiesQuery = `SELECT

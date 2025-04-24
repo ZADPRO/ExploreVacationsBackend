@@ -535,7 +535,7 @@ export function userCarParkingBookingMail(userMailData: any): string {
 
         <table style="width: 100%; margin-top: 10px; border-collapse: collapse;">
           <tr>
-            <td style="padding: 8px 0;"><strong>Customer ID:</strong></td>
+            <td style="padding: 8px 0;"><strong>Parking ID:</strong></td>
             <td style="padding: 8px 0;">${userMailData.refParkingCustId}</td>
           </tr>
           <tr>
@@ -562,27 +562,271 @@ export function userCarParkingBookingMail(userMailData: any): string {
   `;
 }
 
+// export function generateCarParkingBookingEmailContent(result: any): string {
+//   const booking = result.rows[0];
+//   return `
+//     <h2>🚗 New Car Parking Booking</h2>
+//     <p><strong>User ID:</strong> ${booking.refuserId}</p>
+//     <p><strong>Travel Start Date:</strong> ${booking.travelStartDate}</p>
+//     <p><strong>Travel End Date:</strong> ${booking.travelEndDate}</p>
+//     <p><strong>Vehicle Model:</strong> ${booking.VehicleModel}</p>
+//     <p><strong>Vehicle Number:</strong> ${booking.vehicleNumber}</p>
+//     <p><strong>Parking Location ID:</strong> ${booking.refCarParkingId}</p>
+//     <p><strong>Return Flight Number:</strong> ${booking.returnFlightNumber}</p>
+//     <p><strong>Return Flight Location:</strong> ${booking.returnFlightLocation}</p>
+//     <p><strong>Who Will Handover:</strong> ${booking.WhoWillHandover ? 'Self' : 'Someone else'}</p>
+//     ${
+//       !booking.WhoWillHandover
+//         ? `<p><strong>Handover Name:</strong> ${booking.HandoverPersonName}</p>
+//            <p><strong>Handover Phone:</strong> ${booking.HandoverPersonPhone}</p>
+//            <p><strong>Handover Email:</strong> ${booking.HandoverPersonEmail}</p>`
+//         : ''
+//     }
+//     <p><strong>Booking Time:</strong> ${booking.CurrentTime()}</p>
+//   `;
+// }
 
 export function generateCarParkingBookingEmailContent(result: any): string {
   const booking = result.rows[0];
   return `
-    <h2>🚗 New Car Parking Booking</h2>
-    <p><strong>User ID:</strong> ${booking.refuserId}</p>
-    <p><strong>Travel Start Date:</strong> ${booking.travelStartDate}</p>
-    <p><strong>Travel End Date:</strong> ${booking.travelEndDate}</p>
-    <p><strong>Vehicle Model:</strong> ${booking.VehicleModel}</p>
-    <p><strong>Vehicle Number:</strong> ${booking.vehicleNumber}</p>
-    <p><strong>Parking Location ID:</strong> ${booking.refCarParkingId}</p>
-    <p><strong>Return Flight Number:</strong> ${booking.returnFlightNumber}</p>
-    <p><strong>Return Flight Location:</strong> ${booking.returnFlightLocation}</p>
-    <p><strong>Who Will Handover:</strong> ${booking.WhoWillHandover ? 'Self' : 'Someone else'}</p>
-    ${
-      !booking.WhoWillHandover
-        ? `<p><strong>Handover Name:</strong> ${booking.HandoverPersonName}</p>
-           <p><strong>Handover Phone:</strong> ${booking.HandoverPersonPhone}</p>
-           <p><strong>Handover Email:</strong> ${booking.HandoverPersonEmail}</p>`
-        : ''
-    }
-    <p><strong>Booking Time:</strong> ${booking.createdAt}</p>
+   <h2 style="color: #0077cc;">🚗 New Car Parking Booking</h2>
+<table style="width: 100%; border-collapse: collapse; background-color: #f8f9fa;">
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">User ID:</td>
+    <td style="padding: 8px;">${booking.refuserId}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Travel Start Date:</td>
+    <td style="padding: 8px;">${booking.travelStartDate}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Travel End Date:</td>
+    <td style="padding: 8px;">${booking.travelEndDate}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Vehicle Model:</td>
+    <td style="padding: 8px;">${booking.VehicleModel}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Vehicle Number:</td>
+    <td style="padding: 8px;">${booking.vehicleNumber}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Parking Location ID:</td>
+    <td style="padding: 8px;">${booking.refCarParkingId}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Return Flight Number:</td>
+    <td style="padding: 8px;">${booking.returnFlightNumber}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Return Flight Location:</td>
+    <td style="padding: 8px;">${booking.returnFlightLocation}</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Who Will Handover:</td>
+    <td style="padding: 8px;">${booking.WhoWillHandover ? 'Self' : 'Someone else'}</td>
+  </tr>
+  ${
+    !booking.WhoWillHandover
+      ? `
+      <tr>
+        <td style="padding: 8px; font-weight: bold;">Handover Name:</td>
+        <td style="padding: 8px;">${booking.HandoverPersonName}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; font-weight: bold;">Handover Phone:</td>
+        <td style="padding: 8px;">${booking.HandoverPersonPhone}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; font-weight: bold;">Handover Email:</td>
+        <td style="padding: 8px;">${booking.HandoverPersonEmail}</td>
+      </tr>
+      `
+      : ''
+  }
+  <tr>
+    <td style="padding: 8px; font-weight: bold;">Booking Time:</td>
+    <td style="padding: 8px;">${booking.CurrentTime()}</td>
+  </tr>
+</table>
+
   `;
 }
+export function sendTourRemainder(
+  refUserName: string,
+  refUserMail: string,
+  refPickupDate: string
+): string {
+  const daysLeft = Math.ceil(
+    (new Date(refPickupDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  return `
+    <h2 style="color: #0077cc;">📅 Tour Reminder – Explore Vacations</h2>
+    <p>Hi <strong>${refUserName}</strong>,</p>
+    <p>This is a gentle reminder for your upcoming tour.</p>
+
+    <table style="width:100%; background-color:#e6f0fa; padding: 10px; border-radius: 6px;">
+      <tr><td><strong>Pickup Date:</strong></td><td>${refPickupDate}</td></tr>
+      <tr><td><strong>Days Left:</strong></td><td>${daysLeft}</td></tr>
+    </table>
+
+    <p>We're excited to have you onboard! Let us know if you need anything.</p>
+    <p style="color: #0077cc;"><strong>- Explore Vacations Team</strong></p>
+  `;
+}
+
+export const sendCarRemainder = (
+  userName: string,
+  userEmail: string,
+  pickUpDate: string
+): string => {
+  const formattedDate = new Date(pickUpDate).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const daysLeft = Math.ceil(
+    (new Date(pickUpDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  return `
+    <div style="font-family: Arial, sans-serif; color: #333;">
+      <h2 style="color: #0077cc;">🚗 Car Pickup Reminder</h2>
+      <p>Hello <strong>${userName}</strong>,</p>
+      <p>This is a friendly reminder from <strong>Explore Vacations</strong> about your upcoming car pickup.</p>
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">📧 Email:</td>
+          <td style="padding: 8px;">${userEmail}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">📅 Pickup Date:</td>
+          <td style="padding: 8px;">${formattedDate}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">⏳ Days Left:</td>
+          <td style="padding: 8px;">${daysLeft} day${daysLeft !== 1 ? "s" : ""}</td>
+        </tr>
+      </table>
+      <p>Please make sure you're prepared for your pickup. If you have any questions, feel free to contact us.</p>
+      <p>Safe travels!<br><strong>Explore Vacations Team</strong></p>
+    </div>
+  `;
+};
+
+export const sendCustomizeTourRemainder = (
+  userName: string,
+  userEmail: string,
+  arrivalDate: string
+): string => {
+  // const formattedDate = new Date(arrivalDate).toLocaleDateString("en-US", {
+  //   weekday: "long",
+  //   year: "numeric",
+  //   month: "long",
+  //   day: "numeric",
+  // });
+
+  const daysLeft = Math.ceil(
+    (new Date(arrivalDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  return `
+    <div style="font-family: Arial, sans-serif; color: #333;">
+      <h2 style="color: #0077cc;">🌍 Customized Tour Reminder – Explore Vacations</h2>
+      <p>Hi <strong>${userName}</strong>,</p>
+      <p>This is a kind reminder about your upcoming customized tour.</p>
+      
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">📧 Email:</td>
+          <td style="padding: 8px;">${userEmail}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">🗓 Arrival Date:</td>
+          <td style="padding: 8px;">${arrivalDate}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">⏳ Days Left:</td>
+          <td style="padding: 8px;">${daysLeft} day${daysLeft !== 1 ? "s" : ""}</td>
+        </tr>
+      </table>
+
+      <p>Please make sure all your documents and travel essentials are ready.</p>
+      <p>We’re thrilled to be a part of your journey. See you soon!</p>
+      <p><strong>– The Explore Vacations Team</strong></p>
+    </div>
+  `;
+};
+
+
+export const sendParkingRemainder = (
+  firstName: string,
+  userEmail: string,
+  userName: string,
+  travelStartDate: string,
+  travelEndDate: string
+): string => {
+  const now = new Date();
+
+  const formattedStartDate = new Date(travelStartDate).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const formattedEndDate = new Date(travelEndDate).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const daysLeft = Math.max(
+    0,
+    Math.ceil((new Date(travelStartDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+  );
+
+  const currentTime = CurrentTime(); // Use your function here
+
+  return `
+    <div style="font-family: Arial, sans-serif; color: #333;">
+      <h2 style="color: #0077cc;">🚗 Car Parking Reminder – Explore Vacations</h2>
+      <p>Hi <strong>${firstName}</strong>,</p>
+      <p>This is a friendly reminder about your upcoming parking reservation with Explore Vacations.</p>
+
+      <table style="width: 100%; border-collapse: collapse; background-color: #f1f9ff; padding: 12px; border-radius: 6px; margin: 20px 0;">
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">👤 Name:</td>
+          <td style="padding: 8px;">${userName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">📧 Email:</td>
+          <td style="padding: 8px;">${userEmail}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">🚙 Travel Start Date:</td>
+          <td style="padding: 8px;">${formattedStartDate}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">🏁 Travel End Date:</td>
+          <td style="padding: 8px;">${formattedEndDate}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">⏳ Days Left:</td>
+          <td style="padding: 8px;">${daysLeft} day${daysLeft !== 1 ? "s" : ""}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; font-weight: bold;">🕒 Sent At:</td>
+          <td style="padding: 8px;">${currentTime} (Europe/Zurich)</td>
+        </tr>
+      </table>
+
+      <p>We hope you're all set! If you need any assistance, feel free to reach out to our support team.</p>
+      <p><strong>– The Explore Vacations Team</strong></p>
+    </div>
+  `;
+};
+

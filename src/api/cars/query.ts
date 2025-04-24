@@ -47,7 +47,7 @@ export const listVehicleQuery = `SELECT
 FROM
   public."refVehicleType"
 WHERE
-  "isDelete" = false;
+  "isDelete" IS NOT true;
 `;
 
 export const deleteVehicleQuery = `UPDATE
@@ -111,7 +111,7 @@ WHERE
 
 export const listBenifitsQuery = `SELECT * FROM public."refBenifits"
 WHERE
-  "isDelete" = false;
+  "isDelete" IS NOT true;
 `;
 
 
@@ -173,7 +173,7 @@ WHERE
 
 export const listIncludeQuery = `SELECT * FROM public."refInclude"
 WHERE
-  "isDelete" = false;
+  "isDelete" IS NOT true;
 `;
 
 export const deleteIncludeQuery = `UPDATE
@@ -228,8 +228,12 @@ WHERE
 "refExcludeId" = $1;
 `;
 
-export const listExcludeQuery = `SELECT * FROM public."refExclude" WHERE
-  "isDelete" = false;
+export const listExcludeQuery = `SELECT
+  *
+FROM
+  public."refExclude"
+WHERE
+  "isDelete" IS NOT true;
 `;
 
 export const deleteExcludeQuery = ` UPDATE
@@ -373,13 +377,13 @@ WHERE
   "refFormDetailsId" = $1;
 `;
 
-export const listFormDetailsQuery = `SELECT
+export const listFormDetailsQuery = `
+SELECT
   *
 FROM
   public."refFormDetails"
 WHERE
-  "isDelete" = false;
-`;
+  "isDelete" IS NOT true;`;
 
 export const deleteFormDetailsQuery = `UPDATE
   public."refFormDetails"

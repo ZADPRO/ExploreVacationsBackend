@@ -610,5 +610,14 @@ RETURNING
 `;
 
 export const deleteCarParkingBookingsQuery = `
-
+UPDATE
+  public."userCarParkingBooking"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "carParkingBookingId" = $1
+RETURNING
+  *;
 `;

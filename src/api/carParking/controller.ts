@@ -172,7 +172,9 @@ export class carParkingController {
         id:request.plugins.token.id
       }
       let entity;
-      entity = await this.resolver.getCarParkingV1(request.payload,decodedToken);
+      entity = await this.resolver.getCarParkingV1(request.payload
+        ,decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created

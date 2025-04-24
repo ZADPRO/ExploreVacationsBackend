@@ -16,7 +16,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----tour Booking");
+    // logger.info("Router-----tour Booking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -50,7 +52,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----customize Booking");
+    // logger.info("Router-----customize Booking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -84,7 +88,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----upload Certificate");
+    // logger.info("Router-----upload Certificate");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -116,7 +122,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----upload passport");
+    // logger.info("Router-----upload passport");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -148,7 +156,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----car Booking");
+    // logger.info("Router-----car Booking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -214,7 +224,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Tour");
+    // logger.info("Router-----list Tour");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -243,7 +255,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list all Tour");
+    // logger.info("Router-----list all Tour");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -335,7 +349,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----upload Map");
+    // logger.info("Router-----upload Map");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -366,7 +382,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----deleteMap");
+    // logger.info("Router-----deleteMap");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -398,7 +416,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list all car");
+    // logger.info("Router-----list all car");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -427,7 +447,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list car by id");
+    // logger.info("Router-----list car by id");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -456,7 +478,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----listCarParking");
+    // logger.info("Router-----listCarParking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -485,7 +509,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----getCarParking");
+    // logger.info("Router-----getCarParking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       let entity;
 
@@ -514,7 +540,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Destination");
+    // logger.info("Router-----list Destination");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {      
       let entity;
       entity = await this.resolver.listDestinationV1(request.payload);
@@ -541,7 +569,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----user SignUp");
+    // logger.info("Router-----user SignUp");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try { 
       let entity;
       entity = await this.resolver.userSignUpV1(request.payload);
@@ -568,7 +598,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----forgotPassword");
+    // logger.info("Router-----forgotPassword");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -599,7 +631,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----tour Brochure");
+    // logger.info("Router-----tour Brochure");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -628,7 +662,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----profileData");
+    // logger.info("Router-----profileData");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -660,7 +696,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----UpdateprofileData");
+    // logger.info("Router-----UpdateprofileData");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -693,7 +731,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----tourBookingHistory");
+    // logger.info("Router-----tourBookingHistory");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -724,7 +764,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----carBookingHistory");
+    // logger.info("Router-----carBookingHistory");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -755,7 +797,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----carParkingHistory");
+    // logger.info("Router-----carParkingHistory");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -786,7 +830,10 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Associate Airport");
+  
+    // logger.info("Router-----list Associate Airport");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -814,7 +861,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----listParkingType");
+    // logger.info("Router-----listParkingType");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       
       let entity;
@@ -842,7 +891,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----addUserAddress");
+    // logger.info("Router-----addUserAddress");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -873,7 +924,9 @@ export class userController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----car Parking Booking");
+    // logger.info("Router-----car Parking Booking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
     try {
       const decodedToken ={
         id:request.plugins.token.id

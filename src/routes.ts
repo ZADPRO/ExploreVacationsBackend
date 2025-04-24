@@ -5,6 +5,9 @@ import { adminRoutes } from "./api/admin/routes";
 import { carsRoutes } from "./api/cars/routes";
 import { userRoutes } from "./api/user/routes";
 import { carParkingRoutes } from "./api/carParking/routes";
+import { batchRoutes } from "./api/batch/routes";
+import { paymentRoutes } from "./api/payment/routes";
+import { homePageRoutes } from "./api/cars/homePage/routes";
 
 
 
@@ -16,7 +19,9 @@ export default class Router {
     await new carsRoutes().register(server);
     await new userRoutes().register(server);
     await new carParkingRoutes().register(server);
-
+    await new batchRoutes().register(server);
+    await new paymentRoutes().register(server);
+    await new homePageRoutes().register(server);
 
   }
 }

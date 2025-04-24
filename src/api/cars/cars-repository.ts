@@ -113,7 +113,7 @@ export class carsRepository {
           success: true,
           message: "vehicle added successfully",
           data: vehicleResult,
-          token: tokens,
+          token: tokens
         },
         true
       );
@@ -124,7 +124,7 @@ export class carsRepository {
           success: false,
           message: "An unknown error occurred during vehicle addition",
           token: tokens,
-          error: String(error),
+          error: String(error)
         },
         true
       );
@@ -150,7 +150,7 @@ export class carsRepository {
           {
             success: false,
             message: "vehicle ID not found",
-            token: tokens,
+            token: tokens
           },
           true
         );
@@ -303,7 +303,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while deleting the Vehicle",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -600,7 +600,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while deleting the benifits",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -679,7 +679,7 @@ export class carsRepository {
       const history = [
         16,
         tokendata.id,
-        "add Includes",
+        `${refIncludeName} Include added successFully`,
         CurrentTime(),
         tokendata.id,
       ];
@@ -887,7 +887,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while deleting the Include",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -960,7 +960,7 @@ export class carsRepository {
       const history = [
         18,
         tokendata.id,
-        "add excludes",
+        `${refExcludeName} exclude added SuccessFully`,
         CurrentTime(),
         tokendata.id,
       ];
@@ -1049,7 +1049,7 @@ export class carsRepository {
       const history = [
         19,
         tokenData.id,
-        "Update Exclude",
+        `${refExcludeName} Update Exclude successfully`,
         CurrentTime(),
         tokenData.id,
       ];
@@ -1166,7 +1166,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while deleting the Exclude",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -1492,17 +1492,18 @@ export class carsRepository {
         );
       }
 
-      const duplicateCheck = await client.query(
+      const duplicateCheck:any = await client.query(
         checkduplicateFormDetailsQuery,
         [refFormDetails]
       );
+      console.log('duplicateCheck', duplicateCheck)
 
-      if ((duplicateCheck.rowCount ?? 0) > 0) {
+      if (duplicateCheck[0]?.count == 0)  {
         await client.query("ROLLBACK");
         return encrypt(
           {
             success: false,
-            message: `ref Form Details "${refFormDetails}" already exists for the selected destination.`,
+            message: `ref Form Details "${refFormDetails}" already exists `,
             token: tokens,
           },
           true
@@ -1521,7 +1522,7 @@ export class carsRepository {
         const result = await client.query(addFormDetailsQuery, [
           refFormDetails,
           CurrentTime(),
-          "Admin",
+          tokendata.id,
         ]);
 
         console.log("Form Details added result:", result);
@@ -1533,7 +1534,9 @@ export class carsRepository {
       const history = [
         23,
         tokendata.id,
-        "add Form Details", // Action name
+        `Added Form Details: ${refFormDetails
+          .map((item: any) => item.refFormDetails)
+          .join(", ")}`,
         CurrentTime(), // Timestamp of the action
         tokendata.id, // Performed by
       ];
@@ -1604,14 +1607,14 @@ export class carsRepository {
         );
       }
 
-      const params = [refFormDetailsId, refFormDetails, CurrentTime(), "Admin"];
+      const params = [refFormDetailsId, refFormDetails, CurrentTime(),tokenData.id];
 
       const update = await client.query(updateFormDetailsQuery, params);
 
       const history = [
         24,
         tokenData.id,
-        "Update form details",
+        `${refFormDetails}FormDetails is added successfully`,
         CurrentTime(),
         tokenData.id,
       ];
@@ -1730,7 +1733,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while deleting the form Details",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -1876,7 +1879,10 @@ export class carsRepository {
           success: false,
           message: "An error occurred while adding the car",
           error: String(error),
+          token: tokens,
+
         },
+
         true
       );
     } finally {
@@ -1953,7 +1959,7 @@ export class carsRepository {
             {
               success: false,
               message: "Image record not found",
-              tokens: tokens,
+              token: tokens,
             },
             true
           );
@@ -1976,7 +1982,7 @@ export class carsRepository {
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -1986,7 +1992,7 @@ export class carsRepository {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -2058,7 +2064,7 @@ export class carsRepository {
         refCarPrice,
         refCarTypeId,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
         refCarsId, // Specify the car to be updated by `refCarsId`
       ];
 
@@ -2071,7 +2077,7 @@ export class carsRepository {
         refFuelPolicy,
         refPaymentTerms,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ];
 
       await client.query(updateCondation, termsPrams);
@@ -2250,7 +2256,7 @@ export class carsRepository {
       const result = await client.query(deleteCarsQuery, [
         refCarsId,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ]);
 
       // const getDeletedCar = await executeQuery(getDeletedCarQuery,[refCarsId])
@@ -2297,7 +2303,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while deleting the Vehicle",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -2327,7 +2333,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while listed carType",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true

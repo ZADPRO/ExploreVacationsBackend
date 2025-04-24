@@ -226,7 +226,7 @@ const customerPrefix = "EV-PAR-";
             {
               success: false,
               message: "Image record not found",
-              tokens: tokens,
+              token: tokens,
             },
             true
           );
@@ -251,7 +251,7 @@ const customerPrefix = "EV-PAR-";
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -261,7 +261,7 @@ const customerPrefix = "EV-PAR-";
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -462,6 +462,7 @@ const customerPrefix = "EV-PAR-";
         {
           success: false,
           message: "An error occurred while updating the car Parking",
+          token: tokens,
           error: String(error),
         },
         true
@@ -603,7 +604,7 @@ const customerPrefix = "EV-PAR-";
         {
           success: false,
           message: "An error occurred while deleting the Vehicle",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true

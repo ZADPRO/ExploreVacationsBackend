@@ -347,7 +347,7 @@ export class userRoutes implements IRoute {
           },
         },
         {
-          method: "GET",
+          method: "POST",
           path: "/api/v1/userRoutes/carParkingBooking",
           config: {
             pre: [{ method: validateToken, assign: "token" }],

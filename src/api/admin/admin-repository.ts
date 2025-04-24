@@ -12,7 +12,6 @@ import {
   generateTokenWithoutExpire,
 } from "../../helper/token";
 import {
- 
   checkQuery,
   dashBoardQuery,
   deleteCarBookingsQuery,
@@ -36,7 +35,6 @@ import {
   listTransactionTypeQuery,
   listUserTypeQuery,
   selectUserByLogin,
-
   updateEmployeeQuery,
   updateHistoryQuery,
 } from "./query";
@@ -46,62 +44,188 @@ import { sendEmail } from "../../helper/mail";
 import { storeFile, viewFile } from "../../helper/storage";
 
 export class adminRepository {
+  // public async adminLoginV1(user_data: any, domain_code?: any): Promise<any> {
+  //   const client: PoolClient = await getClient();
+
+  //   try {
+  //     const params = [user_data.login];
+  //     const users:any = await client.query(selectUserByLogin, params);
+  //     console.log("users", users);
+
+  //     if (users.rows.length > 0) {
+  //       const user = users.rows[0];
+
+  //       if (!user.refUserHashedPassword) {
+  //         console.error("Error: User has no hashed password stored.");
+  //         return encrypt(
+  //           {
+  //             success: false,
+  //             message: "Invalid login credentials",
+  //           },
+  //           true
+  //         );
+  //       }
+
+  //       const validPassword = await bcrypt.compare(
+  //         user_data.password,
+  //         user.refUserHashedPassword
+  //       );
+  //       if (validPassword) {
+  //         const tokenData = { id: user.refUserId };
+
+  //         const history = [
+  //           1,
+  //           user.refUserId,
+  //          `${user_data.login} login succesfully`,
+  //           CurrentTime(),
+  //           user.refUserId,
+  //         ];
+
+  //         const updateHistory = await client.query(updateHistoryQuery, history);
+
+  //         return encrypt(
+  //           {
+  //             success: true,
+  //             message: "Login successful",
+  //             userId:user.refUserId,
+  //             token: generateTokenWithExpire(tokenData, true),
+  //           },
+  //           true
+  //         );
+  //       }
+  //     }
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "Invalid login credentials",
+  //       },
+  //       true
+  //     );
+  //   } catch (error) {
+  //     console.error("Error during login:", error);
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "Internal server error",
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+
   public async adminLoginV1(user_data: any, domain_code?: any): Promise<any> {
     const client: PoolClient = await getClient();
 
     try {
       const params = [user_data.login];
-      const users:any = await client.query(selectUserByLogin, params);
+      const users: any = await client.query(selectUserByLogin, params);
       console.log("users", users);
 
-      if (users.rows.length > 0) {
-        const user = users.rows[0];
+      // if (users.rows.length > 0) {
+      //   const user = users.rows[0];
 
-        // console.log("User data:", user);
-        // console.log("User hashed password:", user.refUserHashedPassword); // Correct field name
-        // console.log("Entered password:", user_data.password);
+      //   if (!user.refUserHashedPassword) {
+      //     console.error("Error: User has no hashed password stored.");
+      //     return encrypt(
+      //       {
+      //         success: false,
+      //         message: "Invalid login credentials",
+      //       },
+      //       true
+      //     );
+      //   }
 
-        if (!user.refUserHashedPassword) {
-          console.error("Error: User has no hashed password stored.");
-          return encrypt(
-            {
-              success: false,
-              message: "Invalid login credentials",
-            },
-            true
-          );
-        }
+      //   const validPassword = await bcrypt.compare(
+      //     user_data.password,
+      //     user.refUserHashedPassword
+      //   );
+      //   if (validPassword) {
+      //     const tokenData = { id: user.refUserId };
 
-        const validPassword = await bcrypt.compare(
-          user_data.password,
-          user.refUserHashedPassword
+      //     const history = [
+      //       1,
+      //       user.refUserId,
+      //      `${user_data.login} login succesfully`,
+      //       CurrentTime(),
+      //       user.refUserId,
+      //     ];
+
+      //     const updateHistory = await client.query(updateHistoryQuery, history);
+
+      //     return encrypt(
+      //       {
+      //         success: true,
+      //         message: "Login successful",
+      //         userId:user.refUserId,
+      //         token: generateTokenWithExpire(tokenData, true),
+      //       },
+      //       true
+      //     );
+      //   }
+      // }
+
+      if (users.rows.length === 0) {
+        return encrypt(
+          { 
+            success: false, 
+            message: "Invalid login credentials user not found"
+           },
+          true
         );
-        console.log("validPassword", validPassword);
-        if (validPassword) {
-          const tokenData = { id: user.refUserId };
-          console.log("tokenData", tokenData);
-
-          const history = [
-            1,
-            user.refUserId,
-           `${user_data.login} login succesfully`,
-            CurrentTime(),
-            user.refUserId,
-          ];
-
-          const updateHistory = await client.query(updateHistoryQuery, history);
-
-          return encrypt(
-            {
-              success: true,
-              message: "Login successful",
-              userId:user.refUserId,
-              token: generateTokenWithExpire(tokenData, true),
-            },
-            true
-          );
-        }
       }
+
+      const user = users.rows[0];
+
+      if (!user.refUserHashedPassword) {
+        console.error("Error: User has no hashed password stored.");
+        return encrypt(
+          { success: false, 
+            message: "Invalid login credentials UserHashedPassword not match" 
+          },
+          true
+        );
+      }
+
+      const validPassword = await bcrypt.compare(
+        user_data.password,
+        user.refUserHashedPassword
+      );
+
+      if (!validPassword) {
+        return encrypt(
+          { success: false,
+             message: "Invalid login credentials, validPassword is in false" },
+          true
+        );
+      }
+
+      // validPassword === true
+      const tokenData = { id: user.refUserId };
+      console.log("user.refUserId", user.refUserId);
+      console.log("tokenData", tokenData);
+
+      const history = [
+        1,
+        user.refUserId,
+        `${user_data.login} login successfully`,
+        CurrentTime(),
+        user.refUserId,
+      ];
+
+      await client.query(updateHistoryQuery, history);
+
+      return encrypt(
+        {
+          success: true,
+          message: "Login successful",
+          userId: user.refUserId,
+          token: generateTokenWithExpire(tokenData, true),
+        },
+        true
+      );
 
       return encrypt(
         {
@@ -177,7 +301,7 @@ export class adminRepository {
       );
     }
   }
-  
+
   public async listCustomizeTourBookingsV1(
     userData: any,
     tokendata: any
@@ -283,14 +407,13 @@ export class adminRepository {
       //   date,
       //   [TransactionType],
       // ]);
-      
 
       const result = await executeQuery(listAuditPageQuery, [
         date,
         [parseInt(TransactionType)], // ensure it's an integer array
       ]);
-      
-      console.log('result', result)
+
+      console.log("result", result);
       return encrypt(
         {
           success: true,
@@ -347,8 +470,8 @@ export class adminRepository {
   public async addEmployeeV1(userData: any, token_data?: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: token_data.id }; // Extract token ID
-    console.log('token', token)
-    console.log('token_data.id', token_data.id)
+    console.log("token", token);
+    console.log("token_data.id", token_data.id);
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -364,6 +487,8 @@ export class adminRepository {
           {
             success: true,
             message: "Already exists",
+            token: tokens,
+
           },
           true
         );
@@ -398,7 +523,7 @@ export class adminRepository {
         userData.refMoblile,
         userData.refUserTypeId,
         CurrentTime(),
-        token_data.id
+        token_data.id,
       ];
       const userResult = await client.query(insertUserQuery, params);
       const newUser = userResult.rows[0];
@@ -436,7 +561,6 @@ export class adminRepository {
           };
           await client.query("COMMIT");
           const main = async () => {
-           
             const mailOptions = {
               to: userData.refUserEmail,
               subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
@@ -455,31 +579,31 @@ export class adminRepository {
           };
           main().catch(console.error);
 
-  // const adminMail = {
-  //       to: userData.refUserEmail,
-  //       subject: "You Accont has be Created Successfully In our Platform",
-  //       html: generateSignupEmailContent( userData.refMoblile,
-  //               genPassword)
-  //     };
-  //     // await sendEmail(adminMail);
+          // const adminMail = {
+          //       to: userData.refUserEmail,
+          //       subject: "You Accont has be Created Successfully In our Platform",
+          //       html: generateSignupEmailContent( userData.refMoblile,
+          //               genPassword)
+          //     };
+          //     // await sendEmail(adminMail);
 
-  //     const transporter = nodemailer.createTransport({
-  //       service: "gmail",
-  //       auth: {
-  //         user: process.env.EMAILID,
-  //         pass: process.env.PASSWORD,
-  //       },
-  //     });
+          //     const transporter = nodemailer.createTransport({
+          //       service: "gmail",
+          //       auth: {
+          //         user: process.env.EMAILID,
+          //         pass: process.env.PASSWORD,
+          //       },
+          //     });
 
-//       const mailoption = {
-//         from: process.env.EMAILID,
-//         to: "indumathi123indumathi@gmail.com",
-//         subject: "New Tour Booking Received",
-//         html:  generateSignupEmailContent( userData.refMoblile,
-//           genPassword)
-    
-// };
-//       await transporter.sendMail(mailoption);
+          //       const mailoption = {
+          //         from: process.env.EMAILID,
+          //         to: "indumathi123indumathi@gmail.com",
+          //         subject: "New Tour Booking Received",
+          //         html:  generateSignupEmailContent( userData.refMoblile,
+          //           genPassword)
+
+          // };
+          //       await transporter.sendMail(mailoption);
 
           return encrypt(
             {
@@ -510,6 +634,8 @@ export class adminRepository {
           success: false,
           message: "An unexpected error occurred during Employee added",
           error: error instanceof Error ? error.message : String(error),
+          token: tokens,
+
         },
         true
       );
@@ -616,7 +742,7 @@ export class adminRepository {
           success: false,
           message:
             "An error occurred while deleting the Employee  profile image ",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -625,15 +751,15 @@ export class adminRepository {
       client.release();
     }
   }
- 
+
   public async updateEmployeeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
-  
+
     try {
       await client.query("BEGIN");
-  
+
       const {
         refuserId,
         refFName,
@@ -643,42 +769,48 @@ export class adminRepository {
         refQualification,
         refProfileImage,
         refMoblile,
-        refUserTypeId
+        refUserTypeId,
       } = userData;
-  
-      const existingEmployeeRes = await client.query(
-        getEmployeeQuery,
-        [refuserId]
-      );
+
+      const existingEmployeeRes = await client.query(getEmployeeQuery, [
+        refuserId,
+      ]);
       const existingData = existingEmployeeRes.rows[0];
-  
-      if (!existingData) throw new Error(`Employee with ID ${refuserId} not found`);
-  
+
+      if (!existingData)
+        throw new Error(`Employee with ID ${refuserId} not found`);
+
       const changes: string[] = [];
-  
+
       if (existingData.refFName !== refFName)
         changes.push(`First Name: '${existingData.refFName}' : '${refFName}'`);
-  
+
       if (existingData.refLName !== refLName)
         changes.push(`Last Name: '${existingData.refLName}' : '${refLName}'`);
-  
-      if (existingData.refDOB!== refDOB)
+
+      if (existingData.refDOB !== refDOB)
         changes.push(`DOB: '${existingData.refDOB}' : '${refDOB}'`);
-  
+
       if (existingData.refDesignation !== refDesignation)
-        changes.push(`Designation: '${existingData.refDesignation}' : '${refDesignation}'`);
-  
+        changes.push(
+          `Designation: '${existingData.refDesignation}' : '${refDesignation}'`
+        );
+
       if (existingData.refQualification !== refQualification)
-        changes.push(`Qualification: '${existingData.refQualification}' : '${refQualification}'`);
-  
+        changes.push(
+          `Qualification: '${existingData.refQualification}' : '${refQualification}'`
+        );
+
       if (existingData.refProfileImage !== refProfileImage)
         changes.push(`Profile Image changed`);
-  
+
       if (existingData.refMoblile !== refMoblile)
         changes.push(`Mobile: '${existingData.refMoblile}' : '${refMoblile}'`);
-  
-      const changeSummary = changes.length ? `Updated Fields: ${changes.join(", ")}` : "No changes detected";
-  
+
+      const changeSummary = changes.length
+        ? `Updated Fields: ${changes.join(", ")}`
+        : "No changes detected";
+
       const updateParams = [
         refuserId,
         refFName,
@@ -693,7 +825,7 @@ export class adminRepository {
         tokendata.id,
       ];
       await client.query(updateEmployeeQuery, updateParams);
-  
+
       const historyParams = [
         50,
         tokendata.id,
@@ -702,9 +834,9 @@ export class adminRepository {
         tokendata.id,
       ];
       await client.query(updateHistoryQuery, historyParams);
-  
+
       await client.query("COMMIT");
-  
+
       return encrypt(
         {
           success: true,
@@ -716,12 +848,14 @@ export class adminRepository {
     } catch (error: unknown) {
       await client.query("ROLLBACK");
       console.error("Error updating employee:", error);
-  
+
       return encrypt(
         {
           success: false,
           message: "An error occurred while updating the employee",
           error: String(error),
+          token: tokens,
+
         },
         true
       );
@@ -782,9 +916,7 @@ export class adminRepository {
       for (const profile of result) {
         if (profile.refProfileImage) {
           try {
-            const fileBuffer = await viewFile(
-              profile.refProfileImage
-            );
+            const fileBuffer = await viewFile(profile.refProfileImage);
             profile.refProfileImage = {
               filename: path.basename(profile.refProfileImage),
               content: fileBuffer.toString("base64"),
@@ -821,31 +953,34 @@ export class adminRepository {
       );
     }
   }
- 
+
   public async deleteEmployeeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
-  
+
     try {
       await client.query("BEGIN");
-  
-      const getDeletedEmployee: any = await client.query(getDeletedEmployeeQuery, [userData.refuserId]);
-  
+
+      const getDeletedEmployee: any = await client.query(
+        getDeletedEmployeeQuery,
+        [userData.refuserId]
+      );
+
       if (!getDeletedEmployee.rows.length) {
         throw new Error("Employee not found");
       }
-  
+
       const employee = getDeletedEmployee.rows[0];
       const employeeName = `${employee.refFName}, (${employee.refCustId})`;
       console.log("employeeName", employeeName);
-  
+
       const result = await client.query(deleteEmployeesQuery, [
         userData.refuserId,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ]);
-  
+
       const history = [
         51,
         tokendata.id,
@@ -853,12 +988,12 @@ export class adminRepository {
         CurrentTime(),
         tokendata.id,
       ];
-  
+
       const updateHistory = await client.query(updateHistoryQuery, history);
       console.log("updateHistory", updateHistory);
-  
+
       await client.query("COMMIT");
-  
+
       return encrypt(
         {
           success: true,
@@ -914,16 +1049,16 @@ export class adminRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const dashBoard:any = await executeQuery(dashBoardQuery);
-     
-      console.log('dashBoard', dashBoard)
-  
+      const dashBoard: any = await executeQuery(dashBoardQuery);
+
+      console.log("dashBoard", dashBoard);
+
       return encrypt(
         {
           success: true,
           message: "listed dashboard successfully",
           dashBoard: dashBoard,
-          token: tokens
+          token: tokens,
         },
         true
       );
@@ -939,74 +1074,80 @@ export class adminRepository {
       );
     }
   }
-  public async deleteCarBookingsV1(userData: any, tokendata: any): Promise<any> {
-      const client: PoolClient = await getClient();
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-  
-      try {
-        await client.query("BEGIN"); // Start transaction
-  
-        const { userCarBookingId } = userData;
-        const result = await client.query(deleteCarBookingsQuery, [
-          userCarBookingId,
-          CurrentTime(),
-          tokendata.id,
-        ]);
-        
-        console.log('result', result)
-        if (result.rowCount === 0) {
-          await client.query("ROLLBACK");
-          return encrypt(
-            {
-              success: false,
-              message: "car booking not found or already deleted",
-              token: tokens,
-            },
-            true
-          );
-        }
-  
-        // Insert delete action into history
-        // const history = [
-        //   36, // Unique ID for delete action
-        //   tokendata.id,
-        //   "delete Include",
-        //   CurrentTime(),
-        //   tokendata.id,
-        // ];
-  
-        // await client.query(updateHistoryQuery, history);
+  public async deleteCarBookingsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
 
-        await client.query("COMMIT"); // Commit transaction
-  
-        return encrypt(
-          {
-            success: true,
-            message: "car booking deleted successfully",
-            token: tokens,
-            deletedData: result.rows[0], // Return deleted record for reference
-          },
-          true
-        );
-      } catch (error: unknown) {
-        await client.query("ROLLBACK"); // Rollback on error
-        console.error("Error deleting car booking:", error);
-  
+    try {
+      await client.query("BEGIN"); // Start transaction
+
+      const { userCarBookingId } = userData;
+      const result = await client.query(deleteCarBookingsQuery, [
+        userCarBookingId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      console.log("result", result);
+      if (result.rowCount === 0) {
+        await client.query("ROLLBACK");
         return encrypt(
           {
             success: false,
-            message: "An error occurred while deleting the car booking",
-            tokens: tokens,
-            error: String(error),
+            message: "car booking not found or already deleted",
+            token: tokens,
           },
           true
         );
-      } finally {
-        client.release();
       }
+
+      // Insert delete action into history
+      // const history = [
+      //   36, // Unique ID for delete action
+      //   tokendata.id,
+      //   "delete Include",
+      //   CurrentTime(),
+      //   tokendata.id,
+      // ];
+
+      // await client.query(updateHistoryQuery, history);
+
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "car booking deleted successfully",
+          token: tokens,
+          deletedData: result.rows[0], // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback on error
+      console.error("Error deleting car booking:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the car booking",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
   }
-  public async deleteTourBookingsV1(userData: any, tokendata: any): Promise<any> {
+  public async deleteTourBookingsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1063,7 +1204,7 @@ export class adminRepository {
         {
           success: false,
           message: "An error occurred while deleting the car booking",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -1072,7 +1213,10 @@ export class adminRepository {
       client.release();
     }
   }
-  public async deleteCustomizeTourBookingsV1(userData: any, tokendata: any): Promise<any> {
+  public async deleteCustomizeTourBookingsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1128,8 +1272,9 @@ export class adminRepository {
       return encrypt(
         {
           success: false,
-          message: "An error occurred while deleting the Customize tour booking",
-          tokens: tokens,
+          message:
+            "An error occurred while deleting the Customize tour booking",
+          token: tokens,
           error: String(error),
         },
         true
@@ -1138,7 +1283,10 @@ export class adminRepository {
       client.release();
     }
   }
-  public async deleteCarParkingBookingsV1(userData: any, tokendata: any): Promise<any> {
+  public async deleteCarParkingBookingsV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1150,7 +1298,7 @@ export class adminRepository {
       const result = await client.query(deleteCarParkingBookingsQuery, [
         carParkingBookingId,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ]);
 
       if (result.rowCount === 0) {
@@ -1164,7 +1312,6 @@ export class adminRepository {
           true
         );
       }
-
 
       await client.query("COMMIT"); // Commit transaction
 
@@ -1185,7 +1332,7 @@ export class adminRepository {
         {
           success: false,
           message: "An error occurred while deleting the Car Parking Booking",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true

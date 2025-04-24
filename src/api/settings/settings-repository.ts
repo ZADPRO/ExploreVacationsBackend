@@ -95,7 +95,7 @@ export class settingsRepository {
         true
       );
     } catch (error: unknown) {
-      console.log('error', error)
+      console.log("error", error);
       await client.query("ROLLBACK");
 
       return encrypt(
@@ -614,12 +614,14 @@ export class settingsRepository {
       ]);
 
       const check: any = await client.query(checkDuplicateCategoryQuery, [
-        refCategory
+        refCategory,
       ]);
-      console.log('check', check.rows[0].count)
-      const count = Number(check.rows[0].count || 0); // safely convert to number
+      console.log("checkDuplicateCategoryQuery", checkDuplicateCategoryQuery);
+      console.log("refCategory --->", refCategory);
+      console.log("check------------", check);
+      const count = Number(check.count || 0); // safely convert to number
 
-      console.log('count', count)
+      console.log("count", count);
 
       if (count > 0) {
         throw new Error(
@@ -687,12 +689,13 @@ export class settingsRepository {
         );
       }
       const check: any = await client.query(checkDuplicateCategoryQuery, [
-        refCategoryName
+        refCategoryName,
       ]);
-      console.log('check', check.rows[0].count)
-      const count = Number(check.rows[0].count || 0); // safely convert to number
+      // console.log("check", check.rows[0].count);
+      // const count = Number(check.rows[0].count || 0); // safely convert to number
+      const count = Number(check.count || 0); // safely convert to number
 
-      console.log('count', count)
+      console.log("count", count);
 
       if (count > 0) {
         throw new Error(
@@ -846,6 +849,7 @@ export class settingsRepository {
   }
 
   public async addActivitiesV1(userData: any, tokendata: any): Promise<any> {
+    console.log("userData", userData);
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -858,8 +862,11 @@ export class settingsRepository {
         tokendata.id,
       ]);
 
+      console.log("userResult", userResult);
       const check: any = await executeQuery(checkActivityQuery, [refActivity]);
-      const count = Number(check[0]?.count || 0); // safely convert to number
+      console.log("check", check);
+      // const count = Number(check.count || 0); // safely convert to number
+      const count = Number(check?.rows[0]?.count || 0);
 
       if (count > 0) {
         throw new Error(
@@ -926,7 +933,9 @@ export class settingsRepository {
           true
         );
       }
-      const check: any = await executeQuery(checkActivityQuery, [refActivitiesName]);
+      const check: any = await executeQuery(checkActivityQuery, [
+        refActivitiesName,
+      ]);
       const count = Number(check[0]?.count || 0); // safely convert to number
 
       if (count > 0) {

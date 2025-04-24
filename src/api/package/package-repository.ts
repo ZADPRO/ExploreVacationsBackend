@@ -103,11 +103,9 @@ export class packageRepository {
 
   //  }
   public async addPackageV1(userData: any, tokendata: any): Promise<any> {
-    console.log("userData line 107 --------- ", userData);
-    console.log("tokendata line ----- 103", tokendata);
+    
     const client: PoolClient = await getClient();
     const refuserId = tokendata.id;
-    console.log("refuserId line ------ 105", refuserId);
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -302,7 +300,7 @@ export class packageRepository {
         {
           success: false,
           message: "An error occurred while adding the package",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -645,7 +643,7 @@ export class packageRepository {
         refSeasonalPrice,
         refCoverImage,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ]);
 
       const Result = await client.query(updateTravalDataQuery, [
@@ -657,7 +655,7 @@ export class packageRepository {
         refTravalExclude,
         refSpecialNotes,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ]);
 
       const history = [
@@ -678,7 +676,7 @@ export class packageRepository {
           token: tokens,
           packageDetails: packageDetails.rows,
         },
-        false
+        true
       );
     } catch (error) {
       console.log(
@@ -696,7 +694,7 @@ export class packageRepository {
           error: errorMessage,
           token: tokens,
         },
-        false
+        true
       );
     } finally {
       client.release();
@@ -715,7 +713,7 @@ export class packageRepository {
       const result = await client.query(deletePackageQuery, [
         refPackageId,
         CurrentTime(),
-        "Admin",
+        tokendata.id
       ]);
 
       const deletedPackage: any = await client.query(getdeletedPackageQuery, [
@@ -1087,7 +1085,7 @@ export class packageRepository {
             {
               success: false,
               message: "Image record not found",
-              tokens: tokens,
+              token: tokens,
             },
             true
           );
@@ -1110,7 +1108,7 @@ export class packageRepository {
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -1120,7 +1118,7 @@ export class packageRepository {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -1161,7 +1159,7 @@ export class packageRepository {
         const result = await client.query(addTravalIncludeQuery, [
           refTravalInclude,
           CurrentTime(),
-          "Admin",
+          tokendata.id,
         ]);
 
         console.log("Include added result:", result);
@@ -1249,7 +1247,7 @@ export class packageRepository {
         refTravalIncludeId,
         refTravalInclude,
         CurrentTime(),
-        "Admin",
+        tokenData.id,
       ];
 
       const updateBenifits = await client.query(
@@ -1260,7 +1258,7 @@ export class packageRepository {
       const history = [
         42,
         tokenData.id,
-        `${refTravalInclude} updated succesfully`,
+        `${refTravalInclude} TravalInclude updated succesfully`,
         CurrentTime(),
         tokenData.id,
       ];
@@ -1308,7 +1306,7 @@ export class packageRepository {
       const result = await client.query(deleteTravalIncludeQuery, [
         refTravalIncludeId,
         CurrentTime(),
-        "Admin",
+        tokendata.id,
       ]);
 
       const getdeletedinclude: any = await client.query(
@@ -1361,7 +1359,7 @@ export class packageRepository {
         {
           success: false,
           message: "An error occurred while deleting the Include",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -1434,7 +1432,7 @@ export class packageRepository {
         const result = await client.query(addTravalExcludeQuery, [
           refTravalExclude,
           CurrentTime(),
-          "Admin",
+          tokendata.id,
         ]);
 
         resultArray.push(result);
@@ -1521,7 +1519,7 @@ export class packageRepository {
         refTravalExcludeId,
         refTravalExclude,
         CurrentTime(),
-        "Admin",
+        tokenData.id
       ];
 
       const updateBenifits = await client.query(
@@ -1629,7 +1627,7 @@ export class packageRepository {
         {
           success: false,
           message: "An error occurred while deleting the Exclude",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -1737,7 +1735,7 @@ export class packageRepository {
             {
               success: false,
               message: "Image record not found",
-              tokens: tokens,
+              token: tokens,
             },
             true
           );
@@ -1760,7 +1758,7 @@ export class packageRepository {
         {
           success: true,
           message: " Image Deleted Successfully",
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -1770,7 +1768,7 @@ export class packageRepository {
         {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
-          tokens: tokens,
+          token: tokens,
         },
         true
       );
@@ -1842,7 +1840,7 @@ export class packageRepository {
         {
           success: true,
           message: "Listed Tour successfully",
-          tokens: tokens,
+          token: tokens,
           tourDetails: result1,
         },
         true
@@ -1856,7 +1854,7 @@ export class packageRepository {
         {
           success: false,
           message: "An error occurred while listing the tour details.",
-          tokens: tokens,
+          token: tokens,
           error: String(error), // Return detailed error for debugging
         },
         true
