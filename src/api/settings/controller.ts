@@ -17,7 +17,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add Destination'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -47,7 +47,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update Destination'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -77,7 +77,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list  Destination'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -107,7 +107,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Destination'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -138,7 +138,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add Loaction");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -168,7 +168,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update Loaction");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -198,7 +198,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Loaction");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -228,7 +228,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Loaction");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -259,7 +259,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add Categories");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -289,7 +289,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update Categories");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -319,7 +319,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Categories");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -349,7 +349,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Categories");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -380,7 +380,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add Activities");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -410,7 +410,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update activities");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -440,7 +440,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Activities");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -470,7 +470,7 @@ export class settingsController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Activities");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id

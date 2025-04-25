@@ -3,7 +3,7 @@ import * as Boom from "@hapi/boom";
 
 // import { decodeToken } from "../../helper/token"
 import { homePageResolver } from "./resolver";
-import logger from "../../../helper/logger";
+import logger from "../../helper/logger";
 
 export class homePageController {
   public resolver: any;
@@ -15,7 +15,7 @@ export class homePageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----upload Home Images");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id

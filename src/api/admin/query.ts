@@ -486,7 +486,7 @@ SET
   "refQualification" = $6,
   "refProfileImage" =$7,
   "refMoblile" = $8,
-  "refUserTypeId" = $9
+  "refUserTypeId" = $9,
   "updatedAt" = $10,
   "updatedBy" = $11
 WHERE
@@ -503,31 +503,79 @@ WHERE
   "refuserId" = $1`;
   
 export const deleteEmployeeImageQuery = `
+UPDATE
+  public."users"
+SET
+  "refProfileImage" = NULL
+WHERE
+  "refuserId" = $1
+RETURNING
+  *;
   `;
 
 export const listEmployeesQuery = `
 SELECT
   u.*,
   ud."refUserEmail",
-  ud."refUsername"
+  ud."refUsername",
+  ud."refUserHashedPassword",
+  array_agg(ut."refUserType") AS "refUserType"
 FROM
   public."users" u
-  LEFT JOIN public."refUserDomain" ud ON CAST (ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(u."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
 WHERE
-  u."isDelete" IS NOT true;
+  u."isDelete" IS NOT true
+GROUP BY
+  u."refuserId",
+  ud."refUserEmail",
+  ud."refUsername",
+  ud."refUserHashedPassword";
   `;
 
-export const getEmployeesQuery = `SELECT
+export const getEmployeesQuery = `
+SELECT
   u.*,
-  ud."refUserEmail"
+  ud."refUserEmail",
+  ud."refUsername",
+  ud."refUserHashedPassword",
+  array_agg(ut."refUserType") AS "refUserType",
+  array_to_json(
+    string_to_array(
+      trim(
+        both '{}'
+        from
+          u."refUserTypeId"
+      ),
+      ','
+    )::int[]
+  ) AS "userTypeId"
 FROM
   public."users" u
-  JOIN public."refUserDomain" ud ON CAST ( ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(u."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
 WHERE
-  "refuserId" = $1
-  `;
+  u."isDelete" IS NOT true
+  AND u."refuserId" = $1
+GROUP BY
+  u."refuserId",
+  ud."refUserEmail",
+  ud."refUsername",
+  ud."refUserHashedPassword";
+    `;
 
-export const deleteEmployeesQuery = `UPDATE
+export const deleteEmployeesQuery = `
+UPDATE
   public."users"
 SET
   "isDelete" = true,

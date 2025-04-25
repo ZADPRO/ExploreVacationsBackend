@@ -1,4 +1,5 @@
-export const updateHistoryQuery = `INSERT INTO
+export const updateHistoryQuery = `
+INSERT INTO
   public."refTxnHistory" (
     "refTransactionHistoryId",
     "refUserId",

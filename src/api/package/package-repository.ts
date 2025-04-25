@@ -78,7 +78,7 @@ export class packageRepository {
   //         refTourPrice,
   //         refSeasonalPrice,
   //         CurrentTime(),
-  //         "Admin"
+  //         tokendata.id
   //        ]);
 
   //        return encrypt(
@@ -373,8 +373,8 @@ export class packageRepository {
   //       refSeasonalPrice,
   //       refCoverImage,
   //       CurrentTime(),
-  //       "Admin",
-  //     ]);
+  // tokendata.id
+    //     ]);
   //     console.log("packageDetails", packageDetails);
 
   //     // let storedImages: any[] = [];
@@ -404,7 +404,7 @@ export class packageRepository {
   //     //       refPackageId,
   //     //       imagePath,
   //     //       CurrentTime(),
-  //     //       "Admin",
+  //     //      tokendata.id,
   //     //     ]);
 
   //     //     storedImages.push({
@@ -425,7 +425,7 @@ export class packageRepository {
   //       refTravalExclude,
   //       refSpecialNotes,
   //       CurrentTime(),
-  //       "Admin",
+  //      tokendata.id
   //     ]);
 
   //     const history = [
@@ -760,7 +760,7 @@ export class packageRepository {
         {
           success: false,
           message: "An error occurred while deleting the package",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
@@ -1578,8 +1578,8 @@ export class packageRepository {
       const result = await client.query(deleteTravalExcludeQuery, [
         refTravalExcludeId,
         CurrentTime(),
-        "Admin",
-      ]);
+        tokendata.id
+            ]);
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");

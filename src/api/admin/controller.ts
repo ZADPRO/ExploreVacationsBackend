@@ -16,7 +16,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----admin Login");
+    logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
       let entity;
@@ -42,7 +42,7 @@ export class adminController {
      request: any,
      response: Hapi.ResponseToolkit
    ): Promise<any> => {
-     logger.info("Router-----list tour Bookings'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
      try {
        const decodedToken ={
          id:request.plugins.token.id
@@ -72,7 +72,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list car Bookings'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -102,7 +102,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Customize Tour Bookings");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -132,7 +132,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----listParkingBookings");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -162,7 +162,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Audit page");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -192,7 +192,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add Employee");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -223,7 +223,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----upload Employee Image");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -253,7 +253,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Employee Image");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -283,7 +283,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update Employee ");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -313,7 +313,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Employee ");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -343,7 +343,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----get Employee ");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -373,7 +373,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Employee ");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -403,7 +403,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Transaction Type ");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -433,7 +433,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list UserType");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -463,7 +463,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----dashBoard");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -493,7 +493,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----deleteCarBookings");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -523,7 +523,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----deleteTourBookings");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -553,7 +553,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----deleteCustomizeTourBookings");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -583,7 +583,7 @@ export class adminController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----deleteCarParkingBookings");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id

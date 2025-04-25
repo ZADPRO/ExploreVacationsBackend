@@ -16,7 +16,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add packages'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       console.log('request line ----- 21', request)
       const decodedToken ={
@@ -50,7 +50,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update packages'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -84,7 +84,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----delete packages'");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -118,7 +118,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----gallery Upload");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -153,7 +153,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list Package");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -185,7 +185,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- delete gallery image");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -219,7 +219,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- add Traval Include");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -251,7 +251,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- update Traval Include");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -283,7 +283,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- delete Traval Include");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -315,7 +315,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- list Traval Include");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -348,7 +348,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- add Traval Exclude");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -380,7 +380,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- update Traval Exclude");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -412,7 +412,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- delete Traval Exclude");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -444,7 +444,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router----- list Traval Exclude");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -477,7 +477,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----cover Upload");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -512,7 +512,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Cover Image");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={
@@ -547,7 +547,7 @@ export class packageController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----getTour");
+    logger.info(`GET URL REQ => ${request.url.href}`);
   
     try {
       const decodedToken ={

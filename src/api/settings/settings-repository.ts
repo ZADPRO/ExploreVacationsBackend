@@ -250,7 +250,7 @@ export class settingsRepository {
           {
             success: false,
             message: "Destination not found or already deleted",
-            tokens: tokens,
+            token: tokens,
           },
           true
         );
@@ -280,7 +280,7 @@ export class settingsRepository {
         {
           success: true,
           message: "Destination deleted successfully",
-          tokens: tokens,
+          token: tokens,
           deletedData: result.rows[0], // Return deleted record for reference
         },
         true
@@ -293,7 +293,7 @@ export class settingsRepository {
         {
           success: false,
           message: "An error occurred while deleting the destination",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true

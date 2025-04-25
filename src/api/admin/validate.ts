@@ -13,7 +13,6 @@ export default {
 
   addEmployee: {
     payload: Joi.object({
-      // label("Temporary Email"),
       refFName: Joi.string().required(),
       refLName: Joi.string().required(),
       refDOB: Joi.string().required(),
@@ -21,7 +20,7 @@ export default {
       refQualification: Joi.string().required(),
       refProfileImage: Joi.string().optional(),
       refMoblile: Joi.string().required(),
-      refUserTypeId: Joi.number().integer().required(),
+      refUserTypeId:  Joi.array().items(Joi.number()).required(),
       refUserEmail: Joi.string().email().required(),
     }),
     headers: Joi.object({
@@ -46,12 +45,12 @@ export default {
       refuserId: Joi.number().integer().required(),
       refFName: Joi.string().min(2).max(50).required(),
       refLName: Joi.string().min(2).max(50).required(),
-      refDOB: Joi.date().iso().required(),
+      refDOB: Joi.string().required(),
       refDesignation: Joi.string().required(),
       refQualification: Joi.string().required(),
       refProfileImage: Joi.string().optional().allow(null, ""),
       refMoblile: Joi.string().required(),
-      // refUserTypeId: Joi.number().integer().required(),
+      refUserTypeId: Joi.array().items(Joi.number()).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

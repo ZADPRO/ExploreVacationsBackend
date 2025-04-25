@@ -1,6 +1,6 @@
 import * as Hapi from "@hapi/hapi";
-import IRoute from "../../../helper/routes";
-import { validateToken } from "../../../helper/token";
+import IRoute from "../../helper/routes";
+import { validateToken } from "../../helper/token";
 import { homePageController } from "./controller";
 
 export class homePageRoutes implements IRoute {

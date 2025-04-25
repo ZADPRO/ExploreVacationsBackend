@@ -16,7 +16,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add CarParking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -46,7 +46,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----upload Parking Image");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -76,7 +76,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete Parking Image");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -106,7 +106,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----updateCarParking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -136,7 +136,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----listCarParking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -166,7 +166,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----getCarParking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -198,7 +198,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----deleteCarParking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -228,7 +228,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----getCarParkingType");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -262,7 +262,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----add ServiceFeatures");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -292,7 +292,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----update ServiceFeatures");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -322,7 +322,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----list ServiceFeatures");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id
@@ -352,7 +352,7 @@ export class carParkingController {
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
-    logger.info("Router-----delete ServiceFeatures");
+    logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
         id:request.plugins.token.id

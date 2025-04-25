@@ -4,15 +4,15 @@ import * as Boom from "@hapi/boom";
 import logger from "../../helper/logger";
 
 import { decodeToken } from "../../helper/token"
-import { batchResolver } from "./resolver";
+import { notificationResolver } from "./resolver";
 
-export class batchController {
+export class notificationController {
   public resolver: any;
 
   constructor() {
-    this.resolver = new batchResolver();
+    this.resolver = new notificationResolver();
   }
-  public sendTourRem = async (
+  public addNotifications = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
@@ -22,7 +22,7 @@ export class batchController {
         id:request.plugins.token.id
       }
       let entity;
-      entity = await this.resolver.sendTourRemV1(request.payload,decodedToken);
+      entity = await this.resolver.addNotificationsV1(request.payload,decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -30,7 +30,7 @@ export class batchController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in add sendTourRem", error);
+      logger.error("Error in add Notifications", error);
       return response
         .response({
           success: false,
@@ -42,7 +42,7 @@ export class batchController {
         .code(500);
     }
   };
-  public sendCarRem = async (
+  public updateNotifications = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
@@ -52,7 +52,7 @@ export class batchController {
         id:request.plugins.token.id
       }
       let entity;
-      entity = await this.resolver.sendCarRemV1(request.payload,decodedToken);
+      entity = await this.resolver.updateNotificationsV1(request.payload,decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -60,7 +60,7 @@ export class batchController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in  sendCarRem", error);
+      logger.error("Error in update Notifications", error);
       return response
         .response({
           success: false,
@@ -72,7 +72,7 @@ export class batchController {
         .code(500);
     }
   };
-  public sendCustomizeTourRem = async (
+  public listNotifications = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
@@ -82,7 +82,7 @@ export class batchController {
         id:request.plugins.token.id
       }
       let entity;
-      entity = await this.resolver.sendCustomizeTourRemV1(request.payload,decodedToken);
+      entity = await this.resolver.listNotificationsV1(request.payload,decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -90,7 +90,7 @@ export class batchController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in  send Customize Tour Remainder", error);
+      logger.error("Error in list Notifications", error);
       return response
         .response({
           success: false,
@@ -102,7 +102,7 @@ export class batchController {
         .code(500);
     }
   };
-  public sendParkingRem = async (
+  public getNotifications = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
@@ -112,7 +112,7 @@ export class batchController {
         id:request.plugins.token.id
       }
       let entity;
-      entity = await this.resolver.sendParkingRemV1(request.payload,decodedToken);
+      entity = await this.resolver.getNotificationsV1(request.payload,decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -120,7 +120,7 @@ export class batchController {
       return response.response(entity).code(200); // Bad Request if failed
 
     } catch (error) {
-      logger.error("Error in  send car parking Remainder", error);
+      logger.error("Error in get Notifications", error);
       return response
         .response({
           success: false,
@@ -132,5 +132,4 @@ export class batchController {
         .code(500);
     }
   };
- 
 }

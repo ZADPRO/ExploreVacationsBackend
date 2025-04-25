@@ -101,7 +101,7 @@ export class userRepository {
   //       refInfants,
   //       refOtherRequirements,
   //       CurrentTime(),
-  //       "Admin",
+  //      tokendata.id
   //     ]);
 
   //     const main = async () => {
@@ -352,7 +352,7 @@ export class userRepository {
   //       refVaccinationCertificate, // Store the file path
   //       refOtherRequirements,
   //       CurrentTime(),
-  //       "Admin",
+  //      tokendata.id
   //     ]);
 
   //     console.log('Result', Result.rows)
@@ -801,7 +801,7 @@ export class userRepository {
   //       refFormDetails,
   //       refOtherRequirements,
   //       CurrentTime(),
-  //       "Admin",
+  //      tokendata.id
   //     ]);
 
   //     const main = async () => {
@@ -2125,7 +2125,7 @@ export class userRepository {
           success: true,
           message: "mail send successfully",
           emailId,
-          tokens: tokens,
+          token: tokens,
         },
         true
       );

@@ -83,7 +83,7 @@ export class adminRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addEmployee,
-            // validate: validate.addEmployee,
+            validate: validate.addEmployee,
             description: "add Employee",
             tags: ["api", "Users"],
             auth: false,
@@ -109,7 +109,7 @@ export class adminRoutes implements IRoute {
         },
         {
           method: "POST",
-          path: "/api/v1/carsRoutes/deleteEmployeeImage",
+          path: "/api/v1/adminRoutes/deleteEmployeeImage",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteEmployeeImage,
@@ -124,7 +124,7 @@ export class adminRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateEmployee,
-            // validate: validate.updateEmployee,
+            validate: validate.updateEmployee,
             description: "update employee",
             tags: ["api", "Users"],
             auth: false,

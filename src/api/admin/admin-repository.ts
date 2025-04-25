@@ -383,7 +383,6 @@ export class adminRepository {
       );
     }
   }
-
   public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -436,7 +435,6 @@ export class adminRepository {
       );
     }
   }
-
   public async listTransactionTypeV1(
     userData: any,
     tokendata: any
@@ -510,6 +508,9 @@ export class adminRepository {
           .toString()
           .padStart(4, "0")}`;
       }
+      const refUserTypeId = Array.isArray(userData.refUserTypeId)
+      ? `{${userData.refUserTypeId.join(",")}}`
+      : "{}";
 
       // Insert into users table
       const params = [
@@ -521,10 +522,11 @@ export class adminRepository {
         userData.refQualification,
         userData.refProfileImage,
         userData.refMoblile,
-        userData.refUserTypeId,
+        refUserTypeId,
         CurrentTime(),
         token_data.id,
       ];
+
       const userResult = await client.query(insertUserQuery, params);
       const newUser = userResult.rows[0];
 
@@ -565,7 +567,8 @@ export class adminRepository {
               to: userData.refUserEmail,
               subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
               html: generateSignupEmailContent(
-                userData.refMoblile,
+                userData.refFName,
+                userData.refUserEmail,
                 genPassword
               ),
             };
@@ -769,9 +772,12 @@ export class adminRepository {
         refQualification,
         refProfileImage,
         refMoblile,
-        refUserTypeId,
+        // refUserTypeId,
       } = userData;
-
+      
+      const refUserTypeId = Array.isArray(userData.refUserTypeId)
+      ? `{${userData.refUserTypeId.join(",")}}`
+      : "{}";
       const existingEmployeeRes = await client.query(getEmployeeQuery, [
         refuserId,
       ]);
@@ -1044,7 +1050,6 @@ export class adminRepository {
       );
     }
   }
-
   public async dashBoardV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1341,4 +1346,5 @@ export class adminRepository {
       client.release();
     }
   }
+
 }

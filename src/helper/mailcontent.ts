@@ -1,20 +1,41 @@
 import { CurrentTime } from "./common";
 
 export const generateSignupEmailContent = (
+  refFName:string,
   username: string,
   password: string
 ) => {
   return `
-      <h3>Welcome to Our Platform!</h3>
-      <p>Dear User,</p>
-      <p>Your account has been successfully created. Below are your login details:</p>
-      <ul>
-        <li><strong>Email:</strong> ${username}</li>
-        <li><strong>Password:</strong> ${password}</li>
-      </ul>
-      <p>Please log in and change your password for security reasons.</p>
-      <p>Best Regards,<br/>The Team</p>
-    `;
+  
+    <div style="font-family: Arial, sans-serif; background-color: #f4faff; padding: 30px;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="background-color: #0077cc; color: #ffffff; padding: 20px 30px;">
+      <h2 style="margin: 0;">Welcome to Explore Vacation!</h2>
+    </div>
+    <div style="padding: 30px;">
+      <p style="font-size: 16px;">Hi <strong>${refFName}</strong>,</p>
+      <p style="font-size: 15px;">We're excited to have you onboard at <strong>Explore Vacation</strong>! Your employee account has been successfully created. Below are your login credentials:</p>
+      <table style="width: 100%; font-size: 15px; margin: 20px 0;">
+        <tr>
+          <td style="padding: 8px 0;"><strong>Email:</strong></td>
+          <td>${username}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>Password:</strong></td>
+          <td>${password}</td>
+        </tr>
+      </table>
+      <p style="font-size: 15px;">Please log in as soon as possible and make sure to change your password for security reasons.</p>
+      <p style="font-size: 15px;">If you have any questions or need assistance, feel free to reach out to our support team.</p>
+      <p style="font-size: 15px;">Welcome aboard once again!</p>
+      <p style="font-size: 15px;">Best Regards,<br/><strong>Team Explore Vacation</strong></p>
+    </div>
+    <div style="background-color: #e6f0fb; text-align: center; padding: 15px; font-size: 13px; color: #555;">
+      &copy; ${CurrentTime()} Explore Vacation. All rights reserved.
+    </div>
+  </div>
+</div>
+`;
 };
 
 export function generateTourBookingEmailContent(result: any): string {

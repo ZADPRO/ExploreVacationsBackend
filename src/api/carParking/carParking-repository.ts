@@ -143,7 +143,7 @@ const customerPrefix = "EV-PAR-";
         {
           success: false,
           message: "An error occurred while adding the car parking",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true

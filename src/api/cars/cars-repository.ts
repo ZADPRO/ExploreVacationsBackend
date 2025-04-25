@@ -370,7 +370,7 @@ export class carsRepository {
         const result = await client.query(addBenifitsQuery, [
           benefitName,
           CurrentTime(),
-          "Admin",
+          tokendata.id,
         ]);
 
         console.log("Benefit added result:", result);
@@ -554,7 +554,7 @@ export class carsRepository {
       const result = await client.query(deletebenifitsQuery, [
         refBenifitsId,
         CurrentTime(),
-        "Admin",
+        tokendata.id
       ]);
 
       if (result.rowCount === 0) {
@@ -667,7 +667,7 @@ export class carsRepository {
         const result = await client.query(addIncludeQuery, [
           refIncludeName,
           CurrentTime(),
-          "Admin",
+          tokendata.id
         ]);
 
         console.log("result", result);
@@ -843,8 +843,8 @@ export class carsRepository {
       const result = await client.query(deleteIncludeQuery, [
         refIncludeId,
         CurrentTime(),
-        "Admin",
-      ]);
+        tokendata.id
+            ]);
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -948,8 +948,7 @@ export class carsRepository {
         const result = await client.query(addExcludeQuery, [
           refExcludeName,
           CurrentTime(),
-          "Admin",
-        ]);
+          tokendata.id        ]);
 
         console.log("excludes added result:", result);
 
@@ -1121,8 +1120,7 @@ export class carsRepository {
       const result = await client.query(deleteExcludeQuery, [
         refExcludeId,
         CurrentTime(),
-        "Admin",
-      ]);
+        tokendata.id      ]);
 
       console.log("result", result);
       if (result.rowCount === 0) {
@@ -1201,7 +1199,7 @@ export class carsRepository {
         refDriverLocation,
         isVerified,
         CurrentTime(),
-        "Admin",
+        tokendata.id      
       ]);
 
       const history = [20, token.id, "Add driver", CurrentTime(), tokendata.id];
@@ -1278,8 +1276,8 @@ export class carsRepository {
         refDriverLocation,
         isVerified,
         CurrentTime(),
-        "Admin",
-      ];
+        tokenData.id     
+       ];
 
       const update = await client.query(updateDriverDetailsQuery, params);
 
@@ -1408,7 +1406,7 @@ export class carsRepository {
         {
           success: false,
           message: "An error occurred while deleting the DriverDetails",
-          tokens: tokens,
+          token: tokens,
           error: String(error),
         },
         true
