@@ -12,8 +12,11 @@ import { CurrentTime } from "../../helper/common";
 
 import {
   addNotificationQuery,
+  deleteNotificationQuery,
   getNotificationQuery,
   listNotificationQuery,
+  staffNotificationCountQuery,
+  staffNotificationsQuery,
   updateNotificationQuery,
 } from "./query";
 
@@ -183,4 +186,101 @@ export class notificationRepository {
       );
     }
   }
+  public async deleteNotificationsV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const Result = await executeQuery(deleteNotificationQuery, [
+        userData.refNotificationsId,
+        CurrentTime(),
+        tokendata.id
+      ]);
+
+      console.log("Result", Result);
+      return encrypt(
+        {
+          success: true,
+          message: "get Notifications by id successfully",
+          token: tokens,
+          Result: Result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error get Notifications:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while getting the Notifications",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------------
+
+  public async staffNotificationCountV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const Result = await executeQuery(staffNotificationCountQuery);
+      console.log("Result", Result);
+      return encrypt(
+        {
+          success: true,
+          message: "get staff Notification Count successfully",
+          token: tokens,
+          Result: Result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error get staff Notification Count:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while getting the staff Notification Count",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async staffNotificationsV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const Result = await executeQuery(staffNotificationsQuery);
+      console.log("Result", Result);
+      return encrypt(
+        {
+          success: true,
+          message: "get staff Notifications successfully",
+          token: tokens,
+          Result: Result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error get staff Notifications:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while getting the staff Notifications",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+
+
 }

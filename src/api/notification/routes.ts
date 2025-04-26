@@ -57,6 +57,43 @@ export class notificationRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/notificationRoutes/deleteNotifications",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteNotifications,
+            validate: validate.deleteNotifications,
+            description: "delete Notifications",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+
+        {
+          method: "GET",
+          path: "/api/v1/notificationRoutes/staffNotificationCount",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.staffNotificationCount,
+            description: "staff Notification Count",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/notificationRoutes/staffNotifications",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.staffNotifications,
+            description: "staff Notifications",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+
+      
       ]);
       resolve(true);
     });

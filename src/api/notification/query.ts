@@ -76,3 +76,30 @@ WHERE
 GROUP BY
   n."refNotificationsId";
 `;
+
+export const deleteNotificationQuery = `
+UPDATE
+  public."refNotifications"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refNotificationsId" = $1
+RETURNING
+  *;
+`;
+
+export const staffNotificationCountQuery = `
+SELECT
+  COUNT(*) AS "unReadNotifications"
+FROM
+  public."refNotifications"
+WHERE
+  "isDelete" IS NOT true
+  AND "refReadStatus" != 'Read';
+`;
+
+export const staffNotificationsQuery =`
+
+`;

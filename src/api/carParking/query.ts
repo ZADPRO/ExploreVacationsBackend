@@ -188,9 +188,20 @@ GROUP BY
 // `;
 
 
-export const getCarParkingQuery = `SELECT
+export const getCarParkingQuery = `
+SELECT
   cp.*,
-  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList",
+  array_to_json(
+    string_to_array(
+      trim(
+        both '{}'
+        from
+          cp."ServiceFeatures"
+      ),
+      ','
+    )::int[]
+  ) AS "ServiceFeature"
 FROM
   public."refCarParkingTable" cp
   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (

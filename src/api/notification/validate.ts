@@ -35,9 +35,16 @@ export default {
     headers: Joi.object({
       authorization: Joi.string().optional(),
     }).unknown(),
-  }
-
-
+  },
+  deleteNotifications:{
+    payload: Joi.object({
+      refNotificationsId:Joi.number().integer().required()
+    }),
+    
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
 
 
 };
