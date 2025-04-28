@@ -246,7 +246,29 @@ export class adminRoutes implements IRoute {
             auth: false,
           },
         },
-
+        {
+          method: "GET",
+          path: "/api/v1/adminRoutes/listUserData",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listUserData,
+            description: "listUserData",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/getUserData",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getUserData,
+            validate: validate.getUserData,
+            description: "getUserData",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

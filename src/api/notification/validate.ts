@@ -45,6 +45,14 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
-
+  updateReadStatus:{
+    payload: Joi.object({
+      refNotificationsId:Joi.number().integer().required()
+    }),
+    
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  }
 
 };

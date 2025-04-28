@@ -18,11 +18,13 @@ export class notificationResolver {
   public async deleteNotificationsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.notificationRepository.deleteNotificationsV1(user_data, token_data, domain_code);
   }
-
   public async staffNotificationCountV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.notificationRepository.staffNotificationCountV1(user_data, token_data, domain_code);
   }
   public async staffNotificationsV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.notificationRepository.staffNotificationsV1(user_data, token_data, domain_code);
+  }
+  public async updateReadStatusV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.notificationRepository.updateReadStatusV1(user_data, token_data, domain_code);
   }
 }

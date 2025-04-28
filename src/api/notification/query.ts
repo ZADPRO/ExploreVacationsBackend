@@ -100,6 +100,74 @@ WHERE
   AND "refReadStatus" != 'Read';
 `;
 
-export const staffNotificationsQuery =`
+export const readNotificationQuery =`
+SELECT
+  n.*,
+  array_agg(ut."refUserType") AS "refUserType",
+  array_to_json(
+    string_to_array(
+      trim(
+        both '{}'
+        from
+          n."refUserTypeId"
+      ),
+      ','
+    )::int[]
+  ) AS "userTypeId"
+FROM
+  public."refNotifications" n
+  LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  n."refReadStatus" = 'Read'
+  AND n."isDelete" IS NOT true
+GROUP BY
+  n."refNotificationsId"
 
+`;
+
+export const unreadNotificationQuery =`
+SELECT
+  n.*,
+  array_agg(ut."refUserType") AS "refUserType",
+  array_to_json(
+    string_to_array(
+      trim(
+        both '{}'
+        from
+          n."refUserTypeId"
+      ),
+      ','
+    )::int[]
+  ) AS "userTypeId"
+FROM
+  public."refNotifications" n
+  LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  "refReadStatus" != 'Read'
+  AND "isDelete" IS NOT true
+GROUP BY
+  n."refNotificationsId"
+`;
+
+
+
+export const updateReadStatusQuery = `
+UPDATE
+  public."refNotifications"
+SET
+  "refReadStatus" = 'Read'
+WHERE
+  "refNotificationsId" = $1
+RETURNING
+  *;
 `;

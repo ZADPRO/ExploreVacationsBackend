@@ -69,7 +69,18 @@ export class notificationRoutes implements IRoute {
             auth: false,
           },
         },
-
+        {
+          method: "POST",
+          path: "/api/v1/notificationRoutes/updateReadStatus",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.updateReadStatus,
+            validate: validate.updateReadStatus,
+            description: "update Read Status",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
         {
           method: "GET",
           path: "/api/v1/notificationRoutes/staffNotificationCount",

@@ -15,9 +15,11 @@ import {
   deleteNotificationQuery,
   getNotificationQuery,
   listNotificationQuery,
+  readNotificationQuery,
   staffNotificationCountQuery,
-  staffNotificationsQuery,
+  unreadNotificationQuery,
   updateNotificationQuery,
+  updateReadStatusQuery,
 } from "./query";
 
 export class notificationRepository {
@@ -256,14 +258,15 @@ export class notificationRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const Result = await executeQuery(staffNotificationsQuery);
-      console.log("Result", Result);
+      const Result1 = await executeQuery(readNotificationQuery);
+      const Result2 = await executeQuery(unreadNotificationQuery)
       return encrypt(
         {
           success: true,
           message: "get staff Notifications successfully",
           token: tokens,
-          Result: Result,
+          readNotification: Result1,
+          unReadNotification: Result2
         },
         true
       );
@@ -281,6 +284,33 @@ export class notificationRepository {
       );
     }
   }
+  public async updateReadStatusV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const readResult = await executeQuery(updateReadStatusQuery,[userData.refNotificationsId]);
+      return encrypt(
+        {
+          success: true,
+          message: "update Read Status successfully",
+          token: tokens,
+          readResult: readResult,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in update Read Status:", error);
 
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while update Read Status",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
 
 }

@@ -1,7 +1,39 @@
+// export const selectUserByLogin = `
+// SELECT *
+// FROM  public."refUserDomain" rd
+// WHERE rd."refUserEmail" = $1 OR rd."refUsername" = $1;
+// `;
+
 export const selectUserByLogin = `
-SELECT *
-FROM  public."refUserDomain" rd
-WHERE rd."refUserEmail" = $1 OR rd."refUsername" = $1;
+SELECT
+  rd.*,
+  u."refUserTypeId",
+  array_agg(ut."refUserType") AS "refUserType",
+  array_to_json(
+    string_to_array(
+      trim(
+        both '{}'
+        from
+          u."refUserTypeId"
+      ),
+      ','
+    )::int[]
+  ) AS "userTypeId"
+FROM
+  public."refUserDomain" rd
+  LEFT JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = rd."refUserId"
+  LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(u."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  rd."refUserEmail" = $1
+  OR rd."refUsername" = $1
+GROUP BY
+  rd."refUserDomId",
+  u."refUserTypeId"
 `;
 
 export const updateHistoryQuery = `INSERT INTO
@@ -193,8 +225,7 @@ RETURNING
 
 // `;
 
-
-export const listTourBookingsQuery =`
+export const listTourBookingsQuery = `
 WITH
   "base" AS (
     SELECT
@@ -374,7 +405,7 @@ WHERE
   ctb."isDelete" IS NOT true
 `;
 
-export const listParkingBookingsQuery  =`
+export const listParkingBookingsQuery = `
 SELECT
   cp.*,
   pt.*,
@@ -415,8 +446,6 @@ WHERE
 
 `;
 
-
-
 export const listTransactionTypeQuery = `SELECT
   *
 FROM
@@ -439,8 +468,7 @@ FROM
   public.users u
 WHERE
   u."refCustId" LIKE 'EV-EMP-%';
-  `
-  ;
+  `;
 
 export const insertUserQuery = `INSERT INTO
   public.users(
@@ -494,14 +522,14 @@ WHERE
 RETURNING
   *;
   `;
-export const getEmployeeQuery =   `
+export const getEmployeeQuery = `
 SELECT
   *
 FROM
   public.users
 WHERE
   "refuserId" = $1`;
-  
+
 export const deleteEmployeeImageQuery = `
 UPDATE
   public."users"
@@ -572,7 +600,8 @@ GROUP BY
   ud."refUserEmail",
   ud."refUsername",
   ud."refUserHashedPassword";
-    `;
+    
+  `;
 
 export const deleteEmployeesQuery = `
 UPDATE
@@ -596,15 +625,18 @@ WHERE
   "refuserId" = $1;
 `;
 
-
-
-export const listUserTypeQuery = `SELECT
+export const listUserTypeQuery = `
+SELECT
   *
 FROM
-  public."refUserType";
+  public."refUserType"
+WHERE
+  "refUserTypeId" != 3
+ORDER BY
+  "refUserTypeId" ASC;
 `;
 
-export const dashBoardQuery =`
+export const dashBoardQuery = `
 SELECT
   (SELECT COUNT(*) FROM public."userTourBooking" WHERE "isDelete" IS NOT true) AS "tourBookingCount",
   (SELECT COUNT(*) FROM public."userCarBooking" WHERE "isDelete" IS NOT true) AS "carBookingCount",
@@ -668,4 +700,56 @@ WHERE
   "carParkingBookingId" = $1
 RETURNING
   *;
+`;
+
+export const listUserDataQuery = `
+SELECT DISTINCT
+  u.*,
+  ud.*,
+  ua."refUserAddress",
+  ua."refUserCity",
+  ua."refUserState",
+  ua."refUserCountry",
+  ua."refUserZipCode"
+FROM
+  public."users" u
+  LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refUserAddress" ua ON CAST(ua."refUserId" AS INTEGER) = u."refuserId"
+  WHERE 
+u."refCustId" LIKE 'EV-CUS-%';
+`;
+
+export const getUserdataQuery = `
+SELECT DISTINCT
+  u.*,
+  ud.*,
+  ua."refUserAddress",
+  ua."refUserCity",
+  ua."refUserState",
+  ua."refUserCountry",
+  ua."refUserZipCode"
+FROM
+  public."users" u
+  LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refUserAddress" ua ON CAST(ua."refUserId" AS INTEGER) = u."refuserId"
+WHERE
+  u."refCustId" LIKE 'EV-CUS-%'
+  AND u."refuserId" = $1
+  AND u."isDelete" IS NOT true;
+`;
+
+export const tourResultQuery = `
+
+`;
+
+export const carResultQuery = `
+
+`;
+
+export const customizeTourResultQuery = `
+
+`;
+
+export const parkingResultQuery = `
+
 `;

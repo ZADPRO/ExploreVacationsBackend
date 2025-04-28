@@ -10,6 +10,17 @@ export class paymentRoutes implements IRoute {
       server.route([
         {
           method: "POST",
+          path: "/api/v1/paymentRoutes/calculation",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.calculation,
+            description: "calculation",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
           path: "/api/v1/paymentRoutes/payment",
           config: {
             pre: [{ method: validateToken, assign: "token" }],

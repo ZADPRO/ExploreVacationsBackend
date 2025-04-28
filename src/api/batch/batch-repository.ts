@@ -9,19 +9,21 @@ import {
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
 import fs from "fs";
+import { decodeToken } from "../../helper/token"
 
 import {
   generateTokenWithExpire,
   generateTokenWithoutExpire,
 } from "../../helper/token";
 import { CurrentTime } from "../../helper/common";
-// import { sendTourRemainder } from "../../helper/mailcontent";
 import { getCarData, getCarParkingRemData, getCustomizeTourRemData, getTourData } from "./query";
 import { sendEmail } from "../../helper/mail";
 import { sendCarRemainder, sendCustomizeTourRemainder, sendParkingRemainder, sendTourRemainder } from "../../helper/mailcontent";
 
 export class BatchRepository {
-  public async sendTourRemV1(): Promise<any> {
+  public async sendTourRemV1(tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getTourData, []);
       if (getData.length > 0) {
@@ -31,7 +33,6 @@ export class BatchRepository {
               to: getData[i].refCtEmail,
               subject: "📅 Tour Reminder – Explore Vacations",
               html: sendTourRemainder(
- 
                 getData[i].refUserName,
                 getData[i].refUserMail,
                 getData[i].refPickUpdate
@@ -53,20 +54,22 @@ export class BatchRepository {
       const results = {
         success: true,
         message: "Mail Is Send Successfully",
-        // token: generateToken1(this.decodedToken, true),
+        token: tokens
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     } catch (error) {
       console.log(error);
       const results = {
         success: false,
         message: "error In sending Mail",
-        // token: generateToken1 (this.decodedToken, true),
+        token: tokens
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     }
   }
-  public async sendCarRemV1(): Promise<any> {
+  public async sendCarRemV1(tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCarData, []);
       if (getData.length > 0) {
@@ -81,6 +84,7 @@ export class BatchRepository {
                 getData[i].refPickUpdate
               ),
             };
+            console.log('sendCarRemainder', sendCarRemainder)
             // Call the sendEmail function
             try {
               await sendEmail(mailOptions);
@@ -88,7 +92,6 @@ export class BatchRepository {
               console.error("Failed to send email:", error);
             }
           };
-
           main().catch(console.error);
         }
       }
@@ -96,20 +99,22 @@ export class BatchRepository {
       const results = {
         success: true,
         message: "Mail Is Send Successfully",
-        // token: generateToken1(this.decodedToken, true),
+        token: tokens
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     } catch (error) {
       console.log(error);
       const results = {
         success: false,
         message: "error In sending Mail",
-        // token: generateToken1(this.decodedToken, true),
+        token: tokens,
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     }
   }
-  public async sendCustomizeTourRemV1(): Promise<any> {
+  public async sendCustomizeTourRemV1(tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCustomizeTourRemData, []);
       if (getData.length > 0) {
@@ -138,20 +143,22 @@ export class BatchRepository {
       const results = {
         success: true,
         message: "Mail Is Send Successfully",
-        // token: generateToken1(this.decodedToken, true),
+        token: tokens,
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     } catch (error) {
       console.log(error);
       const results = {
         success: false,
         message: "error In sending Mail",
-        // token: generateToken1(this.decodedToken, true),
+        token: tokens,
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     }
   }
-  public async sendParkingRemV1(): Promise<any> {
+  public async sendParkingRemV1(tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCarParkingRemData, []);
       if (getData.length > 0) {
@@ -183,17 +190,17 @@ export class BatchRepository {
       const results = {
         success: true,
         message: "Mail Is Send Successfully",
-        // token: generateToken1(this.decodedToken, true),
+        token: tokens,
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     } catch (error) {
       console.log(error);
       const results = {
         success: false,
         message: "error In sending Mail",
-        // token: generateToken1(this.decodedToken, true),
+        token: tokens,
       };
-      return encrypt(results, false);
+      return encrypt(results, true);
     }
   }
 

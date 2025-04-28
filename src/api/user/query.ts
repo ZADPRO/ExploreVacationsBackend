@@ -953,7 +953,7 @@ GROUP BY
 // `;
 
 export const listCarParkingQuery = `
-SELECT
+SELECT DISTINCT
   cp.*,
   pt."refParkingTypeName",
   cpt."refCarParkingTypeName",
@@ -962,41 +962,42 @@ SELECT
   array_agg(DISTINCT rf."refServiceFeatures") AS "ServiceFeaturesList"
 FROM
   public."refCarParkingTable" AS cp
-  LEFT JOIN public."refParkingType" pt ON pt."refParkingTypeId" = cp."refParkingTypeId"
-  LEFT JOIN public."userCarParkingBooking" cpb ON cpb."refCarParkingId" = cp."refCarParkingId"
-  LEFT JOIN public."refCarParkingType" cpt ON cpt."refCarParkingTypeId" = cp."refCarParkingTypeId"
-  LEFT JOIN public."refServiceFeatures" rf ON rf."refServiceFeaturesId" = ANY (
-    string_to_array(
-      regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
-      ','
-    )::int[]
-  )
-WHERE
+  LEFT JOIN public."refParkingType" pt 
+    ON CAST(pt."refParkingTypeId" AS INTEGER) = CAST(cp."refParkingTypeId" AS INTEGER)
+  LEFT JOIN public."userCarParkingBooking" cpb 
+    ON CAST(cpb."refCarParkingId" AS INTEGER) = CAST(cp."refCarParkingId" AS INTEGER)
+  LEFT JOIN public."refCarParkingType" cpt 
+    ON CAST(cpt."refCarParkingTypeId" AS INTEGER) = CAST(cp."refCarParkingTypeId" AS INTEGER)
+  LEFT JOIN public."refServiceFeatures" rf 
+    ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+      string_to_array(
+        regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
+        ','
+      )::INTEGER[]
+    )
+    
+    WHERE
+    
   $1::date BETWEEN cp."MinimumBookingDuration"::date AND cp."MaximumBookingDuration"::date
   AND (
-  cpb."travelStartDate"::date IS NULL OR
-  NOT (
-    cpb."travelStartDate"::date <= $2::date AND
-    cpb."travelEndDate"::date >= $1::date
+    cpb."isDelete" IS NOT true AND
+    cpb."travelStartDate"::date IS NULL OR
+    NOT (
+      cpb."travelStartDate"::date <= $2::date AND
+      cpb."travelEndDate"::date >= $1::date
+    )
   )
-)
   AND cp."refAssociatedAirport" = $3
   AND cp."refCarParkingTypeId" = $4
   AND cp."refParkingTypeId" = $5
   AND cp."isDelete" IS NOT true
-GROUP BY
-  cp."refCarParkingId",
-  cp."MinimumBookingDuration",
-  cp."MaximumBookingDuration",
-  cp."refParkingTypeId",
-  cp."refCarParkingTypeId",
-  cp."refAssociatedAirport",
-  cp."isDelete",
-  pt."refParkingTypeName",
-  cpt."refCarParkingTypeName",
-  cpb."travelStartDate",
-  cpb."travelEndDate"
-
+    
+    GROUP BY 
+    cp."refCarParkingId",
+    pt."refParkingTypeId",
+    cpt."refCarParkingTypeName",
+    cpb."carParkingBookingId"
+   
   
 `;
 export const listCarParkingByIdQuery = `

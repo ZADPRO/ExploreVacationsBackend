@@ -1620,7 +1620,7 @@ export class userRepository {
       const { refCarParkingId } = userData;
       // Step 1: Execute Queries
       const result1 = await executeQuery(listCarParkingByIdQuery, [
-        refCarParkingId,
+        refCarParkingId
       ]);
 
       // Step 2: Process images results if needed
@@ -1646,7 +1646,7 @@ export class userRepository {
         {
           success: true,
           message: "get car parikng successfully",
-          tourDetails: result1,
+          Details: result1,
         },
         true
       );
@@ -2548,6 +2548,7 @@ export class userRepository {
       ];
 
       const Result = await client.query(insertcarParkingBookingQuery, params);
+      console.log('Result--------------------------------------------------------------------------------------------2551', Result)
 
       // const getUserResult:any = await client.query(getUserResultQuery,[tokendata.id])
       // console.log('getUserResult', getUserResult)
@@ -2641,7 +2642,7 @@ export class userRepository {
         {
           success: true,
           message: "car ParkingBooking added successful",
-          Result: Result,
+          Result: Result.rows,
           token: tokens,
         },
         true

@@ -143,7 +143,6 @@ export class carParkingRoutes implements IRoute {
             tags: ["api", "Users"],
             auth: false,
           },
-          
         },
         {
           method: "GET",
@@ -155,7 +154,6 @@ export class carParkingRoutes implements IRoute {
             tags: ["api", "Users"],
             auth: false,
           },
-          
         },
       ]);
       resolve(true);

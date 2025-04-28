@@ -12,7 +12,9 @@ import {
   generateTokenWithoutExpire,
 } from "../../helper/token";
 import {
+  carResultQuery,
   checkQuery,
+  customizeTourResultQuery,
   dashBoardQuery,
   deleteCarBookingsQuery,
   deleteCarParkingBookingsQuery,
@@ -24,6 +26,7 @@ import {
   getEmployeeQuery,
   getEmployeesQuery,
   getLastEmployeeIdQuery,
+  getUserdataQuery,
   insertUserDomainQuery,
   insertUserQuery,
   listAuditPageQuery,
@@ -33,8 +36,11 @@ import {
   listParkingBookingsQuery,
   listTourBookingsQuery,
   listTransactionTypeQuery,
+  listUserDataQuery,
   listUserTypeQuery,
+  parkingResultQuery,
   selectUserByLogin,
+  tourResultQuery,
   updateEmployeeQuery,
   updateHistoryQuery,
 } from "./query";
@@ -167,12 +173,14 @@ export class adminRepository {
       //   }
       // }
 
+      const { userTypeId } = users.rows[0];
+
       if (users.rows.length === 0) {
         return encrypt(
-          { 
-            success: false, 
-            message: "Invalid login credentials user not found"
-           },
+          {
+            success: false,
+            message: "Invalid login credentials user not found",
+          },
           true
         );
       }
@@ -182,8 +190,9 @@ export class adminRepository {
       if (!user.refUserHashedPassword) {
         console.error("Error: User has no hashed password stored.");
         return encrypt(
-          { success: false, 
-            message: "Invalid login credentials UserHashedPassword not match" 
+          {
+            success: false,
+            message: "Invalid login credentials UserHashedPassword not match",
           },
           true
         );
@@ -196,8 +205,10 @@ export class adminRepository {
 
       if (!validPassword) {
         return encrypt(
-          { success: false,
-             message: "Invalid login credentials, validPassword is in false" },
+          {
+            success: false,
+            message: "Invalid login credentials, validPassword is in false",
+          },
           true
         );
       }
@@ -212,7 +223,7 @@ export class adminRepository {
         user.refUserId,
         `${user_data.login} login successfully`,
         CurrentTime(),
-        user.refUserId,
+        user.refUserId
       ];
 
       await client.query(updateHistoryQuery, history);
@@ -222,18 +233,19 @@ export class adminRepository {
           success: true,
           message: "Login successful",
           userId: user.refUserId,
+          roleId:userTypeId,
           token: generateTokenWithExpire(tokenData, true),
         },
         true
       );
 
-      return encrypt(
-        {
-          success: false,
-          message: "Invalid login credentials",
-        },
-        true
-      );
+      // return encrypt(
+      //   {
+      //     success: false,
+      //     message: "Invalid login credentials",
+      //   },
+      //   true
+      // );
     } catch (error) {
       console.error("Error during login:", error);
       return encrypt(
@@ -486,7 +498,6 @@ export class adminRepository {
             success: true,
             message: "Already exists",
             token: tokens,
-
           },
           true
         );
@@ -509,8 +520,8 @@ export class adminRepository {
           .padStart(4, "0")}`;
       }
       const refUserTypeId = Array.isArray(userData.refUserTypeId)
-      ? `{${userData.refUserTypeId.join(",")}}`
-      : "{}";
+        ? `{${userData.refUserTypeId.join(",")}}`
+        : "{}";
 
       // Insert into users table
       const params = [
@@ -613,7 +624,8 @@ export class adminRepository {
               success: true,
               message: "Employee added successful",
               user: newUser,
-              token: tokens,
+              roleId:refUserTypeId,
+              token: tokens
             },
             true
           );
@@ -625,7 +637,7 @@ export class adminRepository {
         {
           success: false,
           message: "failed Employee added",
-          token: tokens,
+          token: tokens
         },
         true
       );
@@ -637,8 +649,7 @@ export class adminRepository {
           success: false,
           message: "An unexpected error occurred during Employee added",
           error: error instanceof Error ? error.message : String(error),
-          token: tokens,
-
+          token: tokens
         },
         true
       );
@@ -774,10 +785,10 @@ export class adminRepository {
         refMoblile,
         // refUserTypeId,
       } = userData;
-      
+
       const refUserTypeId = Array.isArray(userData.refUserTypeId)
-      ? `{${userData.refUserTypeId.join(",")}}`
-      : "{}";
+        ? `{${userData.refUserTypeId.join(",")}}`
+        : "{}";
       const existingEmployeeRes = await client.query(getEmployeeQuery, [
         refuserId,
       ]);
@@ -861,7 +872,6 @@ export class adminRepository {
           message: "An error occurred while updating the employee",
           error: String(error),
           token: tokens,
-
         },
         true
       );
@@ -1303,7 +1313,7 @@ export class adminRepository {
       const result = await client.query(deleteCarParkingBookingsQuery, [
         carParkingBookingId,
         CurrentTime(),
-        tokendata.id
+        tokendata.id,
       ]);
 
       if (result.rowCount === 0) {
@@ -1346,5 +1356,80 @@ export class adminRepository {
       client.release();
     }
   }
+  public async listUserDataV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
 
+    try {
+      const result = await executeQuery(listUserDataQuery);
+      
+
+      return encrypt(
+        {
+          success: true,
+          message: "list User data deleted successfully",
+          token: tokens,
+          userData: result, // Return deleted record for reference
+         
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in list user data", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred list the user data",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } 
+  }
+  public async getUserDataV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const result = await executeQuery(getUserdataQuery);
+      const tour = await executeQuery(tourResultQuery);
+      const car = await executeQuery(carResultQuery)
+      const customizeTour = await executeQuery(customizeTourResultQuery)
+      const parking = await executeQuery(parkingResultQuery)
+
+      return encrypt(
+        {
+          success: true,
+          message: "get User data deleted successfully",
+          token: tokens,
+          userData: result, // Return deleted record for reference
+          tour:tour,
+          car:car,
+          customizeTour:customizeTour,
+          parking:parking
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in get user data", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred get the user data",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } 
+  }
 }
