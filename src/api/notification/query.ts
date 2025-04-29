@@ -94,10 +94,16 @@ export const staffNotificationCountQuery = `
 SELECT
   COUNT(*) AS "unReadNotifications"
 FROM
-  public."refNotifications"
+  public."refNotifications" rn
 WHERE
-  "isDelete" IS NOT true
-  AND "refReadStatus" != 'Read';
+  $1 = ANY (
+    string_to_array(
+      regexp_replace(rn."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+  AND rn."isDelete" IS NOT true
+  AND rn."refReadStatus" != 'Read'
 `;
 
 export const readNotificationQuery =`

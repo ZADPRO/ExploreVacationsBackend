@@ -174,6 +174,8 @@ export class adminRepository {
       // }
 
       const { userTypeId } = users.rows[0];
+      console.log('userTypeId', userTypeId)
+      console.log('users.rows[0]', users.rows[0])
 
       if (users.rows.length === 0) {
         return encrypt(
@@ -1399,11 +1401,11 @@ export class adminRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-      const result = await executeQuery(getUserdataQuery);
-      const tour = await executeQuery(tourResultQuery);
-      const car = await executeQuery(carResultQuery)
-      const customizeTour = await executeQuery(customizeTourResultQuery)
-      const parking = await executeQuery(parkingResultQuery)
+      const result = await executeQuery(getUserdataQuery,[userData.userId]);
+      const tour = await executeQuery(tourResultQuery,[userData.userId]);
+      const car = await executeQuery(carResultQuery,[userData.userId])
+      const customizeTour = await executeQuery(customizeTourResultQuery,[userData.userId])
+      const parking = await executeQuery(parkingResultQuery,[userData.userId])
 
       return encrypt(
         {

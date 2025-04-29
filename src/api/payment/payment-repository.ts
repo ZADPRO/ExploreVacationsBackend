@@ -10,7 +10,8 @@ import {
 } from "../../helper/token";
 import dayjs from "dayjs";
 import axios from "axios";
-import Payrexx from "../../helper/payrexx";
+import Payrexx from "../../helper/Payrexx";
+// import Payrexx from "../../helper/payrexx";
 export class patmentRepository {
   public async calculationV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };

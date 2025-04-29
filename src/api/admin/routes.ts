@@ -241,7 +241,7 @@ export class adminRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteCarParkingBookings,
             validate: validate.deleteCarParkingBookings,
-            description: "deleteCarParkingBookings",
+            description: "delete CarParkingBookings",
             tags: ["api", "Users"],
             auth: false,
           },

@@ -16,7 +16,7 @@ export class notificationRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addNotifications,
-            validate: validate.addNotifications,
+            // validate: validate.addNotifications,
             description: "add Notifications",
             tags: ["api", "Users"],
             auth: false,

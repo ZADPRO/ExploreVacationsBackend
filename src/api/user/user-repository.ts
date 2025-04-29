@@ -1548,7 +1548,6 @@ export class userRepository {
       );
     }
   }
-
   public async listCarParkingV1(userData: any, tokendata: any): Promise<any> {
     try {
       const {
@@ -2074,14 +2073,14 @@ export class userRepository {
         genPassword,
         genHashedPassword,
         CurrentTime(),
-        token_data.id,
+        token_data.id
       ]);
 
       console.log("token_data.id", token_data.id);
       console.log("updatePassword", updatePassword);
       const tokenData = {
         id: token_data.id,
-        email: emailId,
+        email: emailId
       };
       await client.query("COMMIT");
 
@@ -2516,7 +2515,7 @@ export class userRepository {
         WhoWillHandover,
         HandoverPersonName,
         HandoverPersonPhone,
-        HandoverPersonEmail,
+        HandoverPersonEmail
       } = userData;
 
       // Conditionally handle handover details
@@ -2584,14 +2583,12 @@ export class userRepository {
 
       const { refParkingName, refParkingCustId } = getParkingResult.rows[0];
 
-
       const main = async () => {
         const adminMail = {
           to: "indumathi123indumathi@gmail.com",
           subject: "New Car parking Booking Received",
           html: generateCarParkingBookingEmailContent(Result),
         };
-
         try {
           sendEmail(adminMail);
         } catch (error) {

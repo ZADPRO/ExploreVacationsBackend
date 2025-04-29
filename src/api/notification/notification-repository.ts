@@ -39,7 +39,7 @@ export class notificationRepository {
         refDescription,
         refNotes,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ]);
       console.log("Result", Result);
 
@@ -97,7 +97,7 @@ export class notificationRepository {
         refDescription,
         refNotes,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ]);
       console.log("Result", Result);
       return encrypt(
@@ -229,7 +229,9 @@ export class notificationRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const Result = await executeQuery(staffNotificationCountQuery);
+
+      const Result = await executeQuery(staffNotificationCountQuery, [tokendata.id]);
+      
       console.log("Result", Result);
       return encrypt(
         {

@@ -616,7 +616,8 @@ RETURNING
   *;
   `;
 
-export const getDeletedEmployeeQuery = `SELECT
+export const getDeletedEmployeeQuery = `
+SELECT
   "refCustId",
   "refFName"
 FROM
@@ -716,7 +717,7 @@ FROM
   LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
   LEFT JOIN public."refUserAddress" ua ON CAST(ua."refUserId" AS INTEGER) = u."refuserId"
   WHERE 
-u."refCustId" LIKE 'EV-CUS-%';
+u."refCustId" LIKE 'EV-CUS-%' AND u."isDelete" IS NOT true;
 `;
 
 export const getUserdataQuery = `
@@ -739,17 +740,212 @@ WHERE
 `;
 
 export const tourResultQuery = `
-
+WITH
+  "base" AS (
+    SELECT
+      urt."userTourBookingId",
+      urt."refUserName",
+      urt."refUserMail",
+      urt."refUserMobile",
+      urt."refPickupDate",
+      urt."refAdultCount",
+      urt."refChildrenCount",
+      urt."refInfants",
+      urt."refOtherRequirements",
+      rp."refPackageId",
+      rp."refPackageName",
+      rp."refLocation",
+      rp."refActivity",
+      rp."refDesignationId",
+      rp."refDurationIday",
+      rp."refDurationINight",
+      rp."refGroupSize",
+      rp."refTourCode",
+      rp."refTourPrice",
+      rp."refSeasonalPrice",
+      rp."refCoverImage",
+      rtd."refTravalDataId",
+      rtd."refItinary",
+      rtd."refItinaryMapPath",
+      rtd."refTravalInclude",
+      rtd."refTravalExclude",
+      rtd."refSpecialNotes",
+      rtd."refTravalOverView",
+      rd."refDestinationName",
+      rc."refCategoryName"
+    FROM
+      public."userTourBooking" urt
+      LEFT JOIN public."refPackage" rp ON CAST(rp."refPackageId" AS INTEGER) = urt."refPackageId"
+      LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+      LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
+      LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
+    WHERE
+      rp."isDelete" IS NOT true
+      AND urt."isDelete" IS NOT true
+    AND urt."refuserId" = $1
+  ),
+  locations AS (
+    SELECT
+      rp."refPackageId",
+      ARRAY_AGG(DISTINCT rl."refLocationName") AS "refLocationName"
+    FROM
+      public."refPackage" rp
+      LEFT JOIN public."refLocation" rl ON CAST(rl."refLocationId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(rp."refLocation", '[{}]', '', 'g'),
+          ','
+        )::INTEGER[]
+      )
+    GROUP BY
+      rp."refPackageId"
+  ),
+  "galleries" AS (
+    SELECT
+      "refPackageId",
+      ARRAY_AGG(DISTINCT "refGallery") AS "refGallery"
+    FROM
+      public."refGallery"
+    GROUP BY
+      "refPackageId"
+  ),
+  "activities" AS (
+    SELECT
+      "refPackageId",
+      ARRAY_AGG(DISTINCT ra."refActivitiesName") AS "Activity"
+    FROM
+      public."refPackage" rp
+      LEFT JOIN public."refActivities" ra ON CAST(ra."refActivitiesId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(rp."refActivity", '[{}]', '', 'g'),
+          ','
+        )::INTEGER[]
+      )
+    GROUP BY
+      rp."refPackageId"
+  ),
+  "includes" AS (
+    SELECT
+      "refPackageId",
+      ARRAY_AGG(DISTINCT ti."refTravalInclude") AS "travalInclude"
+    FROM
+      public."refPackage" rp
+      LEFT JOIN public."refTravalInclude" ti ON CAST(ti."refTravalIncludeId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(
+            (
+              SELECT
+                rtd."refTravalInclude"
+              FROM
+                public."refTravalData" rtd
+              WHERE
+                CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+              LIMIT
+                1
+            ),
+            '[{}]',
+            '',
+            'g'
+          ),
+          ','
+        )::INTEGER[]
+      )
+    GROUP BY
+      rp."refPackageId"
+  ),
+  "excludes" AS (
+    SELECT
+      "refPackageId",
+      ARRAY_AGG(DISTINCT te."refTravalExclude") AS "travalExclude"
+    FROM
+      public."refPackage" rp
+      LEFT JOIN public."refTravalExclude" te ON CAST(te."refTravalExcludeId" AS INTEGER) = ANY (
+        string_to_array(
+          regexp_replace(
+            (
+              SELECT
+                rtd."refTravalExclude"
+              FROM
+                public."refTravalData" rtd
+              WHERE
+                CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+              LIMIT
+                1
+            ),
+            '[{}]',
+            '',
+            'g'
+          ),
+          ','
+        )::INTEGER[]
+      )
+    GROUP BY
+      rp."refPackageId"
+  )
+SELECT
+  b.*,
+  l."refLocationName",
+  g."refGallery",
+  a."Activity",
+  i."travalInclude",
+  e."travalExclude"
+FROM
+  "base" b
+  LEFT JOIN locations l ON b."refPackageId" = l."refPackageId"
+  LEFT JOIN galleries g ON b."refPackageId" = g."refPackageId"
+  LEFT JOIN activities a ON b."refPackageId" = a."refPackageId"
+  LEFT JOIN includes i ON b."refPackageId" = i."refPackageId"
+  LEFT JOIN excludes e ON b."refPackageId" = e."refPackageId"
+ORDER BY
+  b."refPackageId",
+  b."userTourBookingId";
 `;
 
 export const carResultQuery = `
-
+SELECT
+  rcb.*
+FROM
+  public."userCarBooking" rcb
+  JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
+  AND rcb."isDelete" IS NOT true
+  AND rcb."refuserId" = $1;
 `;
 
 export const customizeTourResultQuery = `
-
+SELECT
+  ctb.*,
+  rp."refPackageName"
+FROM
+  public."customizeTourBooking" ctb
+  LEFT JOIN public."refPackage" rp ON CAST(rp."refPackageId" AS INTEGER) = ctb."refPackageId"::INTEGER
+WHERE
+  ctb."isDelete" IS NOT true
+  AND ctb."refuserId" = $1;
 `;
 
 export const parkingResultQuery = `
-
+SELECT
+  cp.*,
+  pt.*,
+  pa."refParkingTypeName",
+  cpt."refCarParkingTypeName",
+  array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
+FROM
+  public."userCarParkingBooking" cp
+  LEFT JOIN public."refCarParkingTable" pt ON CAST(pt."refCarParkingId" AS INTEGER) = cp."refCarParkingId"
+  LEFT JOIN public."refParkingType" pa ON CAST(pa."refParkingTypeId" AS INTEGER) = pt."refParkingTypeId"
+  LEFT JOIN public."refCarParkingType" cpt ON CAST(cpt."refCarParkingTypeId" AS INTEGER) = pt."refCarParkingTypeId"
+  LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(pt."ServiceFeatures", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+WHERE
+  cp."isDelete" IS NOT true
+  AND cp."refuserId" = $1
+GROUP BY
+  cp."carParkingBookingId",
+  pt."refCarParkingId",
+  pa."refParkingTypeName",
+  cpt."refCarParkingTypeName"
 `;

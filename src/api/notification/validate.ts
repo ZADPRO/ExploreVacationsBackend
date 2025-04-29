@@ -6,7 +6,7 @@ export default {
       refUserTypeId: Joi.array().items(Joi.string()).required(),
       refSubject: Joi.string().required(),
       refDescription: Joi.string().required(),
-      refNotes: Joi.string().required(),
+      refNotes: Joi.string().required()
     }),
 
     headers: Joi.object({
