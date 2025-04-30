@@ -671,23 +671,6 @@ const customerPrefix = "EV-PAR-";
         );
       }
 
-      const duplicateCheck: any = await client.query(checkduplicateQuery, [
-        ServiceFeatures,
-      ]);
-
-      const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
-
-      if (count > 0) {
-        await client.query("ROLLBACK");
-        return encrypt(
-          {
-            success: false,
-            message: `ServiceFeatures "${ServiceFeatures}" already exists `,
-            token: tokens,
-          },
-          true
-        );
-      }
 
       const resultArray = [];
 
@@ -702,6 +685,27 @@ const customerPrefix = "EV-PAR-";
         ]);
 
         resultArray.push(result);
+      }
+      const duplicateCheck: any = await client.query(checkduplicateQuery, [
+        ServiceFeatures
+      ]);
+      
+      console.log('duplicateCheck', duplicateCheck)
+      // const count = Number(duplicateCheck.count || 0); // safely convert to number
+      const count = Number(duplicateCheck.rows[0]?.count || 0);
+
+      console.log('count', count)
+
+      if (count > 0) {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: `ServiceFeatures "${ServiceFeatures}" already exists `,
+            token: tokens,
+          },
+          true
+        );
       }
 
       const historyDescription = `Added Service Features: ${ServiceFeatures.map(
@@ -744,6 +748,8 @@ const customerPrefix = "EV-PAR-";
       client.release();
     }
   }
+
+  
   public async updateServiceFeaturesV1(
     userData: any,
     tokenData: any

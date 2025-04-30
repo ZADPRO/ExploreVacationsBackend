@@ -71,11 +71,16 @@ import { sendEmail } from "../../helper/mail";
 import { cli } from "winston/lib/winston/config";
 
 export class userRepository {
-  // public async tourBookingV1(userData: any, tokendata: any): Promise<any> {
+ 
+  // public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
+  //   // const refUserId = decodedToken.id;
+  //   const token = { id: tokendata.id };
+  //   console.log("tokendata.id", tokendata.id);
+  //   const tokens = generateTokenWithExpire(token, true);
   //   const client: PoolClient = await getClient();
 
   //   try {
-  //     await client.query("BEGIN"); // Start transaction
+  //     await client.query("BEGIN");
   //     const {
   //       refPackageId,
   //       refUserName,
@@ -88,7 +93,7 @@ export class userRepository {
   //       refOtherRequirements,
   //     } = userData;
 
-  //     // Insert package details and get refPackageId
+  //     console.log(" line --------- 178");
 
   //     const Result = await client.query(addTourBookingQuery, [
   //       refPackageId,
@@ -101,59 +106,116 @@ export class userRepository {
   //       refInfants,
   //       refOtherRequirements,
   //       CurrentTime(),
-  //      tokendata.id
+  //       tokendata.id,
+  //       tokendata.id,
+  //     ]);
+  //     console.log("Result line ----- 191", Result);
+  //     const getPackageName: any = await executeQuery(getPackageNameQuery, [
+  //       refPackageId,
   //     ]);
 
+  //     console.log("getPackageName line ---- 195", getPackageName);
+
+  //     // if (!getPackageName.rows.length) {
+  //     //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
+  //     // }
+  //     const { refPackageName, refTourCustID } = getPackageName[0];
+
   //     const main = async () => {
-  //       const mailOptions = {
+  //       const adminMail = {
   //         to: "indumathi123indumathi@gmail.com",
-  //         subject: "New Tour Booking Received", // Subject of the email
+  //         subject: "New Tour Booking Received",
   //         html: generateTourBookingEmailContent(Result),
   //       };
 
-  //       // Call the sendEmail function
   //       try {
-  //         await sendEmail(mailOptions);
+  //         sendEmail(adminMail);
   //       } catch (error) {
-  //         console.error("Failed to send email:", error);
+  //         console.log("Error in sending the Mail for Admin", error);
   //       }
   //     };
-
   //     main().catch(console.error);
 
-  //     if (refPickupDate === new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0]) {
-  //       const reminderHtml = generateReminderEmailContent({
-  //         refUserName,
-  //         refPackageId,
-  //         refPickupDate,
-  //         refUserMail,
-  //       });
+  //     // 2. User confirmation email with countdown
+  //     const daysLeft = Math.ceil(
+  //       (new Date(refPickupDate).getTime() -
+  //         new Date(CurrentTime()).getTime()) /
+  //         (1000 * 60 * 60 * 24)
+  //     );
 
-  //       await sendEmail({
+  //     const userMailData = {
+  //       daysLeft: daysLeft,
+  //       refPickupDate: refPickupDate,
+  //       refUserName: refUserName,
+  //       refPackageName: refPackageName,
+  //       refTourCustID: refTourCustID,
+  //     };
+
+  //     console.log("userMailData", userMailData);
+  //     const main1 = async () => {
+  //       const adminMail = {
   //         to: refUserMail,
-  //         subject: "⏰ Your tour is tomorrow!",
-  //         html: reminderHtml,
-  //       });
-  //     }
+  //         subject: "✅ Your Tour Has Been Booked!",
+  //         html: userTourBookingMail(userMailData),
+  //       };
 
-  //     await client.query("COMMIT"); // Commit transaction
+  //       try {
+  //         sendEmail(adminMail);
+  //       } catch (error) {
+  //         console.log("Error in sending the Mail for User", error);
+  //       }
+  //     };
+  //     main1().catch(console.error);
+
+  //     // const userMail = {
+  //     //   to: refUserMail,
+  //     //   subject: "✅ Your Tour Has Been Booked!",
+  //     //   html: `
+  //     //     <h2>Hi ${refUserName},</h2>
+  //     //     <p>🎉 Your tour has been successfully booked!</p>
+  //     //     <p>Your tour starts on <strong>${refPickupDate}</strong>.</p>
+  //     //     <p>🧳 Only <strong>${daysLeft}</strong> day(s) to go!</p>
+  //     //     <p>We’ll send you daily reminders so you don’t miss a thing!</p>
+  //     //     <br/>
+  //     //     <p>Thank you,<br>Team Explore Vacations</p>
+  //     //   `,
+  //     // };
+  //     // await sendEmail(userMail);
+  //     // Daily reminder emails logic
+
+  //     //   try {
+  //     //     const reminderMailOptions = {
+  //     //       to: refUserMail,
+  //     //       subject: "📅 Tour Reminder – Explore Vacations",
+  //     //       html: sendTourRemainder(userMailData), // Template function must be implemented
+  //     //     };
+
+  //     //     await sendEmail(reminderMailOptions);
+  //     //     console.log("Tour reminder email sent.");
+  //     //   } catch (error) {
+  //     //     console.error("Failed to send reminder email:", error);
+  //     //   }
+
+  //     await client.query("COMMIT");
 
   //     return encrypt(
   //       {
   //         success: true,
   //         message: "tour booking successfully",
+  //         token: tokens,
   //         Data: Result.rows[0],
   //       },
   //       true
   //     );
   //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     await client.query("ROLLBACK");
   //     console.error("Error tour booking:", error);
 
   //     return encrypt(
   //       {
   //         success: false,
   //         message: "An error occurred while tour booking",
+  //         token: tokens,
   //         error: String(error),
   //       },
   //       true
@@ -162,8 +224,7 @@ export class userRepository {
   //     client.release();
   //   }
   // }
-  public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
-    // const refUserId = decodedToken.id;
+ public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
     const token = { id: tokendata.id };
     console.log("tokendata.id", tokendata.id);
     const tokens = generateTokenWithExpire(token, true);
@@ -226,66 +287,6 @@ export class userRepository {
       };
       main().catch(console.error);
 
-      // 2. User confirmation email with countdown
-      const daysLeft = Math.ceil(
-        (new Date(refPickupDate).getTime() -
-          new Date(CurrentTime()).getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-
-      const userMailData = {
-        daysLeft: daysLeft,
-        refPickupDate: refPickupDate,
-        refUserName: refUserName,
-        refPackageName: refPackageName,
-        refTourCustID: refTourCustID,
-      };
-
-      console.log("userMailData", userMailData);
-      const main1 = async () => {
-        const adminMail = {
-          to: refUserMail,
-          subject: "✅ Your Tour Has Been Booked!",
-          html: userTourBookingMail(userMailData),
-        };
-
-        try {
-          sendEmail(adminMail);
-        } catch (error) {
-          console.log("Error in sending the Mail for User", error);
-        }
-      };
-      main1().catch(console.error);
-
-      // const userMail = {
-      //   to: refUserMail,
-      //   subject: "✅ Your Tour Has Been Booked!",
-      //   html: `
-      //     <h2>Hi ${refUserName},</h2>
-      //     <p>🎉 Your tour has been successfully booked!</p>
-      //     <p>Your tour starts on <strong>${refPickupDate}</strong>.</p>
-      //     <p>🧳 Only <strong>${daysLeft}</strong> day(s) to go!</p>
-      //     <p>We’ll send you daily reminders so you don’t miss a thing!</p>
-      //     <br/>
-      //     <p>Thank you,<br>Team Explore Vacations</p>
-      //   `,
-      // };
-      // await sendEmail(userMail);
-      // Daily reminder emails logic
-
-      //   try {
-      //     const reminderMailOptions = {
-      //       to: refUserMail,
-      //       subject: "📅 Tour Reminder – Explore Vacations",
-      //       html: sendTourRemainder(userMailData), // Template function must be implemented
-      //     };
-
-      //     await sendEmail(reminderMailOptions);
-      //     console.log("Tour reminder email sent.");
-      //   } catch (error) {
-      //     console.error("Failed to send reminder email:", error);
-      //   }
-
       await client.query("COMMIT");
 
       return encrypt(
@@ -306,7 +307,7 @@ export class userRepository {
           success: false,
           message: "An error occurred while tour booking",
           token: tokens,
-          error: String(error),
+          error: String(error)
         },
         true
       );
@@ -314,11 +315,17 @@ export class userRepository {
       client.release();
     }
   }
-  // public async customizeBookingV1(userData: any, tokendata: any): Promise<any> {
+
+  // public async customizeBookingV1(
+  //   userData?: any,
+  //   tokendata?: any
+  // ): Promise<any> {
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
   //   const client: PoolClient = await getClient();
 
   //   try {
-  //     await client.query("BEGIN"); // Start transaction
+  //     await client.query("BEGIN");
 
   //     const {
   //       refPackageId,
@@ -334,9 +341,9 @@ export class userRepository {
   //       refVaccinationType,
   //       refOtherRequirements,
   //       refVaccinationCertificate,
+  //       refPassPort,
   //     } = userData;
 
-  //     // Insert booking details with PDF path
   //     const Result = await client.query(addcustomizeBookingQuery, [
   //       refUserName,
   //       refUserMail,
@@ -349,59 +356,199 @@ export class userRepository {
   //       refAdultCount,
   //       refChildrenCount,
   //       refVaccinationType,
-  //       refVaccinationCertificate, // Store the file path
+  //       refVaccinationCertificate,
   //       refOtherRequirements,
+  //       refPassPort,
   //       CurrentTime(),
-  //      tokendata.id
+  //       tokendata.id,
+  //       tokendata.id,
   //     ]);
 
-  //     console.log('Result', Result.rows)
+  //     const getPackageName: any = await executeQuery(getPackageNameQuery, [
+  //       refPackageId,
+  //     ]);
+
+  //     console.log("getPackageName", getPackageName);
+
+  //     // if (!getPackageName.rows.length) {
+  //     //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
+  //     // }
+  //     const { refPackageName, refTourCustID } = getPackageName[0];
+
+  //     const bookingData = Result.rows[0];
+
+  //     //way 1
+
+  //     // const sendAdminMail = async () => {
+  //     //   const mailOptions = {
+  //     //     to: "indumathi123indumathi@gmail.com",
+  //     //     subject: "New Customize Tour Booking Received",
+  //     //     html: generateCustomizeTourBookingEmailContent(bookingData),
+  //     //   };
+
+  //     //   try {
+  //     //     await sendEmail(mailOptions);
+  //     //   } catch (error) {
+  //     //     console.error("Failed to send admin email:", error);
+  //     //   }
+  //     // };
+
+  //     // const sendUserConfirmationMail = async () => {
+  //     //   const daysLeft = Math.ceil(
+  //     //     (new Date(refArrivalDate).getTime() - new Date().getTime()) /
+  //     //       (1000 * 60 * 60 * 24)
+  //     //   );
+
+  //     //   // way 1
+  //     //   const mailOptions = {
+  //     //     to: refUserMail,
+  //     //     subject: "🌍 Customize Tour Booking Confirmed",
+  //     //     html: `
+  //     //    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  //     //   <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+  //     //     <h1 style="margin: 0;">Explore Vacations</h1>
+  //     //     <p style="margin: 0;">Your journey starts here ✈️</p>
+  //     //   </div>
+  //     //   <div style="padding: 30px; background-color: #f9f9f9;">
+  //     //     <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
+  //     //     <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
+
+  //     //     <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+  //     //       <tr>
+  //     //         <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
+  //     //         <td style="padding: 8px 0;">${refPackageName}</td>
+  //     //       </tr>
+  //     //       <tr>
+  //     //         <td style="padding: 8px 0;"><strong>🆔 Tour ID:</strong></td>
+  //     //         <td style="padding: 8px 0;">${refTourCustID}</td>
+  //     //       </tr>
+  //     //       <tr>
+  //     //         <td style="padding: 8px 0;"><strong>📅 Arrival Date:</strong></td>
+  //     //         <td style="padding: 8px 0;">${refArrivalDate}</td>
+  //     //       </tr>
+  //     //       <tr>
+  //     //         <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+  //     //         <td style="padding: 8px 0;">${daysLeft} day(s)</td>
+  //     //       </tr>
+  //     //     </table>
+
+  //     //     <p style="margin-top: 25px; font-size: 16px; color: #333;">
+  //     //       Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
+  //     //     </p>
+
+  //     //     <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+  //     //   </div>
+  //     //   <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+  //     //     &copy; ${new Date().getFullYear()} Explore Vacations. All rights reserved.
+  //     //   </div>
+  //     // </div>
+  //     //     `,
+  //     //   };
+
+  //     //   try {
+  //     //     await sendEmail(mailOptions);
+  //     //   } catch (error) {
+  //     //     console.error("Failed to send confirmation email to user:", error);
+  //     //   }
+  //     // };
+
+  //     // await Promise.all([sendAdminMail(), sendUserConfirmationMail()]);
+
+  //     // way 2
+
+  //     const daysLeft = Math.ceil(
+  //       (new Date(refArrivalDate).getTime() -
+  //         new Date(CurrentTime()).getTime()) /
+  //         (1000 * 60 * 60 * 24)
+  //     );
   //     const main = async () => {
-  //       const mailOptions = {
+  //       const adminMail = {
   //         to: "indumathi123indumathi@gmail.com",
-  //         subject: "New customize Tour Booking Received", // Subject of the email
-  //         html: generateCustomizeTourBookingEmailContent(Result.rows[0]),
+  //         subject: "New Customize Tour Booking Received",
+  //         html: generateCustomizeTourBookingEmailContent(Result),
   //       };
 
-  //       // Call the sendEmail function
   //       try {
-  //         await sendEmail(mailOptions);
+  //         sendEmail(adminMail);
   //       } catch (error) {
-  //         console.error("Failed to send email:", error);
+  //         console.log("Error in sending the Mail for Admin", error);
   //       }
   //     };
-
   //     main().catch(console.error);
 
-  //     // const history = [
-  //     //   28,
-  //     //   tokendata.id,
-  //     //   "add customize tour booking",
-  //     //   CurrentTime(),
-  //     //   "user",
-  //     // ];
+  //     const main1 = async () => {
+  //       const adminMail = {
+  //         to: refUserMail,
+  //         subject: "✅ Your Tour Has Been Booked!",
+  //         html: `
+  //                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  //           <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+  //             <h1 style="margin: 0;">Explore Vacations</h1>
+  //             <p style="margin: 0;">Your journey starts here ✈️</p>
+  //           </div>
+  //           <div style="padding: 30px; background-color: #f9f9f9;">
+  //             <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
+  //             <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
+              
+  //             <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+  //               <tr>
+  //                 <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
+  //                 <td style="padding: 8px 0;">${refPackageName}</td>
+  //               </tr>
+  //               <tr>
+  //                 <td style="padding: 8px 0;"><strong>🆔 Tour ID:</strong></td>
+  //                 <td style="padding: 8px 0;">${refTourCustID}</td>
+  //               </tr>
+  //               <tr>
+  //                 <td style="padding: 8px 0;"><strong>📅 Arrival Date:</strong></td>
+  //                 <td style="padding: 8px 0;">${refArrivalDate}</td>
+  //               </tr>
+  //               <tr>
+  //                 <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+  //                 <td style="padding: 8px 0;">${daysLeft} day(s)</td>
+  //               </tr>
+  //             </table>
+        
+  //             <p style="margin-top: 25px; font-size: 16px; color: #333;">
+  //               Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
+  //             </p>
+              
+  //             <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+  //           </div>
+  //           <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+  //             &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
+  //           </div>
+  //         </div> `,
+  //       };
+  //       try {
+  //         sendEmail(adminMail);
+  //       } catch (error) {
+  //         console.log("Error in sending the Mail for User", error);
+  //       }
+  //     };
+  //     main1().catch(console.error);
 
-  //     // await client.query(updateHistoryQuery, history);
-
-  //     await client.query("COMMIT"); // Commit transaction
+  //     await client.query("COMMIT");
 
   //     return encrypt(
   //       {
   //         success: true,
   //         message: "Customize tour booking added successfully",
-  //         Data: Result.rows[0],
-  //         pdfPath: refVaccinationCertificate, // Returning stored PDF path for confirmation
+  //         token: tokens,
+  //         Data: bookingData,
+  //         pdfPath: refVaccinationCertificate,
   //       },
   //       true
   //     );
   //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     await client.query("ROLLBACK");
   //     console.error("Error adding customize tour booking:", error);
 
   //     return encrypt(
   //       {
   //         success: false,
   //         message: "An error occurred while adding the customize tour booking",
+  //         token: tokens,
   //         error: String(error),
   //       },
   //       true
@@ -410,7 +557,6 @@ export class userRepository {
   //     client.release();
   //   }
   // }
-
   public async customizeBookingV1(
     userData?: any,
     tokendata?: any
@@ -571,58 +717,7 @@ export class userRepository {
       };
       main().catch(console.error);
 
-      const main1 = async () => {
-        const adminMail = {
-          to: refUserMail,
-          subject: "✅ Your Tour Has Been Booked!",
-          html: `
-                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
-              <h1 style="margin: 0;">Explore Vacations</h1>
-              <p style="margin: 0;">Your journey starts here ✈️</p>
-            </div>
-            <div style="padding: 30px; background-color: #f9f9f9;">
-              <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
-              <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
-              
-              <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
-                <tr>
-                  <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
-                  <td style="padding: 8px 0;">${refPackageName}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 0;"><strong>🆔 Tour ID:</strong></td>
-                  <td style="padding: 8px 0;">${refTourCustID}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 0;"><strong>📅 Arrival Date:</strong></td>
-                  <td style="padding: 8px 0;">${refArrivalDate}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
-                  <td style="padding: 8px 0;">${daysLeft} day(s)</td>
-                </tr>
-              </table>
-        
-              <p style="margin-top: 25px; font-size: 16px; color: #333;">
-                Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
-              </p>
-              
-              <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
-            </div>
-            <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
-              &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
-            </div>
-          </div> `,
-        };
-        try {
-          sendEmail(adminMail);
-        } catch (error) {
-          console.log("Error in sending the Mail for User", error);
-        }
-      };
-      main1().catch(console.error);
-
+ 
       await client.query("COMMIT");
 
       return encrypt(
@@ -764,12 +859,14 @@ export class userRepository {
     }
   }
 
-  // public async userCarBookingV1(userData: any, tokendata: any): Promise<any> {
+
+  // public async userCarBookingV1(userData?: any, tokendata?: any): Promise<any> {
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
   //   const client: PoolClient = await getClient();
 
   //   try {
   //     await client.query("BEGIN"); // Start transaction
-
   //     const {
   //       refCarsId,
   //       refUserName,
@@ -782,12 +879,16 @@ export class userRepository {
   //       refChildrenCount,
   //       refInfants,
   //       refOtherRequirements,
+  //       refDriverName,
+  //       refDriverAge,
+  //       refDriverMail,
+  //       refDriverMobile,
   //     } = userData;
 
   //     const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
 
-  //     // Insert package details and get refPackageId
-  //     const Result = await client.query(addCarBookingQuery, [
+  //     // Insert booking data
+  //     const Result: any = await client.query(addCarBookingQuery, [
   //       refCarsId,
   //       refUserName,
   //       refUserMail,
@@ -801,57 +902,262 @@ export class userRepository {
   //       refFormDetails,
   //       refOtherRequirements,
   //       CurrentTime(),
-  //      tokendata.id
+  //       tokendata.id,
+  //       tokendata.id,
   //     ]);
 
-  //     const main = async () => {
-  //       const mailOptions = {
-  //         to: "indumathi123indumathi@gmail.com",
-  //         subject: "New car Booking Received", // Subject of the email
-  //         html: generateCarBookingEmailContent(Result.rows[0]),
-  //       };
+  //     console.log("Result", Result.rows);
+  //     //way 1
 
-  //       // Call the sendEmail function
-  //       try {
-  //         await sendEmail(mailOptions);
-  //       } catch (error) {
-  //         console.error("Failed to send email:", error);
-  //       }
+  //     const daysLeft = Math.ceil(
+  //       (new Date(refPickupDate).getTime() -
+  //         new Date(CurrentTime()).getTime()) /
+  //         (1000 * 60 * 60 * 24)
+  //     );
+  //     const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
+
+  //     console.log("getCarName", getCarName);
+
+  //     const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
+  //       getCarName[0];
+
+  //     const userMailData = {
+  //       daysLeft: daysLeft,
+  //       refPickupDate: refPickupDate,
+  //       refUserName: refUserName,
+  //       refCarTypeName: refCarTypeName,
+  //       refVehicleTypeName: refVehicleTypeName,
+  //       refCarCustId: refCarCustId,
+  //       refCarPrice: refCarPrice,
   //     };
 
-  //     main().catch(console.error);
+  //     const adminMail = {
+  //       to: "indumathi123indumathi@gmail.com",
+  //       subject: "New car Booking Received",
+  //       html: generateCarBookingEmailContent(Result),
+  //     };
 
-  //     // const history = [29, tokendata.id, "car booking", CurrentTime(), "user"];
+  //     const transporter = nodemailer.createTransport({
+  //       service: "gmail",
+  //       auth: {
+  //         user: process.env.EMAILID,
+  //         pass: process.env.PASSWORD,
+  //       },
+  //     });
 
-  //     // const updateHistory = await client.query(updateHistoryQuery, history);
+  //     const mailoption = {
+  //       from: process.env.EMAILID,
+  //       to: "indumathi123indumathi@gmail.com",
+  //       subject: "New car Booking Received",
+  //       html: generateCarBookingEmailContent(Result.rows),
+  //     };
+
+  //     transporter.sendMail(mailoption);
+
+  //     // 2. User confirmation email with countdown
+
+  //     const adminmailoption = {
+  //       from: process.env.EMAILID,
+  //       to: refUserMail,
+  //       subject: "🚗 Car Booking Confirmed",
+  //       html: `
+  //              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  //     <div style="background-color:rgba(0, 123, 255, 0.66); padding: 20px; color: white; text-align: center;">
+  //     <h1 style="margin: 0;">Explore Vacations</h1>
+  //     <p style="margin: 0;">Ride into comfort 🚗</p>
+  //   </div>
+  //   <div style="padding: 30px; background-color: #f9f9f9;">
+  //     <h2 style="color: #007BFF;">Hello ${userMailData.refUserName} 👋</h2>
+  //     <p style="font-size: 16px; color: #333;">Your car booking has been <strong>successfully received</strong>.</p>
+
+  //     <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+  //       <tr>
+  //         <td style="padding: 8px 0;"><strong>🆔 Booking ID:</strong></td>
+  //         <td style="padding: 8px 0;">${userMailData.refCarCustId}</td>
+  //       </tr>
+  //       <tr>
+  //         <td style="padding: 8px 0;"><strong>🚘 Vehicle Type:</strong></td>
+  //         <td style="padding: 8px 0;">${userMailData.refVehicleTypeName}</td>
+  //       </tr>
+  //       <tr>
+  //         <td style="padding: 8px 0;"><strong>🏷️ Car Category:</strong></td>
+  //         <td style="padding: 8px 0;">${userMailData.refCarTypeName}</td>
+  //       </tr>
+  //       <tr>
+  //         <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
+  //         <td style="padding: 8px 0;">${userMailData.refPickupDate}</td>
+  //       </tr>
+  //       <tr>
+  //         <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+  //         <td style="padding: 8px 0;">${userMailData.daysLeft} day(s)</td>
+  //       </tr>
+  //       <tr>
+  //         <td style="padding: 8px 0;"><strong>💰 Price:</strong></td>
+  //         <td style="padding: 8px 0;">₹${userMailData.refCarPrice}</td>
+  //       </tr>
+  //     </table>
+
+  //     <p style="margin-top: 25px; font-size: 16px; color: #333;">
+  //       Our team will contact you soon to finalize your ride details.
+  //     </p>
+      
+  //     <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+  //   </div>
+  //   <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+  //     &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
+  //   </div>
+  // </div>
+  //            `,
+  //     };
+
+  //     transporter.sendMail(adminmailoption);
+
+  //     // //way 2
+
+  //     // const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
+
+  //     // console.log("getCarName", getCarName);
+
+  //     // const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
+  //     //   getCarName[0];
+
+  //     // const main = async () => {
+  //     //   const adminMail = {
+  //     //     to: "indumathi123indumathi@gmail.com",
+  //     //     // to: "keerthana2005keethukeethu@gmail.com",
+  //     //     subject: "New car Booking Received",
+  //     //     html: generateCarBookingEmailContent(Result),
+  //     //   };
+  //     //   try {
+  //     //     await sendEmail(adminMail);
+  //     //   } catch (error) {
+  //     //     console.log("Error in sending the Mail for Admin", error);
+  //     //   }
+  //     // };
+  //     // main().catch(console.error);
+
+  //     // // 2. User confirmation email with countdown
+
+  //     // // const daysLeft = Math.ceil(
+  //     // //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
+  //     // //     (1000 * 60 * 60 * 24)
+  //     // // );
+
+  //     // const daysLeft = Math.ceil(
+  //     //   (new Date(refPickupDate).getTime() - new Date(CurrentTime()).getTime()) /
+  //     //     (1000 * 60 * 60 * 24)
+  //     // );
+
+  //     // const userMailData = {
+  //     //   daysLeft: daysLeft,
+  //     //   refPickupDate: refPickupDate,
+  //     //   refUserName: refUserName,
+  //     //   refCarTypeName: refCarTypeName,
+  //     //   refVehicleTypeName: refVehicleTypeName,
+  //     //   refCarCustId: refCarCustId,
+  //     //   refCarPrice: refCarPrice,
+  //     // };
+
+  //     // console.log("userMailData", userMailData);
+  //     // const main1 = async () => {
+  //     //   const adminMail = {
+  //     //     to: refUserMail,
+  //     //     subject: "✅ Your car Has Been Booked!",
+  //     //     // html: userCarEmailContent(userMailData),
+  //     //     html:` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  //     // <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+  //     //   <h1 style="margin: 0;">Explore Vacations</h1>
+  //     //   <p style="margin: 0;">Ride into comfort 🚗</p>
+  //     // </div>
+  //     // <div style="padding: 30px; background-color: #f9f9f9;">
+  //     //   <h2 style="color: #007BFF;">Hello ${userMailData.refUserName} 👋</h2>
+  //     //   <p style="font-size: 16px; color: #333;">Your car booking has been <strong>successfully received</strong>.</p>
+
+  //     //   <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
+  //     //     <tr>
+  //     //   <td style="padding: 8px 0;"><strong>🆔 Booking ID:</strong></td>
+  //     //   <td style="padding: 8px 0;">${userMailData.refCarCustId}</td>
+  //     // </tr>
+  //     // <tr>
+  //     //   <td style="padding: 8px 0;"><strong>🚘 Vehicle Type:</strong></td>
+  //     //   <td style="padding: 8px 0;">${userMailData.refVehicleTypeName}</td>
+  //     // </tr>
+  //     // <tr>
+  //     //   <td style="padding: 8px 0;"><strong>🏷️ Car Category:</strong></td>
+  //     //   <td style="padding: 8px 0;">${userMailData.refCarTypeName}</td>
+  //     // </tr>
+  //     // <tr>
+  //     //   <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
+  //     //   <td style="padding: 8px 0;">${userMailData.refPickupDate}</td>
+  //     // </tr>
+  //     // <tr>
+  //     //   <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
+  //     //   <td style="padding: 8px 0;">${userMailData.daysLeft} day(s)</td>
+  //     // </tr>
+  //     // <tr>
+  //     //   <td style="padding: 8px 0;"><strong>💰 Price:</strong></td>
+  //     //   <td style="padding: 8px 0;">₹${userMailData.refCarPrice}</td>
+  //     //       </tr>
+  //     //     </table>
+
+  //     //     <p style="margin-top: 25px; font-size: 16px; color: #333;">
+  //     //       Our team will contact you soon to finalize your ride details.
+  //     //     </p>
+
+  //     //     <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+  //     //   </div>
+  //     //   <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+  //     //     &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
+  //     //   </div>
+  //     // </div>`
+  //     //     };
+
+  //     //   try {
+  //     //     await sendEmail(adminMail);
+  //     //   } catch (error) {
+  //     //     console.log("Error in sending the Mail for User", error);
+  //     //   }
+  //     // };
+  //     // main1().catch(console.error);
+
+  //     const drivarDetails = await client.query(drivarDetailsQuery, [
+  //       refDriverName,
+  //       refDriverAge,
+  //       refDriverMail,
+  //       refDriverMobile,
+  //       CurrentTime(),
+  //       tokendata.id,
+  //     ]);
 
   //     await client.query("COMMIT"); // Commit transaction
 
   //     return encrypt(
   //       {
   //         success: true,
-  //         message: "user car booking  added successfully",
+  //         message: "User car booking added successfully",
+  //         token: tokens,
   //         Data: Result.rows[0],
+  //         drivarDetails: drivarDetails,
   //       },
-  //       false
+  //       true
   //     );
   //   } catch (error: unknown) {
-  //     await client.query("ROLLBACK"); // Rollback transaction in case of failure
+  //     await client.query("ROLLBACK"); // Rollback transaction
   //     console.error("Error adding user car booking:", error);
 
   //     return encrypt(
   //       {
   //         success: false,
   //         message: "An error occurred while adding the user car booking",
+  //         token: tokens,
   //         error: String(error),
   //       },
-  //       false
+  //       true
   //     );
   //   } finally {
   //     client.release();
   //   }
   // }
-
   public async userCarBookingV1(userData?: any, tokendata?: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -945,173 +1251,7 @@ export class userRepository {
       };
 
       transporter.sendMail(mailoption);
-
-      // 2. User confirmation email with countdown
-
-      const adminmailoption = {
-        from: process.env.EMAILID,
-        to: refUserMail,
-        subject: "🚗 Car Booking Confirmed",
-        html: `
-               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-      <div style="background-color:rgba(0, 123, 255, 0.66); padding: 20px; color: white; text-align: center;">
-      <h1 style="margin: 0;">Explore Vacations</h1>
-      <p style="margin: 0;">Ride into comfort 🚗</p>
-    </div>
-    <div style="padding: 30px; background-color: #f9f9f9;">
-      <h2 style="color: #007BFF;">Hello ${userMailData.refUserName} 👋</h2>
-      <p style="font-size: 16px; color: #333;">Your car booking has been <strong>successfully received</strong>.</p>
-
-      <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
-        <tr>
-          <td style="padding: 8px 0;"><strong>🆔 Booking ID:</strong></td>
-          <td style="padding: 8px 0;">${userMailData.refCarCustId}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>🚘 Vehicle Type:</strong></td>
-          <td style="padding: 8px 0;">${userMailData.refVehicleTypeName}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>🏷️ Car Category:</strong></td>
-          <td style="padding: 8px 0;">${userMailData.refCarTypeName}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
-          <td style="padding: 8px 0;">${userMailData.refPickupDate}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
-          <td style="padding: 8px 0;">${userMailData.daysLeft} day(s)</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>💰 Price:</strong></td>
-          <td style="padding: 8px 0;">₹${userMailData.refCarPrice}</td>
-        </tr>
-      </table>
-
-      <p style="margin-top: 25px; font-size: 16px; color: #333;">
-        Our team will contact you soon to finalize your ride details.
-      </p>
       
-      <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
-    </div>
-    <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
-      &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
-    </div>
-  </div>
-             `,
-      };
-
-      transporter.sendMail(adminmailoption);
-
-      // //way 2
-
-      // const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
-
-      // console.log("getCarName", getCarName);
-
-      // const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
-      //   getCarName[0];
-
-      // const main = async () => {
-      //   const adminMail = {
-      //     to: "indumathi123indumathi@gmail.com",
-      //     // to: "keerthana2005keethukeethu@gmail.com",
-      //     subject: "New car Booking Received",
-      //     html: generateCarBookingEmailContent(Result),
-      //   };
-      //   try {
-      //     await sendEmail(adminMail);
-      //   } catch (error) {
-      //     console.log("Error in sending the Mail for Admin", error);
-      //   }
-      // };
-      // main().catch(console.error);
-
-      // // 2. User confirmation email with countdown
-
-      // // const daysLeft = Math.ceil(
-      // //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
-      // //     (1000 * 60 * 60 * 24)
-      // // );
-
-      // const daysLeft = Math.ceil(
-      //   (new Date(refPickupDate).getTime() - new Date(CurrentTime()).getTime()) /
-      //     (1000 * 60 * 60 * 24)
-      // );
-
-      // const userMailData = {
-      //   daysLeft: daysLeft,
-      //   refPickupDate: refPickupDate,
-      //   refUserName: refUserName,
-      //   refCarTypeName: refCarTypeName,
-      //   refVehicleTypeName: refVehicleTypeName,
-      //   refCarCustId: refCarCustId,
-      //   refCarPrice: refCarPrice,
-      // };
-
-      // console.log("userMailData", userMailData);
-      // const main1 = async () => {
-      //   const adminMail = {
-      //     to: refUserMail,
-      //     subject: "✅ Your car Has Been Booked!",
-      //     // html: userCarEmailContent(userMailData),
-      //     html:` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-      // <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
-      //   <h1 style="margin: 0;">Explore Vacations</h1>
-      //   <p style="margin: 0;">Ride into comfort 🚗</p>
-      // </div>
-      // <div style="padding: 30px; background-color: #f9f9f9;">
-      //   <h2 style="color: #007BFF;">Hello ${userMailData.refUserName} 👋</h2>
-      //   <p style="font-size: 16px; color: #333;">Your car booking has been <strong>successfully received</strong>.</p>
-
-      //   <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
-      //     <tr>
-      //   <td style="padding: 8px 0;"><strong>🆔 Booking ID:</strong></td>
-      //   <td style="padding: 8px 0;">${userMailData.refCarCustId}</td>
-      // </tr>
-      // <tr>
-      //   <td style="padding: 8px 0;"><strong>🚘 Vehicle Type:</strong></td>
-      //   <td style="padding: 8px 0;">${userMailData.refVehicleTypeName}</td>
-      // </tr>
-      // <tr>
-      //   <td style="padding: 8px 0;"><strong>🏷️ Car Category:</strong></td>
-      //   <td style="padding: 8px 0;">${userMailData.refCarTypeName}</td>
-      // </tr>
-      // <tr>
-      //   <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
-      //   <td style="padding: 8px 0;">${userMailData.refPickupDate}</td>
-      // </tr>
-      // <tr>
-      //   <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
-      //   <td style="padding: 8px 0;">${userMailData.daysLeft} day(s)</td>
-      // </tr>
-      // <tr>
-      //   <td style="padding: 8px 0;"><strong>💰 Price:</strong></td>
-      //   <td style="padding: 8px 0;">₹${userMailData.refCarPrice}</td>
-      //       </tr>
-      //     </table>
-
-      //     <p style="margin-top: 25px; font-size: 16px; color: #333;">
-      //       Our team will contact you soon to finalize your ride details.
-      //     </p>
-
-      //     <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
-      //   </div>
-      //   <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
-      //     &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
-      //   </div>
-      // </div>`
-      //     };
-
-      //   try {
-      //     await sendEmail(adminMail);
-      //   } catch (error) {
-      //     console.log("Error in sending the Mail for User", error);
-      //   }
-      // };
-      // main1().catch(console.error);
-
       const drivarDetails = await client.query(drivarDetailsQuery, [
         refDriverName,
         refDriverAge,
@@ -1150,7 +1290,6 @@ export class userRepository {
       client.release();
     }
   }
-
   public async listTourV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refPackageId } = userData;
@@ -1278,159 +1417,7 @@ export class userRepository {
       );
     }
   }
-  // public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
 
-  //   try {
-  //     const result1 = await executeQuery(listallTourQuery);
-
-  //     //  //way 1
-  //     //     for (const image of result1) {
-  //     //       for (const key of [
-  //     //         "refGallery",
-  //     //         "refItinaryMapPath",
-  //     //         "refCoverImage",
-  //     //       ]) {
-  //     //         console.log("********************", key + "(()()()()(", image[key]);
-  //     //         if (image[key]) {
-  //     //           try {
-  //     //             console.log("key line 219", key);
-  //     //             const fileBuffer = await viewFile(image[key]);
-  //     //             image[key] = {
-  //     //               filename: path.basename(image[key]),
-  //     //               content: fileBuffer.toString("base64"),
-  //     //               contentType: "image/jpeg", // Adjust if needed based on the image type
-  //     //             };
-  //     //           } catch (error) {
-  //     //             console.error(`Error reading ${key} file:`, error);
-  //     //             image[key] = null; // Handle missing/unreadable files
-  //     //           }
-  //     //         }
-  //     //       }
-
-  //     //way 2
-
-  //     for (const image of result1) {
-  //       for (const key of [
-  //         "refGallery",
-  //         "refItinaryMapPath",
-  //         "refCoverImage",
-  //       ]) {
-  //         const value = image[key];
-
-  //         if (value) {
-  //           try {
-  //             if (key === "refGallery") {
-  //               // Handle multiple image paths (as comma-separated string or array)
-  //               const paths = Array.isArray(value)
-  //                 ? value
-  //                 : value.split(",").map((p: string) => p.trim());
-
-  //               image[key] = await Promise.all(
-  //                 paths.map(async (imgPath: string) => {
-  //                   try {
-  //                     const fileBuffer = await viewFile(imgPath);
-  //                     return {
-  //                       filename: path.basename(imgPath),
-  //                       content: fileBuffer.toString("base64"),
-  //                       contentType: "image/jpeg", // Update as needed
-  //                     };
-  //                   } catch (err) {
-  //                     console.error(
-  //                       `Error reading image from ${imgPath}:`,
-  //                       err
-  //                     );
-  //                     return null;
-  //                   }
-  //                 })
-  //               );
-  //             } else {
-  //               // Handle single image path
-  //               const fileBuffer = await viewFile(value);
-  //               image[key] = {
-  //                 filename: path.basename(value),
-  //                 content: fileBuffer.toString("base64"),
-  //                 contentType: "image/jpeg", // Update as needed
-  //               };
-  //             }
-  //           } catch (error) {
-  //             console.error(`Error processing ${key}:`, error);
-  //             image[key] = null;
-  //           }
-  //         }
-  //       }
-  //     }
-
-  //     // way 3
-
-  //     // for (const image of result1) {
-  //     //   //  Handle refGallery (Multiple Images)
-  //     //   if (image.refGallery) {
-  //     //     try {
-  //     //       const paths = Array.isArray(image.refGallery)
-  //     //         ? image.refGallery
-  //     //         : image.refGallery.split(",").map((p: string) => p.trim());
-
-  //     //       image.refGallery = await Promise.all(
-  //     //         paths.map(async (imgPath: string) => {
-  //     //           try {
-  //     //             const fileBuffer = await viewFile(imgPath);
-  //     //             return {
-  //     //               filename: path.basename(imgPath),
-  //     //               content: fileBuffer.toString("base64"),
-  //     //               contentType: "image/jpeg", // Adjust based on file type
-  //     //             };
-  //     //           } catch (err) {
-  //     //             console.error(`Error reading image from ${imgPath}:`, err);
-  //     //             return null;
-  //     //           }
-  //     //         })
-  //     //       ).then((imgs) => imgs.filter(Boolean)); // Remove nulls if any
-  //     //     } catch (error) {
-  //     //       console.error("Error processing refGallery:", error);
-  //     //       image.refGallery = [];
-  //     //     }
-  //     //   }
-
-  //     // ✅ Handle Single Image Fields
-  //     //   for (const key of ["refItinaryMapPath", "refCoverImage"]) {
-  //     //     const value = image[key];
-  //     //     if (value) {
-  //     //       try {
-  //     //         const fileBuffer = await viewFile(value);
-  //     //         image[key] = {
-  //     //           filename: path.basename(value),
-  //     //           content: fileBuffer.toString("base64"),
-  //     //           contentType: "image/jpeg", // Adjust as needed
-  //     //         };
-  //     //       } catch (error) {
-  //     //         console.error(`Error reading ${key} file:`, error);
-  //     //         image[key] = null;
-  //     //       }
-  //     //     }
-  //     //   }
-  //     // }
-
-  //     console.log(result1);
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "listed Tour successfully",
-  //         tourDetails: result1,
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An unknown error occurred during listed  Tour ",
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   }
-  // }
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
       const result1 = await executeQuery(listallTourQuery);
@@ -1919,7 +1906,7 @@ export class userRepository {
         refLName,
         refDOB,
         refUserEmail,
-        refMoblile,
+        refMoblile
       } = userData;
       console.log("userData", userData);
 
@@ -1967,7 +1954,7 @@ export class userRepository {
         refLName,
         refDOB,
         refMoblile,
-        // userData.refUserTypeId,
+        `{3}`,
         CurrentTime(),
         3,
       ];
@@ -2493,6 +2480,174 @@ export class userRepository {
       client.release();
     }
   }
+  // public async carParkingBookingV1(
+  //   userData?: any,
+  //   tokendata?: any
+  // ): Promise<any> {
+  //   const token = { id: tokendata.id }; // Extract token ID
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   const client: PoolClient = await getClient();
+  //   try {
+  //     await client.query("BEGIN");
+  //     const {
+  //       travelStartDate,
+  //       travelEndDate,
+  //       refCarParkingId,
+  //       returnFlightNumber,
+  //       returnFlightLocation,
+  //       VehicleModel,
+  //       vehicleNumber,
+  //       refHandOverTime,
+  //       refReturnTime,
+  //       WhoWillHandover,
+  //       HandoverPersonName,
+  //       HandoverPersonPhone,
+  //       HandoverPersonEmail
+  //     } = userData;
+
+  //     // Conditionally handle handover details
+  //     const handoverName =
+  //       WhoWillHandover === false ? HandoverPersonName : null;
+  //     const handoverPhone =
+  //       WhoWillHandover === false ? HandoverPersonPhone : null;
+  //     const handoverEmail =
+  //       WhoWillHandover === false ? HandoverPersonEmail : null;
+
+  //     // Insert into users table
+  //     const params = [
+  //       tokendata.id,
+  //       travelStartDate,
+  //       travelEndDate,
+  //       refCarParkingId,
+  //       returnFlightNumber,
+  //       returnFlightLocation,
+  //       VehicleModel,
+  //       vehicleNumber,
+  //       refHandOverTime,
+  //       refReturnTime,
+  //       WhoWillHandover,
+  //       handoverName,
+  //       handoverPhone,
+  //       handoverEmail,
+  //       CurrentTime(),
+  //       tokendata.id,
+  //     ];
+
+  //     const Result = await client.query(insertcarParkingBookingQuery, params);
+  //     console.log('Result--------------------------------------------------------------------------------------------2551', Result)
+
+  //     // const getUserResult:any = await client.query(getUserResultQuery,[tokendata.id])
+  //     // console.log('getUserResult', getUserResult)
+  //     // const {refUserEmail, refFName } = getUserResult[0];
+
+  //     const getUserResult: any = await client.query(getUserResultQuery, [
+  //       tokendata.id,
+  //     ]);
+
+  //     if (!getUserResult.rows || getUserResult.rows.length === 0) {
+  //       throw new Error(`No user found with id ${tokendata.id}`);
+  //     }
+
+  //     const { refUserEmail, refFName } = getUserResult.rows[0];
+
+  //     // const getParkingResult: any = await client.query(getParkingResultQuery, [
+  //     //   refCarParkingId,
+  //     // ]);
+  //     // console.log("getParkingResult", getParkingResult);
+  //     // const { refParkingName, refParkingCustId } = getParkingResult[0];
+  //     // console.log('refParkingCustId', refParkingCustId)
+  //     // console.log('refParkingName', refParkingName)
+
+  //     const getParkingResult: any = await client.query(getParkingResultQuery, [
+  //       refCarParkingId,
+  //     ]);
+
+  //     console.log("getParkingResult", getParkingResult);
+
+  //     if (!getParkingResult.rows || getParkingResult.rows.length === 0) {
+  //       throw new Error("No parking data found for the given refCarParkingId");
+  //     }
+
+  //     const { refParkingName, refParkingCustId } = getParkingResult.rows[0];
+
+  //     const main = async () => {
+  //       const adminMail = {
+  //         to: "indumathi123indumathi@gmail.com",
+  //         subject: "New Car parking Booking Received",
+  //         html: generateCarParkingBookingEmailContent(Result),
+  //       };
+  //       try {
+  //         sendEmail(adminMail);
+  //       } catch (error) {
+  //         console.log("Error in sending the Mail for Admin", error);
+  //       }
+  //     };
+  //     main().catch(console.error);
+
+  //     // 2. User confirmation email with countdown
+  //     // const daysLeft = Math.ceil(
+  //     //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
+  //     //     (1000 * 60 * 60 * 24)
+  //     // );
+
+  //     const daysLeft = Math.ceil(
+  //       (new Date(travelStartDate).getTime() -
+  //         new Date(CurrentTime()).getTime()) /
+  //         (1000 * 60 * 60 * 24)
+  //     );
+
+  //     const userMailData = {
+  //       daysLeft: daysLeft,
+  //       refPickupDate: travelStartDate,
+  //       refUserName: refFName,
+  //       refParkingName: refParkingName,
+  //       refParkingCustId: refParkingCustId,
+  //     };
+
+  //     console.log("userMailData", userMailData);
+  //     const main1 = async () => {
+  //       const adminMail = {
+  //         to: refUserEmail,
+  //         subject: "✅ Your CarParking Has Been Booked!",
+  //         html: userCarParkingBookingMail(userMailData),
+  //       };
+
+  //       try {
+  //         sendEmail(adminMail);
+  //       } catch (error) {
+  //         console.log("Error in sending the Mail for User", error);
+  //       }
+  //     };
+  //     main1().catch(console.error);
+
+  //     await client.query("COMMIT");
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "car ParkingBooking added successful",
+  //         Result: Result.rows,
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK");
+  //     console.error("Error during car ParkingBooking addition:", error);
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message:
+  //           "An unexpected error occurred during User car Parking Booking ",
+  //         error: error instanceof Error ? error.message : String(error),
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
   public async carParkingBookingV1(
     userData?: any,
     tokendata?: any
@@ -2597,11 +2752,7 @@ export class userRepository {
       };
       main().catch(console.error);
 
-      // 2. User confirmation email with countdown
-      // const daysLeft = Math.ceil(
-      //   (new Date(refPickupDate).getTime() - new Date().getTime()) /
-      //     (1000 * 60 * 60 * 24)
-      // );
+
 
       const daysLeft = Math.ceil(
         (new Date(travelStartDate).getTime() -

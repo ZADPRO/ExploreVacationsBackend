@@ -334,7 +334,6 @@ export class settingsRepository {
         if (!refLocation) {
           continue;
         }
-
         // const duplicateCheck = await client.query(checkduplicateQuery, [
         //   refLocation
         // ]);
@@ -610,16 +609,14 @@ export class settingsRepository {
       const userResult = await client.query(addCategoryQuery, [
         refCategory,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ]);
 
       const check: any = await client.query(checkDuplicateCategoryQuery, [
-        refCategory,
+        refCategory
       ]);
-      console.log("checkDuplicateCategoryQuery", checkDuplicateCategoryQuery);
-      console.log("refCategory --->", refCategory);
-      console.log("check------------", check);
-      const count = Number(check.count || 0); // safely convert to number
+  
+      const count = Number(check[0]?.count || 0); // safely convert to number
 
       console.log("count", count);
 
@@ -631,7 +628,7 @@ export class settingsRepository {
       const history = [
         6,
         tokendata.id,
-        `${refCategory}  added successfully`,
+        `${refCategory} added successfully`,
         CurrentTime(),
         tokendata.id,
       ];
@@ -866,7 +863,8 @@ export class settingsRepository {
       const check: any = await executeQuery(checkActivityQuery, [refActivity]);
       console.log("check", check);
       // const count = Number(check.count || 0); // safely convert to number
-      const count = Number(check?.rows[0]?.count || 0);
+      // const count = Number(check?.rows[0]?.count || 0);
+      const count = Number(check[0]?.count || 0); // safely convert to number
 
       if (count > 0) {
         throw new Error(

@@ -174,8 +174,7 @@ export class adminRepository {
       // }
 
       const { userTypeId } = users.rows[0];
-      console.log('userTypeId', userTypeId)
-      console.log('users.rows[0]', users.rows[0])
+      console.log("users.rows[0]", users.rows[0]);
 
       if (users.rows.length === 0) {
         return encrypt(
@@ -217,25 +216,24 @@ export class adminRepository {
 
       // validPassword === true
       const tokenData = { id: user.refUserId };
-      console.log("user.refUserId", user.refUserId);
-      console.log("tokenData", tokenData);
 
       const history = [
         1,
         user.refUserId,
         `${user_data.login} login successfully`,
         CurrentTime(),
-        user.refUserId
+        user.refUserId,
       ];
 
       await client.query(updateHistoryQuery, history);
 
+      console.log("userTypeId =============== ", userTypeId);
       return encrypt(
         {
           success: true,
           message: "Login successful",
           userId: user.refUserId,
-          roleId:userTypeId,
+          roleId: userTypeId,
           token: generateTokenWithExpire(tokenData, true),
         },
         true
@@ -626,8 +624,8 @@ export class adminRepository {
               success: true,
               message: "Employee added successful",
               user: newUser,
-              roleId:refUserTypeId,
-              token: tokens
+              roleId: refUserTypeId,
+              token: tokens,
             },
             true
           );
@@ -639,7 +637,7 @@ export class adminRepository {
         {
           success: false,
           message: "failed Employee added",
-          token: tokens
+          token: tokens,
         },
         true
       );
@@ -651,7 +649,7 @@ export class adminRepository {
           success: false,
           message: "An unexpected error occurred during Employee added",
           error: error instanceof Error ? error.message : String(error),
-          token: tokens
+          token: tokens,
         },
         true
       );
@@ -1176,7 +1174,7 @@ export class adminRepository {
       const result = await client.query(deleteTourBookingsQuery, [
         userTourBookingId,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ]);
 
       if (result.rowCount === 0) {
@@ -1358,16 +1356,12 @@ export class adminRepository {
       client.release();
     }
   }
-  public async listUserDataV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async listUserDataV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
       const result = await executeQuery(listUserDataQuery);
-      
 
       return encrypt(
         {
@@ -1375,7 +1369,6 @@ export class adminRepository {
           message: "list User data deleted successfully",
           token: tokens,
           userData: result, // Return deleted record for reference
-         
         },
         true
       );
@@ -1391,21 +1384,20 @@ export class adminRepository {
         },
         true
       );
-    } 
+    }
   }
-  public async getUserDataV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
+  public async getUserDataV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-      const result = await executeQuery(getUserdataQuery,[userData.userId]);
-      const tour = await executeQuery(tourResultQuery,[userData.userId]);
-      const car = await executeQuery(carResultQuery,[userData.userId])
-      const customizeTour = await executeQuery(customizeTourResultQuery,[userData.userId])
-      const parking = await executeQuery(parkingResultQuery,[userData.userId])
+      const result = await executeQuery(getUserdataQuery, [userData.userId]);
+      const tour = await executeQuery(tourResultQuery, [userData.userId]);
+      const car = await executeQuery(carResultQuery, [userData.userId]);
+      const customizeTour = await executeQuery(customizeTourResultQuery, [
+        userData.userId,
+      ]);
+      const parking = await executeQuery(parkingResultQuery, [userData.userId]);
 
       return encrypt(
         {
@@ -1413,10 +1405,10 @@ export class adminRepository {
           message: "get User data deleted successfully",
           token: tokens,
           userData: result, // Return deleted record for reference
-          tour:tour,
-          car:car,
-          customizeTour:customizeTour,
-          parking:parking
+          tour: tour,
+          car: car,
+          customizeTour: customizeTour,
+          parking: parking,
         },
         true
       );
@@ -1432,6 +1424,6 @@ export class adminRepository {
         },
         true
       );
-    } 
+    }
   }
 }

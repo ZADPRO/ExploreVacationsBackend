@@ -9,6 +9,7 @@ import { batchRoutes } from "./api/batch/routes";
 import { paymentRoutes } from "./api/payment/routes";
 import { homePageRoutes } from "./api/homePage/routes";
 import { notificationRoutes } from "./api/notification/routes";
+import { bookingRoutes } from "./api/Booking/routes";
 
 
 
@@ -24,6 +25,7 @@ export default class Router {
     await new paymentRoutes().register(server);
     await new homePageRoutes().register(server);
     await new notificationRoutes().register(server);
+    await new bookingRoutes().register(server);
 
   }
 }

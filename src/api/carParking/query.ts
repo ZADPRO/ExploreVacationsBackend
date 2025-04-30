@@ -273,6 +273,7 @@ LIMIT
   10;
 `;
 
+
 export const addServiceFeaturesQuery = `INSERT INTO
   public."refServiceFeatures" (
     "refServiceFeatures",

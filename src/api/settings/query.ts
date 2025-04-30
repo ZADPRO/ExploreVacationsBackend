@@ -79,7 +79,8 @@ WHERE
 export const checkLocationQuery = `SELECT COUNT(*) AS count FROM public."refLocation" WHERE "refLocationId" = $1  AND "isDelete" = false;
 `;
 
-export const addLocationQuery = `INSERT INTO
+export const addLocationQuery = `
+INSERT INTO
   public."refLocation" (
     "refLocationName",
     "refDestinationId",
@@ -99,7 +100,7 @@ SELECT
 FROM
   public."refLocation"
 WHERE
-  "refLocation" = $1 AND "isDelete" IS NOT true
+  "refLocationName" = $1 AND "isDelete" IS NOT true
 LIMIT
   10;
 `;
@@ -179,7 +180,6 @@ WHERE
   AND "isDelete" IS NOT true
 LIMIT
   10;
-
 `;
 
 // export const checkCategoryQuery = `SELECT COUNT(*) AS count FROM public."refCategory" WHERE "refCategoryId" = $1

@@ -230,6 +230,8 @@ WITH
   "base" AS (
     SELECT
       urt."userTourBookingId",
+      urt."refuserId",
+      urt."refStatus",
       urt."refUserName",
       urt."refUserMail",
       urt."refUserMobile",
@@ -382,8 +384,7 @@ FROM
   LEFT JOIN excludes e ON b."refPackageId" = e."refPackageId"
 ORDER BY
   b."refPackageId",
-  b."userTourBookingId";
-  `;
+  b."userTourBookingId"; `;
 
 export const listCarBookingsQuery = `
 SELECT
@@ -408,7 +409,24 @@ WHERE
 export const listParkingBookingsQuery = `
 SELECT
   cp.*,
-  pt.*,
+  pt."refParkingName",
+  pt."refAssociatedAirport",
+  pt."refLocation",
+  pt."refAvailability",
+  pt."refOperatingHours",
+  pt."refBookingType",
+  pt."pricePerHourORday",
+  pt."refPrice",
+  pt."refWeeklyDiscount",
+  pt."refExtraCharges",
+  pt."MinimumBookingDuration",
+  pt."MaximumBookingDuration",
+  pt."isCancellationAllowed",
+  pt."isRescheduleAllowed",
+  pt."ServiceFeatures",
+  pt.instructions,
+  pt.description,
+  pt."parkingSlotImage",
   pa."refParkingTypeName",
   cpt."refCarParkingTypeName",
   array_agg(rf."refServiceFeatures") AS "refServiceFeaturesList"
@@ -430,7 +448,6 @@ cp."carParkingBookingId",
 pt."refCarParkingId",
 pa."refParkingTypeName",
 cpt."refCarParkingTypeName"
-
 `;
 export const listAuditPageQuery = `SELECT
   th.*,
@@ -558,12 +575,14 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  u."isDelete" IS NOT true
+  u."isDelete" IS NOT true AND u."refCustId" LIKE 'EV-EMP-%'
 GROUP BY
   u."refuserId",
   ud."refUserEmail",
   ud."refUsername",
-  ud."refUserHashedPassword";
+  ud."refUserHashedPassword"
+  ORDER BY
+  u."refuserId" DESC;
   `;
 
 export const getEmployeesQuery = `
