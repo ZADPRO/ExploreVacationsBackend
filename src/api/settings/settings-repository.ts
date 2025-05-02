@@ -327,7 +327,7 @@ export class settingsRepository {
             message: "No locations provided",
             token: tokens,
           },
-          false
+          true
         );
       }
       let resultArray = [];
@@ -342,7 +342,9 @@ export class settingsRepository {
           refLocation
         ]);
 
-        const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+        // const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+        const count = Number(duplicateCheck.rows[0]?.count || 0);
+
         console.log('count', count)
 
         if (count > 0) {
@@ -393,7 +395,7 @@ export class settingsRepository {
           token: tokens,
           result: resultArray,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK");
@@ -405,7 +407,7 @@ export class settingsRepository {
           error: String(error),
           token: tokens,
         },
-        false
+        true
       );
     } finally {
       client.release();
@@ -616,8 +618,10 @@ export class settingsRepository {
       const check: any = await client.query(checkDuplicateCategoryQuery, [
         refCategory
       ]);
+      console.log('check', check)
   
-      const count = Number(check[0]?.count || 0); // safely convert to number
+      // const count = Number(check[0]?.count || 0); // safely convert to number
+      const count = Number(check.rows[0]?.count || 0);
 
       console.log("count", count);
 
@@ -863,9 +867,9 @@ export class settingsRepository {
       console.log("userResult", userResult);
       const check: any = await executeQuery(checkActivityQuery, [refActivity]);
       console.log("check", check);
-      // const count = Number(check.count || 0); // safely convert to number
       // const count = Number(check?.rows[0]?.count || 0);
       const count = Number(check[0]?.count || 0); // safely convert to number
+      console.log('count', count)
 
       if (count > 0) {
         throw new Error(

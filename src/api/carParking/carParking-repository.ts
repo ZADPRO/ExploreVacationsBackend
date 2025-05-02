@@ -72,7 +72,7 @@ export class carParkingRepository {
       const ServiceFeatures = Array.isArray(userData.ServiceFeatures)
         ? `{${userData.ServiceFeatures.join(",")}}`
         : `{${userData.ServiceFeatures.split(",").join(",")}}`;
-const customerPrefix = "EV-PAR-";
+      const customerPrefix = "EV-PAR-";
       const baseNumber = 0;
 
       const lastCustomerResult = await client.query(getCarParkingIdQuery);
@@ -621,7 +621,7 @@ const customerPrefix = "EV-PAR-";
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result1 = await executeQuery(getCarParkingTypeQuery);
-      console.log('result1', result1)
+      console.log("result1", result1);
       // const result2 = await executeQuery(listCarParkingTypeQuery);
 
       return encrypt(
@@ -671,13 +671,36 @@ const customerPrefix = "EV-PAR-";
         );
       }
 
-
       const resultArray = [];
 
       for (const feature of ServiceFeatures) {
         const { Feature } = feature;
         if (!Feature) continue;
+        const duplicateCheck: any = await client.query(checkduplicateQuery, [
+          ServiceFeatures[0].Feature,
+        ]);
 
+        console.log("duplicateCheck", duplicateCheck);
+        // const count = Number(duplicateCheck.count || 0); // safely convert to number
+        const count = Number(duplicateCheck.rows[0]?.count || 0);
+
+        console.log(
+          "count",
+          duplicateCheck.rows,
+          "service",
+          ServiceFeatures[0].Feature
+        );
+
+        if (count > 0) {
+          return encrypt(
+            {
+              success: false,
+              message: `ServiceFeatures "${ServiceFeatures}" already exists `,
+              token: tokens,
+            },
+            true
+          );
+        }
         const result = await client.query(addServiceFeaturesQuery, [
           Feature,
           CurrentTime(),
@@ -685,27 +708,6 @@ const customerPrefix = "EV-PAR-";
         ]);
 
         resultArray.push(result);
-      }
-      const duplicateCheck: any = await client.query(checkduplicateQuery, [
-        ServiceFeatures
-      ]);
-      
-      console.log('duplicateCheck', duplicateCheck)
-      // const count = Number(duplicateCheck.count || 0); // safely convert to number
-      const count = Number(duplicateCheck.rows[0]?.count || 0);
-
-      console.log('count', count)
-
-      if (count > 0) {
-        await client.query("ROLLBACK");
-        return encrypt(
-          {
-            success: false,
-            message: `ServiceFeatures "${ServiceFeatures}" already exists `,
-            token: tokens,
-          },
-          true
-        );
       }
 
       const historyDescription = `Added Service Features: ${ServiceFeatures.map(
@@ -748,8 +750,6 @@ const customerPrefix = "EV-PAR-";
       client.release();
     }
   }
-
-  
   public async updateServiceFeaturesV1(
     userData: any,
     tokenData: any

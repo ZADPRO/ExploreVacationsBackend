@@ -269,8 +269,6 @@ FROM
 WHERE
   "refServiceFeatures" = $1
   AND "isDelete" IS NOT true
-LIMIT
-  10;
 `;
 
 
