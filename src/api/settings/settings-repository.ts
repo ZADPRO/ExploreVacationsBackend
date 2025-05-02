@@ -122,6 +122,7 @@ export class settingsRepository {
       const { refDestinationId, refDestinationName } = userData;
 
       const checkResult = await executeQuery(checkQuery, [refDestinationId]);
+      console.log('checkResult', checkResult)
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -130,11 +131,11 @@ export class settingsRepository {
             message: "Destination ID not found",
             token: tokens,
           },
-          true
+          false
         );
       }
       const check: any = await executeQuery(checkDestinationQuery, [
-        refDestinationName,
+        refDestinationName
       ]);
       console.log("check", check);
 
@@ -172,9 +173,11 @@ export class settingsRepository {
         {
           success: true,
           message: "Destination updated successfully",
+          result:updateDestination,
           token: tokens,
+        
         },
-        true
+        false
       );
     } catch (error) {
       const errorMessage =
@@ -188,7 +191,7 @@ export class settingsRepository {
           error: errorMessage,
           token: tokens,
         },
-        true
+        false
       );
     } finally {
       client.release();
@@ -324,25 +327,23 @@ export class settingsRepository {
             message: "No locations provided",
             token: tokens,
           },
-          true
+          false
         );
       }
       let resultArray = [];
       for (const location of locations) {
         const { refLocation } = location;
+        console.log('refLocation', refLocation)
 
         if (!refLocation) {
           continue;
         }
-        // const duplicateCheck = await client.query(checkduplicateQuery, [
-        //   refLocation
-        // ]);
-
         const duplicateCheck: any = await client.query(checkduplicateQuery, [
-          refLocation,
+          refLocation
         ]);
 
         const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
+        console.log('count', count)
 
         if (count > 0) {
           throw new Error(
@@ -392,7 +393,7 @@ export class settingsRepository {
           token: tokens,
           result: resultArray,
         },
-        true
+        false
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK");
@@ -404,7 +405,7 @@ export class settingsRepository {
           error: String(error),
           token: tokens,
         },
-        true
+        false
       );
     } finally {
       client.release();

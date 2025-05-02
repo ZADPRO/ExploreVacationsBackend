@@ -108,7 +108,7 @@ export default {
   },
   getUserData:{
     payload: Joi.object({
-      carParkingBookingId: Joi.number().integer().required()
+      userId: Joi.number().integer().required()
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
