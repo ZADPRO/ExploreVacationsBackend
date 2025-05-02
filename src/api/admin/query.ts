@@ -231,6 +231,7 @@ WITH
     SELECT
       urt."userTourBookingId",
       urt."refuserId",
+      urt."refAgreementPath",
       urt."refStatus",
       urt."refUserName",
       urt."refUserMail",
@@ -388,7 +389,8 @@ ORDER BY
 
 export const listCarBookingsQuery = `
 SELECT
-  rcb.*
+  rcb.*,
+  ct.*
 FROM
   public."userCarBooking" rcb
   JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
