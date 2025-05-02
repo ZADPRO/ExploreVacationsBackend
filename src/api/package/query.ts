@@ -396,7 +396,8 @@ ORDER BY
   "refPackageId";
     `;
 
-export const getImageRecordQuery = `SELECT *
+export const getImageRecordQuery = `
+SELECT *
     FROM public."refGallery" rg
     WHERE rg."refGalleryId" = $1;
 `;
@@ -532,7 +533,8 @@ WHERE
   "isDelete" = false;
 `;
 
-export const getCoverImageRecordQuery = `SELECT *
+export const getCoverImageRecordQuery = `
+SELECT *
     FROM public."refPackage" rp
     WHERE rp."refPackageId" = $1;
 `;

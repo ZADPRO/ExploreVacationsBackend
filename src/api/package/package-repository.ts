@@ -103,7 +103,6 @@ export class packageRepository {
 
   //  }
   public async addPackageV1(userData: any, tokendata: any): Promise<any> {
-    
     const client: PoolClient = await getClient();
     const refuserId = tokendata.id;
     const token = { id: tokendata.id };
@@ -374,7 +373,7 @@ export class packageRepository {
   //       refCoverImage,
   //       CurrentTime(),
   // tokendata.id
-    //     ]);
+  //     ]);
   //     console.log("packageDetails", packageDetails);
 
   //     // let storedImages: any[] = [];
@@ -713,7 +712,7 @@ export class packageRepository {
       const result = await client.query(deletePackageQuery, [
         refPackageId,
         CurrentTime(),
-        tokendata.id
+        tokendata.id,
       ]);
 
       const deletedPackage: any = await client.query(getdeletedPackageQuery, [
@@ -1073,7 +1072,7 @@ export class packageRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      // let filePath: string | any;
+      let filePath: string | any;
 
       if (userData.refGalleryId) {
         // Retrieve the image record from the database
@@ -1090,24 +1089,32 @@ export class packageRepository {
             true
           );
         }
-      }
-      // filePath = imageRecord[0].refImagePath;
+      
+      filePath = imageRecord[0].refImagePath;
 
       // Delete the image record from the database
       await executeQuery(deleteImageRecordQuery, [userData.refGalleryId]);
-      // } else {
-      //   // filePath = userData.filePath;
-      // }
-
-      // if (filePath) {
-      //   // Delete the file from local storage
-      //   await deleteFile(filePath);
-      // }
+      }else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
+      }
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
 
       return encrypt(
         {
           success: true,
-          message: " Image Deleted Successfully",
+          message: "Employee profile image deleted successfully",
           token: tokens,
         },
         true
@@ -1519,7 +1526,7 @@ export class packageRepository {
         refTravalExcludeId,
         refTravalExclude,
         CurrentTime(),
-        tokenData.id
+        tokenData.id,
       ];
 
       const updateBenifits = await client.query(
@@ -1578,8 +1585,8 @@ export class packageRepository {
       const result = await client.query(deleteTravalExcludeQuery, [
         refTravalExcludeId,
         CurrentTime(),
-        tokendata.id
-            ]);
+        tokendata.id,
+      ]);
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -1723,7 +1730,7 @@ export class packageRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      // let filePath: string | any;
+      let filePath: string | any;
 
       if (userData.refPackageId) {
         // Retrieve the image record from the database
@@ -1740,24 +1747,35 @@ export class packageRepository {
             true
           );
         }
+
+        filePath = imageRecord[0].refCoverImage;
+        console.log("filePath", filePath);
+
+        // Delete the image record from the database
+        await executeQuery(deleteCoverImageRecordQuery, [
+          userData.refPackageId,
+        ]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
       }
-      // filePath = imageRecord[0].refImagePath;
-
-      // Delete the image record from the database
-      await executeQuery(deleteCoverImageRecordQuery, [userData.refPackageId]);
-      // } else {
-      //   // filePath = userData.filePath;
-      // }
-
-      // if (filePath) {
-      //   // Delete the file from local storage
-      //   await deleteFile(filePath);
-      // }
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
 
       return encrypt(
         {
           success: true,
-          message: " Image Deleted Successfully",
+          message: " cover image deleted successfully",
           token: tokens,
         },
         true
@@ -1800,42 +1818,42 @@ export class packageRepository {
       //   }
       // }
 
-       for (const image of result1) {
-              // Handle gallery images
-              const galleryValue = image["refGallery"];
-              if (galleryValue) {
-                try {
-                  const galleryPaths =
-                    typeof galleryValue === "string"
-                      ? galleryValue
-                          .replace(/^{|}$/g, "") // Remove {}
-                          .split(/","?/) // Split by "," or "
-                          .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
-                      : galleryValue;
-            
-                  image["refGallery"] = galleryPaths.map((imgPath: string) =>
-                    path.basename(imgPath)
-                  );
-                } catch (error) {
-                  console.error("Error processing refGallery:", error);
-                  image["refGallery"] = [];
-                }
-              }
-            
-              // Handle single image fields
-              for (const key of ["refItinaryMapPath", "refCoverImage"]) {
-                const value = image[key];
-                if (value) {
-                  try {
-                    image[key] = path.basename(value);
-                  } catch (error) {
-                    console.error(`Error processing ${key}:`, error);
-                    image[key] = null;
-                  }
-                }
-              }
+      for (const image of result1) {
+        // Handle gallery images
+        const galleryValue = image["refGallery"];
+        if (galleryValue) {
+          try {
+            const galleryPaths =
+              typeof galleryValue === "string"
+                ? galleryValue
+                    .replace(/^{|}$/g, "") // Remove {}
+                    .split(/","?/) // Split by "," or "
+                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
+                : galleryValue;
+
+            image["refGallery"] = galleryPaths.map((imgPath: string) =>
+              path.basename(imgPath)
+            );
+          } catch (error) {
+            console.error("Error processing refGallery:", error);
+            image["refGallery"] = [];
+          }
+        }
+
+        // Handle single image fields
+        for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+          const value = image[key];
+          if (value) {
+            try {
+              image[key] = path.basename(value);
+            } catch (error) {
+              console.error(`Error processing ${key}:`, error);
+              image[key] = null;
             }
-           
+          }
+        }
+      }
+
       return encrypt(
         {
           success: true,

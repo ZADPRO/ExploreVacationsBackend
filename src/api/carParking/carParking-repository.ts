@@ -5,6 +5,7 @@ import {
   viewFile,
   convertToBase64,
   storetheFile,
+  deleteFile,
 } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
@@ -214,7 +215,7 @@ export class carParkingRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      // let filePath: string | any;
+      let filePath: string | any;
 
       if (userData.refCarParkingId) {
         // Retrieve the image record from the database
@@ -231,26 +232,35 @@ export class carParkingRepository {
             true
           );
         }
+
+        filePath = imageRecord[0].parkingSlotImage;
+
+        // Delete the image record from the database
+        await executeQuery(deleteParkingImageRecordQuery, [
+          userData.refCarParkingId,
+        ]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
       }
-      // filePath = imageRecord[0].refImagePath;
 
-      // Delete the image record from the database
-      await executeQuery(deleteParkingImageRecordQuery, [
-        userData.refCarParkingId,
-      ]);
-      // } else {
-      //   // filePath = userData.filePath;
-      // }
-
-      // if (filePath) {
-      //   // Delete the file from local storage
-      //   await deleteFile(filePath);
-      // }
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
 
       return encrypt(
         {
           success: true,
-          message: " Image Deleted Successfully",
+          message: "Employee profile image deleted successfully",
           token: tokens,
         },
         true
@@ -646,7 +656,6 @@ export class carParkingRepository {
       );
     }
   }
-
   public async addServiceFeaturesV1(
     userData: any,
     tokendata: any

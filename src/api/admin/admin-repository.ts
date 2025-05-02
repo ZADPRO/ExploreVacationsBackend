@@ -47,7 +47,7 @@ import {
 import { CurrentTime, generatePassword } from "../../helper/common";
 import { generateSignupEmailContent } from "../../helper/mailcontent";
 import { sendEmail } from "../../helper/mail";
-import { storeFile, viewFile } from "../../helper/storage";
+import { deleteFile, storeFile, viewFile } from "../../helper/storage";
 
 export class adminRepository {
   // public async adminLoginV1(user_data: any, domain_code?: any): Promise<any> {
@@ -712,6 +712,75 @@ export class adminRepository {
       );
     }
   }
+  //   public async deleteEmployeeImageV1(
+  //     userData: any,
+  //     tokendata: any
+  //   ): Promise<any> {
+  //     const client: PoolClient = await getClient();
+  //     const token = { id: tokendata.id };
+  //     const tokens = generateTokenWithExpire(token, true);
+
+  //     try {
+  //       await client.query("BEGIN"); // Start transaction
+  //       let filePath: string | any;
+
+  //       const { refuserId } = userData;
+  // if (refuserId) {
+  //         // Retrieve the image record from the database
+  //         const imageRecord:any = await executeQuery(getEmployeeQuery, [
+  //           refuserId
+  //         ]);
+  //         if (imageRecord.length === 0) {
+  //           return encrypt(
+  //             {
+  //               success: false,
+  //               message: "Image record not found",
+  //               token: tokens,
+  //             },
+  //             true
+  //           );
+  //         }
+  //       }
+  //       filePath = imageRecord[0].refImagePath;
+
+  //        await client.query(deleteEmployeeImageQuery, [refuserId]);
+
+  //    } else {
+  //         // filePath = userData.filePath;
+  //       }
+
+  //       if (filePath) {
+  //         // Delete the file from local storage
+  //         await deleteFile(filePath);
+  //       }
+
+  //       return encrypt(
+  //         {
+  //           success: true,
+  //           message: "Employee profile image deleted successfully",
+  //           token: tokens,
+  //         },
+  //         true
+  //       );
+  //     } catch (error: unknown) {
+  //       await client.query("ROLLBACK"); // Rollback on error
+  //       console.error("Error deleting Employee profile image :", error);
+
+  //       return encrypt(
+  //         {
+  //           success: false,
+  //           message:
+  //             "An error occurred while deleting the Employee  profile image ",
+  //           token: tokens,
+  //           error: String(error),
+  //         },
+  //         true
+  //       );
+  //     } finally {
+  //       client.release();
+  //     }
+  // }
+
   public async deleteEmployeeImageV1(
     userData: any,
     tokendata: any
@@ -721,41 +790,72 @@ export class adminRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-      await client.query("BEGIN"); // Start transaction
+      await client.query("BEGIN");
 
       const { refuserId } = userData;
-      const result = await client.query(deleteEmployeeImageQuery, [refuserId]);
+      let filePath: string | null = null;
 
-      // if (result.rowCount === 0) {
-      //   await client.query("ROLLBACK");
-      //   return encrypt(
-      //     {
-      //       success: false,
-      //       message: "car not found or already deleted",
-      //       token: tokens,
-      //     },
-      //     true
-      //   );
-      // }
+      if (refuserId) {
+        // Retrieve the image record from the database
+        const imageRecord: any = await executeQuery(getEmployeeQuery, [
+          refuserId,
+        ]);
+
+        if (!imageRecord || imageRecord.length === 0) {
+          await client.query("ROLLBACK");
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              token: tokens,
+            },
+            true
+          );
+        }
+
+        filePath = imageRecord[0]?.refProfileImage;
+        console.log('filePath', filePath)
+
+        // Delete from DB
+        await client.query(deleteEmployeeImageQuery, [refuserId]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
+
+      await client.query("COMMIT"); // Commit transaction
 
       return encrypt(
         {
           success: true,
           message: "Employee profile image deleted successfully",
           token: tokens,
-          deletedData: result.rows[0], // Return deleted record for reference
         },
         true
       );
     } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback on error
-      console.error("Error deleting Employee profile image :", error);
+      await client.query("ROLLBACK");
 
+      console.error("Error deleting Employee profile image:", error);
       return encrypt(
         {
           success: false,
           message:
-            "An error occurred while deleting the Employee  profile image ",
+            "An error occurred while deleting the Employee profile image",
           token: tokens,
           error: String(error),
         },
@@ -1174,7 +1274,7 @@ export class adminRepository {
       const result = await client.query(deleteTourBookingsQuery, [
         userTourBookingId,
         CurrentTime(),
-        tokendata.id
+        tokendata.id,
       ]);
 
       if (result.rowCount === 0) {

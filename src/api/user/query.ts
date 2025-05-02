@@ -13,7 +13,8 @@ RETURNING
   *;
 `;
 
-export const addTourBookingQuery = `INSERT INTO
+export const addTourBookingQuery = `
+INSERT INTO
   public."userTourBooking" (
     "refPackageId",
     "refUserName",
@@ -24,13 +25,14 @@ export const addTourBookingQuery = `INSERT INTO
     "refChildrenCount",
     "refInfants",
     "refOtherRequirements",
+    "refAgreementPath",
     "createdAt",
     "createdBy",
     "refuserId"
     
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 )
 RETURNING
   *;
 `;
@@ -60,11 +62,12 @@ export const addcustomizeBookingQuery = `
         "refVaccinationCertificate", 
         "refOtherRequirements", 
         "refPassPort",
+        "refAgreementPath",
         "createdAt", 
         "createdBy",
         "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) 
     RETURNING *;
 `;
 
@@ -81,11 +84,12 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "refInfants", 
         "refOtherRequirements", 
         "refFormDetails",
+        "refAgreementPath",
         "createdAt", 
         "createdBy",
         "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,$16) 
     RETURNING *;
 
 `;
@@ -1045,7 +1049,8 @@ FROM
 export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" IS NOT true
         `;
 
-export const getImageRecordQuery = `SELECT
+export const getImageRecordQuery = `
+SELECT
   *
 FROM
   public."refTravalData" 
@@ -1053,7 +1058,8 @@ WHERE
   "refTravalDataId" = $1;
 `;
 
-export const deleteImageRecordQuery = `UPDATE
+export const deleteImageRecordQuery = `
+UPDATE
   public."refTravalData"
 SET
   "refItinaryMapPath" = NULL
@@ -1462,12 +1468,13 @@ INSERT INTO
     "returnFlightLocation",
     "VehicleModel",
     "vehicleNumber",
-            "refHandOverTime",
-        "refReturnTime",
+    "refHandOverTime",
+    "refReturnTime",
     "WhoWillHandover",
     "HandoverPersonName",
     "HandoverPersonPhone",
     "HandoverPersonEmail",
+    "refAgreementPath",
     "createdAt",
     "createdBy"
   )
@@ -1488,7 +1495,8 @@ VALUES
     $13,
     $14,
     $15,
-    $16
+    $16,
+    $17
   )
 RETURNING
   *;

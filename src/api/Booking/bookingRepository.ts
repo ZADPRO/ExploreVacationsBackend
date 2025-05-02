@@ -4,12 +4,18 @@ import path from "path";
 import fs from "fs";
 import { generateTokenWithExpire } from "../../helper/token";
 import { encrypt } from "../../helper/encrypt";
-import { executeQuery } from "../../helper/db";
+import { executeQuery, getClient } from "../../helper/db";
 import {
   approveCarBookingQuery,
   approveCustomizeBookingQuery,
   approveParkingBookingQuery,
   approveTourBookingQuery,
+  deleteAgreementQuery,
+  deleteCarAgreementQuery,
+  deleteParkingAgreementQuery,
+  getCarAgreementQuery,
+  getParkingAgreementQuery,
+  getTourAgreementQuery,
   getUserdataCarQuery,
   getUserdataCustomizeTourQuery,
   getUserdataParkingQuery,
@@ -21,7 +27,7 @@ import {
 } from "../../helper/mailcontent";
 import { sendEmail } from "../../helper/mail";
 import { CurrentTime } from "../../helper/common";
-import { storeFile, viewFile } from "../../helper/storage";
+import { deleteFile, storeFile, viewFile } from "../../helper/storage";
 
 export class bookingRepository {
   public async approveTourBookingV1(
@@ -458,60 +464,424 @@ export class bookingRepository {
     }
   }
   public async uploadTourAgreementV1(
-      userData: any,
-      tokendata: any
-    ): Promise<any> {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-      try {
-        // Extract the PDF file from userData
-        const pdfFile = userData["PdfFile "] || userData.PdfFile;
-        console.log("userData", userData);
-        console.log("pdfFile-------------------------------------", pdfFile);
-  
-        // Ensure that a PDF file is provided
-        if (!pdfFile) {
-          throw new Error("Please provide a PDF file.");
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the PDF file from userData
+      const pdfFile = userData["PdfFile "] || userData.PdfFile;
+      console.log("userData", userData);
+      console.log("pdfFile-------------------------------------", pdfFile);
+
+      // Ensure that a PDF file is provided
+      if (!pdfFile) {
+        throw new Error("Please provide a PDF file.");
+      }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the PDF file
+      console.log("Storing PDF...");
+      filePath = await storeFile(pdfFile, 9); // Assuming storeFile handles PDF storage
+
+      // Read the file buffer and convert it to Base64
+      const pdfBuffer = await viewFile(filePath);
+      const pdfBase64 = pdfBuffer.toString("base64");
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: pdfBase64,
+        contentType: "application/pdf",
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "PDF Stored Successfully",
+          token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the PDF",
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async uploadCarAgreementV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the PDF file from userData
+      const pdfFile = userData["PdfFile "] || userData.PdfFile;
+      console.log("userData", userData);
+      console.log("pdfFile-------------------------------------", pdfFile);
+
+      // Ensure that a PDF file is provided
+      if (!pdfFile) {
+        throw new Error("Please provide a PDF file.");
+      }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the PDF file
+      console.log("Storing PDF...");
+      filePath = await storeFile(pdfFile, 10); // Assuming storeFile handles PDF storage
+
+      // Read the file buffer and convert it to Base64
+      const pdfBuffer = await viewFile(filePath);
+      const pdfBase64 = pdfBuffer.toString("base64");
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: pdfBase64,
+        contentType: "application/pdf",
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "PDF Stored Successfully",
+          token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the PDF",
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async uploadParkingAgreementV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the PDF file from userData
+      const pdfFile = userData["PdfFile "] || userData.PdfFile;
+      console.log("userData", userData);
+      console.log("pdfFile-------------------------------------", pdfFile);
+
+      // Ensure that a PDF file is provided
+      if (!pdfFile) {
+        throw new Error("Please provide a PDF file.");
+      }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the PDF file
+      console.log("Storing PDF...");
+      filePath = await storeFile(pdfFile, 10); // Assuming storeFile handles PDF storage
+
+      // Read the file buffer and convert it to Base64
+      const pdfBuffer = await viewFile(filePath);
+      const pdfBase64 = pdfBuffer.toString("base64");
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: pdfBase64,
+        contentType: "application/pdf",
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "PDF Stored Successfully",
+          token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the PDF",
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async deleteTourAgreementV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN");
+
+      const { userTourBookingId } = userData;
+      let filePath: string | null = null;
+
+      if (userTourBookingId) {
+        // Retrieve the image record from the database
+        const imageRecord: any = await executeQuery(getTourAgreementQuery, [
+          userTourBookingId,
+        ]);
+
+        if (!imageRecord || imageRecord.length === 0) {
+          await client.query("ROLLBACK");
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              token: tokens,
+            },
+            true
+          );
         }
-  
-        let filePath: string = "";
-        let storedFiles: any[] = [];
-  
-        // Store the PDF file
-        console.log("Storing PDF...");
-        filePath = await storeFile(pdfFile, 3); // Assuming storeFile handles PDF storage
-  
-        // Read the file buffer and convert it to Base64
-        const pdfBuffer = await viewFile(filePath);
-        const pdfBase64 = pdfBuffer.toString("base64");
-  
-        storedFiles.push({
-          filename: path.basename(filePath),
-          content: pdfBase64,
-          contentType: "application/pdf"
-        });
-  
-        // Return success response
-        return encrypt(
-          {
-            success: true,
-            message: "PDF Stored Successfully",
-            token: tokens,
-            filePath: filePath,
-            files: storedFiles,
-          },
-          true
-        );
-      } catch (error) {
-        console.error("Error occurred:", error);
+
+        filePath = imageRecord[0]?.refAgreementPath;
+        console.log("filePath", filePath);
+
+        // Delete from DB
+        await client.query(deleteAgreementQuery, [userTourBookingId]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        await client.query("ROLLBACK");
         return encrypt(
           {
             success: false,
-            message: "Error in Storing the PDF",
+            message: "No ID or file path provided for deletion",
             token: tokens,
           },
           true
         );
       }
+
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
+
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "agreement deleted successfully",
+          token: tokens,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+
+      console.error("Error deleting agreement:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the agreement",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
     }
+  }
+  public async deleteCarAgreementV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN");
+
+      const { userCarBookingId } = userData;
+      let filePath: string | null = null;
+
+      if (userCarBookingId) {
+        // Retrieve the image record from the database
+        const imageRecord: any = await executeQuery(getCarAgreementQuery, [
+          userCarBookingId
+        ]);
+
+        if (!imageRecord || imageRecord.length === 0) {
+          await client.query("ROLLBACK");
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              token: tokens,
+            },
+            true
+          );
+        }
+
+        filePath = imageRecord[0]?.refAgreementPath;
+        console.log("filePath", filePath);
+
+        // Delete from DB
+        await client.query(deleteCarAgreementQuery, [userCarBookingId]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "No ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
+
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "agreement deleted successfully",
+          token: tokens,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+
+      console.error("Error deleting agreement:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the agreement",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async deleteParkingAgreementV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN");
+
+      const { carParkingBookingId } = userData;
+      let filePath: string | null = null;
+
+      if (carParkingBookingId) {
+        // Retrieve the image record from the database
+        const imageRecord: any = await executeQuery(getParkingAgreementQuery, [
+          carParkingBookingId
+        ]);
+
+        if (!imageRecord || imageRecord.length === 0) {
+          await client.query("ROLLBACK");
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              token: tokens,
+            },
+            true
+          );
+        }
+
+        filePath = imageRecord[0]?.refAgreementPath;
+        console.log("filePath", filePath);
+
+        // Delete from DB
+        await client.query(deleteParkingAgreementQuery, [carParkingBookingId]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        await client.query("ROLLBACK");
+        return encrypt(
+          {
+            success: false,
+            message: "No ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
+
+      await client.query("COMMIT"); // Commit transaction
+
+      return encrypt(
+        {
+          success: true,
+          message: "agreement deleted successfully",
+          token: tokens,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+
+      console.error("Error deleting agreement:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the agreement",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  
 }

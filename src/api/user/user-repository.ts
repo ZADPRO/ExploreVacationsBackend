@@ -71,7 +71,6 @@ import { sendEmail } from "../../helper/mail";
 import { cli } from "winston/lib/winston/config";
 
 export class userRepository {
- 
   // public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
   //   // const refUserId = decodedToken.id;
   //   const token = { id: tokendata.id };
@@ -224,7 +223,7 @@ export class userRepository {
   //     client.release();
   //   }
   // }
- public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
+  public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
     const token = { id: tokendata.id };
     console.log("tokendata.id", tokendata.id);
     const tokens = generateTokenWithExpire(token, true);
@@ -242,6 +241,7 @@ export class userRepository {
         refChildrenCount,
         refInfants,
         refOtherRequirements,
+        refAgreementPath
       } = userData;
 
       console.log(" line --------- 178");
@@ -256,6 +256,7 @@ export class userRepository {
         refChildrenCount,
         refInfants,
         refOtherRequirements,
+        refAgreementPath,
         CurrentTime(),
         tokendata.id,
         tokendata.id,
@@ -307,7 +308,7 @@ export class userRepository {
           success: false,
           message: "An error occurred while tour booking",
           token: tokens,
-          error: String(error)
+          error: String(error),
         },
         true
       );
@@ -489,7 +490,7 @@ export class userRepository {
   //           <div style="padding: 30px; background-color: #f9f9f9;">
   //             <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
   //             <p style="font-size: 16px; color: #333;">Your customized tour request has been <strong>successfully received</strong>.</p>
-              
+
   //             <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
   //               <tr>
   //                 <td style="padding: 8px 0;"><strong>📦 Package:</strong></td>
@@ -508,11 +509,11 @@ export class userRepository {
   //                 <td style="padding: 8px 0;">${daysLeft} day(s)</td>
   //               </tr>
   //             </table>
-        
+
   //             <p style="margin-top: 25px; font-size: 16px; color: #333;">
   //               Our team will contact you shortly to finalize the details. Please keep an eye on your inbox!
   //             </p>
-              
+
   //             <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
   //           </div>
   //           <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
@@ -583,6 +584,7 @@ export class userRepository {
         refOtherRequirements,
         refVaccinationCertificate,
         refPassPort,
+        refAgreementPath
       } = userData;
 
       const Result = await client.query(addcustomizeBookingQuery, [
@@ -600,6 +602,7 @@ export class userRepository {
         refVaccinationCertificate,
         refOtherRequirements,
         refPassPort,
+        refAgreementPath,
         CurrentTime(),
         tokendata.id,
         tokendata.id,
@@ -717,7 +720,6 @@ export class userRepository {
       };
       main().catch(console.error);
 
- 
       await client.query("COMMIT");
 
       return encrypt(
@@ -859,7 +861,6 @@ export class userRepository {
     }
   }
 
-
   // public async userCarBookingV1(userData?: any, tokendata?: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);
@@ -1000,7 +1001,7 @@ export class userRepository {
   //     <p style="margin-top: 25px; font-size: 16px; color: #333;">
   //       Our team will contact you soon to finalize your ride details.
   //     </p>
-      
+
   //     <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
   //   </div>
   //   <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
@@ -1181,6 +1182,7 @@ export class userRepository {
         refDriverAge,
         refDriverMail,
         refDriverMobile,
+        refAgreementPath
       } = userData;
 
       const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
@@ -1199,6 +1201,7 @@ export class userRepository {
         refInfants,
         refFormDetails,
         refOtherRequirements,
+        refAgreementPath,
         CurrentTime(),
         tokendata.id,
         tokendata.id,
@@ -1251,7 +1254,7 @@ export class userRepository {
       };
 
       transporter.sendMail(mailoption);
-      
+
       const drivarDetails = await client.query(drivarDetailsQuery, [
         refDriverName,
         refDriverAge,
@@ -1606,7 +1609,7 @@ export class userRepository {
       const { refCarParkingId } = userData;
       // Step 1: Execute Queries
       const result1 = await executeQuery(listCarParkingByIdQuery, [
-        refCarParkingId
+        refCarParkingId,
       ]);
 
       // Step 2: Process images results if needed
@@ -1707,7 +1710,7 @@ export class userRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      // let filePath: string | any;
+      let filePath: string | any;
 
       if (userData.refTravalDataId) {
         console.log("userData.refTravalDataId", userData.refTravalDataId);
@@ -1717,6 +1720,7 @@ export class userRepository {
           userData.refTravalDataId,
         ]);
         console.log("imageRecord", imageRecord);
+
         if (imageRecord.length === 0) {
           return encrypt(
             {
@@ -1727,27 +1731,35 @@ export class userRepository {
             true
           );
         }
+
+        filePath = imageRecord[0].refItinaryMapPath;
+        console.log("filePath", filePath);
+
+        // Delete the image record from the database
+        const DeleteImage = await executeQuery(deleteImageRecordQuery, [
+          userData.refTravalDataId,
+        ]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
       }
-      // filePath = imageRecord[0].refImagePath;
-
-      // Delete the image record from the database
-      const DeleteImage = await executeQuery(deleteImageRecordQuery, [
-        userData.refTravalDataId,
-      ]);
-
-      // } else {
-      //   // filePath = userData.filePath;
-      // }
-
-      // if (filePath) {
-      //   // Delete the file from local storage
-      //   await deleteFile(filePath);
-      // }
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
 
       return encrypt(
         {
           success: true,
-          message: " Image Deleted Successfully",
+          message: "Employee profile image deleted successfully",
           token: tokens,
         },
         true
@@ -1906,7 +1918,7 @@ export class userRepository {
         refLName,
         refDOB,
         refUserEmail,
-        refMoblile
+        refMoblile,
       } = userData;
       console.log("userData", userData);
 
@@ -2060,14 +2072,14 @@ export class userRepository {
         genPassword,
         genHashedPassword,
         CurrentTime(),
-        token_data.id
+        token_data.id,
       ]);
 
       console.log("token_data.id", token_data.id);
       console.log("updatePassword", updatePassword);
       const tokenData = {
         id: token_data.id,
-        email: emailId
+        email: emailId,
       };
       await client.query("COMMIT");
 
@@ -2670,7 +2682,8 @@ export class userRepository {
         WhoWillHandover,
         HandoverPersonName,
         HandoverPersonPhone,
-        HandoverPersonEmail
+        HandoverPersonEmail,
+        refAgreementPath
       } = userData;
 
       // Conditionally handle handover details
@@ -2697,19 +2710,23 @@ export class userRepository {
         handoverName,
         handoverPhone,
         handoverEmail,
+        refAgreementPath,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ];
 
       const Result = await client.query(insertcarParkingBookingQuery, params);
-      console.log('Result--------------------------------------------------------------------------------------------2551', Result)
+      console.log(
+        "Result--------------------------------------------------------------------------------------------2551",
+        Result
+      );
 
       // const getUserResult:any = await client.query(getUserResultQuery,[tokendata.id])
       // console.log('getUserResult', getUserResult)
       // const {refUserEmail, refFName } = getUserResult[0];
 
       const getUserResult: any = await client.query(getUserResultQuery, [
-        tokendata.id,
+        tokendata.id
       ]);
 
       if (!getUserResult.rows || getUserResult.rows.length === 0) {
@@ -2751,39 +2768,7 @@ export class userRepository {
         }
       };
       main().catch(console.error);
-
-
-
-      const daysLeft = Math.ceil(
-        (new Date(travelStartDate).getTime() -
-          new Date(CurrentTime()).getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-
-      const userMailData = {
-        daysLeft: daysLeft,
-        refPickupDate: travelStartDate,
-        refUserName: refFName,
-        refParkingName: refParkingName,
-        refParkingCustId: refParkingCustId,
-      };
-
-      console.log("userMailData", userMailData);
-      const main1 = async () => {
-        const adminMail = {
-          to: refUserEmail,
-          subject: "✅ Your CarParking Has Been Booked!",
-          html: userCarParkingBookingMail(userMailData),
-        };
-
-        try {
-          sendEmail(adminMail);
-        } catch (error) {
-          console.log("Error in sending the Mail for User", error);
-        }
-      };
-      main1().catch(console.error);
-
+      
       await client.query("COMMIT");
 
       return encrypt(

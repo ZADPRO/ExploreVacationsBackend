@@ -60,11 +60,16 @@ export const storeFile = async (
     uploadDir = path.join(process.cwd(), "./src/assets/carParkingImage");
   } else if (uploadType === 8) {
     uploadDir = path.join(process.cwd(), "./src/assets/passport");
+  } else if (uploadType === 9) {
+    uploadDir = path.join(process.cwd(), "./src/assets/tourAgreement");
+  } else if (uploadType === 10) {
+    uploadDir = path.join(process.cwd(), ".src/assets/carAgreement");
+  } else if (uploadType === 11) {
+    uploadDir = path.join(process.cwd(), ".src/assets/parkingAgreement");
+  } else {
+    throw new Error(`Invalid upload type: ${uploadType}. `);
   }
-   else {
-    throw new Error(`Invalid upload type: ${uploadType}. Allowed values are 1 to 8.`);
-  }
-  
+
   const uniqueFilename = generateUniqueFilename(file.hapi.filename);
   const uploadPath = path.join(uploadDir, uniqueFilename);
 

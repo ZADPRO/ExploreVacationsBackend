@@ -5,6 +5,7 @@ import {
   viewFile,
   convertToBase64,
   storetheFile,
+  deleteFile,
 } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
@@ -113,7 +114,7 @@ export class carsRepository {
           success: true,
           message: "vehicle added successfully",
           data: vehicleResult,
-          token: tokens
+          token: tokens,
         },
         true
       );
@@ -124,7 +125,7 @@ export class carsRepository {
           success: false,
           message: "An unknown error occurred during vehicle addition",
           token: tokens,
-          error: String(error)
+          error: String(error),
         },
         true
       );
@@ -150,7 +151,7 @@ export class carsRepository {
           {
             success: false,
             message: "vehicle ID not found",
-            token: tokens
+            token: tokens,
           },
           true
         );
@@ -482,7 +483,7 @@ export class carsRepository {
       const history = [
         15,
         tokenData.id,
-       `${refBenifitsName} benifits updated successfully`,
+        `${refBenifitsName} benifits updated successfully`,
         CurrentTime(),
         tokenData.id,
       ];
@@ -554,7 +555,7 @@ export class carsRepository {
       const result = await client.query(deletebenifitsQuery, [
         refBenifitsId,
         CurrentTime(),
-        tokendata.id
+        tokendata.id,
       ]);
 
       if (result.rowCount === 0) {
@@ -568,8 +569,6 @@ export class carsRepository {
           true
         );
       }
-
-
 
       // Insert delete action into history
       const history = [
@@ -667,7 +666,7 @@ export class carsRepository {
         const result = await client.query(addIncludeQuery, [
           refIncludeName,
           CurrentTime(),
-          tokendata.id
+          tokendata.id,
         ]);
 
         console.log("result", result);
@@ -843,8 +842,8 @@ export class carsRepository {
       const result = await client.query(deleteIncludeQuery, [
         refIncludeId,
         CurrentTime(),
-        tokendata.id
-            ]);
+        tokendata.id,
+      ]);
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -948,7 +947,8 @@ export class carsRepository {
         const result = await client.query(addExcludeQuery, [
           refExcludeName,
           CurrentTime(),
-          tokendata.id        ]);
+          tokendata.id,
+        ]);
 
         console.log("excludes added result:", result);
 
@@ -1120,7 +1120,8 @@ export class carsRepository {
       const result = await client.query(deleteExcludeQuery, [
         refExcludeId,
         CurrentTime(),
-        tokendata.id      ]);
+        tokendata.id,
+      ]);
 
       console.log("result", result);
       if (result.rowCount === 0) {
@@ -1199,7 +1200,7 @@ export class carsRepository {
         refDriverLocation,
         isVerified,
         CurrentTime(),
-        tokendata.id      
+        tokendata.id,
       ]);
 
       const history = [20, token.id, "Add driver", CurrentTime(), tokendata.id];
@@ -1276,8 +1277,8 @@ export class carsRepository {
         refDriverLocation,
         isVerified,
         CurrentTime(),
-        tokenData.id     
-       ];
+        tokenData.id,
+      ];
 
       const update = await client.query(updateDriverDetailsQuery, params);
 
@@ -1490,13 +1491,13 @@ export class carsRepository {
         );
       }
 
-      const duplicateCheck:any = await client.query(
+      const duplicateCheck: any = await client.query(
         checkduplicateFormDetailsQuery,
         [refFormDetails]
       );
-      console.log('duplicateCheck', duplicateCheck)
+      console.log("duplicateCheck", duplicateCheck);
 
-      if (duplicateCheck[0]?.count == 0)  {
+      if (duplicateCheck[0]?.count == 0) {
         await client.query("ROLLBACK");
         return encrypt(
           {
@@ -1605,7 +1606,12 @@ export class carsRepository {
         );
       }
 
-      const params = [refFormDetailsId, refFormDetails, CurrentTime(),tokenData.id];
+      const params = [
+        refFormDetailsId,
+        refFormDetails,
+        CurrentTime(),
+        tokenData.id,
+      ];
 
       const update = await client.query(updateFormDetailsQuery, params);
 
@@ -1878,7 +1884,6 @@ export class carsRepository {
           message: "An error occurred while adding the car",
           error: String(error),
           token: tokens,
-
         },
 
         true
@@ -1945,7 +1950,7 @@ export class carsRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      // let filePath: string | any;
+      let filePath: string | any;
 
       if (userData.refCarsId) {
         // Retrieve the image record from the database
@@ -1962,24 +1967,33 @@ export class carsRepository {
             true
           );
         }
+
+        filePath = imageRecord[0].refGallery;
+        console.log("filePath", filePath);
+
+        // Delete the image record from the database
+        await executeQuery(deleteImageRecordQuery, [userData.refCarsId]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            token: tokens,
+          },
+          true
+        );
       }
-      // filePath = imageRecord[0].refImagePath;
-
-      // Delete the image record from the database
-      await executeQuery(deleteImageRecordQuery, [userData.refCarsId]);
-      // } else {
-      //   // filePath = userData.filePath;
-      // }
-
-      // if (filePath) {
-      //   // Delete the file from local storage
-      //   await deleteFile(filePath);
-      // }
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
 
       return encrypt(
         {
           success: true,
-          message: " Image Deleted Successfully",
+          message: "gallery image deleted successfully",
           token: tokens,
         },
         true
@@ -2211,17 +2225,17 @@ export class carsRepository {
       //   }
       // }
 
-       for (const image of result) {
-              if (image.refCarPath) {
-                try {
-                  image.refCarPath = path.basename(image.refCarPath);
-                } catch (error) {
-                  console.error("Error extracting filename from refCarPath:", error);
-                  image.refCarPath = null;
-                }
-              }
-            }
-            
+      for (const image of result) {
+        if (image.refCarPath) {
+          try {
+            image.refCarPath = path.basename(image.refCarPath);
+          } catch (error) {
+            console.error("Error extracting filename from refCarPath:", error);
+            image.refCarPath = null;
+          }
+        }
+      }
+
       return encrypt(
         {
           success: true,

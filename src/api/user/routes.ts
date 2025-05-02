@@ -341,7 +341,7 @@ export class userRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addUserAddress,
             validate: validate.addUserAddress,
-            description: "addUserAddress",
+            description: "add User Address",
             tags: ["api", "Users"],
             auth: false,
           },

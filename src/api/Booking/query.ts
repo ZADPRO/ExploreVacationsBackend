@@ -49,7 +49,7 @@ WHERE
   "refuserId" = $1
   RETURNING *;
 `;
-export const getUserdataCustomizeTourQuery =`
+export const getUserdataCustomizeTourQuery = `
 SELECT
   cb.*,
   rp.*
@@ -59,7 +59,7 @@ FROM
 WHERE
   cb."refuserId" = $1
 `;
-export const approveParkingBookingQuery =`
+export const approveParkingBookingQuery = `
 UPDATE
   public."userCarParkingBooking"
 SET
@@ -85,5 +85,62 @@ WHERE
   pb."refuserId" = $1
 `;
 
+export const getTourAgreementQuery = `
+SELECT
+  "refAgreementPath"
+FROM
+  public."userTourBooking"
+WHERE
+  "userTourBookingId" = $1
+`;
 
+export const deleteAgreementQuery =`
+UPDATE
+  public."userTourBooking"
+SET
+  "refAgreementPath" = NULL
+WHERE
+  "userTourBookingId" = $1
+RETURNING
+  *;
+`;
 
+export const getCarAgreementQuery = `
+SELECT
+  "refAgreementPath"
+FROM
+  public."userCarBooking"
+WHERE
+  "userCarBookingId" = $1
+`;
+
+export const deleteCarAgreementQuery = `
+UPDATE
+  public."userCarBooking"
+SET
+  "refAgreementPath" = NULL
+WHERE
+  "userCarBookingId" = $1
+RETURNING
+  *;
+`;
+
+export const getParkingAgreementQuery = `
+SELECT
+  "refAgreementPath"
+FROM
+  public."userCarParkingBooking"
+WHERE
+  "carParkingBookingId" = $1
+`;
+
+export const deleteParkingAgreementQuery = `
+UPDATE
+  public."userCarParkingBooking"
+SET
+  "refAgreementPath" = NULL
+WHERE
+  "carParkingBookingId" = $1
+RETURNING
+  *;
+`;
