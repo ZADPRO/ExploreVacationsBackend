@@ -668,7 +668,7 @@ export function generateCarParkingBookingEmailContent(result: any): string {
   }
   <tr>
     <td style="padding: 8px; font-weight: bold;">Booking Time:</td>
-    <td style="padding: 8px;">${booking.CurrentTime()}</td>
+    <td style="padding: 8px;">${CurrentTime()}</td>
   </tr>
 </table>
 

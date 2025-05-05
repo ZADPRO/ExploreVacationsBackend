@@ -1,6 +1,7 @@
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 import { s3 } from "../../helper/s3Client";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export class homePageRepository {
   public async uploadHomeImagesV1(file: any): Promise<any> {
@@ -10,14 +11,12 @@ export class homePageRepository {
     const fileData = file.file;
     const fileName = `${uuidv4()}_${fileData.hapi.filename}`;
     const contentType = fileData.hapi.headers["content-type"];
-    
-    // const bucketName = process.env.AWS_BUCKET_NAME;
 
-        const bucketName = process.env.S3_BUCKET_NAME;
+    const bucketName = process.env.S3_BUCKET_NAME;
 
-    console.log('bucketName', bucketName)
+    console.log("bucketName", bucketName);
     if (!bucketName) throw new Error("Missing AWS_BUCKET_NAME in environment");
-  
+
     const uploadParams: PutObjectCommandInput = {
       Bucket: process.env.S3_BUCKET_NAME!,
       Key: fileName,
@@ -39,4 +38,22 @@ export class homePageRepository {
       base64: fileData._data.toString("base64"),
     };
   }
+  public async deleteHomeImageV1(fileName: string): Promise<any> {
+    const bucketName = process.env.S3_BUCKET_NAME;
+    if (!bucketName) throw new Error("Missing AWS_BUCKET_NAME in environment");
+
+    const deleteParams = {
+      Bucket: bucketName,
+      Key: fileName,
+    };
+
+    await s3.send(new DeleteObjectCommand(deleteParams));
+
+    return {
+      success: true,
+      message: "Image deleted successfully",
+      fileName,
+    };
+  }
+  
 }

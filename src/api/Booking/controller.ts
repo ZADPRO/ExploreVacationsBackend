@@ -88,9 +88,7 @@ export class bookingController {
       const decodedToken = {
         id: request.plugins.token.id,
       };
-
       let entity;
-
       entity = await this.resolver.approveCustomizeTourBookingV1(
         request.payload,
         decodedToken

@@ -25,6 +25,30 @@ export class homePageRoutes implements IRoute {
             },
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/homePageRoutes/deleteHomeImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteHomeImage,
+            // validate: validate.deleteHomeImage,
+            description: "update Package",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/homePageRoutes/homeImageContent",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.homeImageContent,
+            // validate: validate.homeImageContent,
+            description: "update Package",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

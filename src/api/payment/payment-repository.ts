@@ -13,10 +13,72 @@ import axios from "axios";
 import Payrexx from "../../helper/Payrexx";
 import { getPriceQuery } from "./query";
 export class patmentRepository {
+  // public async calculationV1(userData: any, tokendata: any): Promise<any> {
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+
+  //   try {
+  //     const {
+  //       travelStartDate,
+  //       travelEndDate,
+  //       pricePerDayorHour,
+  //       refCarParkingId
+  //     } = userData;
+
+  //     const getPrice = await executeQuery(getPriceQuery, [refCarParkingId]);
+  //     console.log("getPrice", getPrice);
+  //     const refPrice = getPrice[0];
+  //     console.log("price", refPrice);
+  //     const start = dayjs(travelStartDate);
+  //     const end = dayjs(travelEndDate);
+
+  //     if (!start.isValid() || !end.isValid() || end.isBefore(start)) {
+  //       throw new Error("Invalid travel dates");
+  //     }
+
+  //     let totalAmount = 0;
+
+  //     if (pricePerDayorHour === "day" ) {
+  //       const days = end.diff(start, "day") + 1; // include the end day
+  //       totalAmount = days * refPrice;
+  //     } else if (pricePerDayorHour === "hour") {
+  //       const hours = end.diff(start, "hour");
+  //       totalAmount = hours * refPrice;
+  //     } else {
+  //       throw new Error(
+  //         "Invalid pricePerDayorHour value. Must be 'day' or 'hour'"
+  //       );
+  //     }
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "payment calculated successfully",
+  //         totalAmount:totalAmount,
+  //         // travelStartDate,
+  //         // travelEndDate,
+  //         // pricePerDayorHour,
+  //         // refPrice,
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred during payment calculation",
+  //         token: tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
   public async calculationV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
-
+  
     try {
       const {
         travelStartDate,
@@ -24,24 +86,34 @@ export class patmentRepository {
         pricePerDayorHour,
         refCarParkingId
       } = userData;
-
+      console.log('userData', userData)
+  
       const getPrice = await executeQuery(getPriceQuery, [refCarParkingId]);
       console.log("getPrice", getPrice);
-      const refPrice = getPrice[0];
-      console.log("price", refPrice);
+  
+      if (!getPrice.length) {
+        throw new Error("No pricing found for the given car parking ID");
+      }
+  
+      // const refPrice = getPrice[0];
+      const refPrice = Number(getPrice[0].refPrice);
+      if (isNaN(refPrice)) {
+        throw new Error("Invalid price data from database");
+      }
       const start = dayjs(travelStartDate);
       const end = dayjs(travelEndDate);
-
+  
       if (!start.isValid() || !end.isValid() || end.isBefore(start)) {
         throw new Error("Invalid travel dates");
       }
-
+  
       let totalAmount = 0;
-
-      if (pricePerDayorHour === "day") {
+      const billingUnit = pricePerDayorHour.toLowerCase(); // normalize casing
+  
+      if (billingUnit === "day") {
         const days = end.diff(start, "day") + 1; // include the end day
         totalAmount = days * refPrice;
-      } else if (pricePerDayorHour === "hour") {
+      } else if (billingUnit === "hour") {
         const hours = end.diff(start, "hour");
         totalAmount = hours * refPrice;
       } else {
@@ -49,16 +121,13 @@ export class patmentRepository {
           "Invalid pricePerDayorHour value. Must be 'day' or 'hour'"
         );
       }
-
+      console.log('totalAmount', totalAmount)
+  
       return encrypt(
         {
           success: true,
-          message: "payment calculated successfully",
-          totalAmount,
-          travelStartDate,
-          travelEndDate,
-          pricePerDayorHour,
-          refPrice,
+          message: "Payment calculated successfully",
+          totalAmount: totalAmount,
           token: tokens,
         },
         true
@@ -75,6 +144,7 @@ export class patmentRepository {
       );
     }
   }
+  
   public async paymentV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -95,7 +165,7 @@ export class patmentRepository {
         pm: ["visa", "mastercard", "twint", "amex"],
         fields: {
           email: { value: userEmail },
-          forename: { value: firstname },
+          forename: { value: firstname }
           // surname: { value: lastname },
         },
       });

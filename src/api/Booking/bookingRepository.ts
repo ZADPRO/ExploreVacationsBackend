@@ -32,7 +32,8 @@ import { deleteFile, storeFile, viewFile } from "../../helper/storage";
 export class bookingRepository {
   public async approveTourBookingV1(
     userData: any,
-    tokendata: any
+    tokendata: any,
+    pdfBase64: string
   ): Promise<any> {
     console.log("userData", userData);
     const token = { id: tokendata.id };
@@ -56,23 +57,9 @@ export class bookingRepository {
       console.log("mailResult", mailResult);
       console.log("refPickupDate", refPickupDate);
 
-      // 2. User confirmation email with countdown
-      // const daysLeft = Math.ceil(
-      //   (new Date(refPickupDate).getTime() -
-      //     new Date(CurrentTime()).getTime()) /
-      //     (1000 * 60 * 60 * 24)
-      // );
-      // console.log("daysLeft", daysLeft);
-
-      // const userMailData = {
-      //   daysLeft: daysLeft,
-      //   refPickupDate: mailResult.refPickupDate,
-      //   refUserName: mailResult.refUserName,
-      //   refPackageName: mailResult.refPackageName,
-      //   refTourCustID: mailResult.refTourCustID,
-      // };
-
-      // console.log("userMailData", userMailData);
+      // Convert Base64 to Buffer
+      const pdfBuffer = Buffer.from(pdfBase64, "base64");
+      console.log("pdfBuffer", pdfBuffer);
 
       const main1 = async () => {
         const userMail = {
@@ -101,6 +88,13 @@ export class bookingRepository {
           </div>
         </div>
       `,
+          attachments: [
+            {
+              filename: "BookingConformation",
+              content: pdfBuffer,
+              contentType: "application/pdf",
+            },
+          ],
         };
         try {
           sendEmail(userMail);
@@ -133,7 +127,8 @@ export class bookingRepository {
   }
   public async approveCarBookingV1(
     userData: any,
-    tokendata: any
+    tokendata: any,
+    pdfBase64: string
   ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -164,6 +159,9 @@ export class bookingRepository {
           new Date(CurrentTime()).getTime()) /
           (1000 * 60 * 60 * 24)
       );
+
+      // Convert Base64 to Buffer
+      const pdfBuffer = Buffer.from(pdfBase64, "base64");
 
       const main1 = async () => {
         const userMail = {
@@ -217,6 +215,13 @@ export class bookingRepository {
     </div>
   </div>
              `,
+          attachments: [
+            {
+              filename: "BookingConformation",
+              content: pdfBuffer,
+              contentType: "application/pdf",
+            },
+          ],
         };
 
         try {
@@ -250,7 +255,8 @@ export class bookingRepository {
   }
   public async approveCustomizeTourBookingV1(
     userData: any,
-    tokendata: any
+    tokendata: any,
+    pdfBase64: string
   ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -278,6 +284,11 @@ export class bookingRepository {
           new Date(CurrentTime()).getTime()) /
           (1000 * 60 * 60 * 24)
       );
+
+      // Convert Base64 to Buffer
+      const pdfBuffer = Buffer.from(pdfBase64, "base64");
+      console.log('pdfBuffer', pdfBuffer)
+
       const main1 = async () => {
         const userMail = {
           to: refUserMail,
@@ -321,6 +332,13 @@ export class bookingRepository {
               &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
             </div>
           </div> `,
+          attachments: [
+            {
+              filename: "BookingConformation",
+              content: pdfBuffer,
+              contentType: "application/pdf",
+            },
+          ],
         };
         try {
           sendEmail(userMail);
@@ -353,7 +371,8 @@ export class bookingRepository {
   }
   public async approveParkingBookingV1(
     userData: any,
-    tokendata: any
+    tokendata: any,
+    pdfBase64: string
   ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -388,6 +407,9 @@ export class bookingRepository {
         refParkingName: refParkingName,
         refParkingCustId: refParkingCustId,
       };
+      // Convert Base64 to Buffer
+      const pdfBuffer = Buffer.from(pdfBase64, "base64");
+      console.log('pdfBuffer', pdfBuffer)
 
       // console.log("userMailData", userMailData);
       const main1 = async () => {
@@ -432,6 +454,13 @@ export class bookingRepository {
     </div>
   </div>
   `,
+          attachments: [
+            {
+              filename: "BookingConformation",
+              content: pdfBuffer,
+              contentType: "application/pdf",
+            },
+          ],
         };
 
         try {
@@ -734,7 +763,7 @@ export class bookingRepository {
       if (userCarBookingId) {
         // Retrieve the image record from the database
         const imageRecord: any = await executeQuery(getCarAgreementQuery, [
-          userCarBookingId
+          userCarBookingId,
         ]);
 
         if (!imageRecord || imageRecord.length === 0) {
@@ -817,7 +846,7 @@ export class bookingRepository {
       if (carParkingBookingId) {
         // Retrieve the image record from the database
         const imageRecord: any = await executeQuery(getParkingAgreementQuery, [
-          carParkingBookingId
+          carParkingBookingId,
         ]);
 
         if (!imageRecord || imageRecord.length === 0) {
@@ -883,5 +912,4 @@ export class bookingRepository {
       client.release();
     }
   }
-  
 }

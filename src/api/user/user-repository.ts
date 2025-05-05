@@ -2746,7 +2746,6 @@ export class userRepository {
       const getParkingResult: any = await client.query(getParkingResultQuery, [
         refCarParkingId,
       ]);
-
       console.log("getParkingResult", getParkingResult);
 
       if (!getParkingResult.rows || getParkingResult.rows.length === 0) {
