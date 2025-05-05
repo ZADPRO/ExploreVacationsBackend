@@ -659,7 +659,7 @@ export class adminRepository {
   }
   public async uploadEmployeeImageV1(
     userData: any,
-    tokendata: any
+    tokendata: any 
   ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);

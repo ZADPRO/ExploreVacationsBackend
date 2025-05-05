@@ -58,7 +58,7 @@ export class bookingRepository {
       console.log("refPickupDate", refPickupDate);
 
       // Convert Base64 to Buffer
-      const pdfBuffer = Buffer.from(pdfBase64, "base64");
+      const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
       console.log("pdfBuffer", pdfBuffer);
 
       const main1 = async () => {
@@ -161,7 +161,7 @@ export class bookingRepository {
       );
 
       // Convert Base64 to Buffer
-      const pdfBuffer = Buffer.from(pdfBase64, "base64");
+      const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
 
       const main1 = async () => {
         const userMail = {
@@ -238,6 +238,7 @@ export class bookingRepository {
           message: "Car Booking approved successfully",
           token: tokens,
           result: result,
+          mailResult:mailResult
         },
         true
       );
@@ -262,11 +263,10 @@ export class bookingRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(approveCustomizeBookingQuery, [
-        userData.userId,
+        userData.userId
       ]);
-
       const mailResult: any = await executeQuery(
-        getUserdataCustomizeTourQuery,
+        getUserdataCustomizeTourQuery
         [userData.userId]
       );
       console.log("mailResult", mailResult);
@@ -354,6 +354,7 @@ export class bookingRepository {
           message: "Customize Tour Booking approved successfully",
           token: tokens,
           result: result,
+          mailResult:mailResult
         },
         true
       );
@@ -374,22 +375,24 @@ export class bookingRepository {
     tokendata: any,
     pdfBase64: string
   ): Promise<any> {
+  
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
+
+      
       const result = await executeQuery(approveParkingBookingQuery, [
-        userData.userId,
-      ]);
+        userData.userId]);
 
       const mailResult: any = await executeQuery(getUserdataParkingQuery, [
-        userData.userId,
+        userData.userId
       ]);
       const {
         travelStartDate,
         refFName,
         refParkingName,
         refParkingCustId,
-        refUserEmail,
+        refUserEmail
       } = mailResult[0];
       console.log("mailResult", mailResult);
 
@@ -408,7 +411,8 @@ export class bookingRepository {
         refParkingCustId: refParkingCustId,
       };
       // Convert Base64 to Buffer
-      const pdfBuffer = Buffer.from(pdfBase64, "base64");
+
+      const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
       console.log('pdfBuffer', pdfBuffer)
 
       // console.log("userMailData", userMailData);
@@ -477,6 +481,7 @@ export class bookingRepository {
           message: "Parking Booking approved successfully",
           token: tokens,
           result: result,
+          mailResult:mailResult[0]
         },
         true
       );

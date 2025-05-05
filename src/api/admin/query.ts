@@ -229,6 +229,7 @@ export const listTourBookingsQuery = `
 WITH
   "base" AS (
     SELECT
+      u.*,
       urt."userTourBookingId",
       urt."refuserId",
       urt."refAgreementPath",
@@ -261,13 +262,15 @@ WITH
       rtd."refSpecialNotes",
       rtd."refTravalOverView",
       rd."refDestinationName",
-      rc."refCategoryName"
+      rc."refCategoryName",
+      rp."refTourCustID"
     FROM
       public."userTourBooking" urt
       LEFT JOIN public."refPackage" rp ON CAST(rp."refPackageId" AS INTEGER) = urt."refPackageId"
       LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
       LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
       LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
+      LEFT JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = urt."refuserId"
     WHERE
       rp."isDelete" IS NOT true
       AND urt."isDelete" IS NOT true
@@ -385,31 +388,42 @@ FROM
   LEFT JOIN excludes e ON b."refPackageId" = e."refPackageId"
 ORDER BY
   b."refPackageId",
-  b."userTourBookingId"; `;
+  b."userTourBookingId";
+   `;
 
 export const listCarBookingsQuery = `
 SELECT
+  u.*,
   rcb.*,
-  ct.*
+  ct.*,
+  vt."refVehicleTypeName",
+  cty."refCarTypeName"
 FROM
   public."userCarBooking" rcb
   JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
+  LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
+  LEFT JOIN public."refCarType" cty ON CAST(cty."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
+  JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = rcb."refuserId"
   AND rcb."isDelete" IS NOT true;
 `;
 
 export const listCustomizeTourBookingsQuery = `
 SELECT
+  u.*,
   ctb.*,
   rp."refPackageName"
 FROM
   public."customizeTourBooking" ctb
   LEFT JOIN public."refPackage" rp ON CAST(rp."refPackageId" AS INTEGER) = ctb."refPackageId"::INTEGER
+  LEFT JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = ctb."refuserId"::INTEGER
 WHERE
-  ctb."isDelete" IS NOT true
+  ctb."isDelete" IS NOT true;
 `;
 
 export const listParkingBookingsQuery = `
+
 SELECT
+  u.*,
   cp.*,
   pt."refParkingName",
   pt."refAssociatedAirport",
@@ -437,19 +451,21 @@ FROM
   LEFT JOIN public."refCarParkingTable" pt ON CAST(pt."refCarParkingId" AS INTEGER) = cp."refCarParkingId"
   LEFT JOIN public."refParkingType" pa ON CAST(pa."refParkingTypeId" AS INTEGER) = pt."refParkingTypeId"
   LEFT JOIN public."refCarParkingType" cpt ON CAST(cpt."refCarParkingTypeId" AS INTEGER) = pt."refCarParkingTypeId"
-LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
+  LEFT JOIN public."users" u ON u."refuserId" = cp."refuserId"
+  LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(pt."ServiceFeatures", '[{}]', '', 'g'),
       ','
     )::INTEGER[]
   )
- WHERE cp."isDelete" IS NOT true
-
-GROUP BY 
-cp."carParkingBookingId",
-pt."refCarParkingId",
-pa."refParkingTypeName",
-cpt."refCarParkingTypeName"
+WHERE
+  cp."isDelete" IS NOT true
+GROUP BY
+  cp."carParkingBookingId",
+  pt."refCarParkingId",
+  pa."refParkingTypeName",
+  cpt."refCarParkingTypeName",
+  u."refuserId"
 `;
 export const listAuditPageQuery = `SELECT
   th.*,

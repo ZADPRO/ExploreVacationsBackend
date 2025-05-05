@@ -136,7 +136,7 @@ export class adminRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.listEmployees,
-            description: "listEmployees",
+            description: "list Employees",
             tags: ["api", "Users"],
             auth: false,
           },
