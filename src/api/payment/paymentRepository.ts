@@ -10,7 +10,7 @@ import {
 } from "../../helper/token";
 import dayjs from "dayjs";
 import axios from "axios";
-import Payrexx from "../../helper/Payrexx";
+import Payrexx from "./Payrexx";
 import { getPriceQuery } from "./query";
 export class paymentRepository {
   // public async calculationV1(userData: any, tokendata: any): Promise<any> {
