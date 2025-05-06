@@ -148,7 +148,7 @@ export class paymentRepository {
   public async paymentV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
-    const payment = new Payrexx(
+    const payrexx = new Payrexx(
       "explorevacationsag",
       "vqdTdCezHYCNEzgFcRsPz4PwvYvZPV"
     );
@@ -156,7 +156,7 @@ export class paymentRepository {
       const { totalAmount, userEmail, firstname, purpose } = userData;
       console.log("userData", userData);
       // Send payment request to Payrexx
-      const result = await payment.post("Gateway", {
+      const result = await payrexx.post("Gateway", {
         amount: totalAmount * 100,
         currency: "CHF",
         vatRate: 7.7, //means charging 7.7% tax on top of the payment
