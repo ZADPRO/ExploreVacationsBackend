@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import Payrexx from "../../helper/Payrexx";
 import { getPriceQuery } from "./query";
-export class patmentRepository {
+export class paymentRepository {
   // public async calculationV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);
