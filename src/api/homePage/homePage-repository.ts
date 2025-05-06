@@ -1,6 +1,6 @@
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
-import { s3 } from "../../helper/s3Client";
+// import { s3 } from "../../helper/s3Client";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { executeQuery, getClient } from "../../helper/db";
 import { PoolClient } from "pg";
@@ -46,7 +46,7 @@ export class homePageRepository {
       ACL: "public-read", // ensure it's a valid ObjectCannedACL
     };
 
-    await s3.send(new PutObjectCommand(uploadParams));
+    // await s3.send(new PutObjectCommand(uploadParams));
 
     const fileUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
     // const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
@@ -69,7 +69,7 @@ export class homePageRepository {
       Key: fileName,
     };
 
-    await s3.send(new DeleteObjectCommand(deleteParams));
+    // await s3.send(new DeleteObjectCommand(deleteParams));
 
     return {
       success: true,

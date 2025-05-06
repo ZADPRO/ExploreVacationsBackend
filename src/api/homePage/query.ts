@@ -86,5 +86,12 @@ WHERE
 `;
 
 export const getHomeImageQuery = `
-
+SELECT
+  *
+FROM
+  public."refHomePage"
+WHERE
+  "isDelete" IS NOT true
+  AND
+  "refHomePageId" = $1
 `;
