@@ -106,4 +106,15 @@ export class homePageResolver {
       domain_code
     );
   }
+  public async listhomeImageUserSideV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.homePageRepository.listhomeImageUserSideV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
 }

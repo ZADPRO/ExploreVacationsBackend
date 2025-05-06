@@ -124,6 +124,17 @@ export class homePageRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "GET",
+          path: "/api/v1/homePageRoutes/listhomeImageUserSide",
+          config: {
+            // pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listhomeImageUserSide,
+            description: "listhomeImageUserSide",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

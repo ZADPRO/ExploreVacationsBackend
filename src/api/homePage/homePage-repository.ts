@@ -463,4 +463,31 @@ export class homePageRepository {
       );
     }
   }
+  public async listhomeImageUserSideV1(userData: any, tokendata: any): Promise<any> {
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const result = await executeQuery(listhomeImageQuery)
+      return encrypt(
+        {
+          success: true,
+          message: "list data successfully",
+          result:result
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error list data:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while list data",
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
 }

@@ -353,4 +353,32 @@ export class homePageController {
         .code(500);
     }
   };
+  public listhomeImageUserSide = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info(`GET URL REQ => ${request.url.href}`);
+    try {
+   
+      let entity;
+
+      entity = await this.resolver.listhomeImageUserSideV1(request.payload);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+    } catch (error) {
+      logger.error("Error in get home Image user side", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
 }
