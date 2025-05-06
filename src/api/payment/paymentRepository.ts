@@ -78,23 +78,23 @@ export class paymentRepository {
   public async calculationV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
-  
+
     try {
       const {
         travelStartDate,
         travelEndDate,
         pricePerDayorHour,
-        refCarParkingId
+        refCarParkingId,
       } = userData;
-      console.log('userData', userData)
-  
+      console.log("userData", userData);
+
       const getPrice = await executeQuery(getPriceQuery, [refCarParkingId]);
       console.log("getPrice", getPrice);
-  
+
       if (!getPrice.length) {
         throw new Error("No pricing found for the given car parking ID");
       }
-  
+
       // const refPrice = getPrice[0];
       const refPrice = Number(getPrice[0].refPrice);
       if (isNaN(refPrice)) {
@@ -102,14 +102,14 @@ export class paymentRepository {
       }
       const start = dayjs(travelStartDate);
       const end = dayjs(travelEndDate);
-  
+
       if (!start.isValid() || !end.isValid() || end.isBefore(start)) {
         throw new Error("Invalid travel dates");
       }
-  
+
       let totalAmount = 0;
       const billingUnit = pricePerDayorHour.toLowerCase(); // normalize casing
-  
+
       if (billingUnit === "day") {
         const days = end.diff(start, "day") + 1; // include the end day
         totalAmount = days * refPrice;
@@ -121,8 +121,8 @@ export class paymentRepository {
           "Invalid pricePerDayorHour value. Must be 'day' or 'hour'"
         );
       }
-      console.log('totalAmount', totalAmount)
-  
+      console.log("totalAmount", totalAmount);
+
       return encrypt(
         {
           success: true,
@@ -144,7 +144,7 @@ export class paymentRepository {
       );
     }
   }
-  
+
   public async paymentV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -165,7 +165,7 @@ export class paymentRepository {
         pm: ["visa", "mastercard", "twint", "amex"],
         fields: {
           email: { value: userEmail },
-          forename: { value: firstname }
+          forename: { value: firstname },
           // surname: { value: lastname },
         },
       });

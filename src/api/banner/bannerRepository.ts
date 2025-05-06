@@ -1,83 +1,30 @@
-import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
-import { v4 as uuidv4 } from "uuid";
-import { s3 } from "../../helper/s3Client";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { executeQuery, getClient } from "../../helper/db";
 import { PoolClient } from "pg";
-import { CurrentTime } from "../../helper/common";
+import { storeFile, viewFile, deleteFile } from "../../helper/storage";
+import path from "path";
 import { encrypt } from "../../helper/encrypt";
-import mime from "mime-types";
+import fs from "fs";
+
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { buildUpdateQuery, getChanges } from "../../helper/buildquery";
 
 import {
   generateTokenWithExpire,
   generateTokenWithoutExpire,
 } from "../../helper/token";
+import { CurrentTime } from "../../helper/common";
 import {
-  addHomePageQuery,
-  deleteHomeImageContentQuery,
-  getHomeImageQuery,
-  getImageRecordQuery,
-  getModuleQuery,
-  listhomeImageQuery,
-  updateHistoryQuery,
-  updateHomePageQuery,
-} from "./query";
-import { deleteFile, storeFile, viewFile } from "../../helper/storage";
-import path from "path";
-export class homePageRepository {
-  public async uploadHomeImagesV1(file: any): Promise<any> {
-    if (!file || !file.file || !file.file._data || !file.file.hapi) {
-      throw new Error("Invalid file input");
-    }
-    const fileData = file.file;
-    const fileName = `${uuidv4()}_${fileData.hapi.filename}`;
-    const contentType = fileData.hapi.headers["content-type"];
+    addHomePageQuery,
+    deleteHomeImageContentQuery,
+    deleteImageRecordQuery,
+    getImageRecordQuery,
+    getModuleQuery,
+    updateHistoryQuery,
+    updateHomePageQuery,
+  } from "./query";
 
-    const bucketName = process.env.S3_BUCKET_NAME;
-
-    console.log("bucketName", bucketName);
-    if (!bucketName) throw new Error("Missing S3_BUCKET_NAME in environment");
-
-    const uploadParams: PutObjectCommandInput = {
-      Bucket: process.env.S3_BUCKET_NAME!,
-      Key: fileName,
-      Body: fileData._data,
-      ContentType: contentType,
-      ACL: "public-read", // ensure it's a valid ObjectCannedACL
-    };
-
-    await s3.send(new PutObjectCommand(uploadParams));
-
-    const fileUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
-    // const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
-
-    return {
-      success: true,
-      message: "Image uploaded successfully",
-      fileName,
-      filePath: fileUrl,
-      contentType,
-      base64: fileData._data.toString("base64"),
-    };
-  }
-  public async deleteHomeImageV1(fileName: string): Promise<any> {
-    const bucketName = process.env.S3_BUCKET_NAME;
-    if (!bucketName) throw new Error("Missing S3_BUCKET_NAME in environment");
-
-    const deleteParams = {
-      Bucket: bucketName,
-      Key: fileName,
-    };
-
-    await s3.send(new DeleteObjectCommand(deleteParams));
-
-    return {
-      success: true,
-      message: "Image deleted successfully",
-      fileName,
-    };
-  }
-
+export class bannerRepository {
   public async homeImageContentV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
@@ -90,7 +37,7 @@ export class homePageRepository {
         homePageContent,
         refOffer,
         refOfferName,
-        homePageImage,
+        homePageImage
       } = userData;
 
       const getModule = await executeQuery(getModuleQuery);
@@ -103,7 +50,7 @@ export class homePageRepository {
         refOfferName,
         homePageImage,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ]);
 
       const history = [
@@ -169,7 +116,7 @@ export class homePageRepository {
         refOfferName,
         homePageImage,
         CurrentTime(),
-        tokendata.id,
+        tokendata.id
       ]);
 
       const history = [
@@ -232,7 +179,7 @@ export class homePageRepository {
         return encrypt(
           {
             success: false,
-            message: "refHomePageId not found or already deleted",
+            message: "Exclude not found or already deleted",
             token: tokens,
           },
           true
@@ -241,9 +188,9 @@ export class homePageRepository {
 
       // Insert delete action into history
       const history = [
-        60, // Unique ID for delete action
+        37, // Unique ID for delete action
         tokendata.id,
-        "The homepage deleted successfully",
+        "delete Exclude",
         CurrentTime(),
         tokendata.id,
       ];
@@ -254,7 +201,7 @@ export class homePageRepository {
       return encrypt(
         {
           success: true,
-          message: "HomePage deleted successfully",
+          message: "Exclude deleted successfully",
           token: tokens,
           deletedData: result.rows[0], // Return deleted record for reference
         },
@@ -262,12 +209,12 @@ export class homePageRepository {
       );
     } catch (error: unknown) {
       await client.query("ROLLBACK"); // Rollback on error
-      console.error("Error deleting HomePage:", error);
+      console.error("Error deleting Exclude:", error);
 
       return encrypt(
         {
           success: false,
-          message: "An error occurred while deleting the HomePage",
+          message: "An error occurred while deleting the Exclude",
           token: tokens,
           error: String(error),
         },
@@ -400,64 +347,6 @@ export class homePageRepository {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
           token: tokens,
-        },
-        true
-      );
-    }
-  }
-  public async listhomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-
-    try {
-      const result = await executeQuery(listhomeImageQuery)
-      return encrypt(
-        {
-          success: true,
-          message: "list data successfully",
-          token: tokens,
-          result:result
-        },
-        true
-      );
-    } catch (error: unknown) {
-      console.error("Error list data:", error);
-
-      return encrypt(
-        {
-          success: false,
-          message: "An error occurred while list data",
-          token: tokens,
-          error: String(error),
-        },
-        true
-      );
-    }
-  }
-  public async getHomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-
-    try {
-      const result = await executeQuery(getHomeImageQuery)
-      return encrypt(
-        {
-          success: true,
-          message: "get data successfully",
-          token: tokens,
-          result:result
-        },
-        true
-      );
-    } catch (error: unknown) {
-      console.error("Error get data:", error);
-
-      return encrypt(
-        {
-          success: false,
-          message: "An error occurred while get data",
-          token: tokens,
-          error: String(error),
         },
         true
       );

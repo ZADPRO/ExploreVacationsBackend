@@ -76,15 +76,6 @@ FROM
 WHERE
   "refHomePageId" = $1;
 `;
-export const listhomeImageQuery = `
-SELECT
-  *
-FROM
-  public."refHomePage"
-WHERE
-  "isDelete" IS NOT true
-`;
-
-export const getHomeImageQuery = `
+export const deleteImageRecordQuery = `
 
 `;

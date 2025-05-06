@@ -9,35 +9,35 @@ export class homePageRoutes implements IRoute {
     return new Promise((resolve) => {
       const controller = new homePageController();
       server.route([
-        // {
-        //   method: "POST",
-        //   path: "/api/v1/homePageRoutes/uploadHomeImages",
-        //   config: {
-        //     pre: [{ method: validateToken, assign: "token" }],
-        //     handler: controller.uploadHomeImages,
-        //     description: "uploadHomeImages",
-        //     tags: ["api", "HomePage"],
-        //     auth: false,
-        //     payload: {
-        //       maxBytes: 10485760,
-        //       output: "stream",
-        //       parse: true,
-        //       multipart: true,
-        //     },
-        //   },
-        // },
-        // {
-        //   method: "POST",
-        //   path: "/api/v1/homePageRoutes/deleteHomeImage",
-        //   config: {
-        //     pre: [{ method: validateToken, assign: "token" }],
-        //     handler: controller.deleteHomeImage,
-        //     // validate: validate.deleteHomeImage,
-        //     description: "deleteHomeImage",
-        //     tags: ["api", "Users"],
-        //     auth: false,
-        //   },
-        // },
+        {
+          method: "POST",
+          path: "/api/v1/homePageRoutes/uploadHomeImages",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.uploadHomeImages,
+            description: "uploadHomeImages",
+            tags: ["api", "HomePage"],
+            auth: false,
+            payload: {
+              maxBytes: 10485760,
+              output: "stream",
+              parse: true,
+              multipart: true,
+            },
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/homePageRoutes/deleteHomeImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteHomeImage,
+            // validate: validate.deleteHomeImage,
+            description: "deleteHomeImage",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
         {
           method: "POST",
           path: "/api/v1/homePageRoutes/homeImageContent",
@@ -98,6 +98,28 @@ export class homePageRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deletehomeImage,
             description: "deletehomeImage",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/homePageRoutes/listhomeImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listhomeImage,
+            description: "listhomeImage",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/homePageRoutes/getHomeImage",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getHomeImage,
+            description: "getHomeImage",
             tags: ["api", "Users"],
             auth: false,
           },

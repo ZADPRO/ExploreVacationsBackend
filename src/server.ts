@@ -28,7 +28,7 @@ const init = async () => {
     });
 
     await Router.loadRoutes(server);
-    startCronJobs()
+    startCronJobs();
     await server.start((error: any) => {
       if (error) {
         logger.error(error);

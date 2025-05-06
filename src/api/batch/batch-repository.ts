@@ -4,7 +4,7 @@ import {
   storeFile,
   viewFile,
   convertToBase64,
-  storetheFile,
+  storetheFile
 } from "../../helper/storage";
 import path from "path";
 import { encrypt } from "../../helper/encrypt";
@@ -16,13 +16,22 @@ import {
   generateTokenWithoutExpire,
 } from "../../helper/token";
 import { CurrentTime } from "../../helper/common";
-import { getCarData, getCarParkingRemData, getCustomizeTourRemData, getTourData } from "./query";
+import { getCarData,
+   getCarParkingRemData, 
+   getCustomizeTourRemData, 
+   getTourData 
+  } from "./query";
 import { sendEmail } from "../../helper/mail";
-import { sendCarRemainder, sendCustomizeTourRemainder, sendParkingRemainder, sendTourRemainder } from "../../helper/mailcontent";
+import { sendCarRemainder, 
+  sendCustomizeTourRemainder, 
+  sendParkingRemainder, 
+  sendTourRemainder 
+} from "../../helper/mailcontent";
 
 export class BatchRepository {
   public async sendTourRemV1(tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
+    console.log('token', token)
     const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getTourData, []);
@@ -69,6 +78,7 @@ export class BatchRepository {
   }
   public async sendCarRemV1(tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
+    console.log('token', token)
     const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCarData, []);

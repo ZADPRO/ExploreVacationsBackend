@@ -1,5 +1,4 @@
-import { paymentRepository } from "./payment-repository";
-
+import { paymentRepository } from "./paymentRepository";
 export class paymentResolver {
   public paymentRepository: any;
   constructor() {
