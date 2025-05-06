@@ -12,6 +12,7 @@ export default {
       refChildrenCount: Joi.string().required(),
       refInfants: Joi.string().required(),
       refOtherRequirements: Joi.string().optional(),
+      transactionId: Joi.number().integer().required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

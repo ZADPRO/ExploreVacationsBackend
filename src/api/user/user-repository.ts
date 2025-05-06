@@ -241,7 +241,8 @@ export class userRepository {
         refChildrenCount,
         refInfants,
         refOtherRequirements,
-        refAgreementPath
+        refAgreementPath,
+        transactionId
       } = userData;
 
       console.log(" line --------- 178");
@@ -257,6 +258,7 @@ export class userRepository {
         refInfants,
         refOtherRequirements,
         refAgreementPath,
+        transactionId,
         CurrentTime(),
         tokendata.id,
         tokendata.id,
@@ -584,7 +586,9 @@ export class userRepository {
         refOtherRequirements,
         refVaccinationCertificate,
         refPassPort,
-        refAgreementPath
+        refAgreementPath,
+        transactionId
+
       } = userData;
 
       const Result = await client.query(addcustomizeBookingQuery, [
@@ -603,6 +607,7 @@ export class userRepository {
         refOtherRequirements,
         refPassPort,
         refAgreementPath,
+        transactionId,
         CurrentTime(),
         tokendata.id,
         tokendata.id,
@@ -1182,7 +1187,8 @@ export class userRepository {
         refDriverAge,
         refDriverMail,
         refDriverMobile,
-        refAgreementPath
+        refAgreementPath,
+        transactionId
       } = userData;
 
       const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
@@ -1202,6 +1208,7 @@ export class userRepository {
         refFormDetails,
         refOtherRequirements,
         refAgreementPath,
+        transactionId,
         CurrentTime(),
         tokendata.id,
         tokendata.id,
@@ -2683,7 +2690,8 @@ export class userRepository {
         HandoverPersonName,
         HandoverPersonPhone,
         HandoverPersonEmail,
-        refAgreementPath
+        refAgreementPath,
+        transactionId
       } = userData;
 
       // Conditionally handle handover details
@@ -2711,6 +2719,7 @@ export class userRepository {
         handoverPhone,
         handoverEmail,
         refAgreementPath,
+        transactionId,
         CurrentTime(),
         tokendata.id
       ];

@@ -31,7 +31,8 @@ WHERE
   AND "isDelete" = false
 `;
 
-export const updateVehicleQuery = `UPDATE
+export const updateVehicleQuery = `
+UPDATE
   public."refVehicleType" 
 SET
   "refVehicleTypeName" = $2,
@@ -483,7 +484,8 @@ WHERE
   "refCarsId" = $1;
 `;
 
-export const deleteImageRecordQuery = `UPDATE
+export const deleteImageRecordQuery = `
+UPDATE
   public."refCarsTable" 
 SET
   "refCarPath" = NULL

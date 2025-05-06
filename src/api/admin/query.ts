@@ -6,6 +6,7 @@
 
 export const selectUserByLogin = `
 SELECT
+  u."refFName",
   rd.*,
   u."refUserTypeId",
   array_agg(ut."refUserType") AS "refUserType",
@@ -33,7 +34,8 @@ WHERE
   OR rd."refUsername" = $1
 GROUP BY
   rd."refUserDomId",
-  u."refUserTypeId"
+  u."refUserTypeId",
+  u."refuserId"
 `;
 
 export const updateHistoryQuery = `INSERT INTO
@@ -780,6 +782,7 @@ export const tourResultQuery = `
 WITH
   "base" AS (
     SELECT
+      rp."refTourCustID",
       urt."userTourBookingId",
       urt."refUserName",
       urt."refUserMail",
@@ -819,7 +822,7 @@ WITH
     WHERE
       rp."isDelete" IS NOT true
       AND urt."isDelete" IS NOT true
-    AND urt."refuserId" = $1
+      AND urt."refuserId" = $1
   ),
   locations AS (
     SELECT
@@ -934,15 +937,19 @@ FROM
   LEFT JOIN excludes e ON b."refPackageId" = e."refPackageId"
 ORDER BY
   b."refPackageId",
-  b."userTourBookingId";
-`;
+  b."userTourBookingId";`;
 
 export const carResultQuery = `
 SELECT
-  rcb.*
+  rcb.*,
+  ct.*,
+  rc."refCarTypeName",
+  vt."refVehicleTypeName"
 FROM
   public."userCarBooking" rcb
   JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
+  JOIN public."refCarType" rc ON CAST(rc."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
+  JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
   AND rcb."isDelete" IS NOT true
   AND rcb."refuserId" = $1;
 `;
@@ -950,7 +957,10 @@ FROM
 export const customizeTourResultQuery = `
 SELECT
   ctb.*,
-  rp."refPackageName"
+  rp."refPackageName",
+  rp."refTourCustID",
+  rp."refTourCode",
+  rp."refTourPrice"
 FROM
   public."customizeTourBooking" ctb
   LEFT JOIN public."refPackage" rp ON CAST(rp."refPackageId" AS INTEGER) = ctb."refPackageId"::INTEGER

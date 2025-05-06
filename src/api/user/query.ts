@@ -26,13 +26,14 @@ INSERT INTO
     "refInfants",
     "refOtherRequirements",
     "refAgreementPath",
+    "paymentId",
     "createdAt",
     "createdBy",
     "refuserId"
     
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 )
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14 )
 RETURNING
   *;
 `;
@@ -63,11 +64,12 @@ export const addcustomizeBookingQuery = `
         "refOtherRequirements", 
         "refPassPort",
         "refAgreementPath",
+        "paymentId",
         "createdAt", 
         "createdBy",
         "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) 
     RETURNING *;
 `;
 
@@ -85,11 +87,12 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "refOtherRequirements", 
         "refFormDetails",
         "refAgreementPath",
+        "paymentId",
         "createdAt", 
         "createdBy",
         "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,$16) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,$16, $17) 
     RETURNING *;
 
 `;
@@ -506,9 +509,10 @@ GROUP BY
 //   `;
 
 export const listallTourQuery = `
-  WITH
+ WITH
   base AS (
     SELECT
+      rp."refCategoryId",
       rp."refPackageId",
       rp."refPackageName",
       rp."refLocation",
@@ -610,8 +614,7 @@ SELECT
 FROM
   final
 ORDER BY
-  "refPackageId";
-  
+  "refPackageId"; 
   `;
 
 // export const addTravalDataQuery = `INSERT INTO
@@ -1475,6 +1478,7 @@ INSERT INTO
     "HandoverPersonPhone",
     "HandoverPersonEmail",
     "refAgreementPath",
+    "paymentId",
     "createdAt",
     "createdBy"
   )
@@ -1496,7 +1500,8 @@ VALUES
     $14,
     $15,
     $16,
-    $17
+    $17,
+    $18
   )
 RETURNING
   *;

@@ -36,14 +36,14 @@ export function generateUniqueFilename(originalName: string): string {
 
 // Function to store a file
 export const storeFile = async (
-  file: HapiFile,
+  file: any,
   uploadType: number // Renamed from `path` to `uploadType` for clarity
 ): Promise<string> => {
   let uploadDir: string;
-
+  
+  console.log("uploadType", uploadType);
   // Determine the directory based on the uploadType value
   if (uploadType === 1) {
-    console.log("uploadType", uploadType);
 
     uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   } else if (uploadType === 2) {
@@ -63,9 +63,11 @@ export const storeFile = async (
   } else if (uploadType === 9) {
     uploadDir = path.join(process.cwd(), "./src/assets/tourAgreement");
   } else if (uploadType === 10) {
-    uploadDir = path.join(process.cwd(), ".src/assets/carAgreement");
+    uploadDir = path.join(process.cwd(), "./src/assets/carAgreement");
   } else if (uploadType === 11) {
-    uploadDir = path.join(process.cwd(), ".src/assets/parkingAgreement");
+    uploadDir = path.join(process.cwd(), "./src/assets/parkingAgreement");
+  } else if (uploadType === 12) {
+    uploadDir = path.join(process.cwd(), "./src/assets/homePageImage");
   } else {
     throw new Error(`Invalid upload type: ${uploadType}. `);
   }
