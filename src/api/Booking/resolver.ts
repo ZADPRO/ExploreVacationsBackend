@@ -36,4 +36,97 @@ export class bookingResolver {
   public async deleteParkingAgreementV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.bookingRepository.deleteParkingAgreementV1(user_data, token_data, domain_code);
   }
+
+  // ---------------------------------------------------------------------------------------------------------------
+
+
+  public async homeImageContentV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.homeImageContentV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
+  public async updateContentV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.updateContentV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
+  public async deletehomeImageContentV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.deletehomeImageContentV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
+  public async uploadImagesV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.uploadImagesV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
+  public async deletehomeImageV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.deletehomeImageV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
+  public async listhomeImageV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.listhomeImageV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
+  public async getHomeImageV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.getHomeImageV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
+  public async listhomeImageUserSideV1(
+    user_data: any,
+    token_data: any,
+    domain_code: any
+  ): Promise<any> {
+    return await this.bookingRepository.listhomeImageUserSideV1(
+      user_data,
+      token_data,
+      domain_code
+    );
+  }
 }
+
