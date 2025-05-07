@@ -77,7 +77,7 @@ export class homePageController {
       if (entity.success) {
         return response.response(entity).code(201);
       }
-      return response.response(entity).code(400);
+      return response.response(entity).code(200);
     } catch (error) {
       logger.error("Error in uploadHomeImages", error);
       return response
@@ -110,7 +110,7 @@ export class homePageController {
       if (entity.success) {
         return response.response(entity).code(201);
       }
-      return response.response(entity).code(400);
+      return response.response(entity).code(200);
     } catch (error) {
       logger.error("Error in uploadHomeImages", error);
       return response
@@ -144,7 +144,7 @@ export class homePageController {
       if (entity.success) {
         return response.response(entity).code(201);
       }
-      return response.response(entity).code(400);
+      return response.response(entity).code(200);
     } catch (error) {
       logger.error("Error in homeImageContent", error);
       return response
@@ -177,7 +177,7 @@ export class homePageController {
       if (entity.success) {
         return response.response(entity).code(201);
       }
-      return response.response(entity).code(400);
+      return response.response(entity).code(200);
     } catch (error) {
       logger.error("Error in updateContent", error);
       return response
@@ -210,7 +210,7 @@ export class homePageController {
       if (entity.success) {
         return response.response(entity).code(201);
       }
-      return response.response(entity).code(400);
+      return response.response(entity).code(200);
     } catch (error) {
       logger.error("Error in deletehomeImageContent", error);
       return response
