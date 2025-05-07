@@ -1,34 +1,34 @@
-import * as Joi from "joi";
+// import * as Joi from "joi";
 
-export default {
-  homeImageContent: {
-    payload: Joi.object({
-      refHomePageName: Joi.string().required(),
-      homePageHeading: Joi.string().required(),
-      homePageContent: Joi.string().required(),
-      refOffer: Joi.string().required(),
-      refOfferName: Joi.string().required(),
-      homePageImage: Joi.string().required(),
-    }),
-    headers: Joi.object({
-      authorization: Joi.string().optional(),
-    }).unknown(),
-  },
+// export default {
+//   homeImageContent: {
+//     payload: Joi.object({
+//       refHomePageName: Joi.string().required(),
+//       homePageHeading: Joi.string().required(),
+//       homePageContent: Joi.string().required(),
+//       refOffer: Joi.string().required(),
+//       refOfferName: Joi.string().required(),
+//       homePageImage: Joi.string().required(),
+//     }),
+//     headers: Joi.object({
+//       authorization: Joi.string().optional(),
+//     }).unknown(),
+//   },
 
-  updateContent: {
-    payload: Joi.object({
-      refHomePageId: Joi.number().integer().required(),
-      refHomePageName: Joi.string().required(),
-      homePageHeading: Joi.string().required(),
-      homePageContent: Joi.string().required(),
-      refOffer: Joi.string().required(),
-      refOfferName: Joi.string().required(),
-      homePageImage: Joi.string().required(),
-    }),
-  },
-  deletehomeImageContent: {
-    payload: Joi.object({
-      refHomePageId: Joi.number().integer().required(),
-    }),
-  },
-};
+//   updateContent: {
+//     payload: Joi.object({
+//       refHomePageId: Joi.number().integer().required(),
+//       refHomePageName: Joi.string().required(),
+//       homePageHeading: Joi.string().required(),
+//       homePageContent: Joi.string().required(),
+//       refOffer: Joi.string().required(),
+//       refOfferName: Joi.string().required(),
+//       homePageImage: Joi.string().required(),
+//     }),
+//   },
+//   deletehomeImageContent: {
+//     payload: Joi.object({
+//       refHomePageId: Joi.number().integer().required(),
+//     }),
+//   },
+// };

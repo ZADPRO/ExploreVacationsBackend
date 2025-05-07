@@ -936,10 +936,10 @@ export class bookingRepository {
         homePageContent,
         refOffer,
         refOfferName,
-        homePageImage,
+        homePageImage
       } = userData;
 
-      const getModule = await executeQuery(getModuleQuery);
+      // const getModule = await executeQuery(getModuleQuery);
 
       const Result = await client.query(addHomePageQuery, [
         refHomePageName,
