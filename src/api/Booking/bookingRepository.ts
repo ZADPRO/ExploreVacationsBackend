@@ -937,7 +937,7 @@ export class bookingRepository {
         refOffer,
         refOfferName,
         homePageImage,
-        refModuleId
+        refModuleId,
       } = userData;
 
       const getModule = await executeQuery(getModuleQuery);
@@ -1006,7 +1006,7 @@ export class bookingRepository {
         refOffer,
         refOfferName,
         homePageImage,
-        refModuleId
+        refModuleId,
       } = userData;
 
       const Result = await client.query(updateHomePageQuery, [
@@ -1261,6 +1261,26 @@ export class bookingRepository {
 
     try {
       const result = await executeQuery(listhomeImageQuery);
+
+      for (const profile of result) {
+        if (profile.homePageImage) {
+          try {
+            const fileBuffer = await viewFile(profile.homePageImage);
+            profile.homePageImage = {
+              filename: path.basename(profile.homePageImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Change based on actual file type if necessary
+            };
+          } catch (err) {
+            console.error(
+              "Error reading image file for product ${product.productId}",
+              err
+            );
+            profile.homePageImage = null; // Handle missing or unreadable files gracefully
+          }
+        }
+      }
+
       return encrypt(
         {
           success: true,
@@ -1289,10 +1309,28 @@ export class bookingRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
+      const { refHomePageId } = userData;
 
-     const {refHomePageId} = userData
+      const result = await executeQuery(getHomeImageQuery, [refHomePageId]);
 
-      const result = await executeQuery(getHomeImageQuery,[refHomePageId]);
+      for (const profile of result) {
+        if (profile.homePageImage) {
+          try {
+            const fileBuffer = await viewFile(profile.homePageImage);
+            profile.homePageImage = {
+              filename: path.basename(profile.homePageImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Change based on actual file type if necessary
+            };
+          } catch (err) {
+            console.error(
+              "Error reading image file for product ${product.productId}",
+              err
+            );
+            profile.homePageImage = null; // Handle missing or unreadable files gracefully
+          }
+        }
+      }
       return encrypt(
         {
           success: true,
