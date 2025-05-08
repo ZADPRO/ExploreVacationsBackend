@@ -1363,6 +1363,24 @@ export class bookingRepository {
 
     try {
       const result = await executeQuery(listhomeImageQuery);
+      for (const profile of result) {
+        if (profile.homePageImage) {
+          try {
+            const fileBuffer = await viewFile(profile.homePageImage);
+            profile.homePageImage = {
+              filename: path.basename(profile.homePageImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Change based on actual file type if necessary
+            };
+          } catch (err) {
+            console.error(
+              "Error reading image file for product ${product.productId}",
+              err
+            );
+            profile.homePageImage = null; // Handle missing or unreadable files gracefully
+          }
+        }
+      }
       return encrypt(
         {
           success: true,
