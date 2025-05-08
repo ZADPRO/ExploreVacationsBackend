@@ -162,7 +162,10 @@ export class paymentRepository {
         vatRate: 7.7, //means charging 7.7% tax on top of the payment
         purpose: purpose, //  purpose
         psp: [44, 36],
-        pm: ["visa", "mastercard", "twint", "amex"],
+        // pm: ["visa", "mastercard", "twint", "amex"],
+        successRedirectUrl:
+          "https://karmacuisine.ch/orders?status=success&message=Payment+Successful",
+        failedRedirectUrl: "https:/karmacuisine.ch/orders?status=failure",
         fields: {
           email: { value: userEmail },
           forename: { value: firstname },
@@ -183,7 +186,7 @@ export class paymentRepository {
             success: true,
             message: "Payed List passed successfully",
             token: tokens,
-            data: result.data, // Assuming result.data contains the payment link and other details
+            data: result.data, // Assuming result contains the payment link and other details
           },
           true
         );

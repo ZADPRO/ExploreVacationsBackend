@@ -44,13 +44,13 @@ export default {
     payload: Joi.object({
       refuserId: Joi.number().integer().required(),
       refFName: Joi.string().min(2).max(50).required(),
-      refLName: Joi.string().min(2).max(50).required(),
+      refLName: Joi.string().min(1).max(50).required(),
       refDOB: Joi.string().required(),
       refDesignation: Joi.string().required(),
       refQualification: Joi.string().required(),
       refProfileImage: Joi.string().optional().allow(null, ""),
       refMoblile: Joi.string().required(),
-      refUserTypeId: Joi.array().items(Joi.number()).required(),
+      refUserTypeId: Joi.array().items(Joi.string()).required()
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

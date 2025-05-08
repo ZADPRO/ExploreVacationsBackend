@@ -936,10 +936,11 @@ export class bookingRepository {
         homePageContent,
         refOffer,
         refOfferName,
-        homePageImage
+        homePageImage,
+        refModuleId
       } = userData;
 
-      // const getModule = await executeQuery(getModuleQuery);
+      const getModule = await executeQuery(getModuleQuery);
 
       const Result = await client.query(addHomePageQuery, [
         refHomePageName,
@@ -948,6 +949,7 @@ export class bookingRepository {
         refOffer,
         refOfferName,
         homePageImage,
+        refModuleId,
         CurrentTime(),
         tokendata.id,
       ]);
@@ -968,7 +970,7 @@ export class bookingRepository {
           success: true,
           message: "home page content added successfully",
           data: Result,
-          // moduleResult: getModule,
+          moduleResult: getModule,
           token: tokens,
         },
         true
@@ -1004,6 +1006,7 @@ export class bookingRepository {
         refOffer,
         refOfferName,
         homePageImage,
+        refModuleId
       } = userData;
 
       const Result = await client.query(updateHomePageQuery, [
@@ -1014,6 +1017,7 @@ export class bookingRepository {
         refOffer,
         refOfferName,
         homePageImage,
+        refModuleId,
         CurrentTime(),
         tokendata.id,
       ]);
@@ -1285,7 +1289,10 @@ export class bookingRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-      const result = await executeQuery(getHomeImageQuery);
+
+     const {refHomePageId} = userData
+
+      const result = await executeQuery(getHomeImageQuery,[refHomePageId]);
       return encrypt(
         {
           success: true,

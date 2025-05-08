@@ -602,12 +602,14 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      // const decodedToken ={
+      //   id:request.plugins.token.id
+      // }
       let entity;
 
-      entity = await this.resolver.forgotPasswordV1(request.payload,decodedToken);
+      entity = await this.resolver.forgotPasswordV1(request.payload
+        // ,decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created

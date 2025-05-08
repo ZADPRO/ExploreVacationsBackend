@@ -230,7 +230,7 @@ export class userRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/userRoutes/forgotPassword",
           config: {
-            pre: [{ method: validateToken, assign: "token" }],
+            // pre: [{ method: validateToken, assign: "token" }],
             handler: controller.forgotPassword,
             description: "forgot Password",
             tags: ["api", "Users"],

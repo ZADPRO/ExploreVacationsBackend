@@ -171,11 +171,12 @@ INSERT INTO
     "refOffer",
     "refOfferName",
     "homePageImage",
+    "refModuleId",
     "createdAt",
     "createdBy"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8)
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING
   *;
 `;
@@ -184,14 +185,15 @@ export const updateHomePageQuery = `
 UPDATE
   public."refHomePage"
 SET
-"refHomePageName" = $2
+"refHomePageName" = $2,
   "homePageHeading" = $3,
   "homePageContent" = $4,
   "refOffer" = $5,
   "refOfferName" = $6,
   "homePageImage" = $7,
-  "updatedAt" =  $8,
-  "updatedBy" = $9
+  "refModuleId" = $8
+  "updatedAt" =  $9,
+  "updatedBy" = $10
 WHERE
   "refHomePageId" = $1
   RETURNING *;

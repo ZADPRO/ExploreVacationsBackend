@@ -9,6 +9,8 @@ export default {
       refOffer: Joi.string().required(),
       refOfferName: Joi.string().required(),
       homePageImage: Joi.string().required(),
+      refModuleId: Joi.number().integer().required(),
+
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -24,6 +26,8 @@ export default {
       refOffer: Joi.string().required(),
       refOfferName: Joi.string().required(),
       homePageImage: Joi.string().required(),
+      refModuleId: Joi.number().integer().required()
+
     }),
   },
   deletehomeImageContent: {

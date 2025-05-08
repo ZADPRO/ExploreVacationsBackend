@@ -1084,15 +1084,24 @@ RETURNING
 //   10;
 //   `;
 
+// export const checkQuery = `
+// SELECT
+//   *
+// FROM
+//   public."refUserDomain"
+// WHERE
+//   "refUsername" = $1
+//   OR "refUserEmail" = $2
+// LIMIT 1;
+// `;
 export const checkQuery = `
 SELECT
-  *
+  COUNT(*)
 FROM
   public."refUserDomain"
 WHERE
   "refUsername" = $1
-  OR "refUserEmail" = $2
-LIMIT 1;
+  OR "refUserEmail" = $2;
 `;
 
 export const getLastCustomerIdQuery = `SELECT

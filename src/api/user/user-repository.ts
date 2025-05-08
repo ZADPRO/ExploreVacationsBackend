@@ -242,7 +242,7 @@ export class userRepository {
         refInfants,
         refOtherRequirements,
         refAgreementPath,
-        transactionId
+        transactionId,
       } = userData;
 
       console.log(" line --------- 178");
@@ -318,7 +318,6 @@ export class userRepository {
       client.release();
     }
   }
-
   // public async customizeBookingV1(
   //   userData?: any,
   //   tokendata?: any
@@ -587,8 +586,7 @@ export class userRepository {
         refVaccinationCertificate,
         refPassPort,
         refAgreementPath,
-        transactionId
-
+        transactionId,
       } = userData;
 
       const Result = await client.query(addcustomizeBookingQuery, [
@@ -865,7 +863,6 @@ export class userRepository {
       );
     }
   }
-
   // public async userCarBookingV1(userData?: any, tokendata?: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);
@@ -1188,7 +1185,7 @@ export class userRepository {
         refDriverMail,
         refDriverMobile,
         refAgreementPath,
-        transactionId
+        transactionId,
       } = userData;
 
       const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
@@ -1427,7 +1424,6 @@ export class userRepository {
       );
     }
   }
-
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
       const result1 = await executeQuery(listallTourQuery);
@@ -1610,7 +1606,6 @@ export class userRepository {
       );
     }
   }
-
   public async getCarParkingV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refCarParkingId } = userData;
@@ -1934,12 +1929,31 @@ export class userRepository {
       const check = [refMoblile, refUserEmail];
       console.log(check);
 
-      const userCheck = await client.query(checkQuery, check);
+      // const userCheck = await client.query(checkQuery, check);
+      // console.log("userCheck", userCheck);
+
+      // const userFind = userCheck.rows[0];
+
+      // if (userFind) {
+      //   await client.query("ROLLBACK");
+      //   return encrypt(
+      //     {
+      //       message: "Already exists",
+      //       success: true,
+      //     },
+      //     true
+      //   );
+      // }
+
+      // -----------------------------------------------------------------
+
+      const userCheck = await executeQuery(checkQuery, check);
       console.log("userCheck", userCheck);
+      const count = Number(userCheck[0]?.count || 0); // safely convert to number
+      console.log("count", count);
 
-      const userFind = userCheck.rows[0];
-
-      if (userFind) {
+      if (count > 0) {
+        console.log("Count > 0 block entered");
         await client.query("ROLLBACK");
         return encrypt(
           {
@@ -1949,6 +1963,7 @@ export class userRepository {
           true
         );
       }
+
       const customerPrefix = "EV-CUS-";
       const baseNumber = 0;
 
@@ -2032,11 +2047,10 @@ export class userRepository {
       client.release();
     }
   }
-
   public async forgotPasswordV1(userData: any, token_data?: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: token_data.id }; // Extract token ID
-    const tokens = generateTokenWithExpire(token, true);
+    // const token = { id: token_data.id }; // Extract token ID
+    // const tokens = generateTokenWithExpire(token, true);
     try {
       const { emailId } = userData;
 
@@ -2063,7 +2077,7 @@ export class userRepository {
           {
             success: false,
             message: "No found for the user",
-            token: tokens,
+            // token: tokens,
           },
           true
         );
@@ -2130,7 +2144,7 @@ export class userRepository {
           success: true,
           message: "mail send successfully",
           emailId,
-          token: tokens,
+          // token: tokens,
         },
         true
       );
@@ -2143,7 +2157,7 @@ export class userRepository {
         {
           success: false,
           message: "Internal server error",
-          token: tokens,
+          // token: tokens,
         },
         true
       );
@@ -2154,7 +2168,6 @@ export class userRepository {
   public async tourBrochureV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refPackageId } = userData;
-
       const result = await executeQuery(listTourBrochureQuery, [refPackageId]);
 
       if (result && result.length) {
@@ -2288,7 +2301,6 @@ export class userRepository {
       );
     }
   }
-
   public async tourBookingHistoryV1(
     userData: any,
     tokendata: any
@@ -2667,6 +2679,7 @@ export class userRepository {
   //     client.release();
   //   }
   // }
+  
   public async carParkingBookingV1(
     userData?: any,
     tokendata?: any
@@ -2691,7 +2704,7 @@ export class userRepository {
         HandoverPersonPhone,
         HandoverPersonEmail,
         refAgreementPath,
-        transactionId
+        transactionId,
       } = userData;
 
       // Conditionally handle handover details
@@ -2721,7 +2734,7 @@ export class userRepository {
         refAgreementPath,
         transactionId,
         CurrentTime(),
-        tokendata.id
+        tokendata.id,
       ];
 
       const Result = await client.query(insertcarParkingBookingQuery, params);
@@ -2735,7 +2748,7 @@ export class userRepository {
       // const {refUserEmail, refFName } = getUserResult[0];
 
       const getUserResult: any = await client.query(getUserResultQuery, [
-        tokendata.id
+        tokendata.id,
       ]);
 
       if (!getUserResult.rows || getUserResult.rows.length === 0) {
@@ -2776,7 +2789,7 @@ export class userRepository {
         }
       };
       main().catch(console.error);
-      
+
       await client.query("COMMIT");
 
       return encrypt(
