@@ -103,9 +103,10 @@ WHERE
     )::INTEGER[]
   )
   AND rn."isDelete" IS NOT true
-  AND rn."refReadStatus" != 'Read'
+  AND rn."refReadStatus" IS NULL
 `;
 
+//   AND rn."refReadStatus" != 'Read'
 export const readNotificationQuery =`
 SELECT
   n.*,
