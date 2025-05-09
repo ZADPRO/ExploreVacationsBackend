@@ -103,7 +103,7 @@ WHERE
     )::INTEGER[]
   )
   AND rn."isDelete" IS NOT true
-  AND rn."refReadStatus" IS NULL
+  AND rn."refReadStatus" != 'Read'
 `;
 
 //   AND rn."refReadStatus" != 'Read'
