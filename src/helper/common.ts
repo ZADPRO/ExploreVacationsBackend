@@ -20,6 +20,22 @@ export const getAdjustedTime = (): string => {
 };
 
 
+export const getSystemTimestamp = (): string => {
+  const now = new Date();
+  const pad = (n: number, len = 2) => n.toString().padStart(len, '0');
+
+  return (
+    pad(now.getDate()) +
+    pad(now.getMonth() + 1) +
+    pad(now.getFullYear() % 100) +
+    pad(now.getHours()) +
+    pad(now.getMinutes()) +
+    pad(now.getSeconds()) +
+    pad(now.getMilliseconds(), 3)
+  );
+};
+
+console.log("System Time:", getSystemTimestamp());
 
 // export const CurrentTime = (): string => {
 //   const today = new Date();

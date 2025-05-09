@@ -1144,7 +1144,8 @@ VALUES
 RETURNING
   *;`;
 
-export const getUsersQuery = `SELECT
+export const getUsersQuery = `
+SELECT
   *
 FROM
   public.users u
@@ -1157,13 +1158,12 @@ WHERE
 export const updateUserPasswordQuery = `UPDATE
   public."refUserDomain"
 SET
-  "refUserPassword" = $3,
-  "refUserHashedPassword" = $4,
-  "updatedAt" = $5,
-  "updatedBy" = $6
+  "refUserPassword" = $2,
+  "refUserHashedPassword" = $3,
+  "updatedAt" = $4
+
 WHERE
   "refUserEmail" = $1
-  AND "refUserId" = $2
 RETURNING
   *;
 `;
@@ -1486,7 +1486,6 @@ INSERT INTO
     "HandoverPersonName",
     "HandoverPersonPhone",
     "HandoverPersonEmail",
-    "refAgreementPath",
     "paymentId",
     "createdAt",
     "createdBy"
@@ -1509,8 +1508,7 @@ VALUES
     $14,
     $15,
     $16,
-    $17,
-    $18
+    $17
   )
 RETURNING
   *;

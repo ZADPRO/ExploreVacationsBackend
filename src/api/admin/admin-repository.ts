@@ -22,6 +22,7 @@ import {
   deleteEmployeeImageQuery,
   deleteEmployeesQuery,
   deleteTourBookingsQuery,
+  getDeletedEmployeeCountQuery,
   getDeletedEmployeeQuery,
   getEmployeeQuery,
   getEmployeesQuery,
@@ -188,6 +189,22 @@ export class adminRepository {
 
       const user = users.rows[0];
 
+      const getDeletedEmployee = await executeQuery(
+        getDeletedEmployeeCountQuery
+      );
+      const count = Number(getDeletedEmployee[0]?.count || 0); // safely convert to number
+      console.log('count', count)
+
+      if (count > 0) {
+        return encrypt(
+          {
+            success: false,
+            message: "The employee was deleted",
+          },
+          true
+        );
+      }
+
       if (!user.refUserHashedPassword) {
         console.error("Error: User has no hashed password stored.");
         return encrypt(
@@ -246,7 +263,6 @@ export class adminRepository {
       //   },
       //   true
       // );
-      
     } catch (error) {
       console.error("Error during login:", error);
       return encrypt(
@@ -293,6 +309,22 @@ export class adminRepository {
     try {
       const result = await executeQuery(listCarBookingsQuery);
 
+      for (const certificate of result) {
+        if (certificate.refAgreementPath) {
+          try {
+            const fileBuffer = await viewFile(certificate.refAgreementPath);
+            certificate.refAgreementPath = {
+              filename: path.basename(certificate.refAgreementPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "application/pdf",
+            };
+          } catch (error) {
+            console.log("error", error);
+            certificate.refAgreementPath = null;
+          }
+        }
+      }
+
       return encrypt(
         {
           success: true,
@@ -322,11 +354,45 @@ export class adminRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
+      console.log(" line ----- 341");
       const result = await executeQuery(listCustomizeTourBookingsQuery);
+      console.log("result", result[0]);
 
-      // Convert images to Base64 format
+      // for (const certificate of result) {
+      //   if (certificate.refVaccinationCertificate) {
+      //     try {
+      //       const fileBuffer = await viewFile(
+      //         certificate.refVaccinationCertificate
+      //       );
+      //       certificate.refVaccinationCertificate = {
+      //         filename: path.basename(certificate.refVaccinationCertificate),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "application/pdf",
+      //       };
+      //     } catch (error) {
+      //       console.log("error", error);
+      //       certificate.refVaccinationCertificate = null;
+      //     }
+      //   }
+      // }
+
+      result.map((data, index) => {
+        console.log("index", index);
+        if (
+          data.refVaccinationCertificate !== null &&
+          data.refVaccinationCertificate !== "{}" &&
+          data.refPassPort !== null &&
+          data.refPassPort !== "{}"
+        ) {
+          console.log("data line ------ 367\n", data);
+        }
+      });
+
       for (const certificate of result) {
+        console.log(" line ----- 366\n");
+        // Handle vaccination certificate
         if (certificate.refVaccinationCertificate) {
+          console.log(" line --------- 370");
           try {
             const fileBuffer = await viewFile(
               certificate.refVaccinationCertificate
@@ -337,8 +403,27 @@ export class adminRepository {
               contentType: "application/pdf",
             };
           } catch (error) {
-            console.log("error", error);
+            console.log(
+              "Error loading vaccination certificate: line ------ 381 \n",
+              error
+            );
             certificate.refVaccinationCertificate = null;
+          }
+        }
+
+        // Handle passport
+        if (certificate.refPassPort) {
+          console.log("line--------- 389");
+          try {
+            const fileBuffer = await viewFile(certificate.refPassPort);
+            certificate.refPassPort = {
+              filename: path.basename(certificate.refPassPort),
+              content: fileBuffer.toString("base64"),
+              contentType: "application/pdf",
+            };
+          } catch (error) {
+            console.log("Error loading passport: line ------- 398 \n", error);
+            certificate.refPassPort = null;
           }
         }
       }
@@ -660,7 +745,7 @@ export class adminRepository {
   }
   public async uploadEmployeeImageV1(
     userData: any,
-    tokendata: any 
+    tokendata: any
   ): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -815,7 +900,7 @@ export class adminRepository {
         }
 
         filePath = imageRecord[0]?.refProfileImage;
-        console.log('filePath', filePath)
+        console.log("filePath", filePath);
 
         // Delete from DB
         await client.query(deleteEmployeeImageQuery, [refuserId]);

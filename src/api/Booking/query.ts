@@ -191,7 +191,7 @@ SET
   "refOffer" = $5,
   "refOfferName" = $6,
   "homePageImage" = $7,
-  "refModuleId" = $8
+  "refModuleId" = $8,
   "updatedAt" =  $9,
   "updatedBy" = $10
 WHERE

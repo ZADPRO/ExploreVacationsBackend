@@ -30,13 +30,16 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  rd."refUserEmail" = $1
-  OR rd."refUsername" = $1
+  (
+    rd."refUserEmail" = $1
+    OR rd."refUsername" = $1
+  )
+  AND u."isDelete" IS NOT true
 GROUP BY
   rd."refUserDomId",
   u."refUserTypeId",
   u."refuserId"
-`;
+  `;
 
 export const updateHistoryQuery = `INSERT INTO
   public."refTxnHistory" (
@@ -228,6 +231,8 @@ RETURNING
 // `;
 
 export const listTourBookingsQuery = `
+
+
 WITH
   "base" AS (
     SELECT
@@ -413,7 +418,9 @@ export const listCustomizeTourBookingsQuery = `
 SELECT
   u.*,
   ctb.*,
-  rp."refPackageName"
+  rp."refPackageName",
+  rp."refTourCustID",
+  rp."refTourPrice"
 FROM
   public."customizeTourBooking" ctb
   LEFT JOIN public."refPackage" rp ON CAST(rp."refPackageId" AS INTEGER) = ctb."refPackageId"::INTEGER
@@ -425,6 +432,7 @@ WHERE
 export const listParkingBookingsQuery = `
 
 SELECT
+  ud."refUserEmail",
   u.*,
   cp.*,
   pt."refParkingName",
@@ -454,6 +462,7 @@ FROM
   LEFT JOIN public."refParkingType" pa ON CAST(pa."refParkingTypeId" AS INTEGER) = pt."refParkingTypeId"
   LEFT JOIN public."refCarParkingType" cpt ON CAST(cpt."refCarParkingTypeId" AS INTEGER) = pt."refCarParkingTypeId"
   LEFT JOIN public."users" u ON u."refuserId" = cp."refuserId"
+  LEFT JOIN public."refUserDomain" ud ON ud."refUserId" = u."refuserId"
   LEFT JOIN public."refServiceFeatures" rf ON CAST(rf."refServiceFeaturesId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(pt."ServiceFeatures", '[{}]', '', 'g'),
@@ -467,8 +476,9 @@ GROUP BY
   pt."refCarParkingId",
   pa."refParkingTypeName",
   cpt."refCarParkingTypeName",
-  u."refuserId"
-`;
+  u."refuserId",
+  ud."refUserDomId"
+  `;
 export const listAuditPageQuery = `SELECT
   th.*,
   td."refTransactionHistory",
@@ -489,14 +499,18 @@ FROM
   public."refTransactionTable";
 `;
 
-export const checkQuery = `SELECT
+export const checkQuery = `
+SELECT
   *
 FROM
-  public."refUserDomain"
+  public."refUserDomain" ud
+  LEFT JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = ud."refUserId"
 WHERE
-  "refUsername" = $1
+  ud."refUsername" = $1
+  AND u."isDelete" IS NOT true
 LIMIT
-  10;`;
+  10;
+  `;
 
 export const getLastEmployeeIdQuery = `
 SELECT
@@ -664,7 +678,9 @@ FROM
 WHERE
   "refuserId" = $1;
 `;
+export const getDeletedEmployeeCountQuery = `
 
+`;
 export const listUserTypeQuery = `
 SELECT
   *

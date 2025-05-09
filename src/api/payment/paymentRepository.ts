@@ -12,6 +12,8 @@ import dayjs from "dayjs";
 import axios from "axios";
 import Payrexx from "./Payrexx";
 import { getPriceQuery } from "./query";
+import { getSystemTimestamp } from "../../helper/common";
+
 export class paymentRepository {
   // public async calculationV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
@@ -149,10 +151,12 @@ export class paymentRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     const payrexx = new Payrexx(
-      "explorevacationsag",
-      "vqdTdCezHYCNEzgFcRsPz4PwvYvZPV"
+      "karmacuisines",
+      "p9d4TdHGnkujeNx2T90jaygculBt9Q"
     );
     try {
+      const uniqueId = getSystemTimestamp();
+      console.log('uniqueId', uniqueId)
       const { totalAmount, userEmail, firstname, purpose } = userData;
       console.log("userData", userData);
       // Send payment request to Payrexx
@@ -164,8 +168,8 @@ export class paymentRepository {
         psp: [44, 36],
         // pm: ["visa", "mastercard", "twint", "amex"],
         successRedirectUrl:
-          "https://karmacuisine.ch/orders?status=success&message=Payment+Successful",
-        failedRedirectUrl: "https:/karmacuisine.ch/orders?status=failure",
+          `http://localhost:5173/success?transaction_id=${uniqueId}`,
+        failedRedirectUrl: "http://localhost:5173/failure",
         fields: {
           email: { value: userEmail },
           forename: { value: firstname },
@@ -187,6 +191,7 @@ export class paymentRepository {
             message: "Payed List passed successfully",
             token: tokens,
             data: result.data, // Assuming result contains the payment link and other details
+            transactionId:uniqueId
           },
           true
         );

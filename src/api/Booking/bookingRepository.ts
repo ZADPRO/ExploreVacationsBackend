@@ -1006,7 +1006,7 @@ export class bookingRepository {
         refOffer,
         refOfferName,
         homePageImage,
-        refModuleId,
+        refModuleId
       } = userData;
 
       const Result = await client.query(updateHomePageQuery, [

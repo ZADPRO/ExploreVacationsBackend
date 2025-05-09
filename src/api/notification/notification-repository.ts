@@ -231,6 +231,7 @@ export class notificationRepository {
     try {
 
       const Result = await executeQuery(staffNotificationCountQuery, [tokendata.id]);
+      console.log('Result', Result)
       
       console.log("Result", Result);
       return encrypt(
@@ -261,7 +262,9 @@ export class notificationRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const Result1 = await executeQuery(readNotificationQuery);
+      console.log('Result1', Result1)
       const Result2 = await executeQuery(unreadNotificationQuery)
+      console.log('Result2', Result2)
       return encrypt(
         {
           success: true,
@@ -291,6 +294,7 @@ export class notificationRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const readResult = await executeQuery(updateReadStatusQuery,[userData.refNotificationsId]);
+      console.log('readResult', readResult)
       return encrypt(
         {
           success: true,

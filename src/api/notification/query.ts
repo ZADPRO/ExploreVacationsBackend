@@ -159,8 +159,8 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  "refReadStatus" != 'Read'
-  AND "isDelete" IS NOT true
+  n."refReadStatus" is null
+  AND n."isDelete" is not true
 GROUP BY
   n."refNotificationsId"
 `;

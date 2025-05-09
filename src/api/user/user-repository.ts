@@ -1958,7 +1958,7 @@ export class userRepository {
         return encrypt(
           {
             message: "Already exists",
-            success: true,
+            success: false,
           },
           true
         );
@@ -2089,26 +2089,26 @@ export class userRepository {
 
       const updatePassword = await client.query(updateUserPasswordQuery, [
         emailId,
-        token_data.id,
+        // token_data.id,
         genPassword,
         genHashedPassword,
         CurrentTime(),
-        token_data.id,
+        // token_data.id,
       ]);
 
-      console.log("token_data.id", token_data.id);
+      // console.log("token_data.id", token_data.id);
       console.log("updatePassword", updatePassword);
-      const tokenData = {
-        id: token_data.id,
-        email: emailId,
-      };
+      // const tokenData = {
+      //   // id: token_data.id,
+      //   email: emailId,
+      // };
       await client.query("COMMIT");
 
       // way 1
       const main = async () => {
         const mailOptions = {
           to: emailId,
-          subject: "You Accont has be Created Successfully In our Platform", // Subject of the email
+          subject: "Password Reset Successful", // Subject of the email
           html: generateforgotPasswordEmailContent(emailId, genPassword),
         };
 
@@ -2139,11 +2139,12 @@ export class userRepository {
       // await transporter.sendMail(mailToUser);
 
       // Return the mobile numbers and email ID in the response
+      
       return encrypt(
         {
           success: true,
           message: "mail send successfully",
-          emailId,
+          emailId:emailId,
           // token: tokens,
         },
         true
@@ -2165,6 +2166,7 @@ export class userRepository {
       client.release(); // Release the client back to the pool
     }
   }
+  
   public async tourBrochureV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refPackageId } = userData;
@@ -2703,7 +2705,7 @@ export class userRepository {
         HandoverPersonName,
         HandoverPersonPhone,
         HandoverPersonEmail,
-        refAgreementPath,
+        // refAgreementPath,
         transactionId,
       } = userData;
 
@@ -2731,7 +2733,7 @@ export class userRepository {
         handoverName,
         handoverPhone,
         handoverEmail,
-        refAgreementPath,
+        // refAgreementPath,
         transactionId,
         CurrentTime(),
         tokendata.id,
