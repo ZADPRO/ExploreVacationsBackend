@@ -110,17 +110,7 @@ WHERE
 export const readNotificationQuery =`
 SELECT
   n.*,
-  array_agg(ut."refUserType") AS "refUserType",
-  array_to_json(
-    string_to_array(
-      trim(
-        both '{}'
-        from
-          n."refUserTypeId"
-      ),
-      ','
-    )::int[]
-  ) AS "userTypeId"
+  array_agg(ut."refUserType") AS "refUserType"
 FROM
   public."refNotifications" n
   LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
@@ -132,6 +122,12 @@ FROM
 WHERE
   n."refReadStatus" = 'Read'
   AND n."isDelete" IS NOT true
+  AND $1 = ANY (
+    string_to_array(
+      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
 GROUP BY
   n."refNotificationsId"
 
@@ -162,6 +158,12 @@ FROM
 WHERE
   n."refReadStatus" is null
   AND n."isDelete" is not true
+  AND $1 = ANY (
+    string_to_array(
+      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
 GROUP BY
   n."refNotificationsId"
 `;

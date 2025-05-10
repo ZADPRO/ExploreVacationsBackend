@@ -190,8 +190,9 @@ export class adminRepository {
       const user = users.rows[0];
 
       const getDeletedEmployee = await executeQuery(
-        getDeletedEmployeeCountQuery
+        getDeletedEmployeeCountQuery,params
       );
+
       const count = Number(getDeletedEmployee[0]?.count || 0); // safely convert to number
       console.log('count', count)
 
@@ -199,7 +200,7 @@ export class adminRepository {
         return encrypt(
           {
             success: false,
-            message: "The employee was deleted",
+            message: "The Person was already deleted",
           },
           true
         );
@@ -251,7 +252,7 @@ export class adminRepository {
           message: "Login successful",
           userId: user.refUserId,
           roleId: userTypeId,
-          token: generateTokenWithExpire(tokenData, true),
+          token: generateTokenWithExpire(tokenData, true)
         },
         true
       );

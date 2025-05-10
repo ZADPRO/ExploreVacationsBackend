@@ -273,7 +273,7 @@ export class notificationRepository {
           readNotification: Result1,
           unReadNotification: Result2
         },
-        true
+        false
       );
     } catch (error: unknown) {
       console.error("Error get staff Notifications:", error);

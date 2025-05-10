@@ -679,7 +679,14 @@ WHERE
   "refuserId" = $1;
 `;
 export const getDeletedEmployeeCountQuery = `
-
+SELECT
+  COUNT(*)
+FROM
+  public."users" u
+  LEFT JOIN public."refUserDomain" ud ON CAST (ud."refUserId" AS INTEGER) = u."refuserId"
+WHERE
+  u."isDelete" is true
+  AND ( ud."refUserEmail" = $1 OR ud."refUsername" = $1)
 `;
 export const listUserTypeQuery = `
 SELECT
