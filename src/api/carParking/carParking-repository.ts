@@ -514,35 +514,35 @@ export class carParkingRepository {
       const { refCarParkingId } = userData;
       const result = await executeQuery(getCarParkingQuery, [refCarParkingId]);
 
-      // for (const image of result) {
-      //   if (image.parkingSlotImage) {
-      //     try {
-      //       const fileBuffer = await viewFile(image.parkingSlotImage);
-      //       image.parkingSlotImage = {
-      //         filename: path.basename(image.parkingSlotImage),
-      //         content: fileBuffer.toString("base64"),
-      //         contentType: "image/jpeg",
-      //       };
-      //     } catch (error) {
-      //       console.error("Error reading image file for product ,err");
-      //       image.parkingSlotImage = null;
-      //     }
-      //   }
-      // }
-
       for (const image of result) {
         if (image.parkingSlotImage) {
           try {
-            image.parkingSlotImage = path.basename(image.parkingSlotImage);
+            const fileBuffer = await viewFile(image.parkingSlotImage);
+            image.parkingSlotImage = {
+              filename: path.basename(image.parkingSlotImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg",
+            };
           } catch (error) {
-            console.error(
-              "Error extracting filename from parkingSlotImage:",
-              error
-            );
+            console.error("Error reading image file for product ,err");
             image.parkingSlotImage = null;
           }
         }
       }
+
+      // for (const image of result) {
+      //   if (image.parkingSlotImage) {
+      //     try {
+      //       image.parkingSlotImage = path.basename(image.parkingSlotImage);
+      //     } catch (error) {
+      //       console.error(
+      //         "Error extracting filename from parkingSlotImage:",
+      //         error
+      //       );
+      //       image.parkingSlotImage = null;
+      //     }
+      //   }
+      // }
 
       return encrypt(
         {
