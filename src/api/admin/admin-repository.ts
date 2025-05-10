@@ -174,18 +174,18 @@ export class adminRepository {
       //   }
       // }
 
-      const { userTypeId } = users.rows[0];
-      console.log("users.rows[0]", users.rows[0]);
+  if (!users.rows || users.rows.length === 0) {
+  return encrypt(
+    {
+      success: false,
+      message: "Invalid login credentials. User not found.",
+    },
+    true
+  );
+}
 
-      if (users.rows.length === 0) {
-        return encrypt(
-          {
-            success: false,
-            message: "Invalid login credentials user not found",
-          },
-          true
-        );
-      }
+const { userTypeId } = users.rows[0];
+console.log("users.rows[0]", users.rows[0]);
 
       const user = users.rows[0];
 
