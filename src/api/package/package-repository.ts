@@ -1089,12 +1089,12 @@ export class packageRepository {
             true
           );
         }
-      
-      filePath = imageRecord[0].refImagePath;
 
-      // Delete the image record from the database
-      await executeQuery(deleteImageRecordQuery, [userData.refGalleryId]);
-      }else if (userData.filePath) {
+        filePath = imageRecord[0].refImagePath;
+
+        // Delete the image record from the database
+        await executeQuery(deleteImageRecordQuery, [userData.refGalleryId]);
+      } else if (userData.filePath) {
         // Fallback path deletion
         filePath = userData.filePath;
       } else {
@@ -1818,38 +1818,86 @@ export class packageRepository {
       //   }
       // }
 
-      for (const image of result1) {
-        // Handle gallery images
-        const galleryValue = image["refGallery"];
-        if (galleryValue) {
-          try {
-            const galleryPaths =
-              typeof galleryValue === "string"
-                ? galleryValue
-                    .replace(/^{|}$/g, "") // Remove {}
-                    .split(/","?/) // Split by "," or "
-                    .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
-                : galleryValue;
+      // for (const image of result1) {
+      //   // Handle gallery images
+      //   const galleryValue = image["refGallery"];
+      //   if (galleryValue) {
+      //     try {
+      //       const galleryPaths =
+      //         typeof galleryValue === "string"
+      //           ? galleryValue
+      //               .replace(/^{|}$/g, "") // Remove {}
+      //               .split(/","?/) // Split by "," or "
+      //               .map((p) => p.replace(/^"|"$/g, "").trim()) // Remove quotes
+      //           : galleryValue;
 
-            image["refGallery"] = galleryPaths.map((imgPath: string) =>
-              path.basename(imgPath)
-            );
+      //       image["refGallery"] = galleryPaths.map((imgPath: string) =>
+      //         path.basename(imgPath)
+      //       );
+      //     } catch (error) {
+      //       console.error("Error processing refGallery:", error);
+      //       image["refGallery"] = [];
+      //     }
+      //   }
+
+      //   // Handle single image fields
+      //   for (const key of ["refItinaryMapPath", "refCoverImage"]) {
+      //     const value = image[key];
+      //     if (value) {
+      //       try {
+      //         image[key] = path.basename(value);
+      //       } catch (error) {
+      //         console.error(`Error processing ${key}:`, error);
+      //         image[key] = null;
+      //       }
+      //     }
+      //   }
+      // }
+
+      // step 2
+      for (const image of result1) {
+        // Handle refGallery
+        if (image.refGallery) {
+          try {
+            const fileBuffer = await viewFile(image.refGallery);
+            image.refGallery = {
+              filename: path.basename(image.refGallery),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Adjust if needed
+            };
           } catch (error) {
-            console.error("Error processing refGallery:", error);
-            image["refGallery"] = [];
+            console.error("Error reading refGallery file:", error);
+            image.refGallery = null;
           }
         }
 
-        // Handle single image fields
-        for (const key of ["refItinaryMapPath", "refCoverImage"]) {
-          const value = image[key];
-          if (value) {
-            try {
-              image[key] = path.basename(value);
-            } catch (error) {
-              console.error(`Error processing ${key}:`, error);
-              image[key] = null;
-            }
+        // Handle refItenaryMap
+        if (image.refItenaryMap) {
+          try {
+            const fileBuffer = await viewFile(image.refItenaryMap);
+            image.refItenaryMap = {
+              filename: path.basename(image.refItenaryMap),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg",
+            };
+          } catch (error) {
+            console.error("Error reading refItenaryMap file:", error);
+            image.refItenaryMap = null;
+          }
+        }
+
+        // Handle refCoverImage
+        if (image.refCoverImage) {
+          try {
+            const fileBuffer = await viewFile(image.refCoverImage);
+            image.refCoverImage = {
+              filename: path.basename(image.refCoverImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg",
+            };
+          } catch (error) {
+            console.error("Error reading refCoverImage file:", error);
+            image.refCoverImage = null;
           }
         }
       }
