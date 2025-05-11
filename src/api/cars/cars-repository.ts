@@ -2030,7 +2030,6 @@ export class carsRepository {
         refOtherRequirements,
         refrefRentalAgreement,
         refFuelPolicy,
-        // refDriverRequirements,
         refPaymentTerms,
         refCarPrice,
         carImagePath,

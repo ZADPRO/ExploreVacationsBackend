@@ -220,14 +220,14 @@ export class carParkingRepository {
       if (userData.refCarParkingId) {
         // Retrieve the image record from the database
         const imageRecord = await executeQuery(getParkingImageRecordQuery, [
-          userData.refCarParkingId,
+          userData.refCarParkingId
         ]);
         if (imageRecord.length === 0) {
           return encrypt(
             {
               success: false,
               message: "Image record not found",
-              token: tokens,
+              token: tokens
             },
             true
           );
@@ -260,7 +260,7 @@ export class carParkingRepository {
       return encrypt(
         {
           success: true,
-          message: "Employee profile image deleted successfully",
+          message: "image deleted successfully",
           token: tokens,
         },
         true

@@ -261,9 +261,9 @@ export class notificationRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const Result1 = await executeQuery(readNotificationQuery);
+      const Result1 = await executeQuery(readNotificationQuery,[tokendata.id]);
       console.log('Result1', Result1)
-      const Result2 = await executeQuery(unreadNotificationQuery)
+      const Result2 = await executeQuery(unreadNotificationQuery,[tokendata.id])
       console.log('Result2', Result2)
       return encrypt(
         {

@@ -228,7 +228,8 @@ WHERE
 RETURNING
   *;
 `;
-export const getParkingImageRecordQuery = `SELECT
+export const getParkingImageRecordQuery = `
+SELECT
   *
 FROM
   public."refCarParkingTable"

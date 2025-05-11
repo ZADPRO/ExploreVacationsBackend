@@ -1753,7 +1753,7 @@ export class packageRepository {
 
         // Delete the image record from the database
         await executeQuery(deleteCoverImageRecordQuery, [
-          userData.refPackageId,
+          userData.refPackageId
         ]);
       } else if (userData.filePath) {
         // Fallback path deletion

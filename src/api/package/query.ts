@@ -809,7 +809,8 @@ SELECT *
 //   aa."refCoverImage";
 //     `;
 
-export const deleteCoverImageRecordQuery = `UPDATE
+export const deleteCoverImageRecordQuery = `
+UPDATE
   public."refPackage"
 SET
   "refCoverImage" = NULL
