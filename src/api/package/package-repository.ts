@@ -1905,17 +1905,17 @@ export class packageRepository {
         }
 
         // Handle refItenaryMap
-        if (image.refItenaryMap) {
+        if (image.refItinaryMapPath) {
           try {
-            const fileBuffer = await viewFile(image.refItenaryMap);
-            image.refItenaryMap = {
-              filename: path.basename(image.refItenaryMap),
+            const fileBuffer = await viewFile(image.refItinaryMapPath);
+            image.refItinaryMapPath = {
+              filename: path.basename(image.refItinaryMapPath),
               content: fileBuffer.toString("base64"),
               contentType: "image/jpeg",
             };
           } catch (error) {
             console.error("Error reading refItenaryMap file:", error);
-            image.refItenaryMap = null;
+            image.refItinaryMapPath = null;
           }
         }
 
