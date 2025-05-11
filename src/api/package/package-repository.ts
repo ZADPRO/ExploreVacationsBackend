@@ -1753,7 +1753,7 @@ export class packageRepository {
 
         // Delete the image record from the database
         await executeQuery(deleteCoverImageRecordQuery, [
-          userData.refPackageId
+          userData.refPackageId,
         ]);
       } else if (userData.filePath) {
         // Fallback path deletion
@@ -1855,19 +1855,52 @@ export class packageRepository {
       // }
 
       // step 2
+      // for (const image of result1) {
+      //   // Handle refGallery
+      //   if (image.refGallery) {
+      //     try {
+      //       const fileBuffer = await viewFile(image.refGallery);
+      //       image.refGallery = {
+      //         filename: path.basename(image.refGallery),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "image/jpeg", // Adjust if needed
+      //       };
+      //     } catch (error) {
+      //       console.error("Error reading refGallery file:", error);
+      //       image.refGallery = null;
+      //     }
+      //   }
       for (const image of result1) {
-        // Handle refGallery
+        // Handle refGallery (as array of image objects)
         if (image.refGallery) {
           try {
-            const fileBuffer = await viewFile(image.refGallery);
-            image.refGallery = {
-              filename: path.basename(image.refGallery),
-              content: fileBuffer.toString("base64"),
-              contentType: "image/jpeg", // Adjust if needed
-            };
+            const galleryPaths =
+              typeof image.refGallery === "string"
+                ? image.refGallery
+                    .replace(/^{|}$/g, "") // Remove curly braces
+                    .split(",")
+                    .map((item: string) => item.replace(/^"|"$/g, "").trim())
+                : image.refGallery;
+
+            image.refGallery = [];
+
+            for (const filePath of galleryPaths) {
+              try {
+                const fileBuffer = await viewFile(filePath);
+                image.refGallery.push({
+                  id: refPackageId, // or some unique id if available
+                  path: filePath,
+                  filename: path.basename(filePath),
+                  content: fileBuffer.toString("base64"),
+                  contentType: "image/jpeg",
+                });
+              } catch (error) {
+                console.error("Error reading gallery image:", error);
+              }
+            }
           } catch (error) {
-            console.error("Error reading refGallery file:", error);
-            image.refGallery = null;
+            console.error("Error processing refGallery array:", error);
+            image.refGallery = [];
           }
         }
 
