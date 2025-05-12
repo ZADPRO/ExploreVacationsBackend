@@ -327,7 +327,7 @@ export class settingsRepository {
         if (!refLocation) {
           continue;
         }
-        const duplicateCheck: any = await executeQuery(checkduplicateQuery, [
+        const duplicateCheck: any = await client.query(checkduplicateQuery, [
           refLocation
         ]);
 
