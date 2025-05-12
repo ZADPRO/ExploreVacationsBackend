@@ -1112,7 +1112,8 @@ WHERE
   u."refCustId" LIKE 'EV-CUS-%';
   `;
 
-export const insertUserQuery = `INSERT INTO
+export const insertUserQuery = `
+INSERT INTO
   public.users(
     "refCustId",
     "refFName",
@@ -1126,7 +1127,8 @@ export const insertUserQuery = `INSERT INTO
 VALUES
   ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING
-  *;`;
+  *;
+  `;
 
 export const insertUserDomainQuery = `
 INSERT INTO
@@ -1142,7 +1144,8 @@ INSERT INTO
 VALUES
   ($1, $2, $3, $4, $5, $6, $7)
 RETURNING
-  *;`;
+  *;
+  `;
 
 export const getUsersQuery = `
 SELECT

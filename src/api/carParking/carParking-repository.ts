@@ -901,7 +901,7 @@ export class carParkingRepository {
         );
       }
 
-      const getdeletedFeature: any = await client.query(
+      const getdeletedFeature: any = await executeQuery(
         getdeletedFeatureQuery,
         [refServiceFeaturesId]
       );

@@ -263,7 +263,7 @@ export class carsRepository {
           true
         );
       }
-      const getresult: any = await client.query(getVehicleQuery, [
+      const getresult: any = await executeQuery(getVehicleQuery, [
         refVehicleTypeId,
       ]);
 
