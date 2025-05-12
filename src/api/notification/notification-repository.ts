@@ -41,7 +41,6 @@ export class notificationRepository {
         CurrentTime(),
         tokendata.id
       ]);
-      console.log("Result", Result);
 
       //   const history = [
       //     53,
@@ -99,7 +98,6 @@ export class notificationRepository {
         CurrentTime(),
         tokendata.id
       ]);
-      console.log("Result", Result);
       return encrypt(
         {
           success: true,
@@ -132,7 +130,6 @@ export class notificationRepository {
     try {
       const Result = await executeQuery(listNotificationQuery);
 
-      console.log("Result", Result);
       return encrypt(
         {
           success: true,
@@ -164,7 +161,6 @@ export class notificationRepository {
         userData.refNotificationsId
       ]);
 
-      console.log("Result", Result);
       return encrypt(
         {
           success: true,
@@ -198,7 +194,6 @@ export class notificationRepository {
         tokendata.id
       ]);
 
-      console.log("Result", Result);
       return encrypt(
         {
           success: true,
@@ -231,9 +226,7 @@ export class notificationRepository {
     try {
 
       const Result = await executeQuery(staffNotificationCountQuery, [tokendata.id]);
-      console.log('Result', Result)
-      
-      console.log("Result", Result);
+   
       return encrypt(
         {
           success: true,
@@ -262,9 +255,7 @@ export class notificationRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const Result1 = await executeQuery(readNotificationQuery,[tokendata.id]);
-      console.log('Result1', Result1)
       const Result2 = await executeQuery(unreadNotificationQuery,[tokendata.id])
-      console.log('Result2', Result2)
       return encrypt(
         {
           success: true,

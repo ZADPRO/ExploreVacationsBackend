@@ -43,14 +43,12 @@ export class bookingRepository {
     tokendata: any,
     pdfBase64: string
   ): Promise<any> {
-    console.log("userData", userData);
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(approveTourBookingQuery, [
         userData.userId,
       ]);
-      console.log("result", result);
 
       const mailResult: any = await executeQuery(getUserdataTourQuery, [
         userData.userId,
@@ -62,12 +60,10 @@ export class bookingRepository {
         refPackageName,
         refTourCustID,
       } = mailResult[0];
-      console.log("mailResult", mailResult);
-      console.log("refPickupDate", refPickupDate);
+     
 
       // Convert Base64 to Buffer
       const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
-      console.log("pdfBuffer", pdfBuffer);
 
       const main1 = async () => {
         const userMail = {
@@ -148,7 +144,6 @@ export class bookingRepository {
       const mailResult: any = await executeQuery(getUserdataCarQuery, [
         userData.userId,
       ]);
-      console.log("mailResult", mailResult);
       const {
         refPickupDate,
         refUserName,
@@ -159,7 +154,6 @@ export class bookingRepository {
         refVehicleTypeName,
         refCarPrice,
       } = mailResult[0];
-      console.log("mailResult", mailResult);
 
       // 2. User confirmation email with countdown
       const daysLeft = Math.ceil(
@@ -276,7 +270,6 @@ export class bookingRepository {
       const mailResult: any = await executeQuery(
         getUserdataCustomizeTourQuery[userData.userId]
       );
-      console.log("mailResult", mailResult);
       const {
         refUserName,
         refUserMail,
@@ -284,7 +277,6 @@ export class bookingRepository {
         refArrivalDate,
         refPackageName,
       } = mailResult[0];
-      console.log("mailResult", mailResult);
 
       const daysLeft = Math.ceil(
         (new Date(refArrivalDate).getTime() -
@@ -294,7 +286,6 @@ export class bookingRepository {
 
       // Convert Base64 to Buffer
       const pdfBuffer = Buffer.from(pdfBase64, "base64");
-      console.log("pdfBuffer", pdfBuffer);
 
       const main1 = async () => {
         const userMail = {
@@ -399,15 +390,13 @@ export class bookingRepository {
         refParkingCustId,
         refUserEmail,
       } = mailResult[0];
-      console.log("mailResult", mailResult);
 
       const daysLeft = Math.ceil(
         (new Date(travelStartDate).getTime() -
           new Date(CurrentTime()).getTime()) /
           (1000 * 60 * 60 * 24)
       );
-      console.log("daysLeft", daysLeft);
-
+     
       const userMailData = {
         daysLeft: daysLeft,
         refPickupDate: travelStartDate,
@@ -418,7 +407,6 @@ export class bookingRepository {
       // Convert Base64 to Buffer
 
       const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
-      console.log("pdfBuffer", pdfBuffer);
 
       // console.log("userMailData", userMailData);
       const main1 = async () => {
@@ -511,8 +499,6 @@ export class bookingRepository {
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
-      console.log("userData", userData);
-      console.log("pdfFile-------------------------------------", pdfFile);
 
       // Ensure that a PDF file is provided
       if (!pdfFile) {
@@ -523,7 +509,6 @@ export class bookingRepository {
       let storedFiles: any[] = [];
 
       // Store the PDF file
-      console.log("Storing PDF...");
       filePath = await storeFile(pdfFile, 9); // Assuming storeFile handles PDF storage
 
       // Read the file buffer and convert it to Base64
@@ -568,9 +553,7 @@ export class bookingRepository {
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
-      console.log("userData", userData);
-      console.log("pdfFile-------------------------------------", pdfFile);
-
+   
       // Ensure that a PDF file is provided
       if (!pdfFile) {
         throw new Error("Please provide a PDF file.");
@@ -580,7 +563,6 @@ export class bookingRepository {
       let storedFiles: any[] = [];
 
       // Store the PDF file
-      console.log("Storing PDF...");
       filePath = await storeFile(pdfFile, 10); // Assuming storeFile handles PDF storage
 
       // Read the file buffer and convert it to Base64
@@ -625,9 +607,7 @@ export class bookingRepository {
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
-      console.log("userData", userData);
-      console.log("pdfFile-------------------------------------", pdfFile);
-
+    
       // Ensure that a PDF file is provided
       if (!pdfFile) {
         throw new Error("Please provide a PDF file.");
@@ -637,7 +617,6 @@ export class bookingRepository {
       let storedFiles: any[] = [];
 
       // Store the PDF file
-      console.log("Storing PDF...");
       filePath = await storeFile(pdfFile, 10); // Assuming storeFile handles PDF storage
 
       // Read the file buffer and convert it to Base64
@@ -706,7 +685,6 @@ export class bookingRepository {
         }
 
         filePath = imageRecord[0]?.refAgreementPath;
-        console.log("filePath", filePath);
 
         // Delete from DB
         await client.query(deleteAgreementQuery, [userTourBookingId]);
@@ -789,7 +767,6 @@ export class bookingRepository {
         }
 
         filePath = imageRecord[0]?.refAgreementPath;
-        console.log("filePath", filePath);
 
         // Delete from DB
         await client.query(deleteCarAgreementQuery, [userCarBookingId]);
@@ -872,7 +849,6 @@ export class bookingRepository {
         }
 
         filePath = imageRecord[0]?.refAgreementPath;
-        console.log("filePath", filePath);
 
         // Delete from DB
         await client.query(deleteParkingAgreementQuery, [carParkingBookingId]);
@@ -1076,7 +1052,6 @@ export class bookingRepository {
         tokendata.id,
       ]);
 
-      console.log("result", result);
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
         return encrypt(
@@ -1133,9 +1108,7 @@ export class bookingRepository {
     try {
       // Extract the image from userData
       const image = userData.images;
-      console.log("userData.images", userData.images);
-      console.log("image", image);
-
+  
       // Ensure that only one image is provided
       if (!image) {
         throw new Error("Please provide an image.");
@@ -1143,12 +1116,9 @@ export class bookingRepository {
 
       let filePath: string = "";
       let storedFiles: any[] = [];
-      console.log("storedFiles", storedFiles);
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 12);
-      console.log("filePath", filePath);
 
       // Read the file buffer and convert it to Base64
 
@@ -1166,7 +1136,6 @@ export class bookingRepository {
 
         // contentType:contentType
       });
-      console.log("storedFiles", storedFiles);
 
       // Return success response
       return encrypt(
@@ -1214,7 +1183,6 @@ export class bookingRepository {
         }
 
         filePath = imageRecord[0].homePageImage;
-        console.log("filePath", filePath);
 
         // Delete the image record from the database
         // await executeQuery(deleteImageRecordQuery, [userData.refHomePageId]);

@@ -23,7 +23,6 @@ export class userController {
       const decodedToken ={
         id:request.plugins.token.id
       }
-      console.log('decodedToken', decodedToken)
       let entity;
 
       entity = await this.resolver.tourBookingV1(request.payload

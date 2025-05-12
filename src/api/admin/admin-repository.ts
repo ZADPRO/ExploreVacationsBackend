@@ -57,7 +57,6 @@ export class adminRepository {
   //   try {
   //     const params = [user_data.login];
   //     const users:any = await client.query(selectUserByLogin, params);
-  //     console.log("users", users);
 
   //     if (users.rows.length > 0) {
   //       const user = users.rows[0];
@@ -129,7 +128,6 @@ export class adminRepository {
     try {
       const params = [user_data.login];
       const users: any = await client.query(selectUserByLogin, params);
-      console.log("users", users);
 
       // if (users.rows.length > 0) {
       //   const user = users.rows[0];
@@ -185,7 +183,6 @@ export class adminRepository {
 }
 
 const { userTypeId } = users.rows[0];
-console.log("users.rows[0]", users.rows[0]);
 
       const user = users.rows[0];
 
@@ -194,7 +191,6 @@ console.log("users.rows[0]", users.rows[0]);
       );
 
       const count = Number(getDeletedEmployee[0]?.count || 0); // safely convert to number
-      console.log('count', count)
 
       if (count > 0) {
         return encrypt(
@@ -245,7 +241,6 @@ console.log("users.rows[0]", users.rows[0]);
 
       await client.query(updateHistoryQuery, history);
 
-      console.log("userTypeId =============== ", userTypeId);
       return encrypt(
         {
           success: true,
@@ -355,9 +350,7 @@ console.log("users.rows[0]", users.rows[0]);
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      console.log(" line ----- 341");
       const result = await executeQuery(listCustomizeTourBookingsQuery);
-      console.log("result", result[0]);
 
       // for (const certificate of result) {
       //   if (certificate.refVaccinationCertificate) {
@@ -378,22 +371,18 @@ console.log("users.rows[0]", users.rows[0]);
       // }
 
       result.map((data, index) => {
-        console.log("index", index);
         if (
           data.refVaccinationCertificate !== null &&
           data.refVaccinationCertificate !== "{}" &&
           data.refPassPort !== null &&
           data.refPassPort !== "{}"
         ) {
-          console.log("data line ------ 367\n", data);
         }
       });
 
       for (const certificate of result) {
-        console.log(" line ----- 366\n");
         // Handle vaccination certificate
         if (certificate.refVaccinationCertificate) {
-          console.log(" line --------- 370");
           try {
             const fileBuffer = await viewFile(
               certificate.refVaccinationCertificate
@@ -414,7 +403,6 @@ console.log("users.rows[0]", users.rows[0]);
 
         // Handle passport
         if (certificate.refPassPort) {
-          console.log("line--------- 389");
           try {
             const fileBuffer = await viewFile(certificate.refPassPort);
             certificate.refPassPort = {
@@ -511,7 +499,6 @@ console.log("users.rows[0]", users.rows[0]);
         [parseInt(TransactionType)], // ensure it's an integer array
       ]);
 
-      console.log("result", result);
       return encrypt(
         {
           success: true,
@@ -567,8 +554,7 @@ console.log("users.rows[0]", users.rows[0]);
   public async addEmployeeV1(userData: any, token_data?: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: token_data.id }; // Extract token ID
-    console.log("token", token);
-    console.log("token_data.id", token_data.id);
+   
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -763,7 +749,6 @@ console.log("users.rows[0]", users.rows[0]);
       let storedFiles: any[] = [];
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 6);
 
       // Read the file buffer and convert it to Base64
@@ -1176,7 +1161,6 @@ console.log("users.rows[0]", users.rows[0]);
 
       const employee = getDeletedEmployee.rows[0];
       const employeeName = `${employee.refFName}, (${employee.refCustId})`;
-      console.log("employeeName", employeeName);
 
       const result = await client.query(deleteEmployeesQuery, [
         userData.refuserId,
@@ -1193,8 +1177,7 @@ console.log("users.rows[0]", users.rows[0]);
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
-      console.log("updateHistory", updateHistory);
-
+          
       await client.query("COMMIT");
 
       return encrypt(
@@ -1207,6 +1190,7 @@ console.log("users.rows[0]", users.rows[0]);
         true
       );
     } catch (error: unknown) {
+      console.log('error', error)
       await client.query("ROLLBACK");
       return encrypt(
         {
@@ -1253,7 +1237,6 @@ console.log("users.rows[0]", users.rows[0]);
     try {
       const dashBoard: any = await executeQuery(dashBoardQuery);
 
-      console.log("dashBoard", dashBoard);
 
       return encrypt(
         {
@@ -1294,7 +1277,6 @@ console.log("users.rows[0]", users.rows[0]);
         tokendata.id,
       ]);
 
-      console.log("result", result);
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
         return encrypt(

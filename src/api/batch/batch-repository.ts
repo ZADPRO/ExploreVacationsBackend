@@ -31,7 +31,6 @@ import { sendCarRemainder,
 export class BatchRepository {
   public async sendTourRemV1(tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
-    console.log('token', token)
     const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getTourData, []);
@@ -78,7 +77,6 @@ export class BatchRepository {
   }
   public async sendCarRemV1(tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
-    console.log('token', token)
     const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCarData, []);

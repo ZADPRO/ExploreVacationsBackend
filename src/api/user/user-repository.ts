@@ -225,7 +225,6 @@ export class userRepository {
   // }
   public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
     const token = { id: tokendata.id };
-    console.log("tokendata.id", tokendata.id);
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -245,7 +244,6 @@ export class userRepository {
         transactionId,
       } = userData;
 
-      console.log(" line --------- 178");
 
       const Result = await client.query(addTourBookingQuery, [
         refPackageId,
@@ -263,12 +261,10 @@ export class userRepository {
         tokendata.id,
         tokendata.id,
       ]);
-      console.log("Result line ----- 191", Result);
       const getPackageName: any = await executeQuery(getPackageNameQuery, [
         refPackageId,
       ]);
 
-      console.log("getPackageName line ---- 195", getPackageName);
 
       // if (!getPackageName.rows.length) {
       //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
@@ -277,7 +273,7 @@ export class userRepository {
 
       const main = async () => {
         const adminMail = {
-          to: "indumathi123indumathi@gmail.com",
+          to: "tours_booking@explorevacations.ch",
           subject: "New Tour Booking Received",
           html: generateTourBookingEmailContent(Result),
         };
@@ -615,7 +611,6 @@ export class userRepository {
         refPackageId,
       ]);
 
-      console.log("getPackageName", getPackageName);
 
       // if (!getPackageName.rows.length) {
       //   throw new Error(`Package not found for refPackageId: ${refPackageId}`);
@@ -710,7 +705,7 @@ export class userRepository {
       );
       const main = async () => {
         const adminMail = {
-          to: "indumathi123indumathi@gmail.com",
+          to: "tours_booking@explorevacations.ch",
           subject: "New Customize Tour Booking Received",
           html: generateCustomizeTourBookingEmailContent(Result),
         };
@@ -761,9 +756,7 @@ export class userRepository {
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
-      console.log("userData", userData);
-      console.log("pdfFile-------------------------------------", pdfFile);
-
+    
       // Ensure that a PDF file is provided
       if (!pdfFile) {
         throw new Error("Please provide a PDF file.");
@@ -773,7 +766,6 @@ export class userRepository {
       let storedFiles: any[] = [];
 
       // Store the PDF file
-      console.log("Storing PDF...");
       filePath = await storeFile(pdfFile, 3); // Assuming storeFile handles PDF storage
 
       // Read the file buffer and convert it to Base64
@@ -815,8 +807,7 @@ export class userRepository {
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
-      console.log("userData", userData);
-      console.log("pdfFile-------------------------------------", pdfFile);
+    
 
       // Ensure that a PDF file is provided
       if (!pdfFile) {
@@ -827,7 +818,6 @@ export class userRepository {
       let storedFiles: any[] = [];
 
       // Store the PDF file
-      console.log("Storing PDF...");
       filePath = await storeFile(pdfFile, 8); // Assuming storeFile handles PDF storage
 
       // Read the file buffer and convert it to Base64
@@ -1211,7 +1201,6 @@ export class userRepository {
         tokendata.id,
       ]);
 
-      console.log("Result", Result.rows);
       //way 1
 
       const daysLeft = Math.ceil(
@@ -1220,8 +1209,6 @@ export class userRepository {
           (1000 * 60 * 60 * 24)
       );
       const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
-
-      console.log("getCarName", getCarName);
 
       const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
         getCarName[0];
@@ -1236,11 +1223,11 @@ export class userRepository {
         refCarPrice: refCarPrice,
       };
 
-      const adminMail = {
-        to: "indumathi123indumathi@gmail.com",
-        subject: "New car Booking Received",
-        html: generateCarBookingEmailContent(Result),
-      };
+      // const adminMail = {
+      //   to: "rac_booking@explorevacations.ch",
+      //   subject: "New car Booking Received",
+      //   html: generateCarBookingEmailContent(Result),
+      // };
 
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -1252,7 +1239,7 @@ export class userRepository {
 
       const mailoption = {
         from: process.env.EMAILID,
-        to: "indumathi123indumathi@gmail.com",
+        to: "rac_booking@explorevacations.ch",
         subject: "New car Booking Received",
         html: generateCarBookingEmailContent(Result.rows),
       };
@@ -1520,7 +1507,6 @@ export class userRepository {
         }
       }
 
-      console.log(result1);
 
       return encrypt(
         {
@@ -1565,8 +1551,6 @@ export class userRepository {
         refCarParkingTypeId,
         refParkingTypeId,
       ]);
-
-      console.log("result1", result1);
 
       for (const image of result1) {
         if (image.parkingSlotImage) {
@@ -1672,7 +1656,6 @@ export class userRepository {
       let storedFiles: any[] = [];
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 4);
 
       // Read the file buffer and convert it to Base64
@@ -1715,13 +1698,11 @@ export class userRepository {
       let filePath: string | any;
 
       if (userData.refTravalDataId) {
-        console.log("userData.refTravalDataId", userData.refTravalDataId);
 
         // Retrieve the image record from the database
         const imageRecord = await executeQuery(getImageRecordQuery, [
           userData.refTravalDataId,
         ]);
-        console.log("imageRecord", imageRecord);
 
         if (imageRecord.length === 0) {
           return encrypt(
@@ -1735,7 +1716,6 @@ export class userRepository {
         }
 
         filePath = imageRecord[0].refItinaryMapPath;
-        console.log("filePath", filePath);
 
         // Delete the image record from the database
         const DeleteImage = await executeQuery(deleteImageRecordQuery, [
@@ -1835,7 +1815,6 @@ export class userRepository {
       const { refCarsId } = userData;
 
       const result1 = await executeQuery(getCarsByIdQuery, [refCarsId]);
-      console.log("result1", result1);
 
       // const result2 = await executeQuery(getOtherCarsQuery, [refCarsId]);
       // console.log("result2", result2);
@@ -1922,12 +1901,10 @@ export class userRepository {
         refUserEmail,
         refMoblile,
       } = userData;
-      console.log("userData", userData);
 
       const hashedPassword = await bcrypt.hash(temp_password, 10);
 
       const check = [refMoblile, refUserEmail];
-      console.log(check);
 
       // const userCheck = await client.query(checkQuery, check);
       // console.log("userCheck", userCheck);
@@ -1948,12 +1925,9 @@ export class userRepository {
       // -----------------------------------------------------------------
 
       const userCheck = await executeQuery(checkQuery, check);
-      console.log("userCheck", userCheck);
       const count = Number(userCheck[0]?.count || 0); // safely convert to number
-      console.log("count", count);
 
       if (count > 0) {
-        console.log("Count > 0 block entered");
         await client.query("ROLLBACK");
         return encrypt(
           {
@@ -1993,7 +1967,6 @@ export class userRepository {
         3,
       ];
       const userResult = await client.query(insertUserQuery, params);
-      console.log("userResult", userResult);
       const newUser = userResult.rows[0];
 
       // Insert into userDomain table
@@ -2011,7 +1984,6 @@ export class userRepository {
         insertUserDomainQuery,
         domainParams
       );
-      console.log("domainResult", domainResult);
       // if ((userResult.rowCount ?? 0) > 0 && (domainResult.rowCount ?? 0) > 0) {
       //   const history = [
       //     52,
@@ -2097,7 +2069,6 @@ export class userRepository {
       ]);
 
       // console.log("token_data.id", token_data.id);
-      console.log("updatePassword", updatePassword);
       // const tokenData = {
       //   // id: token_data.id,
       //   email: emailId,
@@ -2197,7 +2168,6 @@ export class userRepository {
   }
   public async profileDataV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id }; // Extract token ID
-    console.log("tokendata.id", tokendata.id);
     const tokens = generateTokenWithExpire(token, true);
     try {
       const profileData = await executeQuery(profileDataQuery, [tokendata.id]);
@@ -2228,7 +2198,6 @@ export class userRepository {
     tokendata: any
   ): Promise<any> {
     const token = { id: tokendata.id }; // Extract token ID
-    console.log("tokendata.id", tokendata.id);
     const tokens = generateTokenWithExpire(token, true);
     try {
       const {
@@ -2244,10 +2213,8 @@ export class userRepository {
         refUserCountry,
         refUserZipCode,
       } = userData;
-      console.log("userData", userData);
 
       const genHashedPassword = await bcrypt.hash(refUserPassword, 10);
-      console.log("genHashedPassword", genHashedPassword);
 
       const profileData = await executeQuery(updateProfileDataQuery, [
         refFName,
@@ -2258,7 +2225,6 @@ export class userRepository {
         tokendata.id,
         tokendata.id,
       ]);
-      console.log("profileData", profileData);
 
       const domainData = await executeQuery(updatedomainDataQuery, [
         refUserEmail,
@@ -2268,7 +2234,6 @@ export class userRepository {
         tokendata.id,
         tokendata.id,
       ]);
-      console.log("domainData", domainData);
 
       const addressData = await executeQuery(updateAddressDataQuery, [
         refUserAddress,
@@ -2280,7 +2245,6 @@ export class userRepository {
         tokendata.id,
         tokendata.id,
       ]);
-      console.log("addressData", addressData);
 
       return encrypt(
         {
@@ -2324,6 +2288,7 @@ export class userRepository {
         true
       );
     } catch (error: unknown) {
+      console.log('error', error)
       return encrypt(
         {
           success: false,
@@ -2346,7 +2311,6 @@ export class userRepository {
       const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [
         tokendata.id,
       ]);
-      console.log("CarBookingresult", CarBookingresult);
 
       // const CarParkingBookingresult = await executeQuery(
       //   userCarParkingBookingHistoryQuery,
@@ -2363,6 +2327,7 @@ export class userRepository {
         true
       );
     } catch (error: unknown) {
+      console.log('error', error)
       return encrypt(
         {
           success: false,
@@ -2397,6 +2362,7 @@ export class userRepository {
         true
       );
     } catch (error: unknown) {
+      console.log('error', error)
       return encrypt(
         {
           success: false,
@@ -2449,6 +2415,7 @@ export class userRepository {
         true
       );
     } catch (error: unknown) {
+      console.log('error', error)
       return encrypt(
         {
           success: false,
@@ -2740,10 +2707,7 @@ export class userRepository {
       ];
 
       const Result = await client.query(insertcarParkingBookingQuery, params);
-      console.log(
-        "Result--------------------------------------------------------------------------------------------2551",
-        Result
-      );
+
 
       // const getUserResult:any = await client.query(getUserResultQuery,[tokendata.id])
       // console.log('getUserResult', getUserResult)
@@ -2770,7 +2734,6 @@ export class userRepository {
       const getParkingResult: any = await client.query(getParkingResultQuery, [
         refCarParkingId,
       ]);
-      console.log("getParkingResult", getParkingResult);
 
       if (!getParkingResult.rows || getParkingResult.rows.length === 0) {
         throw new Error("No parking data found for the given refCarParkingId");
@@ -2780,7 +2743,7 @@ export class userRepository {
 
       const main = async () => {
         const adminMail = {
-          to: "indumathi123indumathi@gmail.com",
+          to: "parking@explorevacations.ch",
           subject: "New Car parking Booking Received",
           html: generateCarParkingBookingEmailContent(Result),
         };

@@ -18,11 +18,9 @@ export class packageController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      console.log('request line ----- 21', request)
       const decodedToken ={
         id:request.plugins.token.id
       }
-      console.log('decodedToken line ------ 24', decodedToken)
       
       let entity;
 
@@ -55,12 +53,10 @@ export class packageController {
       const decodedToken ={
         id:request.plugins.token.id
       }
-      console.log('decodedToken', decodedToken)
      
       let entity;
 
       entity = await this.resolver.UpdatePackageV1(request.payload, decodedToken);
-      console.log('entity', entity)
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -89,12 +85,10 @@ export class packageController {
       const decodedToken ={
         id:request.plugins.token.id
       }
-      console.log('decodedToken', decodedToken)
      
       let entity;
 
       entity = await this.resolver.deletePackageV1(request.payload, decodedToken);
-      console.log('entity', entity)
 
       if (entity.success) {
         return response.response(entity).code(201); // Created

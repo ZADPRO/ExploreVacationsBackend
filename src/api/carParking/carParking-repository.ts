@@ -172,7 +172,6 @@ export class carParkingRepository {
       let storedFiles: any[] = [];
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 7);
 
       // Read the file buffer and convert it to Base64
@@ -309,12 +308,10 @@ export class carParkingRepository {
       } = userData;
 
       const ServiceFeatures = `{${userData.ServiceFeatures.join(",")}}`;
-      console.log("ServiceFeatures", ServiceFeatures);
 
       const existingDatas = await client.query(listCarParkingByIdQuery, [
         refCarParkingId,
       ]);
-      console.log("existingDatas", existingDatas);
 
       const existingData = existingDatas.rows[0];
 
@@ -631,7 +628,6 @@ export class carParkingRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result1 = await executeQuery(getCarParkingTypeQuery);
-      console.log("result1", result1);
       // const result2 = await executeQuery(listCarParkingTypeQuery);
 
       return encrypt(
@@ -689,16 +685,8 @@ export class carParkingRepository {
           ServiceFeatures[0].Feature,
         ]);
 
-        console.log("duplicateCheck", duplicateCheck);
         // const count = Number(duplicateCheck.count || 0); // safely convert to number
         const count = Number(duplicateCheck.rows[0]?.count || 0);
-
-        console.log(
-          "count",
-          duplicateCheck.rows,
-          "service",
-          ServiceFeatures[0].Feature
-        );
 
         if (count > 0) {
           return encrypt(
@@ -823,7 +811,6 @@ export class carParkingRepository {
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
-      console.log("updateHistory", updateHistory);
       await client.query("COMMIT");
 
       return encrypt(

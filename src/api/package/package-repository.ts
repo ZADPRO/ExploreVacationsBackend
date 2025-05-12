@@ -211,7 +211,6 @@ export class packageRepository {
       //   }
       // }
 
-      // console.log('image', image)
 
       //     storedImages.push({
       //       filename: filename,
@@ -223,7 +222,6 @@ export class packageRepository {
       // }
 
       if (images) {
-        console.log("images", images);
         let parsedImages: string[] = [];
 
         // If `images` is a stringified object like: {"path1": "", "path2": ""}
@@ -236,7 +234,6 @@ export class packageRepository {
           }
         } else if (Array.isArray(images)) {
           parsedImages = images;
-          console.log("parsedImages", parsedImages);
         }
 
         // Insert each image path into the gallery table
@@ -894,7 +891,6 @@ export class packageRepository {
       let storedFiles: any[] = [];
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 1);
 
       // Read the file buffer and convert it to Base64
@@ -1141,7 +1137,6 @@ export class packageRepository {
 
       const { refTravalInclude } = userData;
 
-      console.log("Received userData:", userData);
 
       if (!Array.isArray(refTravalInclude) || refTravalInclude.length === 0) {
         return encrypt(
@@ -1169,7 +1164,6 @@ export class packageRepository {
           tokendata.id,
         ]);
 
-        console.log("Include added result:", result);
 
         resultArray.push(result);
       }
@@ -1237,7 +1231,6 @@ export class packageRepository {
       const checkResult = await executeQuery(checkTravalIncludeQuery, [
         refTravalIncludeId,
       ]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -1322,7 +1315,6 @@ export class packageRepository {
       );
 
       const { refTravalInclude } = getdeletedinclude.rows[0];
-      console.log("refTravalInclude", refTravalInclude);
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -1344,7 +1336,6 @@ export class packageRepository {
         CurrentTime(),
         tokendata.id,
       ];
-      console.log("history", history);
 
       await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -1458,7 +1449,6 @@ export class packageRepository {
       // Commit transaction
 
       const updateHistory = await client.query(updateHistoryQuery, history);
-      console.log("updateHistory", updateHistory);
 
       await client.query("COMMIT");
 
@@ -1509,7 +1499,6 @@ export class packageRepository {
       const checkResult = await executeQuery(checkTravalExcludeQuery, [
         refTravalExcludeId,
       ]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -1690,7 +1679,6 @@ export class packageRepository {
       let storedFiles: any[] = [];
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 5);
 
       // Read the file buffer and convert it to Base64
@@ -1749,7 +1737,6 @@ export class packageRepository {
         }
 
         filePath = imageRecord[0].refCoverImage;
-        console.log("filePath", filePath);
 
         // Delete the image record from the database
         await executeQuery(deleteCoverImageRecordQuery, [

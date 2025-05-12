@@ -88,10 +88,8 @@ export class paymentRepository {
         pricePerDayorHour,
         refCarParkingId,
       } = userData;
-      console.log("userData", userData);
 
       const getPrice = await executeQuery(getPriceQuery, [refCarParkingId]);
-      console.log("getPrice", getPrice);
 
       if (!getPrice.length) {
         throw new Error("No pricing found for the given car parking ID");
@@ -123,7 +121,6 @@ export class paymentRepository {
           "Invalid pricePerDayorHour value. Must be 'day' or 'hour'"
         );
       }
-      console.log("totalAmount", totalAmount);
 
       return encrypt(
         {
@@ -151,14 +148,13 @@ export class paymentRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     const payrexx = new Payrexx(
-      "karmacuisines",
-      "p9d4TdHGnkujeNx2T90jaygculBt9Q"
+      "explorevacationsag",
+      "vqdTdCezHYCNEzgFcRsPz4PwvYvZPV"
     );
     try {
       const uniqueId = getSystemTimestamp();
-      console.log('uniqueId', uniqueId)
+      // console.log('uniqueId', uniqueId)
       const { totalAmount, userEmail, firstname, purpose } = userData;
-      console.log("userData", userData);
       // Send payment request to Payrexx
       const result = await payrexx.post("Gateway", {
         amount: totalAmount * 100,
@@ -168,8 +164,8 @@ export class paymentRepository {
         psp: [44, 36],
         // pm: ["visa", "mastercard", "twint", "amex"],
         successRedirectUrl:
-          `http://localhost:5173/success?transaction_id=${uniqueId}`,
-        failedRedirectUrl: "http://localhost:5173/failure",
+          `https://explorevacations.max-idigital.ch/success?transaction_id=${uniqueId}`,
+        failedRedirectUrl: "https://dashboard.max-idigital.ch/failure",
         fields: {
           email: { value: userEmail },
           forename: { value: firstname },
@@ -177,11 +173,7 @@ export class paymentRepository {
         },
       });
 
-      console.log(
-        "result-------------------------------------------------------------------98",
-        result
-      );
-      console.log("Payrexx API Response:", result);
+   
 
       // Ensure the response has the necessary fields
       if (result && result.status && result.data) {

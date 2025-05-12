@@ -35,7 +35,6 @@ export const getSystemTimestamp = (): string => {
   );
 };
 
-console.log("System Time:", getSystemTimestamp());
 
 // export const CurrentTime = (): string => {
 //   const today = new Date();
@@ -114,13 +113,9 @@ export function base64ToFile(
 // Mark the function as async to use await inside it
 export async function processImages(result: any[]) {
   for (const image of result) {
-    console.log("image", image);
     for (const key of ["refGallery", "refItinaryMapPath", "refCoverImage"]) {
-      console.log("key", key);
       if (image[key]) {
-        console.log("key line 217", key);
         try {
-          console.log("key line 219", key);
           const fileBuffer = await viewFile(image[key]);
           image[key] = {
             filename: path.basename(image[key]),

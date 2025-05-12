@@ -230,11 +230,9 @@ export class homePageController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      console.log("request line ----- 21", request);
       const decodedToken = {
         id: request.plugins.token.id,
       };
-      console.log("decodedToken line ------ 24", decodedToken);
 
       let entity;
 
@@ -266,7 +264,6 @@ export class homePageController {
       const decodedToken = {
         id: request.plugins.token.id,
       };
-      console.log("decodedToken line ------ 24", decodedToken);
 
       let entity;
 
@@ -298,7 +295,6 @@ export class homePageController {
       const decodedToken = {
         id: request.plugins.token.id,
       };
-      console.log("decodedToken line ------ 24", decodedToken);
 
       let entity;
 
@@ -330,7 +326,6 @@ export class homePageController {
       const decodedToken = {
         id: request.plugins.token.id,
       };
-      console.log("decodedToken line ------ 24", decodedToken);
 
       let entity;
 

@@ -35,7 +35,6 @@ export class homePageRepository {
 
     const bucketName = process.env.S3_BUCKET_NAME;
 
-    console.log("bucketName", bucketName);
     if (!bucketName) throw new Error("Missing S3_BUCKET_NAME in environment");
 
     const uploadParams: PutObjectCommandInput = {
@@ -226,7 +225,6 @@ export class homePageRepository {
         tokendata.id,
       ]);
 
-      console.log("result", result);
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
         return encrypt(
@@ -283,8 +281,7 @@ export class homePageRepository {
     try {
       // Extract the image from userData
       const image = userData.images;
-      console.log("userData.images", userData.images);
-      console.log("image", image);
+    
 
       // Ensure that only one image is provided
       if (!image) {
@@ -293,12 +290,9 @@ export class homePageRepository {
 
       let filePath: string = "";
       let storedFiles: any[] = [];
-      console.log("storedFiles", storedFiles);
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 12);
-      console.log("filePath", filePath);
 
       // Read the file buffer and convert it to Base64
 
@@ -316,7 +310,6 @@ export class homePageRepository {
 
         // contentType:contentType
       });
-      console.log("storedFiles", storedFiles);
 
       // Return success response
       return encrypt(
@@ -364,7 +357,6 @@ export class homePageRepository {
         }
 
         filePath = imageRecord[0].homePageImage;
-        console.log("filePath", filePath);
 
         // Delete the image record from the database
         // await executeQuery(deleteImageRecordQuery, [userData.refHomePageId]);

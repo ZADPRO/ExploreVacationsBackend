@@ -173,7 +173,6 @@
 //         tokendata.id,
 //       ]);
 
-//       console.log("result", result);
 //       if (result.rowCount === 0) {
 //         await client.query("ROLLBACK");
 //         return encrypt(

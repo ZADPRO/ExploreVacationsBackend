@@ -78,7 +78,6 @@ export class carsRepository {
     try {
       await client.query("BEGIN");
       const { refVehicleTypeName } = userData;
-      console.log("userData", userData);
 
       const check: any = await executeQuery(checkVehicleTypeNameQuery, [
         refVehicleTypeName,
@@ -98,7 +97,6 @@ export class carsRepository {
         tokendata.id,
       ]);
 
-      console.log("vehicleResult", vehicleResult.rows);
       const history = [
         12,
         tokendata.id,
@@ -144,7 +142,6 @@ export class carsRepository {
       const checkResult = await executeQuery(checkVehiclesQuery, [
         refVehicleTypeId,
       ]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -270,11 +267,9 @@ export class carsRepository {
         refVehicleTypeId,
       ]);
 
-      console.log("getresult", getresult);
 
       const { refVehicleTypeName } = getresult[0];
 
-      console.log("refVehicleTypeName", refVehicleTypeName);
       // Insert delete action into history
       const history = [
         34, // Unique ID for delete action
@@ -326,7 +321,6 @@ export class carsRepository {
       // Destructure refBenifitsName from the user data
       const { refBenifitsName } = userData;
 
-      console.log("Received userData:", userData);
 
       // Check if refBenifitsName is an array and has items
       if (!Array.isArray(refBenifitsName) || refBenifitsName.length === 0) {
@@ -374,7 +368,6 @@ export class carsRepository {
           tokendata.id,
         ]);
 
-        console.log("Benefit added result:", result);
 
         resultArray.push(result);
       }
@@ -390,13 +383,7 @@ export class carsRepository {
         tokendata.id, // Performed by
       ];
 
-      console.log(
-        '`Added Benefits: ${refBenifitsName.map((item: any) => item.benefitName).join(", ")}`,',
-        `Added Benefits: ${refBenifitsName
-          .map((item: any) => item.benefitName)
-          .join(", ")}`
-      );
-
+    
       // Commit transaction
       await client.query("COMMIT");
 
@@ -447,7 +434,6 @@ export class carsRepository {
       const checkResult = await executeQuery(checkBenifitsQuery, [
         refBenifitsId,
       ]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -619,12 +605,8 @@ export class carsRepository {
 
       const { refIncludeName } = userData;
 
-      console.log("line ------ 523");
-
-      console.log("Received userData:", userData);
 
       if (!Array.isArray(refIncludeName) || refIncludeName.length === 0) {
-        console.log("line ------ 528");
 
         return encrypt(
           {
@@ -635,7 +617,6 @@ export class carsRepository {
           true
         );
       }
-      console.log("line ------ 537");
       const duplicateCheck: any = await client.query(
         checkduplicateIncludeNameQuery,
         [refIncludeName]
@@ -658,7 +639,6 @@ export class carsRepository {
       for (const include of refIncludeName) {
         const { refIncludeName: refIncludeName } = include;
 
-        console.log("include", include);
         if (!refIncludeName) {
           continue;
         }
@@ -669,7 +649,6 @@ export class carsRepository {
           tokendata.id,
         ]);
 
-        console.log("result", result);
 
         resultArray.push(result);
       }
@@ -682,7 +661,6 @@ export class carsRepository {
         CurrentTime(),
         tokendata.id,
       ];
-      console.log("line ------ 570");
 
       // Commit transaction
       await client.query("COMMIT");
@@ -735,7 +713,6 @@ export class carsRepository {
       const { refIncludeId, refIncludeName } = userData;
 
       const checkResult = await executeQuery(checkIncludeQuery, [refIncludeId]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -906,7 +883,6 @@ export class carsRepository {
 
       const { refExcludeName } = userData;
 
-      console.log("Received userData:", userData);
 
       if (!Array.isArray(refExcludeName) || refExcludeName.length === 0) {
         return encrypt(
@@ -950,7 +926,6 @@ export class carsRepository {
           tokendata.id,
         ]);
 
-        console.log("excludes added result:", result);
 
         resultArray.push(result);
       }
@@ -1008,12 +983,9 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
-      console.log("userData", userData);
       const { refExcludeId, refExcludeName } = userData;
-      console.log("refExcludeId", refExcludeId);
 
       const checkResult = await executeQuery(checkExcludeQuery, [refExcludeId]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -1123,7 +1095,6 @@ export class carsRepository {
         tokendata.id,
       ]);
 
-      console.log("result", result);
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
         return encrypt(
@@ -1255,8 +1226,6 @@ export class carsRepository {
       const checkResult = await executeQuery(checkDriverDetailsQuery, [
         refDriverDetailsId,
       ]);
-      console.log("checkResult", checkResult);
-
       if (checkResult[0]?.count == 0) {
         return encrypt(
           {
@@ -1477,7 +1446,6 @@ export class carsRepository {
       // Destructure refBenifitsName from the user data
       const { refFormDetails } = userData;
 
-      console.log("Received userData:", userData);
 
       // Check if refBenifitsName is an array and has items
       if (!Array.isArray(refFormDetails) || refFormDetails.length === 0) {
@@ -1495,7 +1463,6 @@ export class carsRepository {
         checkduplicateFormDetailsQuery,
         [refFormDetails]
       );
-      console.log("duplicateCheck", duplicateCheck);
 
       if (duplicateCheck[0]?.count == 0) {
         await client.query("ROLLBACK");
@@ -1524,7 +1491,6 @@ export class carsRepository {
           tokendata.id,
         ]);
 
-        console.log("Form Details added result:", result);
 
         resultArray.push(result);
       }
@@ -1593,7 +1559,6 @@ export class carsRepository {
       const checkResult = await executeQuery(checkFormDetailsQuery, [
         refFormDetailsId,
       ]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
@@ -1842,13 +1807,11 @@ export class carsRepository {
       await client.query(addCondation, termsPrams);
 
       const refCarsId = carsResult.rows[0].refCarsId;
-      console.log("Inserted cars ID:", refCarsId);
 
       const getVehicleName: any = await executeQuery(getVehicleNameQuery, [
         refVehicleTypeId,
       ]);
 
-      console.log("getVehicleName", getVehicleName);
 
       const vehicleName = getVehicleName[0]?.refVehicleTypeName || "Vehicle";
 
@@ -1899,7 +1862,6 @@ export class carsRepository {
     try {
       // Extract the image from userData
       const image = userData.Image;
-      console.log("image", image);
 
       // Ensure that only one image is provided
       if (!image) {
@@ -1910,7 +1872,6 @@ export class carsRepository {
       let storedFiles: any[] = [];
 
       // Store the image
-      console.log("Storing image...");
       filePath = await storeFile(image, 2);
 
       // Read the file buffer and convert it to Base64
@@ -1969,7 +1930,6 @@ export class carsRepository {
         }
 
         filePath = imageRecord[0].refGallery;
-        console.log("filePath", filePath);
 
         // Delete the image record from the database
         await executeQuery(deleteImageRecordQuery, [userData.refCarsId]);
@@ -2080,7 +2040,6 @@ export class carsRepository {
       ];
 
       const updateResult = await client.query(updateCarsQuery, params);
-      console.log("updateResult", updateResult);
 
       const termsPrams = [
         refCarsId,
@@ -2094,13 +2053,11 @@ export class carsRepository {
       await client.query(updateCondation, termsPrams);
 
       const updatedCar = updateResult.rows[0];
-      console.log("Updated car ID:", updatedCar.refCarsId);
 
       const getVehicleName: any = await executeQuery(getVehicleNameQuery, [
         refVehicleTypeId,
       ]);
 
-      console.log("getVehicleName", getVehicleName);
 
       const vehicleName = getVehicleName[0]?.refVehicleTypeName || "Vehicle";
       // Log history of the action
@@ -2204,7 +2161,6 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refCarsId } = userData;
-      console.log("refCarsId liune ------ 1950", refCarsId);
 
       const result = await executeQuery(getCarsByIdQuery, [refCarsId]);
 

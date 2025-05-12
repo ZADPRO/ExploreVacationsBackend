@@ -351,7 +351,6 @@ export interface AdminCarBookingMailData {
 // };
 
 export const generateCarBookingEmailContent = (data: any): string => {
-  console.log("data line 254", data);
 
   let firstName,
     email,

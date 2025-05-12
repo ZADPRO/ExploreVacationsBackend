@@ -51,14 +51,12 @@ export class settingsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
-      console.log("userData", userData);
 
       const { refDestination } = userData;
 
       const check: any = await executeQuery(checkDestinationQuery, [
         refDestination,
       ]);
-      console.log("check", check);
 
       const count = Number(check[0]?.count || 0); // safely convert to number
 
@@ -122,8 +120,7 @@ export class settingsRepository {
       const { refDestinationId, refDestinationName } = userData;
 
       const checkResult = await executeQuery(checkQuery, [refDestinationId]);
-      console.log('checkResult', checkResult)
-
+      
       if (checkResult[0]?.count == 0) {
         return encrypt(
           {
@@ -137,7 +134,6 @@ export class settingsRepository {
       const check: any = await executeQuery(checkDestinationQuery, [
         refDestinationName
       ]);
-      console.log("check", check);
 
       const count = Number(check[0]?.count || 0); // safely convert to number
 
@@ -245,7 +241,6 @@ export class settingsRepository {
         CurrentTime(),
         tokendata.id,
       ]);
-      console.log("result", result);
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -263,7 +258,6 @@ export class settingsRepository {
         getdeletedDestinationQuery,
         [refDestinationId]
       );
-      console.log("getdeletedDestination", getdeletedDestination);
 
       const { refDestinationName } = getdeletedDestination.rows[0];
 
@@ -274,7 +268,6 @@ export class settingsRepository {
         CurrentTime(),
         tokendata.id,
       ];
-      console.log("history", history);
 
       await client.query(updateHistoryQuery, history);
       await client.query("COMMIT"); // Commit transaction
@@ -315,10 +308,7 @@ export class settingsRepository {
       await client.query("BEGIN");
 
       const { locations, refDestinationId } = userData; // Assuming the payload will have an array of locations
-      console.log(
-        "userData--------------------------------------------------",
-        userData
-      );
+   
 
       if (!Array.isArray(locations) || locations.length === 0) {
         return encrypt(
@@ -333,7 +323,6 @@ export class settingsRepository {
       let resultArray = [];
       for (const location of locations) {
         const { refLocation } = location;
-        console.log('refLocation', refLocation)
 
         if (!refLocation) {
           continue;
@@ -345,7 +334,6 @@ export class settingsRepository {
         // const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
         const count = Number(duplicateCheck.rows[0]?.count || 0);
 
-        console.log('count', count)
 
         if (count > 0) {
           throw new Error(
@@ -359,13 +347,9 @@ export class settingsRepository {
           CurrentTime(),
           tokendata.id,
         ]);
-        console.log("result", result);
 
         resultArray.push(result);
-        console.log(
-          "resultArray-------------------------------------",
-          resultArray
-        );
+    
       }
 
       const history = [
@@ -377,12 +361,12 @@ export class settingsRepository {
         CurrentTime(),
         tokendata.id,
       ];
-      console.log(
-        '`Added Locations: ${locations.map((item: any) => item.locations).join(", ")}`',
-        `Added Locations: ${locations
-          .map((item: any) => item.locations)
-          .join(", ")}`
-      );
+      // console.log(
+      //   '`Added Locations: ${locations.map((item: any) => item.locations).join(", ")}`',
+      //   `Added Locations: ${locations
+      //     .map((item: any) => item.locations)
+      //     .join(", ")}`
+      // );
 
       await client.query("COMMIT");
 
@@ -456,7 +440,6 @@ export class settingsRepository {
       ];
 
       const updateDestination = await client.query(updateLocationQuery, params);
-      console.log("updateDestination", updateDestination.rows);
 
       const history = [
         5,
@@ -467,7 +450,6 @@ export class settingsRepository {
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
-      console.log("updateHistory", updateHistory);
       await client.query("COMMIT");
 
       return encrypt(
@@ -533,7 +515,6 @@ export class settingsRepository {
       await client.query("BEGIN"); // Start transaction
 
       const { refDestinationId } = userData;
-      console.log("userData", userData);
 
       const result = await client.query(deletelocationQuery, [
         refDestinationId,
@@ -541,7 +522,6 @@ export class settingsRepository {
         tokendata.id,
       ]);
 
-      console.log("result", result);
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -618,12 +598,10 @@ export class settingsRepository {
       const check: any = await client.query(checkDuplicateCategoryQuery, [
         refCategory
       ]);
-      console.log('check', check)
   
       // const count = Number(check[0]?.count || 0); // safely convert to number
       const count = Number(check.rows[0]?.count || 0);
 
-      console.log("count", count);
 
       if (count > 0) {
         throw new Error(
@@ -697,7 +675,6 @@ export class settingsRepository {
       // const count = Number(check.rows[0].count || 0); // safely convert to number
       const count = Number(check.count || 0); // safely convert to number
 
-      console.log("count", count);
 
       if (count > 0) {
         throw new Error(
@@ -851,7 +828,6 @@ export class settingsRepository {
   }
 
   public async addActivitiesV1(userData: any, tokendata: any): Promise<any> {
-    console.log("userData", userData);
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -864,19 +840,15 @@ export class settingsRepository {
         tokendata.id,
       ]);
 
-      console.log("userResult", userResult);
       const check: any = await executeQuery(checkActivityQuery, [refActivity]);
-      console.log("check", check);
       // const count = Number(check?.rows[0]?.count || 0);
       const count = Number(check[0]?.count || 0); // safely convert to number
-      console.log('count', count)
 
       if (count > 0) {
         throw new Error(
           `Duplicate Activity found: "${refActivity}" already exists.`
         );
       }
-      console.log("userResult", userResult);
       const history = [
         8,
         tokendata.id,
@@ -924,7 +896,6 @@ export class settingsRepository {
       const checkResult = await executeQuery(checkActivitiesQuery, [
         refActivitiesId,
       ]);
-      console.log("checkResult", checkResult);
 
       if (checkResult[0]?.count == 0) {
         return encrypt(
