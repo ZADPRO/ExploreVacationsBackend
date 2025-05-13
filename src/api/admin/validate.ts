@@ -20,7 +20,7 @@ export default {
       refQualification: Joi.string().required(),
       refProfileImage: Joi.string().optional(),
       refMoblile: Joi.string().required(),
-      refUserTypeId:  Joi.array().items(Joi.number()).required(),
+      refUserTypeId:  Joi.array().items(Joi.string()).required(),
       refUserEmail: Joi.string().email().required(),
     }),
     headers: Joi.object({

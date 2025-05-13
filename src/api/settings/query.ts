@@ -17,9 +17,9 @@ export const checkDestinationQuery = `
 SELECT
   COUNT(*) AS "count"
 FROM
-  public."refDestination"
+  public."refSportsCategory"
 WHERE
-  "refDestinationName" = $1
+  "refSportsCategoryName" = $1
   AND "isDelete" IS NOT true;
 `;
 
@@ -59,7 +59,8 @@ RETURNING
   *;
         `;
 
-export const getdeletedDestinationQuery = `SELECT
+export const getdeletedDestinationQuery = `
+SELECT
   "refDestinationName"
 FROM
   public."refDestination"
