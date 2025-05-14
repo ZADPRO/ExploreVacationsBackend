@@ -555,7 +555,8 @@ VALUES
 RETURNING
   *;`;
 
-export const updateEmployeeQuery = `UPDATE
+export const updateEmployeeQuery = `
+UPDATE
   public."users" 
 SET
   "refFName" = $2,
@@ -577,9 +578,10 @@ export const getEmployeeQuery = `
 SELECT
   *
 FROM
-  public.users
+  public."users"
 WHERE
-  "refuserId" = $1`;
+  "refuserId" = $1
+  `;
 
 export const deleteEmployeeImageQuery = `
 UPDATE

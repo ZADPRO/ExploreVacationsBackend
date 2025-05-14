@@ -37,6 +37,43 @@ export const generateSignupEmailContent = (
 </div>
 `;
 };
+export const generatePartnerSignupEmailContent = (
+  partnerName: string,
+  username: string,
+  password: string
+) => {
+  return `
+
+  <div style="font-family: Arial, sans-serif; background-color: #f4faff; padding: 30px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+      <div style="background-color: #0077cc; color: #ffffff; padding: 20px 30px;">
+        <h2 style="margin: 0;">Welcome to Explore Vacation, Partner!</h2>
+      </div>
+      <div style="padding: 30px;">
+        <p style="font-size: 16px;">Hi <strong>${partnerName}</strong>,</p>
+        <p style="font-size: 15px;">We're thrilled to welcome you as a valued partner of <strong>Explore Vacation</strong>! Your partner account has been successfully set up. Below are your login credentials:</p>
+        <table style="width: 100%; font-size: 15px; margin: 20px 0;">
+          <tr>
+            <td style="padding: 8px 0;"><strong>Username (Email):</strong></td>
+            <td>${username}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong>Password:</strong></td>
+            <td>${password}</td>
+          </tr>
+        </table>
+        <p style="font-size: 15px;">Please log in at your earliest convenience and consider changing your password for enhanced security.</p>
+        <p style="font-size: 15px;">We’re excited to collaborate and grow together. Should you have any questions or need support, our team is here to help.</p>
+        <p style="font-size: 15px;">Looking forward to a successful partnership!</p>
+        <p style="font-size: 15px;">Best Regards,<br/><strong>Team Explore Vacation</strong></p>
+      </div>
+      <div style="background-color: #e6f0fb; text-align: center; padding: 15px; font-size: 13px; color: #555;">
+        &copy; ${CurrentTime()} Explore Vacation. All rights reserved.
+      </div>
+    </div>
+  </div>
+  `;
+};
 
 export function generateTourBookingEmailContent(result: any): string {
   const data = result.rows[0];

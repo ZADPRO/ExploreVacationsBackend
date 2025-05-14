@@ -124,70 +124,30 @@ export class adminRepository {
 
   public async adminLoginV1(user_data: any, domain_code?: any): Promise<any> {
     const client: PoolClient = await getClient();
-
     try {
       const params = [user_data.login];
-      const users: any = await client.query(selectUserByLogin, params);
+      console.log('params', params)
+      console.log('user_data.login', user_data.login)
+      const users = await client.query(selectUserByLogin, params);
+      console.log('users', users)
 
-      // if (users.rows.length > 0) {
-      //   const user = users.rows[0];
+      if (!users.rows || users.rows.length === 0) {
+        return encrypt(
+          {
+            success: false,
+            message: "Invalid login credentials. User not found.",
+          },
+          true
+        );
+      }
 
-      //   if (!user.refUserHashedPassword) {
-      //     console.error("Error: User has no hashed password stored.");
-      //     return encrypt(
-      //       {
-      //         success: false,
-      //         message: "Invalid login credentials",
-      //       },
-      //       true
-      //     );
-      //   }
-
-      //   const validPassword = await bcrypt.compare(
-      //     user_data.password,
-      //     user.refUserHashedPassword
-      //   );
-      //   if (validPassword) {
-      //     const tokenData = { id: user.refUserId };
-
-      //     const history = [
-      //       1,
-      //       user.refUserId,
-      //      `${user_data.login} login succesfully`,
-      //       CurrentTime(),
-      //       user.refUserId,
-      //     ];
-
-      //     const updateHistory = await client.query(updateHistoryQuery, history);
-
-      //     return encrypt(
-      //       {
-      //         success: true,
-      //         message: "Login successful",
-      //         userId:user.refUserId,
-      //         token: generateTokenWithExpire(tokenData, true),
-      //       },
-      //       true
-      //     );
-      //   }
-      // }
-
-  if (!users.rows || users.rows.length === 0) {
-  return encrypt(
-    {
-      success: false,
-      message: "Invalid login credentials. User not found.",
-    },
-    true
-  );
-}
-
-const { userTypeId } = users.rows[0];
+      const { userTypeId } = users.rows[0];
 
       const user = users.rows[0];
 
       const getDeletedEmployee = await executeQuery(
-        getDeletedEmployeeCountQuery,params
+        getDeletedEmployeeCountQuery,
+        params
       );
 
       const count = Number(getDeletedEmployee[0]?.count || 0); // safely convert to number
@@ -247,7 +207,7 @@ const { userTypeId } = users.rows[0];
           message: "Login successful",
           userId: user.refUserId,
           roleId: userTypeId,
-          token: generateTokenWithExpire(tokenData, true)
+          token: generateTokenWithExpire(tokenData, true),
         },
         true
       );
@@ -272,6 +232,9 @@ const { userTypeId } = users.rows[0];
       client.release();
     }
   }
+
+ 
+
   public async listTourBookingsV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -554,7 +517,7 @@ const { userTypeId } = users.rows[0];
   public async addEmployeeV1(userData: any, token_data?: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: token_data.id }; // Extract token ID
-   
+
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -1177,7 +1140,7 @@ const { userTypeId } = users.rows[0];
       ];
 
       const updateHistory = await client.query(updateHistoryQuery, history);
-          
+
       await client.query("COMMIT");
 
       return encrypt(
@@ -1190,7 +1153,7 @@ const { userTypeId } = users.rows[0];
         true
       );
     } catch (error: unknown) {
-      console.log('error', error)
+      console.log("error", error);
       await client.query("ROLLBACK");
       return encrypt(
         {
@@ -1236,7 +1199,6 @@ const { userTypeId } = users.rows[0];
     const tokens = generateTokenWithExpire(token, true);
     try {
       const dashBoard: any = await executeQuery(dashBoardQuery);
-
 
       return encrypt(
         {
