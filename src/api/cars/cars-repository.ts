@@ -267,7 +267,6 @@ export class carsRepository {
         refVehicleTypeId,
       ]);
 
-
       const { refVehicleTypeName } = getresult[0];
 
       // Insert delete action into history
@@ -321,7 +320,6 @@ export class carsRepository {
       // Destructure refBenifitsName from the user data
       const { refBenifitsName } = userData;
 
-
       // Check if refBenifitsName is an array and has items
       if (!Array.isArray(refBenifitsName) || refBenifitsName.length === 0) {
         return encrypt(
@@ -368,7 +366,6 @@ export class carsRepository {
           tokendata.id,
         ]);
 
-
         resultArray.push(result);
       }
 
@@ -383,7 +380,6 @@ export class carsRepository {
         tokendata.id, // Performed by
       ];
 
-    
       // Commit transaction
       await client.query("COMMIT");
 
@@ -605,9 +601,7 @@ export class carsRepository {
 
       const { refIncludeName } = userData;
 
-
       if (!Array.isArray(refIncludeName) || refIncludeName.length === 0) {
-
         return encrypt(
           {
             success: false,
@@ -648,7 +642,6 @@ export class carsRepository {
           CurrentTime(),
           tokendata.id,
         ]);
-
 
         resultArray.push(result);
       }
@@ -883,7 +876,6 @@ export class carsRepository {
 
       const { refExcludeName } = userData;
 
-
       if (!Array.isArray(refExcludeName) || refExcludeName.length === 0) {
         return encrypt(
           {
@@ -925,7 +917,6 @@ export class carsRepository {
           CurrentTime(),
           tokendata.id,
         ]);
-
 
         resultArray.push(result);
       }
@@ -1317,123 +1308,7 @@ export class carsRepository {
       );
     }
   }
-  public async deleteDriverDetailsV1(
-    userData: any,
-    tokendata: any
-  ): Promise<any> {
-    const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
 
-    try {
-      await client.query("BEGIN"); // Start transaction
-
-      const { refDriverDetailsId } = userData;
-      const result = await client.query(deleteDriverDetailsQuery, [
-        refDriverDetailsId,
-        CurrentTime(),
-        "Admin",
-      ]);
-
-      if (result.rowCount === 0) {
-        await client.query("ROLLBACK");
-        return encrypt(
-          {
-            success: false,
-            message: "DriverDetails not found or already deleted",
-            token: tokens,
-          },
-          true
-        );
-      }
-
-      // Insert delete action into history
-      const history = [
-        38, // Unique ID for delete action
-        tokendata.id,
-        "delete Driver Details",
-        CurrentTime(),
-        tokendata.id,
-      ];
-
-      await client.query(updateHistoryQuery, history);
-      await client.query("COMMIT"); // Commit transaction
-
-      return encrypt(
-        {
-          success: true,
-          message: "DriverDetails deleted successfully",
-          token: tokens,
-          deletedData: result.rows[0], // Return deleted record for reference
-        },
-        true
-      );
-    } catch (error: unknown) {
-      await client.query("ROLLBACK"); // Rollback on error
-      console.error("Error deleting DriverDetails:", error);
-
-      return encrypt(
-        {
-          success: false,
-          message: "An error occurred while deleting the DriverDetails",
-          token: tokens,
-          error: String(error),
-        },
-        true
-      );
-    } finally {
-      client.release();
-    }
-  }
-  // public async addTermsAndConditionsV1(
-  //   userData: any,
-  //   tokendata: any
-  // ): Promise<any> {
-  //   const client: PoolClient = await getClient();
-
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-  //   try {
-  //     const { refCarsId, refAnswer } = userData;
-
-  //     const userResult = await executeQuery(addTermsAndConditionsQuery, [
-  //       refCarsId,
-  //       refAnswer,
-  //       CurrentTime(),
-  //       "Admin",
-  //     ]);
-
-  //     const history = [
-  //       22,
-  //       tokendata.id,
-  //       "addTermsAndConditions",
-  //       CurrentTime(),
-  //       "Admin",
-  //     ];
-
-  //     const updateHistory = await client.query(updateHistoryQuery, history);
-
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "Terms And Conditions added successfully",
-  //         data: userResult,
-  //         token: tokens,
-  //       },
-  //       true
-  //     );
-  //   } catch (error: unknown) {
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An unknown error occurred during add Terms And Conditions",
-  //         token: tokens,
-  //         error: String(error),
-  //       },
-  //       true
-  //     );
-  //   }
-  // }
   public async addFormDetailsV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
@@ -1444,20 +1319,7 @@ export class carsRepository {
       await client.query("BEGIN");
 
       // Destructure refBenifitsName from the user data
-      const { refFormDetails } = userData;
-
-
-      // Check if refBenifitsName is an array and has items
-      if (!Array.isArray(refFormDetails) || refFormDetails.length === 0) {
-        return encrypt(
-          {
-            success: false,
-            message: "No Form Details provided",
-            token: tokens,
-          },
-          true
-        );
-      }
+      const { refFormDetails,refPrice } = userData;
 
       const duplicateCheck: any = await client.query(
         checkduplicateFormDetailsQuery,
@@ -1469,39 +1331,26 @@ export class carsRepository {
         return encrypt(
           {
             success: false,
-            message: `ref Form Details "${refFormDetails}" already exists `,
+            message: `Form Details "${refFormDetails}" already exists `,
             token: tokens,
           },
           true
         );
       }
 
-      let resultArray: any[] = [];
-
-      for (const form of refFormDetails) {
-        const { refFormDetails: refFormDetails } = form;
-
-        if (!refFormDetails) {
-          continue;
-        }
-
-        const result = await client.query(addFormDetailsQuery, [
-          refFormDetails,
-          CurrentTime(),
-          tokendata.id,
-        ]);
-
-
-        resultArray.push(result);
-      }
+      const result = await client.query(addFormDetailsQuery, [
+        refFormDetails,
+        refPrice,
+        CurrentTime(),
+        tokendata.id,
+      ]);
 
       // Log history of the action
       const history = [
         23,
         tokendata.id,
-        `Added Form Details: ${refFormDetails
-          .map((item: any) => item.refFormDetails)
-          .join(", ")}`,
+        `${refFormDetails} Form Details Added with
+          ${refPrice} CHF`,
         CurrentTime(), // Timestamp of the action
         tokendata.id, // Performed by
       ];
@@ -1518,7 +1367,7 @@ export class carsRepository {
           success: true,
           message: "Form Details added successfully",
           token: tokens,
-          result: resultArray,
+          result: result.rows,
         },
         true
       );
@@ -1554,10 +1403,10 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
-      const { refFormDetailsId, refFormDetails } = userData;
+      const { refFormDetailsId, refFormDetails,refPrice } = userData;
 
       const checkResult = await executeQuery(checkFormDetailsQuery, [
-        refFormDetailsId,
+        refFormDetailsId
       ]);
 
       if (checkResult[0]?.count == 0) {
@@ -1574,6 +1423,7 @@ export class carsRepository {
       const params = [
         refFormDetailsId,
         refFormDetails,
+        refPrice,
         CurrentTime(),
         tokenData.id,
       ];
@@ -1583,7 +1433,8 @@ export class carsRepository {
       const history = [
         24,
         tokenData.id,
-        `${refFormDetails}FormDetails is added successfully`,
+        `${refFormDetails} Form Details Added with
+          ${refPrice} CHF`,
         CurrentTime(),
         tokenData.id,
       ];
@@ -1811,7 +1662,6 @@ export class carsRepository {
       const getVehicleName: any = await executeQuery(getVehicleNameQuery, [
         refVehicleTypeId,
       ]);
-
 
       const vehicleName = getVehicleName[0]?.refVehicleTypeName || "Vehicle";
 
@@ -2057,7 +1907,6 @@ export class carsRepository {
       const getVehicleName: any = await executeQuery(getVehicleNameQuery, [
         refVehicleTypeId,
       ]);
-
 
       const vehicleName = getVehicleName[0]?.refVehicleTypeName || "Vehicle";
       // Log history of the action
@@ -2307,4 +2156,5 @@ export class carsRepository {
       );
     }
   }
+  
 }

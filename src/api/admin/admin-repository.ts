@@ -51,85 +51,14 @@ import { sendEmail } from "../../helper/mail";
 import { deleteFile, storeFile, viewFile } from "../../helper/storage";
 
 export class adminRepository {
-  // public async adminLoginV1(user_data: any, domain_code?: any): Promise<any> {
-  //   const client: PoolClient = await getClient();
-
-  //   try {
-  //     const params = [user_data.login];
-  //     const users:any = await client.query(selectUserByLogin, params);
-
-  //     if (users.rows.length > 0) {
-  //       const user = users.rows[0];
-
-  //       if (!user.refUserHashedPassword) {
-  //         console.error("Error: User has no hashed password stored.");
-  //         return encrypt(
-  //           {
-  //             success: false,
-  //             message: "Invalid login credentials",
-  //           },
-  //           true
-  //         );
-  //       }
-
-  //       const validPassword = await bcrypt.compare(
-  //         user_data.password,
-  //         user.refUserHashedPassword
-  //       );
-  //       if (validPassword) {
-  //         const tokenData = { id: user.refUserId };
-
-  //         const history = [
-  //           1,
-  //           user.refUserId,
-  //          `${user_data.login} login succesfully`,
-  //           CurrentTime(),
-  //           user.refUserId,
-  //         ];
-
-  //         const updateHistory = await client.query(updateHistoryQuery, history);
-
-  //         return encrypt(
-  //           {
-  //             success: true,
-  //             message: "Login successful",
-  //             userId:user.refUserId,
-  //             token: generateTokenWithExpire(tokenData, true),
-  //           },
-  //           true
-  //         );
-  //       }
-  //     }
-
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "Invalid login credentials",
-  //       },
-  //       true
-  //     );
-  //   } catch (error) {
-  //     console.error("Error during login:", error);
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "Internal server error",
-  //       },
-  //       true
-  //     );
-  //   } finally {
-  //     client.release();
-  //   }
-  // }
-
   public async adminLoginV1(user_data: any, domain_code?: any): Promise<any> {
     const client: PoolClient = await getClient();
     try {
       const params = [user_data.login];
-      console.log('params', params)
-      console.log('user_data.login', user_data.login)
+      console.log("params", params);
+      console.log("user_data.login", user_data.login);
       const users = await client.query(selectUserByLogin, params);
-      console.log('users', users)
+      console.log("users", users);
 
       if (!users.rows || users.rows.length === 0) {
         return encrypt(
@@ -232,8 +161,6 @@ export class adminRepository {
       client.release();
     }
   }
-
- 
 
   public async listTourBookingsV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
@@ -747,74 +674,6 @@ export class adminRepository {
       );
     }
   }
-  //   public async deleteEmployeeImageV1(
-  //     userData: any,
-  //     tokendata: any
-  //   ): Promise<any> {
-  //     const client: PoolClient = await getClient();
-  //     const token = { id: tokendata.id };
-  //     const tokens = generateTokenWithExpire(token, true);
-
-  //     try {
-  //       await client.query("BEGIN"); // Start transaction
-  //       let filePath: string | any;
-
-  //       const { refuserId } = userData;
-  // if (refuserId) {
-  //         // Retrieve the image record from the database
-  //         const imageRecord:any = await executeQuery(getEmployeeQuery, [
-  //           refuserId
-  //         ]);
-  //         if (imageRecord.length === 0) {
-  //           return encrypt(
-  //             {
-  //               success: false,
-  //               message: "Image record not found",
-  //               token: tokens,
-  //             },
-  //             true
-  //           );
-  //         }
-  //       }
-  //       filePath = imageRecord[0].refImagePath;
-
-  //        await client.query(deleteEmployeeImageQuery, [refuserId]);
-
-  //    } else {
-  //         // filePath = userData.filePath;
-  //       }
-
-  //       if (filePath) {
-  //         // Delete the file from local storage
-  //         await deleteFile(filePath);
-  //       }
-
-  //       return encrypt(
-  //         {
-  //           success: true,
-  //           message: "Employee profile image deleted successfully",
-  //           token: tokens,
-  //         },
-  //         true
-  //       );
-  //     } catch (error: unknown) {
-  //       await client.query("ROLLBACK"); // Rollback on error
-  //       console.error("Error deleting Employee profile image :", error);
-
-  //       return encrypt(
-  //         {
-  //           success: false,
-  //           message:
-  //             "An error occurred while deleting the Employee  profile image ",
-  //           token: tokens,
-  //           error: String(error),
-  //         },
-  //         true
-  //       );
-  //     } finally {
-  //       client.release();
-  //     }
-  // }
 
   public async deleteEmployeeImageV1(
     userData: any,

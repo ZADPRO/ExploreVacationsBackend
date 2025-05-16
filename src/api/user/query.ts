@@ -12,6 +12,25 @@ VALUES
 RETURNING
   *;
 `;
+export const offercheckQuery = `
+SELECT
+  *
+FROM
+  public."refOffers" o
+  LEFT JOIN public."users" u ON CAST(o."refOffersId" AS INTEGER) = u."refOffersId"
+WHERE
+  o."refCoupon" = $1
+  AND u."refuserId" = $2
+`;
+
+export const getPackagePriceQuery =`
+SELECT
+  "refTourPrice"
+FROM
+  public."refPackage"
+WHERE
+  "refPackageId" = $1
+`;
 
 export const addTourBookingQuery = `
 INSERT INTO
@@ -25,15 +44,17 @@ INSERT INTO
     "refChildrenCount",
     "refInfants",
     "refOtherRequirements",
-    "refAgreementPath",
-    "paymentId",
+    "refAgreementPath", 
+    "refApplyOffers",
+    "refCouponCode",
+    "transactionId",
     "createdAt",
     "createdBy",
     "refuserId"
     
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14 )
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16 )
 RETURNING
   *;
 `;
@@ -64,12 +85,14 @@ export const addcustomizeBookingQuery = `
         "refOtherRequirements", 
         "refPassPort",
         "refAgreementPath",
-        "paymentId",
+       "refApplyOffers",
+    "refCouponCode",
+    "transactionId",
         "createdAt", 
         "createdBy",
         "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) 
     RETURNING *;
 `;
 
@@ -1536,5 +1559,4 @@ FROM
 WHERE
   "refCarParkingId" = $1
   
-`
-;
+`;

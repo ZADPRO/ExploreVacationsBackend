@@ -20,6 +20,9 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
+      // const decodedToken ={
+      //   id:52
+      // }
       const decodedToken ={
         id:request.plugins.token.id
       }
@@ -954,5 +957,40 @@ export class userController {
         .code(500);
     }
   };
+  public checkoffer = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    // logger.info("Router-----car Parking Booking");
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
+    try {
+      const decodedToken ={
+        id:request.plugins.token.id
+      }
+      let entity;
+
+      entity = await this.resolver.checkofferV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in check offer", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
  
+
+
 }

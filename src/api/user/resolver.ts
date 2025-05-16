@@ -92,5 +92,8 @@ export class userResolver {
   public async carParkingBookingV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.userRepository.carParkingBookingV1(user_data, token_data, domain_code);
   }
+  public async checkofferV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.userRepository.checkofferV1(user_data, token_data, domain_code);
+  }
  
 }

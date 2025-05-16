@@ -16,7 +16,7 @@ export class userRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.tourBooking,
-            validate: validate.tourBooking,
+            // validate: validate.tourBooking,
             description: "tour Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -354,6 +354,18 @@ export class userRoutes implements IRoute {
             handler: controller.carParkingBooking,
             // validate: validate.carParkingBooking,
             description: "carParking Booking",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+         {
+          method: "POST",
+          path: "/api/v1/userRoutes/checkoffer",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.checkoffer,
+            validate: validate.checkoffer,
+            description: "checkoffer",
             tags: ["api", "Users"],
             auth: false,
           },

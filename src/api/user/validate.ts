@@ -12,7 +12,13 @@ export default {
       refChildrenCount: Joi.string().required(),
       refInfants: Joi.string().required(),
       refOtherRequirements: Joi.string().optional(),
-      transactionId: Joi.number().integer().required(),
+      refApplyOffers: Joi.boolean().required(),
+      refCouponCode: Joi.when("refApplyOffers", {
+        is: true,
+        then: Joi.string().required(),
+        otherwise: Joi.string().optional().allow(null, ""),
+      }),
+      transactionId: Joi.string().required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -135,12 +141,9 @@ export default {
     payload: Joi.object({
       travelStartDate: Joi.string().required(),
       travelEndDate: Joi.string().required(),
-      refCarParkingId: Joi.number()
-        .integer()
-        .required(),
+      refCarParkingId: Joi.number().integer().required(),
       returnFlightNumber: Joi.string().required(),
-      returnFlightLocation: Joi.string()
-        .required(),
+      returnFlightLocation: Joi.string().required(),
       VehicleModel: Joi.string().required(),
       vehicleNumber: Joi.string().required(),
       refHandOverTime: Joi.string().required(),
@@ -155,8 +158,7 @@ export default {
 
       HandoverPersonPhone: Joi.alternatives().conditional("WhoWillHandover", {
         is: false,
-        then: Joi.string()
-          .required(),
+        then: Joi.string().required(),
         otherwise: Joi.forbidden(),
       }),
 
@@ -170,4 +172,14 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
+  checkoffer:{
+       payload: Joi.object({
+      refPackageId: Joi.number().integer().required(),
+      refCouponCode: Joi.string().required(),
+      
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  }
 };

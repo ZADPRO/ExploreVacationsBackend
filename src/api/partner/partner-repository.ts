@@ -1,5 +1,5 @@
 import { executeQuery, getClient } from "../../helper/db";
-import { PoolClient } from "pg";
+import { Client, PoolClient } from "pg";
 import {
   storeFile,
   viewFile,
@@ -18,16 +18,24 @@ import {
 import { CurrentTime, generatePassword } from "../../helper/common";
 import bcrypt from "bcryptjs";
 import {
+  applyCouponQuery,
   checkQuery,
+  deleteOffersQuery,
   deletePartnersQuery,
+  getdataQuery,
+  getDeletedOfferQuery,
   getDeletedPartnerQuery,
   getLastPartnerIdQuery,
+  getOffersQuery,
   getPartnerQuery,
   getPartnersQuery,
+  insertoffersQuery,
   insertUserDomainQuery,
   insertUserQuery,
+  listOffersQuery,
   listPartnersQuery,
   updateHistoryQuery,
+  updateoffersQuery,
   updatePartnerQuery,
 } from "./query";
 import {
@@ -85,6 +93,7 @@ export class partnerRepository {
         userData.refLName,
         userData.refDOB,
         userData.refMoblile,
+        userData.refOffersId,
         `{6}`,
         CurrentTime(),
         token_data.id,
@@ -138,7 +147,7 @@ export class partnerRepository {
 
             // Call the sendEmail function
             try {
-               sendEmail(mailOptions);
+              sendEmail(mailOptions);
             } catch (error) {
               console.error("Failed to send email:", error);
             }
@@ -197,7 +206,7 @@ export class partnerRepository {
         refLName,
         refDOB,
         refMoblile,
-        // refUserTypeId,
+        refOffersId,
       } = userData;
 
       const existingPartnerRes = await client.query(getPartnerQuery, [
@@ -229,6 +238,7 @@ export class partnerRepository {
         refLName,
         refDOB,
         refMoblile,
+        refOffersId,
         `{6}`,
         CurrentTime(),
         tokendata.id,
@@ -272,128 +282,437 @@ export class partnerRepository {
     }
   }
   public async getPartnersV1(userData: any, tokendata: any): Promise<any> {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-  
-      try {
-        const result = await executeQuery(getPartnersQuery, [userData.userId]);
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
 
-        return encrypt(
-          {
-            success: true,
-            message: "get partners successfully",
-            token: tokens,
-            result: result, // Return deleted record for reference
-           
-          },
-          true
-        );
-      } catch (error: unknown) {
-        console.error("Error in get partners", error);
-  
-        return encrypt(
-          {
-            success: false,
-            message: "An error occurred get the partners",
-            token: tokens,
-            error: String(error),
-          },
-          true
-        );
-      }
+    try {
+      const result = await executeQuery(getPartnersQuery, [userData.userId]);
+
+      return encrypt(
+        {
+          success: true,
+          message: "get partners successfully",
+          token: tokens,
+          result: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in get partners", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred get the partners",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
   }
   public async listPartnersV1(userData: any, tokendata: any): Promise<any> {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-  
-      try {
-        const result = await executeQuery(listPartnersQuery);
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
 
-        return encrypt(
-          {
-            success: true,
-            message: "list partners successfully",
-            token: tokens,
-            result: result, // Return deleted record for reference
-           
-          },
-          true
-        );
-      } catch (error: unknown) {
-        console.error("Error in list partners", error);
-  
-        return encrypt(
-          {
-            success: false,
-            message: "An error occurred list the partners",
-            token: tokens,
-            error: String(error),
-          },
-          true
-        );
-      }
-  }
-   public async deletePartnersV1(userData: any, tokendata: any): Promise<any> {
-      const client: PoolClient = await getClient();
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-  
-      try {
-        await client.query("BEGIN");
-  
-        const getDeletedPartner: any = await client.query(
-          getDeletedPartnerQuery,
-          [userData.refuserId]
-        );
-  
-        if (!getDeletedPartner.rows.length) {
-          throw new Error("Partner not found");
-        }
-  
-        const Partner = getDeletedPartner.rows[0];
-        const PartnerName = `${Partner.refFName}, (${Partner.refCustId})`;
-  
-        const result = await client.query(deletePartnersQuery, [
-          userData.refuserId,
-          CurrentTime(),
-          tokendata.id,
-        ]);
-  
-        const history = [
-          61,
-          tokendata.id,
-          `${PartnerName} has been deleted.`,
-          CurrentTime(),
-          tokendata.id,
-        ];
-  
-        const updateHistory = await client.query(updateHistoryQuery, history);
-  
-        await client.query("COMMIT");
-  
-        return encrypt(
-          {
-            success: true,
-            message: "Partner deleted successfully",
-            token: tokens,
-            result: result,
-          },
-          true
-        );
-      } catch (error: unknown) {
-        console.log("error", error);
-        await client.query("ROLLBACK");
-        return encrypt(
-          {
-            success: false,
-            message: "An unknown error occurred during deleting Partner",
-            token: tokens,
-            error: String(error),
-          },
-          true
-        );
-      } finally {
-        client.release();
-      }
+    try {
+      const result = await executeQuery(listPartnersQuery);
+
+      return encrypt(
+        {
+          success: true,
+          message: "list partners successfully",
+          token: tokens,
+          result: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in list partners", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred list the partners",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
     }
+  }
+  public async deletePartnersV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN");
+
+      const getDeletedPartner: any = await client.query(
+        getDeletedPartnerQuery,
+        [userData.refuserId]
+      );
+
+      if (!getDeletedPartner.rows.length) {
+        throw new Error("Partner not found");
+      }
+
+      const Partner = getDeletedPartner.rows[0];
+      const PartnerName = `${Partner.refFName}, (${Partner.refCustId})`;
+
+      const result = await client.query(deletePartnersQuery, [
+        userData.refuserId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      const history = [
+        61,
+        tokendata.id,
+        `${PartnerName} has been deleted.`,
+        CurrentTime(),
+        tokendata.id,
+      ];
+
+      const updateHistory = await client.query(updateHistoryQuery, history);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "Partner deleted successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.log("error", error);
+      await client.query("ROLLBACK");
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during deleting Partner",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
+  public async addOffersV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    const client: PoolClient = await getClient();
+    try {
+      await client.query("BEGIN");
+      const {
+        refOffersName,
+        refOfferType,
+        refDescription,
+        refOfferValue,
+        refCoupon,
+        isActive,
+      } = userData;
+
+      // Insert into users table
+      const params = [
+        refOffersName,
+        refOfferType,
+        refDescription,
+        refOfferValue,
+        refCoupon,
+        isActive,
+        CurrentTime(),
+        tokendata.id,
+      ];
+      const Result = await client.query(insertoffersQuery, params);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "offers added successful",
+          Result: Result,
+          token: tokens,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      console.error("Error during  offers addition:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An unexpected error occurred during offers addition ",
+          error: error instanceof Error ? error.message : String(error),
+          token: tokens,
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async updateOffersV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id }; // Extract token ID
+    const tokens = generateTokenWithExpire(token, true);
+    const client: PoolClient = await getClient();
+    try {
+      await client.query("BEGIN");
+      const {
+        refOffersId,
+        refOffersName,
+        refOfferType,
+        refDescription,
+        refOfferValue,
+        refCoupon,
+        isActive,
+      } = userData;
+
+      // Insert into users table
+      const params = [
+        refOffersId,
+        refOffersName,
+        refOfferType,
+        refDescription,
+        refOfferValue,
+        refCoupon,
+        isActive,
+        CurrentTime(),
+        tokendata.id,
+      ];
+      const Result = await client.query(updateoffersQuery, params);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "offers update successful",
+          Result: Result,
+          token: tokens,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      console.error("Error during  offers update:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An unexpected error occurred during offers update ",
+          error: error instanceof Error ? error.message : String(error),
+          token: tokens,
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async deleteOffersV1(userData: any, tokendata: any): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN");
+
+      const getDeletedOffer: any = await client.query(getDeletedOfferQuery, [
+        userData.refOffersId,
+      ]);
+
+      if (!getDeletedOffer.rows.length) {
+        throw new Error("Offer not found");
+      }
+
+      const result = await client.query(deleteOffersQuery, [
+        userData.refOffersId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      // const history = [
+      //   61,
+      //   tokendata.id,
+      //   `${Offer} has been deleted.`,
+      //   CurrentTime(),
+      //   tokendata.id,
+      // ];
+
+      // const updateHistory = await client.query(updateHistoryQuery, history);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "Offer deleted successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.log("error", error);
+      await client.query("ROLLBACK");
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during deleting Offer",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+  public async listOffersV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const result = await executeQuery(listOffersQuery);
+
+      return encrypt(
+        {
+          success: true,
+          message: "list offers successfully",
+          token: tokens,
+          result: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in list offers", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred list the offers",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async getOffersV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const result = await executeQuery(getOffersQuery,[userData.refOffersId]);
+
+      return encrypt(
+        {
+          success: true,
+          message: "get offers successfully",
+          token: tokens,
+          result: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in get offers", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred get the offers",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async applyCouponV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const result = await executeQuery(applyCouponQuery, [userData.userId]);
+
+      const getData: any[] = await executeQuery(getdataQuery, [
+        userData.userId,
+      ]);
+      console.log('getData', getData)
+      if (!getData || getData.length === 0) {
+        throw new Error("No coupon data found for the given user.");
+      }
+      const { refCustId, refFName, refUserEmail, refOffersName, refCoupon } =
+        getData[0];
+
+      const main = async () => {
+        const adminMail = {
+          to: refUserEmail,
+          subject: "🎉 Coupon Successfully Applied – Explore Vacation",
+          html: `   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
+      <h2 style="color: #2b6cb0;">Hello ${refFName || "User"},</h2>
+      <p style="font-size: 16px; color: #333;">
+        Great news! Your coupon code 
+        <strong style="color: #d9534f;">${refCoupon}</strong> 
+        has been successfully applied.
+      </p>
+
+      <p style="font-size: 16px; color: #333;">
+        Use this code during checkout to enjoy your exclusive offer:
+        <strong style="color: #5cb85c;">${refOffersName}</strong>
+      </p>
+
+      <div style="margin-top: 20px; font-size: 15px; line-height: 1.6; color: #555;">
+        <p><strong>Customer ID:</strong> ${refCustId}</p>
+        <p><strong>Offer Name:</strong> ${refOffersName}</p>
+        <p><strong>Coupon Code:</strong> ${refCoupon}</p>
+      </div>
+
+      <br/>
+      <p style="font-size: 16px; color: #333;">Thank you for choosing <strong>Explore Vacation</strong>! We hope you have a wonderful experience.</p>
+
+      <p style="font-size: 14px; color: #999;">If you have any questions, feel free to reply to this email.</p>
+    </div> 
+    `,
+        };
+
+        try {
+          sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for Admin", error);
+        }
+      };
+      main().catch(console.error);
+
+      return encrypt(
+        {
+          success: true,
+          message: "coupon applied successfully",
+          token: tokens,
+          result: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in coupon applied", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred coupon applied",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
 }

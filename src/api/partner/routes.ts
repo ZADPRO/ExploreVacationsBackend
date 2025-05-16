@@ -58,13 +58,85 @@ export class partnerRoutes implements IRoute {
             auth: false,
           },
         },
-         {
+        {
           method: "GET",
           path: "/api/v1/partnerRoutes/listPartners",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.listPartners,
             description: "listPartners",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        // -------------------------------------------------------------------
+        {
+          method: "POST",
+          path: "/api/v1/partnerRoutes/addOffers",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.addOffers,
+            validate: validate.addOffers,
+            description: "addOffers",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/partnerRoutes/updateOffers",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.updateOffers,
+            validate: validate.updateOffers,
+            description: "updateOffers",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/partnerRoutes/deleteOffers",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteOffers,
+            validate: validate.deleteOffers,
+            description: "deleteOffers",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "GET",
+          path: "/api/v1/partnerRoutes/listOffers",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.listOffers,
+            description: "listOffers",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/partnerRoutes/applyCoupon",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.applyCoupon,
+            validate: validate.applyCoupon,
+            description: "applyCoupon",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+         {
+          method: "POST",
+          path: "/api/v1/partnerRoutes/getOffers",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getOffers,
+            validate: validate.getOffers,
+            description: "getOffers",
             tags: ["api", "Users"],
             auth: false,
           },

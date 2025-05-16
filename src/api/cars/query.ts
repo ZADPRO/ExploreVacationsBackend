@@ -349,12 +349,13 @@ LIMIT
 export const addFormDetailsQuery = `INSERT INTO
   public."refFormDetails" (
     "refFormDetails",
+    "refPrice",
     "createdAt",
     "createdBy",
     "isDelete"
   )
 VALUES
-  ($1, $2, $3, false)
+  ($1, $2, $3, $4, false)
 RETURNING
   *;
 `;
@@ -372,8 +373,9 @@ export const updateFormDetailsQuery = `UPDATE
   public."refFormDetails"
 SET
   "refFormDetails" = $2,
-  "updatedAt" = $3,
-  "updatedBy" = $4
+  "refPrice" = $3,
+  "updatedAt" = $4,
+  "updatedBy" = $5
 WHERE
   "refFormDetailsId" = $1;
 `;

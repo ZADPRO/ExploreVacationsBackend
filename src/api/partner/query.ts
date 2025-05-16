@@ -27,12 +27,13 @@ export const insertUserQuery = `INSERT INTO
     "refLName",
     "refDOB",
     "refMoblile",
+    "refOffersId",
     "refUserTypeId",
     "createdAt",
     "createdBy"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8)
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING
   *;`;
 
@@ -51,7 +52,8 @@ VALUES
 RETURNING
   *;`;
 
-  export const updateHistoryQuery = `INSERT INTO
+  export const updateHistoryQuery = `
+  INSERT INTO
   public."refTxnHistory" (
     "refTransactionHistoryId",
     "refUserId",
@@ -81,9 +83,10 @@ SET
   "refLName" = $3,
   "refDOB" = $4,
   "refMoblile" = $5,
-  "refUserTypeId" = $6,
-  "updatedAt" =$7,
-  "updatedBy" = $8
+  "refOffersId" = $6,
+  "refUserTypeId" = $7,
+  "updatedAt" =$8,
+  "updatedBy" = $9
 WHERE
   "refuserId" = $1
 RETURNING
@@ -93,6 +96,7 @@ RETURNING
 export const getPartnersQuery = `
 SELECT
   u.*,
+  o.*,
   ud."refUserEmail",
   ud."refUsername",
   ud."refUserPassword",
@@ -101,6 +105,7 @@ SELECT
 FROM
   public."users" u
   LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refOffers" o ON CAST(o."refOffersId" AS INTEGER) = u."refOffersId"
   LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(u."refUserTypeId", '[{}]', '', 'g'),
@@ -114,7 +119,8 @@ GROUP BY
   ud."refUserEmail",
   ud."refUsername",
   ud."refUserHashedPassword",
-  ud."refUserPassword"
+  ud."refUserPassword",
+  o."refOffersId"
 ORDER BY
   u."refuserId" DESC;
 `;
@@ -122,14 +128,15 @@ ORDER BY
 export const listPartnersQuery = `
 SELECT
   u.*,
+  o.*,
   ud."refUserEmail",
   ud."refUsername",
   ud."refUserHashedPassword",
- 
   array_agg(ut."refUserType") AS "refUserType"
 FROM
   public."users" u
   LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+  LEFT JOIN public."refOffers" o ON CAST(o."refOffersId" AS INTEGER) = u."refOffersId"
   LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
     string_to_array(
       regexp_replace(u."refUserTypeId", '[{}]', '', 'g'),
@@ -137,13 +144,15 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  u."isDelete" IS NOT true AND u."refCustId" LIKE 'EV-PART-%'
+  u."isDelete" IS NOT true
+  AND u."refCustId" LIKE 'EV-PART-%'
 GROUP BY
   u."refuserId",
   ud."refUserEmail",
   ud."refUsername",
-  ud."refUserHashedPassword"
-  ORDER BY
+  ud."refUserHashedPassword",
+  o."refOffersId"
+ORDER BY
   u."refuserId" DESC;
 `;
 
@@ -167,4 +176,105 @@ WHERE
   "refuserId" = $1
 RETURNING
   *;
+`;
+
+export const insertoffersQuery = `
+INSERT INTO
+  public."refOffers" (
+    "refOffersName",
+    "refOfferType",
+    "refDescription",
+    "refOfferValue",
+    "refCoupon",
+    "isActive",
+    "createdAt",
+    "createdBy"
+  )
+VALUES
+  ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING
+  *;
+`;
+
+export const updateoffersQuery = `
+UPDATE
+  public."refOffers"
+SET
+  "refOffersName" = $2,
+  "refOfferType" = $3,
+  "refDescription" = $4,
+  "refOfferValue" = $5,
+  "refCoupon" = $6,
+  "isActive" = $7,
+  "updatedAt" = $8,
+  "updatedBy" = $9
+WHERE
+  "refOffersId" = $1
+RETURNING
+  *;
+`;
+export const getDeletedOfferQuery = `
+SELECT
+  *
+FROM
+  public."refOffers"
+WHERE
+  "refOffersId" = $1
+`;
+export const deleteOffersQuery = `
+UPDATE
+  public."refOffers"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refOffersId" = $1
+RETURNING
+  *;
+`;
+
+export const listOffersQuery =
+`
+SELECT
+  *
+FROM
+  public."refOffers"
+  WHERE "isDelete" IS NOT true
+`;
+
+export const applyCouponQuery = `
+UPDATE
+  public."users"
+SET
+  "refApplyCoupon" = 'Applied'
+WHERE
+  "refuserId" = $1
+RETURNING
+  *;
+`;
+
+export const getdataQuery = `
+SELECT
+  u."refCustId",
+  u."refFName",
+  u."refOffersId",
+  ud."refUserEmail",
+  u."refMoblile",
+  o.*
+FROM
+  public."users" u
+  LEFT JOIN public."refUserDomain" ud ON CAST (ud."refUserId" AS INTEGER ) = u."refuserId"
+  LEFT JOIN public."refOffers" o ON CAST (o."refOffersId" AS INTEGER ) = u."refOffersId"
+WHERE
+  u."refuserId" = $1
+`;
+
+export const getOffersQuery = `
+SELECT
+  *
+FROM
+  public."refOffers"
+WHERE
+  "refOffersId" = $1
 `;

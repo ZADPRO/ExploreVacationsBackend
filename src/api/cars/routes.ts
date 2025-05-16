@@ -276,7 +276,7 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.updateFormDetails,
-            // validate: validate.updateFormDetails,
+            validate: validate.updateFormDetails,
             description: "update Form Details",
             tags: ["api", "Users"],
             auth: false,

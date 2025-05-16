@@ -148,8 +148,8 @@ export class paymentRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     const payrexx = new Payrexx(
-      "explorevacationsag",
-      "vqdTdCezHYCNEzgFcRsPz4PwvYvZPV"
+      "karmacuisines",
+      "p9d4TdHGnkujeNx2T90jaygculBt9Q"
     );
     try {
       const uniqueId = getSystemTimestamp();
@@ -163,17 +163,17 @@ export class paymentRepository {
         purpose: purpose, //  purpose
         psp: [44, 36],
         // pm: ["visa", "mastercard", "twint", "amex"],
-        successRedirectUrl:
-          `https://explorevacations.max-idigital.ch/success?transaction_id=${uniqueId}`,
-        failedRedirectUrl: "https://dashboard.max-idigital.ch/failure",
+        // successRedirectUrl:
+        //   `https://explorevacations.max-idigital.ch/success?transaction_id=${uniqueId}`,
+        // failedRedirectUrl: "https://dashboard.max-idigital.ch/failure",
+        successRedirectUrl: `http://localhost:5174/success`,
+        failedRedirectUrl: "http://localhost:5174/failure",
         fields: {
           email: { value: userEmail },
           forename: { value: firstname },
           // surname: { value: lastname },
         },
       });
-
-   
 
       // Ensure the response has the necessary fields
       if (result && result.status && result.data) {
@@ -183,7 +183,7 @@ export class paymentRepository {
             message: "Payed List passed successfully",
             token: tokens,
             data: result.data, // Assuming result contains the payment link and other details
-            transactionId:uniqueId
+            transactionId: uniqueId,
           },
           true
         );

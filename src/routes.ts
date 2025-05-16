@@ -11,6 +11,8 @@ import { notificationRoutes } from "./api/notification/routes";
 import { bookingRoutes } from "./api/Booking/routes";
 import { homePageRoutes } from "./api/homePage/routes";
 import { partnerRoutes } from "./api/partner/routes";
+import { flightRoutes } from "./api/flightBooking/routes";
+import { newCarsRoutes } from "./api/newCar/routes";
 
 export default class Router {
   public static async loadRoutes(server: Hapi.Server): Promise<any> {
@@ -26,5 +28,7 @@ export default class Router {
     await new bookingRoutes().register(server);
     await new homePageRoutes().register(server);
     await new partnerRoutes().register(server);
+    await new flightRoutes().register(server);
+    await new newCarsRoutes().register(server);
   }
 }

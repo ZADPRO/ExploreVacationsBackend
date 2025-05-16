@@ -160,13 +160,8 @@ export default {
   },
   addFormDetails: {
     payload: Joi.object({
-      refFormDetails: Joi.array()
-        .items(
-          Joi.object({
-            refFormDetails: Joi.string().required(),
-          })
-        )
-        .required(),
+      refFormDetails: Joi.string().required(),
+      refPrice: Joi.string().required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -176,6 +171,7 @@ export default {
     payload: Joi.object({
       refFormDetailsId: Joi.number().integer().required(),
       refFormDetails: Joi.string().required(),
+      refPrice: Joi.string().required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -215,16 +211,14 @@ export default {
   //     authorization: Joi.string().optional(),
   //   }).unknown(),
   // },
-  
 
-  
-   addCars: {
+  addCars: {
     payload: Joi.object({
       refVehicleTypeId: Joi.number().required(),
       refPersonCount: Joi.string().required(), // string digits
-      refBag: Joi.string().required(),         // string digits
+      refBag: Joi.string().required(), // string digits
       refFuelType: Joi.string().required(),
-      refcarManufactureYear: Joi.string().required(), 
+      refcarManufactureYear: Joi.string().required(),
       refMileage: Joi.string().required(), // e.g. "18 km/l"
       refTrasmissionType: Joi.string().required(),
       refFuleLimit: Joi.string().required(),
@@ -244,7 +238,7 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
-  
+
   updateCars: {
     payload: Joi.object({
       refCarsId: Joi.number().integer().required(),
@@ -296,5 +290,4 @@ export default {
       }).unknown(),
     }),
   },
-  
 };

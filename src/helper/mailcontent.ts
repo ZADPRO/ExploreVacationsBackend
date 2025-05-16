@@ -127,18 +127,6 @@ export function generateTourBookingEmailContent(result: any): string {
   `;
 }
 
-// export function userTourBookingMail ( data:any):string {
-//   return `
-//   <h2>Hi ${data.refUserName},</h2>
-//           <p>🎉 Your tour has been successfully booked!</p>
-//           <p>Your tour starts on <strong>${data.refPickupDate}</strong>.</p>
-//           <p>🧳 Only <strong>${data.daysLeft}</strong> day(s) to go!</p>
-//           <p>We’ll send you daily reminders so you don’t miss a thing!</p>
-//           <br/>
-//           <p>Thank you,<br>Team Explore Vacations</p>
-//   `
-
-// }
 
 export function userTourBookingMail(data: any): string {
   return `
@@ -887,3 +875,62 @@ export const sendParkingRemainder = (
   `;
 };
 
+
+export function generateflightBookingEmailContent(bookingData: any) {
+  const {
+    refUserName,
+    refMoblile,
+    refEmail,
+    refPickup,
+    refDestination,
+    refRequirements,
+  } = bookingData;
+
+  return `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <div style="background-color: #007BFF; padding: 20px; color: white; text-align: center;">
+      <h2 style="margin: 0;">✈️ New Flight Booking Enquiry</h2>
+    </div>
+    <div style="padding: 30px; background-color: #f9f9f9;">
+      <h3 style="color: #333;">Customer Details</h3>
+      <table style="width: 100%; font-size: 15px; color: #444;">
+        <tr>
+          <td style="padding: 8px 0;"><strong>Name:</strong></td>
+          <td style="padding: 8px 0;">${refUserName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>Email:</strong></td>
+          <td style="padding: 8px 0;">${refEmail}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>Mobile:</strong></td>
+          <td style="padding: 8px 0;">${refMoblile}</td>
+        </tr>
+      </table>
+
+      <h3 style="margin-top: 20px; color: #333;">Flight Details</h3>
+      <table style="width: 100%; font-size: 15px; color: #444;">
+        <tr>
+          <td style="padding: 8px 0;"><strong>Pickup Location:</strong></td>
+          <td style="padding: 8px 0;">${refPickup}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>Destination:</strong></td>
+          <td style="padding: 8px 0;">${refDestination}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>Requirements:</strong></td>
+          <td style="padding: 8px 0;">${refRequirements || "N/A"}</td>
+        </tr>
+      </table>
+
+      <p style="margin-top: 30px; font-size: 16px; color: #007BFF;">
+        📩 Please follow up with the customer to finalize their booking!
+      </p>
+    </div>
+    <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
+      &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
+    </div>
+  </div>
+  `;
+}
