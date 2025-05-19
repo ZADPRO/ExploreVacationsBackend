@@ -22,7 +22,9 @@ import {
   deleteImageRecordQuery,
   drivarDetailsQuery,
   getcarNameQuery,
+  getCarPriceQuery,
   getCarsByIdQuery,
+  getFormDataQuery,
   getImageRecordQuery,
   getLastCustomerIdQuery,
   getOtherCarsQuery,
@@ -567,9 +569,14 @@ export class userRepository {
         refDriverMobile,
         refAgreementPath,
         transactionId,
+        isExtraKMneeded,
+        refExtraKm,
       } = userData;
 
       const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
+
+      const isExtraKMneed = isExtraKMneeded === true;
+      const ExtraKm = isExtraKMneed ? refExtraKm : null;
 
       // Insert booking data
       const Result: any = await client.query(addCarBookingQuery, [
@@ -587,6 +594,8 @@ export class userRepository {
         refOtherRequirements,
         refAgreementPath,
         transactionId,
+        isExtraKMneed,
+        ExtraKm,
         CurrentTime(),
         tokendata.id,
         tokendata.id,
@@ -1966,4 +1975,184 @@ export class userRepository {
       client.release();
     }
   }
+  // public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   // const client: PoolClient = await getClient();
+
+  //   try {
+  //     // await client.query("BEGIN");
+
+  //     const { isExtraKMneeded, refExtraKm, refCarsId } = userData;
+
+  //     const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
+  //     console.log("getCarPrice", getCarPrice);
+
+  //     const { refCarPrice, refExtraKMcharges } = getCarPrice[0];
+
+  //     let totalAmount: number;
+
+  //     if (isExtraKMneeded === true) {
+  //       totalAmount = refCarPrice + refExtraKMcharges * refExtraKm;
+  //     } else {
+  //       throw new Error("No valid matched.");
+  //     }
+
+  //     // await client.query("COMMIT");
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Listed amount calculated successfully",
+  //         result: totalAmount,
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     console.log("error", error);
+  //     // await client.query("ROLLBACK");
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An unknown error occurred during listed amount",
+  //         error: String(error),
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
+  public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
+        userData;
+
+      let kmPrice = 0;
+      let formDetailsPrice = 0;
+
+      // Optional: Process form details if provided
+      if (Array.isArray(refFormDetails) && refFormDetails.length > 0) {
+        const refFormDetailsIds = refFormDetails.map(
+          (item: any) => item.refFormDetailsId
+        );
+        const getFormData = await executeQuery(getFormDataQuery, [
+          refFormDetailsIds,
+        ]);
+        formDetailsPrice = getFormData.reduce(
+          (sum: number, item: any) => sum + Number(item.refPrice),
+          0
+        );
+      }
+
+      // Optional: Process extra KM charges if needed
+      if (isExtraKMneeded === true) {
+        const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
+        const { refExtraKMcharges } = getCarPrice[0];
+        const extraKmCharge = Number(refExtraKMcharges);
+        const extraKm = Number(refExtraKm);
+        kmPrice = extraKmCharge * extraKm;
+      }
+
+      const totalAmount = kmPrice + formDetailsPrice;
+
+      return encrypt(
+        {
+          success: true,
+          message: "Listed amount calculated successfully",
+          result: {
+            kmPrice,
+            formDetailsPrice,
+            totalAmount,
+          },
+          token: tokens,
+        },
+        false
+      );
+    } catch (error: unknown) {
+      console.log("error", error);
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed amount calculation",
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+  // public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
+  //   const token = { id: tokendata.id };
+  //   const tokens = generateTokenWithExpire(token, true);
+
+  //   try {
+  //     const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
+  //       userData;
+
+  //     // Extract form detail IDs
+  //     const refFormDetailsIds = refFormDetails.map(
+  //       (item: any) => item.refFormDetailsId
+  //     );
+
+  //     // Get form detail prices from DB
+  //     const getFormData = await executeQuery(getFormDataQuery, [
+  //       refFormDetailsIds,
+  //     ]);
+
+  //     // Sum form prices
+  //     const formDetailsPrice = getFormData.reduce(
+  //       (sum: number, item: any) => sum + Number(item.refPrice),
+  //       0
+  //     );
+
+  //     // Get car base price and extra KM charges
+  //     const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
+  //     const { refCarPrice, refExtraKMcharges } = getCarPrice[0];
+  //     console.log("refCarPrice", refCarPrice);
+
+  //     if (!isExtraKMneeded) {
+  //       throw new Error("Extra KM not needed");
+  //     }
+
+  //     // Ensure numeric values
+  //     const carPrice = Number(refCarPrice);
+  //     const extraKmCharge = Number(refExtraKMcharges);
+  //     const extraKm = Number(refExtraKm);
+
+  //     // Calculate extra km price
+  //     const kmPrice = extraKmCharge * extraKm;
+
+  //     // Total = base + extra km + form details
+  //     const totalAmount = carPrice + kmPrice + formDetailsPrice;
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "Listed amount calculated successfully",
+  //         result: {
+  //           kmPrice,
+  //           formDetailsPrice,
+  //           totalAmount,
+  //         },
+  //         token: tokens,
+  //       },
+  //       false
+  //     );
+  //   } catch (error: unknown) {
+  //     console.log("error", error);
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An unknown error occurred during listed amount calculation",
+  //         error: String(error),
+  //         token: tokens,
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
 }

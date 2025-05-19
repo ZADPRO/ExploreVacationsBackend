@@ -172,14 +172,14 @@ export default {
       authorization: Joi.string().optional(),
     }).unknown(),
   },
-  checkoffer:{
-       payload: Joi.object({
+  checkoffer: {
+    payload: Joi.object({
       refPackageId: Joi.number().integer().required(),
       refCouponCode: Joi.string().required(),
-      
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
     }).unknown(),
-  }
+  },
+  extraKMcharges: {},
 };

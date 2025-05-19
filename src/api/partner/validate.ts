@@ -21,6 +21,7 @@ export default {
       refLName: Joi.string().required(),
       refDOB: Joi.string().required(),
       refMoblile: Joi.string().required(),
+      refOffersId: Joi.number().integer().required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

@@ -1319,7 +1319,7 @@ export class carsRepository {
       await client.query("BEGIN");
 
       // Destructure refBenifitsName from the user data
-      const { refFormDetails,refPrice } = userData;
+      const { refFormDetails, refPrice } = userData;
 
       const duplicateCheck: any = await client.query(
         checkduplicateFormDetailsQuery,
@@ -1403,10 +1403,10 @@ export class carsRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
-      const { refFormDetailsId, refFormDetails,refPrice } = userData;
+      const { refFormDetailsId, refFormDetails, refPrice } = userData;
 
       const checkResult = await executeQuery(checkFormDetailsQuery, [
-        refFormDetailsId
+        refFormDetailsId,
       ]);
 
       if (checkResult[0]?.count == 0) {
@@ -1574,6 +1574,7 @@ export class carsRepository {
         refVehicleTypeId,
         refPersonCount,
         refBag,
+        refCarGroupId,
         refFuelType,
         refcarManufactureYear,
         refMileage,
@@ -1582,11 +1583,11 @@ export class carsRepository {
         refOtherRequirements,
         refrefRentalAgreement,
         refFuelPolicy,
-        // refDriverRequirements,
         refPaymentTerms,
         carImagePath,
         refCarPrice,
         refCarTypeId,
+        refExtraKMcharges
       } = userData;
 
       const refBenifits = Array.isArray(userData.refBenifits)
@@ -1626,6 +1627,7 @@ export class carsRepository {
         refVehicleTypeId,
         refPersonCount,
         refBag,
+        refCarGroupId,
         refFuelType,
         refcarManufactureYear,
         refMileage,
@@ -1640,6 +1642,7 @@ export class carsRepository {
         refCarPrice,
         newCustomerId,
         refCarTypeId,
+        refExtraKMcharges,
         CurrentTime(),
         tokendata.id,
       ];
@@ -1649,7 +1652,6 @@ export class carsRepository {
         carsResult.rows[0].refCarsId,
         refrefRentalAgreement,
         refFuelPolicy,
-        // refDriverRequirements,
         refPaymentTerms,
         CurrentTime(),
         tokendata.id,
@@ -1832,6 +1834,7 @@ export class carsRepository {
         refVehicleTypeId,
         refPersonCount,
         refBag,
+        refCarGroupId,
         refFuelType,
         refcarManufactureYear,
         refMileage,
@@ -1844,6 +1847,7 @@ export class carsRepository {
         refCarPrice,
         carImagePath,
         refCarTypeId,
+        refExtraKMcharges
       } = userData;
 
       // const refBenifits = `{${userData.refBenifits.join(",")}}`;
@@ -1871,6 +1875,7 @@ export class carsRepository {
         refVehicleTypeId,
         refPersonCount,
         refBag,
+        refCarGroupId,
         refFuelType,
         refcarManufactureYear,
         refMileage,
@@ -1884,6 +1889,7 @@ export class carsRepository {
         carImagePath, // Updated image path (if provided)
         refCarPrice,
         refCarTypeId,
+        refExtraKMcharges,
         CurrentTime(),
         tokendata.id,
         refCarsId, // Specify the car to be updated by `refCarsId`
@@ -2156,5 +2162,4 @@ export class carsRepository {
       );
     }
   }
-  
 }

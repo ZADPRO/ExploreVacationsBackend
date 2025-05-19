@@ -358,13 +358,25 @@ export class userRoutes implements IRoute {
             auth: false,
           },
         },
-         {
+        {
           method: "POST",
           path: "/api/v1/userRoutes/checkoffer",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.checkoffer,
             validate: validate.checkoffer,
+            description: "checkoffer",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/userRoutes/extraKMcharges",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.extraKMcharges,
+            validate: validate.extraKMcharges,
             description: "checkoffer",
             tags: ["api", "Users"],
             auth: false,

@@ -206,7 +206,7 @@ export class partnerRepository {
         refLName,
         refDOB,
         refMoblile,
-        refOffersId,
+        refOffersId
       } = userData;
 
       const existingPartnerRes = await client.query(getPartnerQuery, [

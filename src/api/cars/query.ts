@@ -10,7 +10,8 @@ LIMIT
   10;
 `;
 
-export const addVehicleQuery = `INSERT INTO
+export const addVehicleQuery = `
+INSERT INTO
   public."refVehicleType" (
     "refVehicleTypeName",
     "createdAt",
@@ -51,7 +52,8 @@ WHERE
   "isDelete" IS NOT true;
 `;
 
-export const deleteVehicleQuery = `UPDATE
+export const deleteVehicleQuery = `
+UPDATE
   public."refVehicleType"
 SET
   "isDelete" = TRUE,
@@ -114,7 +116,6 @@ export const listBenifitsQuery = `SELECT * FROM public."refBenifits"
 WHERE
   "isDelete" IS NOT true;
 `;
-
 
 export const deletebenifitsQuery = `
 UPDATE
@@ -402,7 +403,6 @@ RETURNING
 
 // cars
 
-
 export const getCarIdIdQuery = `SELECT
 COUNT(*)
 FROM
@@ -411,12 +411,12 @@ WHERE
 "refCarCustId" LIKE 'EV-CAR-%'; 
 `;
 
-
 export const addCarsQuery = `INSERT INTO
   public."refCarsTable" (
     "refVehicleTypeId",
     "refPersonCount",
     "refBagCount",
+    "refCarGroupId",
     "refFuelType",
     "refcarManufactureYear",
     "refMileage",
@@ -431,12 +431,13 @@ export const addCarsQuery = `INSERT INTO
     "refCarPrice",
     "refCarCustId",
     "refCarTypeId",
+    "refExtraKMcharges",
     "createdAt",
     "createdBy",
     "isDelete"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, false) 
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, false) 
 RETURNING
   *;
 `;
@@ -461,8 +462,6 @@ FROM
 WHERE
   "refVehicleTypeId" = $1
 `;
-
-
 
 export const updateCondation = `UPDATE
   public."refTermsAndConditions"
@@ -498,28 +497,29 @@ RETURNING
 `;
 
 export const updateCarsQuery = `
-
         UPDATE public."refCarsTable"
         SET 
           "refVehicleTypeId" = $1,
           "refPersonCount" = $2,
           "refBagCount" = $3,
-          "refFuelType" = $4,
-          "refcarManufactureYear" = $5,
-          "refMileage" = $6,
-          "refTrasmissionType" = $7,
-          "refFuleLimit" = $8,
-          "refBenifits" = $9,
-          "refInclude" = $10,
-          "refExclude" = $11,
-          "refFormDetails" = $12,
-          "refOtherRequirements" = $13,
-          "refCarPath" = $14,
-          "refCarPrice" = $15,
-          "refCarTypeId" = $16,
-          "updatedAt" = $17,
-          "updatedBy" = $18
-        WHERE "refCarsId" = $19
+          "refCarGroupId"=$4
+          "refFuelType" = $5,
+          "refcarManufactureYear" = $6,
+          "refMileage" = $7,
+          "refTrasmissionType" = $8,
+          "refFuleLimit" = $9,
+          "refBenifits" = $10,
+          "refInclude" = $11,
+          "refExclude" = $12,
+          "refFormDetails" = $13,
+          "refOtherRequirements" = $14,
+          "refCarPath" = $15,
+          "refCarPrice" = $16,
+          "refCarTypeId" = $17,
+          "refExtraKMcharges" = $18
+          "updatedAt" = $19,
+          "updatedBy" = $20
+        WHERE "refCarsId" = $21
         RETURNING *;
       `;
 
@@ -534,7 +534,6 @@ WHERE
 RETURNING
   *;
 `;
-
 
 export const getDeletedCarQuery = `SELECT
   v."refVehicleTypeName"
@@ -618,7 +617,8 @@ WHERE
 
 export const listCarsQuery = `
 SELECT
-rc."refCarsId",
+  rc."refCarsId",
+  cg."refCarGroupName",
   rvt."refVehicleTypeName",
   ct."refCarTypeName",
   rc."refCarCustId",
@@ -635,11 +635,11 @@ FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
   LEFT JOIN public."refCarType" ct ON CAST(ct."refCarTypeId" AS INTEGER) = rc."refCarTypeId"
-  WHERE rc."isDelete" IS NOT true 
+  LEFT JOIN public."refCarGroup" cg ON cg."refCarGroupId" = rc."refCarGroupId"
+WHERE
+  rc."isDelete" IS NOT true 
   ;
-      
   `;
-
 
 // export const getCarsByIdQuery = `
 // SELECT DISTINCT
@@ -661,10 +661,10 @@ FROM
 //   `
 //   ;
 
-
 export const getCarsByIdQuery = `
 SELECT DISTINCT
   ON (rct."refCarsId") rct.*,
+  cg."refCarGroupName",
   ct."refCarTypeName",
   array_to_json(string_to_array(
     trim(both '{}' from rct."refExclude"), ','
@@ -685,15 +685,17 @@ FROM
   LEFT JOIN public."refVehicleType" vt ON vt."refVehicleTypeId" = rct."refVehicleTypeId"
   LEFT JOIN public."refCarType" ct ON ct."refCarTypeId"= rct."refCarTypeId"
   LEFT JOIN public."refTermsAndConditions" tc ON tc."refCarsId" = rct."refCarsId"
+  LEFT JOIN public."refCarGroup" cg ON cg."refCarGroupId" = rct."refCarGroupId"
 WHERE
   rct."refCarsId" = $1
   AND (
     rct."isDelete" IS NULL
     OR rct."isDelete" IS FALSE
 );
+
 `;
 
-export const getCarTypeQuery =`
+export const getCarTypeQuery = `
 SELECT
   *
 FROM

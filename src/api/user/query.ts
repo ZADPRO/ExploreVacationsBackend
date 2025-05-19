@@ -23,7 +23,7 @@ WHERE
   AND u."refuserId" = $2
 `;
 
-export const getPackagePriceQuery =`
+export const getPackagePriceQuery = `
 SELECT
   "refTourPrice"
 FROM
@@ -96,7 +96,8 @@ export const addcustomizeBookingQuery = `
     RETURNING *;
 `;
 
-export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
+export const addCarBookingQuery = `
+ INSERT INTO public."userCarBooking" (
         "refCarsId",
         "refUserName", 
         "refUserMail", 
@@ -111,13 +112,14 @@ export const addCarBookingQuery = ` INSERT INTO public."userCarBooking" (
         "refFormDetails",
         "refAgreementPath",
         "paymentId",
+        "isExtraKMneeded",
+        "refExtraKm",
         "createdAt", 
         "createdBy",
         "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,$16, $17) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) 
     RETURNING *;
-
 `;
 
 export const getcarNameQuery = `
@@ -1559,4 +1561,23 @@ FROM
 WHERE
   "refCarParkingId" = $1
   
+`;
+
+export const getCarPriceQuery = `
+SELECT
+  "refCarPrice",
+  "refExtraKMcharges"
+FROM
+  public."refCarsTable"
+WHERE
+  "refCarsId" = $1
+`;
+
+export const getFormDataQuery = `
+SELECT
+  *
+FROM
+  public."refFormDetails"
+WHERE
+  "refFormDetailsId" = ANY ($1::int[]);
 `;

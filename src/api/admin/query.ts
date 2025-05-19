@@ -404,12 +404,18 @@ SELECT
   rcb.*,
   ct.*,
   vt."refVehicleTypeName",
-  cty."refCarTypeName"
+  cty."refCarTypeName",
+  dd."refDriverName",
+  dd."refDriverAge",
+  dd."refDriverMail",
+  dd."refDriverMobile",
+  dd."refDriverLocation"
 FROM
   public."userCarBooking" rcb
   JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
   LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
   LEFT JOIN public."refCarType" cty ON CAST(cty."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
+  LEFT JOIN public."refDriverDetails" dd ON CAST (dd."createdBy" AS INTEGER) = rcb."refuserId" ::INTEGER
   JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = rcb."refuserId"
   AND rcb."isDelete" IS NOT true;
 `;

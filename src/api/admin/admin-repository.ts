@@ -674,7 +674,6 @@ export class adminRepository {
       );
     }
   }
-
   public async deleteEmployeeImageV1(
     userData: any,
     tokendata: any
