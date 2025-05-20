@@ -245,6 +245,7 @@ export default {
     payload: Joi.object({
       refCarsId: Joi.number().integer().required(),
       refVehicleTypeId: Joi.number().integer().required(),
+      refCarTypeId: Joi.number().integer().required(),
       refPersonCount: Joi.string().required(),
       refBag: Joi.string().required(),
       refCarGroupId: Joi.number().required(),
@@ -263,6 +264,7 @@ export default {
       refInclude: Joi.array().items(Joi.string()).required(),
       refExclude: Joi.array().items(Joi.string()).required(),
       refFormDetails: Joi.array().items(Joi.string()).required(),
+      carImagePath: Joi.string().required(),
     }),
   },
   getCars: {
