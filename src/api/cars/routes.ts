@@ -311,16 +311,10 @@ export class carsRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.addCars,
-            validate: validate.addCars,
+            // validate: validate.addCars,
             description: "add Cars ",
             tags: ["api", "Users"],
             auth: false,
-            // payload: {
-            //   maxBytes: 10485760,
-            //   output: "stream",
-            //   parse: true,
-            //   multipart: true,
-            // },
           },
         },
         {

@@ -84,24 +84,18 @@ WHERE
 export const addOfflineCarBookingQuery = `
 INSERT INTO
   public."offlineCarBooking" (
-    "refCarsId",
     "refUserName",
     "refUserMail",
     "refUserMobile",
-    "refPickupAddress",
-    "refSubmissionAddress",
-    "refPickupDate",
-    "refAdultCount",
-    "refChildrenCount",
-    "refInfants",
-    "refFormDetails",
-    "refOtherRequirements",
-    "refBookingType",
-    "isExtraKMneeded",
-    "refExtraKm",
+    "refAddress",
+    "refDoorNumber",
+    "refStreet",
+    "refArea",
+    "refcountry",
+    "refPassport",
+    "refLicense",
     "createdAt",
-    "createdBy",
-    "refuserId"
+    "createdBy"
   )
 VALUES
   (
@@ -116,17 +110,11 @@ VALUES
     $9,
     $10,
     $11,
-    $12,
-    $13,
-    $14,
-    $15,
-    $16,
-    $17,
-    $18
+    $12
   )
 RETURNING
   *;
-`;
+    `;
 
 export const drivarDetailsQuery = `
 INSERT INTO
@@ -147,22 +135,16 @@ RETURNING
 
 export const listOfflineCarBookingQuery = `
 SELECT
-  ob.*,
-  ct.*,
-  vt."refVehicleTypeName",
-  cty."refCarTypeName"
+  *
 FROM
-  public."offlineCarBooking" ob
-  LEFT JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = ob."refCarsId"
-  LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
-  LEFT JOIN public."refCarType" cty ON CAST(cty."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
+  public."offlineBooking"
 WHERE
-  ob."isDelete" IS NOT true
+  "isDelete" IS NOT true
 `;
 
 export const deleteOfflineCarBookingQuery =  `
 UPDATE
-  public."offlineCarBooking"
+  public."offlineBooking"
 SET
   "isDelete" = true,
   "deletedAt" = $2,
@@ -171,4 +153,23 @@ WHERE
   "offlineCarBookingId" = $1
 RETURNING
   *;
+`;
+
+
+export const getPasportImageQuery = `
+SELECT
+  "refPassport"
+FROM
+  public."offlineBooking"
+WHERE
+  "offlineCarBookingId" = $1;
+`;
+
+export const getLicenseImageQuery = `
+SELECT
+  "refLicense"
+FROM
+  public."offlineBooking"
+WHERE
+  "offlineCarBookingId" = $1;
 `;

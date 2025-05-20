@@ -29,6 +29,8 @@ import {
   deleteOfflineCarBookingQuery,
   drivarDetailsQuery,
   getCarGroupQuery,
+  getLicenseImageQuery,
+  getPasportImageQuery,
   listCarGroupQuery,
   listOfflineCarBookingQuery,
   updateCarGroupQuery,
@@ -279,107 +281,71 @@ export class newCarsRepository {
     userData?: any,
     tokendata?: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
     try {
       await client.query("BEGIN"); // Start transaction
       const {
-        refCarsId,
         refUserName,
         refUserMail,
         refUserMobile,
-        refPickupAddress,
-        refSubmissionAddress,
-        refPickupDate,
-        refAdultCount,
-        refChildrenCount,
-        refInfants,
-        refOtherRequirements,
-        refDriverName,
-        refDriverAge,
-        refDriverMail,
-        refDriverMobile,
-
-        isExtraKMneeded,
-        refExtraKm,
+        refAddress,
+        refDoorNumber,
+        refStreet,
+        refArea,
+        refcountry,
+        refPassport,
+        refLicense,
       } = userData;
-
-      const refFormDetails = `{${userData.refFormDetails.join(",")}}`;
-
-      const isExtraKMneed = isExtraKMneeded === true;
-      const ExtraKm = isExtraKMneed ? refExtraKm : null;
 
       // Insert booking data
       const Result: any = await client.query(addOfflineCarBookingQuery, [
-        refCarsId,
         refUserName,
         refUserMail,
         refUserMobile,
-        refPickupAddress,
-        refSubmissionAddress,
-        refPickupDate,
-        refAdultCount,
-        refChildrenCount,
-        refInfants,
-        refFormDetails,
-        refOtherRequirements,
-        "offline", //refBookingType
-        isExtraKMneed,
-        ExtraKm,
-        CurrentTime(),
-        tokendata.id,
-        tokendata.id,
-      ]);
-
-      //way 1
-
-      const daysLeft = Math.ceil(
-        (new Date(refPickupDate).getTime() -
-          new Date(CurrentTime()).getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-      const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
-
-      const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
-        getCarName[0];
-
-      const userMailData = {
-        daysLeft: daysLeft,
-        refPickupDate: refPickupDate,
-        refUserName: refUserName,
-        refCarTypeName: refCarTypeName,
-        refVehicleTypeName: refVehicleTypeName,
-        refCarCustId: refCarCustId,
-        refCarPrice: refCarPrice,
-      };
-
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAILID,
-          pass: process.env.PASSWORD,
-        },
-      });
-
-      const mailoption = {
-        from: process.env.EMAILID,
-        to: "rac_booking@explorevacations.ch",
-        subject: "New offline car Booking Received",
-        html: generateCarBookingEmailContent(Result.rows),
-      };
-
-      transporter.sendMail(mailoption);
-
-      const drivarDetails = await client.query(drivarDetailsQuery, [
-        refDriverName,
-        refDriverAge,
-        refDriverMail,
-        refDriverMobile,
+        refAddress,
+        refDoorNumber,
+        refStreet,
+        refArea,
+        refcountry,
+        refPassport,
+        refLicense,
         CurrentTime(),
         tokendata.id,
       ]);
+
+      // // const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
+
+      // const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
+      //   getCarName[0];
+
+      // const userMailData = {
+      //   // daysLeft: daysLeft,
+      //   refUserName: refUserName,
+      //   refCarTypeName: refCarTypeName,
+      //   refVehicleTypeName: refVehicleTypeName,
+      //   refCarCustId: refCarCustId,
+      //   refCarPrice: refCarPrice,
+      // };
+
+      // const transporter = nodemailer.createTransport({
+      //   service: "gmail",
+      //   auth: {
+      //     user: process.env.EMAILID,
+      //     pass: process.env.PASSWORD,
+      //   },
+      // });
+
+      // const mailoption = {
+      //   from: process.env.EMAILID,
+      //   to: "rac_booking@explorevacations.ch",
+      //   subject: "New offline car Booking Received",
+      //   html: generateCarBookingEmailContent(Result.rows),
+      // };
+
+      // transporter.sendMail(mailoption);
 
       await client.query("COMMIT"); // Commit transaction
 
@@ -387,9 +353,8 @@ export class newCarsRepository {
         {
           success: true,
           message: "User offline car booking added successfully",
-          token: tokens,
+          // token: tokens,
           Data: Result.rows[0],
-          drivarDetails: drivarDetails,
         },
         true
       );
@@ -402,7 +367,7 @@ export class newCarsRepository {
           success: false,
           message:
             "An error occurred while adding the user offline car booking",
-          token: tokens,
+          // token: tokens,
           error: String(error),
         },
         true
@@ -441,7 +406,10 @@ export class newCarsRepository {
       );
     }
   }
-  public async deleteOfflineCarBookingV1(userData: any, tokendata: any): Promise<any> {
+  public async deleteOfflineCarBookingV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
     const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -509,6 +477,248 @@ export class newCarsRepository {
       );
     } finally {
       client.release();
+    }
+  }
+  public async uploadPassportV1(userData: any, tokendata: any): Promise<any> {
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the image from userData
+      const image = userData.images;
+
+      // Ensure that only one image is provided
+      if (!image) {
+        throw new Error("Please provide an image.");
+      }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the image
+      filePath = await storeFile(image, 12);
+
+      // Read the file buffer and convert it to Base64
+
+      const imageBuffer = await viewFile(filePath);
+      const imageBase64 = imageBuffer.toString("base64");
+
+      // const contentType = mime.lookup(filePath) || "application/octet-stream";
+      // console.log('contentType', contentType)
+      // const contentType = fileData.hapi.headers["content-type"];
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: imageBase64,
+        contentType: "image/jpg", // Assuming the image is in JPEG format
+
+        // contentType:contentType
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Image Stored Successfully",
+          // token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the Image",
+          // token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async uploadLicenseV1(userData: any, tokendata: any): Promise<any> {
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
+    try {
+      // Extract the image from userData
+      const image = userData.images;
+
+      // Ensure that only one image is provided
+      if (!image) {
+        throw new Error("Please provide an image.");
+      }
+
+      let filePath: string = "";
+      let storedFiles: any[] = [];
+
+      // Store the image
+      filePath = await storeFile(image, 12);
+
+      // Read the file buffer and convert it to Base64
+
+      const imageBuffer = await viewFile(filePath);
+      const imageBase64 = imageBuffer.toString("base64");
+
+      // const contentType = mime.lookup(filePath) || "application/octet-stream";
+      // console.log('contentType', contentType)
+      // const contentType = fileData.hapi.headers["content-type"];
+
+      storedFiles.push({
+        filename: path.basename(filePath),
+        content: imageBase64,
+        contentType: "image/jpg", // Assuming the image is in JPEG format
+
+        // contentType:contentType
+      });
+
+      // Return success response
+      return encrypt(
+        {
+          success: true,
+          message: "Image Stored Successfully",
+          // token: tokens,
+          filePath: filePath,
+          files: storedFiles,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return encrypt(
+        {
+          success: false,
+          message: "Error in Storing the Image",
+          // token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async deletePassportV1(userData: any, tokendata: any): Promise<any> {
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
+    try {
+      let filePath: string | any;
+
+      if (userData.offlineCarBookingId) {
+        // Retrieve the image record from the database
+        const imageRecord = await executeQuery(getPasportImageQuery, [
+          userData.offlineCarBookingId,
+        ]);
+        if (imageRecord.length === 0) {
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              // token: tokens,
+            },
+            true
+          );
+        }
+
+        filePath = imageRecord[0].refPassport;
+
+        // Delete the image record from the database
+        // await executeQuery(deleteImageRecordQuery, [userData.refHomePageId]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            // token: tokens,
+          },
+          true
+        );
+      }
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "gallery image deleted successfully",
+          // token: tokens,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error in deleting file:", (error as Error).message); // Log the error for debugging
+      return encrypt(
+        {
+          success: false,
+          message: `Error In Deleting Image: ${(error as Error).message}`,
+          // token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async deleteLicenseV1(userData: any, tokendata: any): Promise<any> {
+    // const token = { id: tokendata.id };
+    // const tokens = generateTokenWithExpire(token, true);
+    try {
+      let filePath: string | any;
+
+      if (userData.offlineCarBookingId) {
+        // Retrieve the image record from the database
+        const imageRecord = await executeQuery(getLicenseImageQuery, [
+          userData.offlineCarBookingId,
+        ]);
+        if (imageRecord.length === 0) {
+          return encrypt(
+            {
+              success: false,
+              message: "Image record not found",
+              // token: tokens,
+            },
+            true
+          );
+        }
+
+        filePath = imageRecord[0].refPassport;
+
+        // Delete the image record from the database
+        // await executeQuery(deleteImageRecordQuery, [userData.refHomePageId]);
+      } else if (userData.filePath) {
+        // Fallback path deletion
+        filePath = userData.filePath;
+      } else {
+        return encrypt(
+          {
+            success: false,
+            message: "No user ID or file path provided for deletion",
+            // token: tokens,
+          },
+          true
+        );
+      }
+      if (filePath) {
+        await deleteFile(filePath); // Delete file from local storage
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "gallery image deleted successfully",
+          // token: tokens,
+        },
+        true
+      );
+    } catch (error) {
+      console.error("Error in deleting file:", (error as Error).message); // Log the error for debugging
+      return encrypt(
+        {
+          success: false,
+          message: `Error In Deleting Image: ${(error as Error).message}`,
+          // token: tokens,
+        },
+        true
+      );
     }
   }
 }

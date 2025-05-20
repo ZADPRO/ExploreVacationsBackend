@@ -692,11 +692,13 @@ SELECT
   rc."refFuleLimit",
   rc."refCarPath",
   rc."refCarPrice",
-  rc."refCarTypeId"
+  rc."refCarTypeId",
+  cg."refCarGroupName"
 FROM
   public."refCarsTable" rc
   LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
   LEFT JOIN public."refCarType" ct ON CAST(ct."refCarTypeId" AS INTEGER) = rc."refCarTypeId"
+  LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = rc."refCarGroupId"
 WHERE
   rc."isDelete" IS NOT true
   AND rc."refCarTypeId" = $1;
@@ -818,65 +820,66 @@ WHERE
 // `;
 export const getCarsByIdQuery = `
 
-WITH
-  "carData" AS (
-    SELECT
-      rvt."refVehicleTypeId",
-      rvt."refVehicleTypeName",
-      rc."refPersonCount",
-      rc."refBagCount",
-      rc."refFuelType",
-      rc."refcarManufactureYear",
-      rc."refMileage",
-      rc."refTrasmissionType",
-      rc."refFuleLimit",
-      rc."refCarPath",
-      rc."refCarPrice",
-      rc."refOtherRequirements",
-      rc."refInclude",
-      rc."refExclude",
-      rc."refFormDetails",
-      tc."refRentalAgreement",
-      tc."refPaymentTerms",
-      tc."refFuelPolicy",
+WITH "carData" AS (
+  SELECT
+    cg."refCarGroupName",
+    rvt."refVehicleTypeId",
+    rvt."refVehicleTypeName",
+    rc."refPersonCount",
+    rc."refBagCount",
+    rc."refFuelType",
+    rc."refcarManufactureYear",
+    rc."refMileage",
+    rc."refTrasmissionType",
+    rc."refFuleLimit",
+    rc."refCarPath",
+    rc."refCarPrice",
+    rc."refOtherRequirements",
+    rc."refInclude",
+    rc."refExclude",
+    rc."refFormDetails",
     rc."refCarTypeId",
     ct."refCarTypeName",
-      ARRAY_AGG(rb."refBenifitsName") AS "refBenifitsName"
-    FROM
-      public."refCarsTable" rc
-      LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
-      LEFT JOIN public."refTermsAndConditions" tc ON CAST(tc."refCarsId" AS INTEGER) = rc."refCarsId"
+    tc."refRentalAgreement",
+    tc."refPaymentTerms",
+    tc."refFuelPolicy",
+    ARRAY_AGG(rb."refBenifitsName") AS "refBenifitsName"
+  FROM
+    public."refCarsTable" rc
+    LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+    LEFT JOIN public."refTermsAndConditions" tc ON CAST(tc."refCarsId" AS INTEGER) = rc."refCarsId"
     LEFT JOIN public."refCarType" ct ON CAST(ct."refCarTypeId" AS INTEGER) = rc."refCarTypeId"
-      LEFT JOIN public."refBenifits" rb ON CAST(rb."refBenifitsId" AS INTEGER) = ANY (
-        string_to_array(
-          regexp_replace(rc."refBenifits", '[{}]', '', 'g'),
-          ','
-        )::INTEGER[]
-      )
-    WHERE
-      rc."isDelete" IS NOT true
-      AND rc."refCarsId" = $1
-    GROUP BY
-      rc."refCarsId",
-      rvt."refVehicleTypeName",
-      rc."refPersonCount",
-      rc."refBagCount",
-      rc."refFuelType",
-      rc."refcarManufactureYear",
-      rc."refMileage",
-      rc."refTrasmissionType",
-      rc."refFuleLimit",
-      rc."refCarPath",
-      rc."refCarPrice",
-      rc."refOtherRequirements",
-      tc."refRentalAgreement",
-      tc."refPaymentTerms",
-      tc."refFuelPolicy",
-      tc."refPaymentTerms",
-      rvt."refVehicleTypeId",
+    LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = rc."refCarGroupId"
+    LEFT JOIN public."refBenifits" rb ON CAST(rb."refBenifitsId" AS INTEGER) = ANY (
+      string_to_array(regexp_replace(rc."refBenifits", '[{}]', '', 'g'), ',')::INTEGER[]
+    )
+  WHERE
+    rc."isDelete" IS NOT true
+    AND rc."refCarsId" = $1
+  GROUP BY
+    cg."refCarGroupName",
+    rvt."refVehicleTypeId",
+    rvt."refVehicleTypeName",
+    rc."refPersonCount",
+    rc."refBagCount",
+    rc."refFuelType",
+    rc."refcarManufactureYear",
+    rc."refMileage",
+    rc."refTrasmissionType",
+    rc."refFuleLimit",
+    rc."refCarPath",
+    rc."refCarPrice",
+    rc."refOtherRequirements",
+    rc."refInclude",
+    rc."refExclude",
+    rc."refFormDetails",
     rc."refCarTypeId",
-    ct."refCarTypeName"
-  )
+    ct."refCarTypeName",
+    tc."refRentalAgreement",
+    tc."refPaymentTerms",
+    tc."refFuelPolicy"
+)
+
 SELECT
   cd."refVehicleTypeId",
   cd."refVehicleTypeName",
@@ -891,35 +894,34 @@ SELECT
   cd."refCarPrice",
   cd."refOtherRequirements",
   cd."refCarTypeId",
-    cd."refCarTypeName",
+  cd."refCarTypeName",
+  cd."refCarGroupName",
   ARRAY_AGG(DISTINCT ri."refIncludeName") AS "refIncludeName",
   ARRAY_AGG(DISTINCT re."refExcludeName") AS "refExcludeName",
-  ARRAY_AGG(DISTINCT fd."refFormDetails") AS "refFormDetails",
+  jsonb_agg(
+    DISTINCT jsonb_build_object(
+      'refFormDetailsId', fd."refFormDetailsId",
+      'refFormDetails', fd."refFormDetails",
+      'refPrice', fd."refPrice"
+    )
+  ) AS "refFormDetails",
   cd."refRentalAgreement",
   cd."refPaymentTerms",
   cd."refFuelPolicy",
-  cd."refPaymentTerms"
+  cd."refBenifitsName"
 FROM
   "carData" cd
   LEFT JOIN public."refInclude" ri ON CAST(ri."refIncludeId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(cd."refInclude", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
+    string_to_array(regexp_replace(cd."refInclude", '[{}]', '', 'g'), ',')::INTEGER[]
   )
   LEFT JOIN public."refExclude" re ON CAST(re."refExcludeId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(cd."refExclude", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
+    string_to_array(regexp_replace(cd."refExclude", '[{}]', '', 'g'), ',')::INTEGER[]
   )
   LEFT JOIN public."refFormDetails" fd ON CAST(fd."refFormDetailsId" AS INTEGER) = ANY (
-    string_to_array(
-      regexp_replace(cd."refFormDetails", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
+    string_to_array(regexp_replace(cd."refFormDetails", '[{}]', '', 'g'), ',')::INTEGER[]
   )
 GROUP BY
+  cd."refVehicleTypeId",
   cd."refVehicleTypeName",
   cd."refPersonCount",
   cd."refBagCount",
@@ -931,14 +933,14 @@ GROUP BY
   cd."refCarPath",
   cd."refCarPrice",
   cd."refOtherRequirements",
+  cd."refCarTypeId",
+  cd."refCarTypeName",
+  cd."refCarGroupName",
   cd."refRentalAgreement",
   cd."refPaymentTerms",
   cd."refFuelPolicy",
-  cd."refPaymentTerms",
-  cd."refVehicleTypeId",
-  cd."refCarTypeId",
-  cd."refCarTypeName";
-`;
+  cd."refBenifitsName";
+    `;
 
 // export const listCarParkingQuery = `
 // SELECT

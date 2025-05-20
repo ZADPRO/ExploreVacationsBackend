@@ -103,7 +103,7 @@ WHERE
     )::INTEGER[]
   )
   AND rn."isDelete" IS NOT true
-  AND rn."refReadStatus" != 'Read'
+  AND rn."refReadStatus" IS null
 `;
 
 // export const readNotificationQuery =`
@@ -134,18 +134,37 @@ WHERE
 
 export const readNotificationQuery =`
 SELECT
-  "refNotificationsId",
-  "refUserTypeId",
-  regexp_replace("refUserTypeId", '[{}]', '', 'g') AS cleaned,
-  string_to_array(
-    regexp_replace("refUserTypeId", '[{}]', '', 'g'),
-    ','
-  ) AS split
+  n.*,
+  array_agg(ut."refUserType") AS "refUserType",
+  array_to_json(
+    string_to_array(
+      trim(
+        both '{}'
+        from
+          n."refUserTypeId"
+      ),
+      ','
+    )::int[]
+  ) AS "userTypeId"
 FROM
-  public."refNotifications"
+  public."refNotifications" n
+  LEFT JOIN public."refUserType" ut ON CAST(ut."refUserTypeId" AS INTEGER) = ANY (
+    string_to_array(
+      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
 WHERE
   "refReadStatus" = 'Read'
-  AND "isDelete" IS NOT true;
+  AND n."isDelete" IS NOT true
+  AND $1::INTEGER = ANY (
+    string_to_array(
+      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
+  )
+GROUP BY
+  n."refNotificationsId"
 
 `;
 
@@ -172,13 +191,10 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  n."refReadStatus" is null
-  AND n."isDelete" is not true
-  AND $1 = ANY (
-    string_to_array(
-      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
-      ','
-    )::INTEGER[]
+  n."refReadStatus" IS null 
+  AND n."isDelete" IS NOT true
+  AND $1::INTEGER = ANY (
+    string_to_array(regexp_replace(n."refUserTypeId", '[{}]', '', 'g'), ',')::INTEGER[]
   )
 GROUP BY
   n."refNotificationsId"

@@ -617,6 +617,7 @@ WHERE
 
 export const listCarsQuery = `
 SELECT
+rc."refCarGroupId",
   rc."refCarsId",
   cg."refCarGroupName",
   rvt."refVehicleTypeName",

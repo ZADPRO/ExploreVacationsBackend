@@ -226,6 +226,7 @@ export class notificationRepository {
     try {
 
       const Result = await executeQuery(staffNotificationCountQuery, [tokendata.id]);
+      console.log('Result', Result)
    
       return encrypt(
         {

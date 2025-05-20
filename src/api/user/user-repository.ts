@@ -1043,7 +1043,7 @@ export class userRepository {
   public async getAllCarV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refCarTypeId } = userData;
-      const result = await executeQuery(listCarsQuery, [refCarTypeId]);
+      const result = await executeQuery(listCarsQuery,[refCarTypeId]);
 
       // for (const image of result) {
       //   if (image.refCarPath) {
@@ -2052,7 +2052,7 @@ export class userRepository {
       // Optional: Process extra KM charges if needed
       if (isExtraKMneeded === true) {
         const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
-        const { refExtraKMcharges } = getCarPrice[0];
+        const {refExtraKMcharges } = getCarPrice[0];
         const extraKmCharge = Number(refExtraKMcharges);
         const extraKm = Number(refExtraKm);
         kmPrice = extraKmCharge * extraKm;
@@ -2071,7 +2071,7 @@ export class userRepository {
           },
           token: tokens,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       console.log("error", error);
