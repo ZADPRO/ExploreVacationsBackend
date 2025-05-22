@@ -38,4 +38,7 @@ export class newCarsResolver {
   public async deleteLicenseV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.newCarsRepository.deleteLicenseV1(user_data, token_data, domain_code);
   }
+  public async viewCertificatesV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.newCarsRepository.viewCertificatesV1(user_data, token_data, domain_code);
+  }
 }

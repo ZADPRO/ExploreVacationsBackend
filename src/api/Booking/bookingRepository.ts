@@ -144,6 +144,7 @@ export class bookingRepository {
       const mailResult: any = await executeQuery(getUserdataCarQuery, [
         userData.userId,
       ]);
+      console.log('mailResult', mailResult)
       const {
         refPickupDate,
         refUserName,
@@ -193,8 +194,12 @@ export class bookingRepository {
           <td style="padding: 8px 0;">${refCarTypeName}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
+          <td style="padding: 8px 0;"><strong>📅 Pickup Address:</strong></td>
           <td style="padding: 8px 0;">${refPickupAddress}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
+          <td style="padding: 8px 0;">${refPickupDate}</td>
         </tr>
         <tr>
           <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>

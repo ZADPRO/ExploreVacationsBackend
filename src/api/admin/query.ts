@@ -232,7 +232,6 @@ RETURNING
 
 export const listTourBookingsQuery = `
 
-
 WITH
   "base" AS (
     SELECT
@@ -400,6 +399,7 @@ ORDER BY
 
 export const listCarBookingsQuery = `
 SELECT
+  cg."refCarGroupName",
   u.*,
   rcb.*,
   ct.*,
@@ -415,7 +415,8 @@ FROM
   JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
   LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
   LEFT JOIN public."refCarType" cty ON CAST(cty."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
-  LEFT JOIN public."refDriverDetails" dd ON CAST (dd."createdBy" AS INTEGER) = rcb."refuserId" ::INTEGER
+  LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = ct."refCarGroupId"
+  LEFT JOIN public."refDriverDetails" dd ON CAST(dd."createdBy" AS INTEGER) = rcb."refuserId"::INTEGER
   JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = rcb."refuserId"
   AND rcb."isDelete" IS NOT true;
 `;
@@ -1027,3 +1028,30 @@ GROUP BY
   pa."refParkingTypeName",
   cpt."refCarParkingTypeName"
 `;
+
+export const listCarBookingAgreementQuery = `
+SELECT
+  cg."refCarGroupName",
+  u.*,
+  rcb.*,
+  ct.*,
+  vt."refVehicleTypeName",
+  cty."refCarTypeName",
+  dd."refDriverName",
+  dd."refDriverAge",
+  dd."refDriverMail",
+  dd."refDriverMobile",
+  dd."refDriverLocation"
+FROM
+  public."userCarBooking" rcb
+  JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
+  LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
+  LEFT JOIN public."refCarType" cty ON CAST(cty."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
+  LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = ct."refCarGroupId"
+  LEFT JOIN public."refDriverDetails" dd ON CAST(dd."createdBy" AS INTEGER) = rcb."refuserId"::INTEGER
+  JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = rcb."refuserId"
+WHERE
+  rcb."refuserId" = $1
+  AND rcb."isDelete" IS NOT true;
+`
+;

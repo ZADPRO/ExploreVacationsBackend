@@ -31,6 +31,7 @@ import {
   insertUserDomainQuery,
   insertUserQuery,
   listAuditPageQuery,
+  listCarBookingAgreementQuery,
   listCarBookingsQuery,
   listCustomizeTourBookingsQuery,
   listEmployeesQuery,
@@ -194,22 +195,36 @@ export class adminRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCarBookingsQuery);
+      console.log('result', result)
 
-      for (const certificate of result) {
-        if (certificate.refAgreementPath) {
-          try {
-            const fileBuffer = await viewFile(certificate.refAgreementPath);
-            certificate.refAgreementPath = {
-              filename: path.basename(certificate.refAgreementPath),
-              content: fileBuffer.toString("base64"),
-              contentType: "application/pdf",
-            };
-          } catch (error) {
-            console.log("error", error);
-            certificate.refAgreementPath = null;
-          }
-        }
-      }
+      // for (const certificate of result) {
+        // if (certificate.refAgreementPath) {
+        //   try {
+        //     const fileBuffer = await viewFile(certificate.refAgreementPath);
+        //     certificate.refAgreementPath = {
+        //       filename: path.basename(certificate.refAgreementPath),
+        //       content: fileBuffer.toString("base64"),
+        //       contentType: "application/pdf",
+        //     };
+        //   } catch (error) {
+        //     console.log("error", error);
+        //     certificate.refAgreementPath = null;
+        //   }
+        // }
+      //   if (certificate.refCarPath) {
+      //     try {
+      //       const fileBuffer = await viewFile(certificate.refCarPath);
+      //       certificate.refCarPath = {
+      //         filename: path.basename(certificate.refCarPath),
+      //         content: fileBuffer.toString("base64"),
+      //         contentType: "application/pdf",
+      //       };
+      //     } catch (error) {
+      //       console.log("error", error);
+      //       certificate.refCarPath = null;
+      //     }
+      //   }
+      // }
 
       return encrypt(
         {
@@ -365,30 +380,27 @@ export class adminRepository {
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-      const { TransactionType, updatedAt } = userData;
-
-      // const date = updatedAt
-      //   ? updatedAt
-      //   : (() => {
-      //       const now = new Date();
-      //       const day = String(now.getDate()).padStart(2, "0");
-      //       const month = String(now.getMonth() + 1).padStart(2, "0");
-      //       const year = now.getFullYear();
-      //       return `${day}/${month}/${year}`; // Format: 'DD/MM/YYYY'
-      //     })();
+      const { updatedAt } = userData;
 
       const date = updatedAt ? updatedAt : CurrentTime();
 
+      // const TransactionType = Array.isArray(userData.TransactionType)
+      //   ? `{${userData.TransactionType.join(",")}}`
+      //   : "{}";
+
       // const result = await executeQuery(listAuditPageQuery, [
       //   date,
-      //   [TransactionType],
+      //   [parseInt(TransactionType)], // ensure it's an integer array
       // ]);
+      const TransactionTypeArray = Array.isArray(userData.TransactionType)
+        ? userData.TransactionType.map(Number)
+        : [];
 
       const result = await executeQuery(listAuditPageQuery, [
         date,
-        [parseInt(TransactionType)], // ensure it's an integer array
+        TransactionTypeArray,
       ]);
-
+      
       return encrypt(
         {
           success: true,
@@ -1408,6 +1420,65 @@ export class adminRepository {
         {
           success: false,
           message: "An error occurred get the user data",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+
+  public async viewCarAgreementV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    console.log('userData', userData)
+    try {
+      const result = await executeQuery(listCarBookingAgreementQuery,[userData.refuserId]);
+      console.log('result', result)
+
+      for (const certificate of result) {
+        if (certificate.refAgreementPath) {
+          try {
+            const fileBuffer = await viewFile(certificate.refAgreementPath);
+            certificate.refAgreementPath = {
+              filename: path.basename(certificate.refAgreementPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "application/pdf",
+            };
+          } catch (error) {
+            console.log("error", error);
+            certificate.refAgreementPath = null;
+          }
+        }
+        if (certificate.refCarPath) {
+          try {
+            const fileBuffer = await viewFile(certificate.refCarPath);
+            certificate.refCarPath = {
+              filename: path.basename(certificate.refCarPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "application/pdf",
+            };
+          } catch (error) {
+            console.log("error", error);
+            certificate.refCarPath = null;
+          }
+        }
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "listed car bookings successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during listed car bookings",
           token: tokens,
           error: String(error),
         },

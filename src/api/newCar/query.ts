@@ -83,7 +83,7 @@ WHERE
 
 export const addOfflineCarBookingQuery = `
 INSERT INTO
-  public."offlineCarBooking" (
+  public."offlineBooking"(
     "refUserName",
     "refUserMail",
     "refUserMobile",
@@ -94,8 +94,7 @@ INSERT INTO
     "refcountry",
     "refPassport",
     "refLicense",
-    "createdAt",
-    "createdBy"
+    "createdAt"
   )
 VALUES
   (
@@ -109,8 +108,7 @@ VALUES
     $8,
     $9,
     $10,
-    $11,
-    $12
+    $11
   )
 RETURNING
   *;
@@ -172,4 +170,14 @@ FROM
   public."offlineBooking"
 WHERE
   "offlineCarBookingId" = $1;
+`;
+
+export const getOfflineCarBookingQuery = `
+SELECT
+  *
+FROM
+  public."offlineBooking"
+WHERE
+  "isDelete" IS NOT true
+  AND "offlineCarBookingId" = $1
 `;

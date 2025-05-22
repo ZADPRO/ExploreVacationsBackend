@@ -92,7 +92,7 @@ export class userRepository {
         refChildrenCount,
         refInfants,
         refOtherRequirements,
-        refAgreementPath,
+        // refAgreementPath,
         refApplyOffers,
         refCouponCode,
         transactionId,
@@ -168,7 +168,7 @@ export class userRepository {
           refChildrenCount,
           refInfants,
           refOtherRequirements,
-          refAgreementPath,
+          // refAgreementPath,
           applyOffers,
           couponCode,
           transactionId,
@@ -247,7 +247,7 @@ export class userRepository {
         refOtherRequirements,
         refVaccinationCertificate,
         refPassPort,
-        refAgreementPath,
+        // refAgreementPath,
         refApplyOffers,
         refCouponCode,
         transactionId,
@@ -290,7 +290,7 @@ export class userRepository {
         refVaccinationCertificate,
         refOtherRequirements,
         refPassPort,
-        refAgreementPath,
+        // refAgreementPath,
         applyOffers,
         couponCode,
         transactionId,
@@ -1043,7 +1043,7 @@ export class userRepository {
   public async getAllCarV1(userData: any, tokendata: any): Promise<any> {
     try {
       const { refCarTypeId } = userData;
-      const result = await executeQuery(listCarsQuery,[refCarTypeId]);
+      const result = await executeQuery(listCarsQuery, [refCarTypeId]);
 
       // for (const image of result) {
       //   if (image.refCarPath) {
@@ -1975,48 +1975,70 @@ export class userRepository {
       client.release();
     }
   }
-  // public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
+  //   public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);
-  //   // const client: PoolClient = await getClient();
 
   //   try {
-  //     // await client.query("BEGIN");
+  //     const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
+  //       userData;
 
-  //     const { isExtraKMneeded, refExtraKm, refCarsId } = userData;
+  //     let kmPrice = 0;
+  //     let formDetailsPrice = 0;
 
-  //     const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
-  //     console.log("getCarPrice", getCarPrice);
-
-  //     const { refCarPrice, refExtraKMcharges } = getCarPrice[0];
-
-  //     let totalAmount: number;
-
-  //     if (isExtraKMneeded === true) {
-  //       totalAmount = refCarPrice + refExtraKMcharges * refExtraKm;
-  //     } else {
-  //       throw new Error("No valid matched.");
+  //     // Optional: Process form details if provided
+  //     if (Array.isArray(refFormDetails) && refFormDetails.length > 0) {
+  //       const refFormDetailsIds = refFormDetails.map(
+  //         (item: any) => item.refFormDetailsId
+  //       );
+  //       const getFormData = await executeQuery(getFormDataQuery, [
+  //         refFormDetailsIds,
+  //       ]);
+  //       formDetailsPrice = getFormData.reduce(
+  //         (sum: number, item: any) => sum + Number(item.refPrice),
+  //         0
+  //       );
   //     }
 
-  //     // await client.query("COMMIT");
+  //     // Optional: Process extra KM charges if needed
+  //     // if (isExtraKMneeded === true) {
+  //     //   const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
+  //     //   const {refExtraKMcharges, refCarPrice } = getCarPrice[0];
+  //     //   const extraKmCharge = Number(refExtraKMcharges);
+  //     //   const extraKm = Number(refExtraKm);
+  //     //   kmPrice = extraKmCharge * extraKm;
+  //     // }
+  //     let refCarPrice = 0;
+
+  //     if (isExtraKMneeded === true) {
+  //       const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
+  //       const { refExtraKMcharges, refCarPrice: carPrice } = getCarPrice[0];
+  //       const extraKmCharge = Number(refExtraKMcharges);
+  //       const extraKm = Number(refExtraKm); // ⚠️ See next point
+  //       kmPrice = extraKmCharge * extraKm;
+  //       refCarPrice = Number(carPrice);
+  //     }
+  //     const totalAmount = kmPrice + formDetailsPrice + refCarPrice;
 
   //     return encrypt(
   //       {
   //         success: true,
   //         message: "Listed amount calculated successfully",
-  //         result: totalAmount,
+  //         result: {
+  //           kmPrice,
+  //           formDetailsPrice,
+  //           totalAmount,
+  //         },
   //         token: tokens,
   //       },
   //       true
   //     );
   //   } catch (error: unknown) {
   //     console.log("error", error);
-  //     // await client.query("ROLLBACK");
-
   //     return encrypt(
   //       {
   //         success: false,
-  //         message: "An unknown error occurred during listed amount",
+  //         message: "An unknown error occurred during listed amount calculation",
   //         error: String(error),
   //         token: tokens,
   //       },
@@ -2025,17 +2047,15 @@ export class userRepository {
   //   }
   // }
   public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
-    const tokens = generateTokenWithExpire(token, true);
-
     try {
       const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
         userData;
+        console.log('userData', userData)
 
       let kmPrice = 0;
       let formDetailsPrice = 0;
+      let refCarPrice = 0;
 
-      // Optional: Process form details if provided
       if (Array.isArray(refFormDetails) && refFormDetails.length > 0) {
         const refFormDetailsIds = refFormDetails.map(
           (item: any) => item.refFormDetailsId
@@ -2043,22 +2063,37 @@ export class userRepository {
         const getFormData = await executeQuery(getFormDataQuery, [
           refFormDetailsIds,
         ]);
-        formDetailsPrice = getFormData.reduce(
-          (sum: number, item: any) => sum + Number(item.refPrice),
-          0
-        );
+        if (getFormData && getFormData.length > 0) {
+          formDetailsPrice = getFormData.reduce(
+            (sum: number, item: any) => sum + Number(item.refPrice),
+            0
+          );
+          console.log('formDetailsPrice', formDetailsPrice)
+        }
       }
 
-      // Optional: Process extra KM charges if needed
       if (isExtraKMneeded === true) {
         const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
-        const {refExtraKMcharges } = getCarPrice[0];
+        if (!getCarPrice || getCarPrice.length === 0) {
+          throw new Error("Car price not found");
+        }
+        const { refExtraKMcharges, refCarPrice: carPrice } = getCarPrice[0];
         const extraKmCharge = Number(refExtraKMcharges);
+        console.log('extraKmCharge', extraKmCharge)
         const extraKm = Number(refExtraKm);
+        if (!Number.isFinite(extraKmCharge) || !Number.isFinite(extraKm)) {
+          throw new Error("Invalid KM charge or extra KM value");
+        }
         kmPrice = extraKmCharge * extraKm;
+        console.log('kmPrice', kmPrice)
+        refCarPrice = Number(carPrice);
       }
+      console.log('refCarPrice', refCarPrice)
 
-      const totalAmount = kmPrice + formDetailsPrice;
+      const totalAmount = kmPrice + formDetailsPrice + refCarPrice;
+      console.log('totalAmount', totalAmount)
+      const token = { id: tokendata.id };
+      const tokens = generateTokenWithExpire(token, true);
 
       return encrypt(
         {
@@ -2074,6 +2109,8 @@ export class userRepository {
         true
       );
     } catch (error: unknown) {
+      const token = { id: tokendata.id };
+      const tokens = generateTokenWithExpire(token, true);
       console.log("error", error);
       return encrypt(
         {
@@ -2086,6 +2123,7 @@ export class userRepository {
       );
     }
   }
+
   // public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
   //   const token = { id: tokendata.id };
   //   const tokens = generateTokenWithExpire(token, true);

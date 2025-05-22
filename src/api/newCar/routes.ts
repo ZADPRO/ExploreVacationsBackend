@@ -75,7 +75,7 @@ export class newCarsRoutes implements IRoute {
           path: "/api/v1/newCarsRoutes/listOfflineCarBooking",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
-            handler: controller.listCarGroup,
+            handler: controller.listOfflineCarBooking,
             // validate: validate.listCarGroup,
             description: "listCarGroup",
             tags: ["api", "Users"],
@@ -132,7 +132,7 @@ export class newCarsRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/newCarsRoutes/deletePassport",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deletePassport,
             // validate: validate.deleteOfflineCarBooking,
             description: "deletePassport",
@@ -144,8 +144,20 @@ export class newCarsRoutes implements IRoute {
           method: "POST",
           path: "/api/v1/newCarsRoutes/deleteLicense",
           config: {
-            // pre: [{ method: validateToken, assign: "token" }],
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteLicense,
+            // validate: validate.deleteLicense,
+            description: "deleteLicense",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
+        {
+          method: "POST",
+          path: "/api/v1/newCarsRoutes/viewCertificates",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.viewCertificates,
             // validate: validate.deleteLicense,
             description: "deleteLicense",
             tags: ["api", "Users"],

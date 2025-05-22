@@ -30,6 +30,7 @@ import {
   drivarDetailsQuery,
   getCarGroupQuery,
   getLicenseImageQuery,
+  getOfflineCarBookingQuery,
   getPasportImageQuery,
   listCarGroupQuery,
   listOfflineCarBookingQuery,
@@ -53,6 +54,7 @@ export class newCarsRepository {
       ]);
 
       const count = Number(check[0]?.count || 0); // safely convert to number
+      console.log("count", count);
 
       if (count > 0) {
         throw new Error(
@@ -313,7 +315,6 @@ export class newCarsRepository {
         refPassport,
         refLicense,
         CurrentTime(),
-        tokendata.id,
       ]);
 
       // // const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
@@ -716,6 +717,63 @@ export class newCarsRepository {
           success: false,
           message: `Error In Deleting Image: ${(error as Error).message}`,
           // token: tokens,
+        },
+        true
+      );
+    }
+  }
+  public async viewCertificatesV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id };
+    const tokens = generateTokenWithExpire(token, true);
+    try {
+      const result = await executeQuery(getOfflineCarBookingQuery, [
+        userData.offlineCarBookingId,
+      ]);
+      for (const image of result) {
+        if (image.refPassport) {
+          try {
+            const fileBuffer = await viewFile(image.refPassport);
+            image.refPassport = {
+              filename: path.basename(image.refPassport),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Change based on actuwal file type if necessary
+            };
+          } catch (error) {
+            console.error("Error reading image file for product ,err");
+            image.refPassport = null; // Handle missing or unreadable files gracefully
+          }
+        }
+        if (image.refLicense) {
+          try {
+            const fileBuffer = await viewFile(image.refLicense);
+            image.refLicense = {
+              filename: path.basename(image.refLicense),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Change based on actuwal file type if necessary
+            };
+          } catch (error) {
+            console.error("Error reading image file for product ,err");
+            image.refLicense = null; // Handle missing or unreadable files gracefully
+          }
+        }
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "list offline car bookings successfully",
+          token: tokens,
+          result: result,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      return encrypt(
+        {
+          success: false,
+          message: "An unknown error occurred during list offline car bookings",
+          token: tokens,
+          error: String(error),
         },
         true
       );

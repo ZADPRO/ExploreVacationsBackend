@@ -269,6 +269,18 @@ export class adminRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/adminRoutes/viewCarAgreement",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.viewCarAgreement,
+            // validate: validate.getUserData,
+            description: "viewCarAgreement",
+            tags: ["api", "Users"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });
