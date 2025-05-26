@@ -94,7 +94,7 @@ export class newCarsRoutes implements IRoute {
             auth: false,
           },
         },
-         {
+        {
           method: "POST",
           path: "/api/v1/newCarsRoutes/uploadPassport",
           config: {
@@ -111,7 +111,7 @@ export class newCarsRoutes implements IRoute {
             },
           },
         },
-         {
+        {
           method: "POST",
           path: "/api/v1/newCarsRoutes/uploadLicense",
           config: {

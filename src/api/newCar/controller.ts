@@ -159,7 +159,7 @@ export class newCarsController {
       let entity;
 
       entity = await this.resolver.userOfflineCarBookingV1(
-        request.payload,
+        request.payload
         // decodedToken
       );
 
@@ -254,15 +254,15 @@ export class newCarsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken = {
-        id: request.plugins.token.id,
-      };
+      // const decodedToken = {
+      //   id: request.plugins.token.id,
+      // };
 
       let entity;
 
       entity = await this.resolver.uploadPassportV1(
-        request.payload,
-        decodedToken
+        request.payload
+        // decodedToken
       );
 
       if (entity.success) {
@@ -295,7 +295,7 @@ export class newCarsController {
       let entity;
 
       entity = await this.resolver.uploadLicenseV1(
-        request.payload,
+        request.payload
         // decodedToken
       );
 

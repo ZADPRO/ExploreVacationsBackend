@@ -493,6 +493,7 @@ export class userRepository {
     }
   }
   public async uploadPassportV1(userData: any, tokendata: any): Promise<any> {
+    console.log("userData", userData);
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -2050,7 +2051,7 @@ export class userRepository {
     try {
       const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
         userData;
-        console.log('userData', userData)
+      console.log("userData", userData);
 
       let kmPrice = 0;
       let formDetailsPrice = 0;
@@ -2068,7 +2069,7 @@ export class userRepository {
             (sum: number, item: any) => sum + Number(item.refPrice),
             0
           );
-          console.log('formDetailsPrice', formDetailsPrice)
+          console.log("formDetailsPrice", formDetailsPrice);
         }
       }
 
@@ -2079,19 +2080,19 @@ export class userRepository {
         }
         const { refExtraKMcharges, refCarPrice: carPrice } = getCarPrice[0];
         const extraKmCharge = Number(refExtraKMcharges);
-        console.log('extraKmCharge', extraKmCharge)
+        console.log("extraKmCharge", extraKmCharge);
         const extraKm = Number(refExtraKm);
         if (!Number.isFinite(extraKmCharge) || !Number.isFinite(extraKm)) {
           throw new Error("Invalid KM charge or extra KM value");
         }
         kmPrice = extraKmCharge * extraKm;
-        console.log('kmPrice', kmPrice)
+        console.log("kmPrice", kmPrice);
         refCarPrice = Number(carPrice);
       }
-      console.log('refCarPrice', refCarPrice)
+      console.log("refCarPrice", refCarPrice);
 
       const totalAmount = kmPrice + formDetailsPrice + refCarPrice;
-      console.log('totalAmount', totalAmount)
+      console.log("totalAmount", totalAmount);
       const token = { id: tokendata.id };
       const tokens = generateTokenWithExpire(token, true);
 

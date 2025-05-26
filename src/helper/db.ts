@@ -22,6 +22,7 @@ export const executeQuery = async (
   try {
     client = await pool.connect();
     const result = await client.query(query, params);
+    console.log('result', result)
     return result.rows;
   } catch (error: any) {
     throw new Error(`Database query failed : ${error.message}`);

@@ -60,7 +60,6 @@ export class bookingRepository {
         refPackageName,
         refTourCustID,
       } = mailResult[0];
-     
 
       // Convert Base64 to Buffer
       const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
@@ -144,7 +143,7 @@ export class bookingRepository {
       const mailResult: any = await executeQuery(getUserdataCarQuery, [
         userData.userId,
       ]);
-      console.log('mailResult', mailResult)
+      console.log("mailResult", mailResult);
       const {
         refPickupDate,
         refUserName,
@@ -266,15 +265,24 @@ export class bookingRepository {
     tokendata: any,
     pdfBase64: string
   ): Promise<any> {
+    console.log("userData", userData);
+    const client: PoolClient = await getClient();
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const result = await executeQuery(approveCustomizeBookingQuery, [
+      await client.query("BEGIN"); // Start transaction
+
+      const result = await client.query(approveCustomizeBookingQuery, [
         userData.userId,
       ]);
-      const mailResult: any = await executeQuery(
-        getUserdataCustomizeTourQuery[userData.userId]
+      console.log('result', result)
+      const mailResult: any = await executeQuery
+      
+      (
+        getUserdataCustomizeTourQuery,[userData.userId
+        ]
       );
+      console.log('mailResult', mailResult)
       const {
         refUserName,
         refUserMail,
@@ -290,7 +298,7 @@ export class bookingRepository {
       );
 
       // Convert Base64 to Buffer
-      const pdfBuffer = Buffer.from(pdfBase64, "base64");
+      const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
 
       const main1 = async () => {
         const userMail = {
@@ -350,6 +358,7 @@ export class bookingRepository {
         }
       };
       main1().catch(console.error);
+      await client.query("COMMIT"); // Commit transaction
 
       return encrypt(
         {
@@ -362,6 +371,10 @@ export class bookingRepository {
         true
       );
     } catch (error: unknown) {
+      await client.query("ROLLBACK"); // Rollback transaction
+
+      console.log("error", error);
+
       return encrypt(
         {
           success: false,
@@ -371,6 +384,8 @@ export class bookingRepository {
         },
         true
       );
+    } finally {
+      client.release();
     }
   }
   public async approveParkingBookingV1(
@@ -401,7 +416,7 @@ export class bookingRepository {
           new Date(CurrentTime()).getTime()) /
           (1000 * 60 * 60 * 24)
       );
-     
+
       const userMailData = {
         daysLeft: daysLeft,
         refPickupDate: travelStartDate,
@@ -558,7 +573,7 @@ export class bookingRepository {
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
-   
+
       // Ensure that a PDF file is provided
       if (!pdfFile) {
         throw new Error("Please provide a PDF file.");
@@ -612,7 +627,7 @@ export class bookingRepository {
     try {
       // Extract the PDF file from userData
       const pdfFile = userData["PdfFile "] || userData.PdfFile;
-    
+
       // Ensure that a PDF file is provided
       if (!pdfFile) {
         throw new Error("Please provide a PDF file.");
@@ -987,7 +1002,7 @@ export class bookingRepository {
         refOffer,
         refOfferName,
         homePageImage,
-        refModuleId
+        refModuleId,
       } = userData;
 
       const Result = await client.query(updateHomePageQuery, [
@@ -1113,7 +1128,7 @@ export class bookingRepository {
     try {
       // Extract the image from userData
       const image = userData.images;
-  
+
       // Ensure that only one image is provided
       if (!image) {
         throw new Error("Please provide an image.");
