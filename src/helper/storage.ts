@@ -68,6 +68,10 @@ export const storeFile = async (
     uploadDir = path.join(process.cwd(), "./src/assets/parkingAgreement");
   } else if (uploadType === 12) {
     uploadDir = path.join(process.cwd(), "./src/assets/homePageImage");
+  } else if (uploadType === 13) {
+    uploadDir = path.join(process.cwd(), "./src/assets/offlinePassport");
+  } else if (uploadType === 14) {
+    uploadDir = path.join(process.cwd(), "./src/assets/offlineLicense");
   } else {
     throw new Error(`Invalid upload type: ${uploadType}. `);
   }

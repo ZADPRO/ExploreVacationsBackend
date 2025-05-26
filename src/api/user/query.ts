@@ -680,6 +680,7 @@ SELECT
   rc."refCarsId",
   rvt."refVehicleTypeName",
   ct."refCarTypeName",
+  rc."refExtraKMcharges",
   rc."refCarCustId",
   rc."refPersonCount",
   rc."refBagCount",
@@ -823,6 +824,7 @@ WITH "carData" AS (
     cg."refCarGroupName",
     rvt."refVehicleTypeId",
     rvt."refVehicleTypeName",
+  rc."refExtraKMcharges",
     rc."refPersonCount",
     rc."refBagCount",
     rc."refFuelType",
@@ -875,10 +877,12 @@ WITH "carData" AS (
     ct."refCarTypeName",
     tc."refRentalAgreement",
     tc."refPaymentTerms",
-    tc."refFuelPolicy"
+    tc."refFuelPolicy",
+  rc."refExtraKMcharges"
 )
 
 SELECT
+cd."refExtraKMcharges",
   cd."refVehicleTypeId",
   cd."refVehicleTypeName",
   cd."refPersonCount",
@@ -937,8 +941,9 @@ GROUP BY
   cd."refRentalAgreement",
   cd."refPaymentTerms",
   cd."refFuelPolicy",
-  cd."refBenifitsName";
-    `;
+  cd."refBenifitsName",
+  cd."refExtraKMcharges";
+      `;
 
 // export const listCarParkingQuery = `
 // SELECT

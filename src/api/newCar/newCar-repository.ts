@@ -496,7 +496,7 @@ export class newCarsRepository {
       let storedFiles: any[] = [];
 
       // Store the image
-      filePath = await storeFile(image, 12);
+      filePath = await storeFile(image, 13);
 
       // Read the file buffer and convert it to Base64
 
@@ -554,7 +554,7 @@ export class newCarsRepository {
       let storedFiles: any[] = [];
 
       // Store the image
-      filePath = await storeFile(image, 12);
+      filePath = await storeFile(image, 14);
 
       // Read the file buffer and convert it to Base64
 

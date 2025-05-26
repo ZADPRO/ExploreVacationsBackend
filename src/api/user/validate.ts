@@ -113,7 +113,7 @@ export default {
       refLName: Joi.string().required(),
       refDOB: Joi.string().required(),
       refMoblile: Joi.string().required(),
-      refUserEmail: Joi.string().required(),
+      refUserEmail: Joi.string().email().required(),
       refUserPassword: Joi.string().required(),
       refUserAddress: Joi.string().required(),
       refUserCity: Joi.string().required(),

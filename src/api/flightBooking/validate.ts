@@ -5,7 +5,7 @@ export default {
     payload: Joi.object({
       refUserName: Joi.string().required(),
       refMoblile: Joi.string().required(),
-      refEmail: Joi.string().required(),
+      refEmail: Joi.string().email().required(),
       refPickup: Joi.string().required(),
       refDestination: Joi.string().required(),
       refRequirements: Joi.string().required(),
