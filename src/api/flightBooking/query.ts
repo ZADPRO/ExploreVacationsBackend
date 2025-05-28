@@ -6,17 +6,21 @@ INSERT INTO
     "refEmail",
     "refPickup",
     "refDestination",
+    "flightORtour",
+    "refAdultCount",
+    "refKidsCount",
+    "refInfantsCount",
     "refRequirements",
     "createdAt",
     "createdBy"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8)
+  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 RETURNING
   *;
 `;
 
-export const listuserflightBookingHistoryQuery =`
+export const listuserflightBookingHistoryQuery = `
 SELECT
   *
 FROM
@@ -25,7 +29,7 @@ WHERE
   "createdBy"::INTEGER = $1
 `;
 
-export const listFlightBookingQuery =`
+export const listFlightBookingQuery = `
 SELECT
   *
 FROM
@@ -34,7 +38,7 @@ WHERE
   "isDelete" IS NOT true
 `;
 
-export const deleteflightBookingQuery  = `
+export const deleteflightBookingQuery = `
 UPDATE
   public."flightBooking"
 SET

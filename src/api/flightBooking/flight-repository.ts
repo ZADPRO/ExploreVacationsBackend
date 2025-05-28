@@ -37,6 +37,10 @@ export class flightRepository {
         refEmail,
         refPickup,
         refDestination,
+        flightORtour,
+        refAdultCount,
+        refKidsCount,
+        refInfantsCount,
         refRequirements,
       } = userData;
 
@@ -47,6 +51,10 @@ export class flightRepository {
         refEmail,
         refPickup,
         refDestination,
+        flightORtour,
+        refAdultCount,
+        refKidsCount,
+        refInfantsCount,
         refRequirements,
         CurrentTime(),
         tokendata.id,
@@ -178,7 +186,7 @@ export class flightRepository {
       const result = await executeQuery(deleteflightBookingQuery, [
         userData.flightBookingId,
         CurrentTime,
-        tokendata.id
+        tokendata.id,
       ]);
 
       return encrypt(
