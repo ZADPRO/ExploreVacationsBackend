@@ -17,10 +17,11 @@ export const checkDestinationQuery = `
 SELECT
   COUNT(*) AS "count"
 FROM
-  public."refSportsCategory"
+  public."refDestination"
 WHERE
-  "refSportsCategoryName" = $1
+  "refDestinationName" = $1
   AND "isDelete" IS NOT true;
+
 `;
 
 export const addDestinationQuery = `INSERT INTO public."refDestination" (
