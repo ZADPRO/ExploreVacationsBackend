@@ -1,5 +1,26 @@
 import * as Joi from "joi";
 
+// const validateAge18Plus = Joi.string()
+//   .less('now')
+//   .required()
+//   .custom((value, helpers) => {
+//     const today = new Date();
+//     const birthDate = new Date(value);
+//     let age = today.getFullYear() - birthDate.getFullYear();
+//     const m = today.getMonth() - birthDate.getMonth();
+
+//     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+//       age--;
+//     }
+
+//     if (age < 18) {
+//       return helpers.error('any.custom', { message: 'Employee must be at least 18 years old.' });
+//     }
+
+//     return value;
+//   }, 'Age Validation');
+
+
 export default {
   userLogin: {
     payload: Joi.object({
@@ -15,7 +36,7 @@ export default {
     payload: Joi.object({
       refFName: Joi.string().required(),
       refLName: Joi.string().required(),
-      refDOB: Joi.string().required(),
+      refDOB:Joi.string().required(),
       refDesignation: Joi.string().required(),
       refQualification: Joi.string().required(),
       refProfileImage: Joi.string().optional(),

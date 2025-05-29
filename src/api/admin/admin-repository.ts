@@ -162,7 +162,6 @@ export class adminRepository {
       client.release();
     }
   }
-
   public async listTourBookingsV1(userData: any, tokendata: any): Promise<any> {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
@@ -1069,6 +1068,7 @@ export class adminRepository {
     const tokens = generateTokenWithExpire(token, true);
     try {
       const dashBoard: any = await executeQuery(dashBoardQuery);
+      console.log('dashBoard', dashBoard)
 
       return encrypt(
         {

@@ -398,7 +398,7 @@ ORDER BY
    `;
 
 export const listCarBookingsQuery = `
-SELECT
+SELECT DISTINCT ON (rcb."userCarBookingId")
   cg."refCarGroupName",
   u.*,
   rcb.*,
@@ -410,15 +410,15 @@ SELECT
   dd."refDriverMail",
   dd."refDriverMobile",
   dd."refDriverLocation"
-FROM
-  public."userCarBooking" rcb
-  JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
-  LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
-  LEFT JOIN public."refCarType" cty ON CAST(cty."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
-  LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = ct."refCarGroupId"
-  LEFT JOIN public."refDriverDetails" dd ON CAST(dd."createdBy" AS INTEGER) = rcb."refuserId"::INTEGER
-  JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = rcb."refuserId"
-  AND rcb."isDelete" IS NOT true;
+FROM public."userCarBooking" rcb
+JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = rcb."refCarsId"
+LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
+LEFT JOIN public."refCarType" cty ON CAST(cty."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
+LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = ct."refCarGroupId"
+LEFT JOIN public."refDriverDetails" dd ON CAST(dd."createdBy" AS INTEGER) = rcb."refuserId"
+LEFT JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = rcb."refuserId"
+WHERE rcb."isDelete" IS NOT TRUE
+ORDER BY rcb."userCarBookingId", dd."refDriverName";
 `;
 
 export const listCustomizeTourBookingsQuery = `
@@ -618,7 +618,8 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  u."isDelete" IS NOT true AND u."refCustId" LIKE 'EV-EMP-%'
+  u."isDelete" IS NOT true AND u."refCustId" LIKE 'EV-EMP-%' AND
+  u."refuserId" != '1'
 GROUP BY
   u."refuserId",
   ud."refUserEmail",
@@ -626,7 +627,7 @@ GROUP BY
   ud."refUserHashedPassword"
   ORDER BY
   u."refuserId" DESC;
-  `;
+    `;
 
 export const getEmployeesQuery = `
 SELECT
@@ -703,7 +704,8 @@ SELECT
 FROM
   public."refUserType"
 WHERE
-  "refUserTypeId" != 3
+  "refUserTypeId" != 3 AND 
+  "refUserTypeId"  != 6
 ORDER BY
   "refUserTypeId" ASC;
 `;

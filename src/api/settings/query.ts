@@ -69,7 +69,8 @@ WHERE
   "refDestinationId" = $1;
 `;         
 
-export const listDestinationQuery = `SELECT
+export const listDestinationQuery = `
+SELECT
   *
 FROM
   public."refDestination"
@@ -78,7 +79,8 @@ WHERE
         `;
 
 // location
-export const checkLocationQuery = `SELECT COUNT(*) AS count FROM public."refLocation" WHERE "refLocationId" = $1  AND "isDelete" = false;
+export const checkLocationQuery = `
+SELECT COUNT(*) AS count FROM public."refLocation" WHERE "refLocationId" = $1  AND "isDelete" = false;
 `;
 
 export const addLocationQuery = `
@@ -138,7 +140,8 @@ FROM
   public."refLocation" rl
   LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rl."refDestinationId"
 WHERE
-  rl."isDelete" IS NOT true;`
+  rl."isDelete" IS NOT true;
+  `
 ;
 export const deletelocationQuery = `UPDATE
   public."refLocation"

@@ -128,7 +128,7 @@ export class settingsRepository {
             message: "Destination ID not found",
             token: tokens,
           },
-          false
+          true
         );
       }
       const check: any = await executeQuery(checkDestinationQuery, [
@@ -173,7 +173,7 @@ export class settingsRepository {
           token: tokens,
         
         },
-        false
+        true
       );
     } catch (error) {
       const errorMessage =
@@ -187,7 +187,7 @@ export class settingsRepository {
           error: errorMessage,
           token: tokens,
         },
-        false
+        true
       );
     } finally {
       client.release();
