@@ -196,34 +196,34 @@ export class adminRepository {
       const result = await executeQuery(listCarBookingsQuery);
       console.log('result', result)
 
-      // for (const certificate of result) {
-        // if (certificate.refAgreementPath) {
-        //   try {
-        //     const fileBuffer = await viewFile(certificate.refAgreementPath);
-        //     certificate.refAgreementPath = {
-        //       filename: path.basename(certificate.refAgreementPath),
-        //       content: fileBuffer.toString("base64"),
-        //       contentType: "application/pdf",
-        //     };
-        //   } catch (error) {
-        //     console.log("error", error);
-        //     certificate.refAgreementPath = null;
-        //   }
-        // }
-      //   if (certificate.refCarPath) {
-      //     try {
-      //       const fileBuffer = await viewFile(certificate.refCarPath);
-      //       certificate.refCarPath = {
-      //         filename: path.basename(certificate.refCarPath),
-      //         content: fileBuffer.toString("base64"),
-      //         contentType: "application/pdf",
-      //       };
-      //     } catch (error) {
-      //       console.log("error", error);
-      //       certificate.refCarPath = null;
-      //     }
-      //   }
-      // }
+      for (const certificate of result) {
+        if (certificate.refAgreementPath) {
+          try {
+            const fileBuffer = await viewFile(certificate.refAgreementPath);
+            certificate.refAgreementPath = {
+              filename: path.basename(certificate.refAgreementPath),
+              // content: fileBuffer.toString("base64"),
+              contentType: "application/pdf",
+            };
+          } catch (error) {
+            console.log("error", error);
+            certificate.refAgreementPath = null;
+          }
+        }
+        if (certificate.refCarPath) {
+          try {
+            const fileBuffer = await viewFile(certificate.refCarPath);
+            certificate.refCarPath = {
+              filename: path.basename(certificate.refCarPath),
+              // content: fileBuffer.toString("base64"),
+              contentType: "application/pdf",
+            };
+          } catch (error) {
+            console.log("error", error);
+            certificate.refCarPath = null;
+          }
+        }
+      }
 
       return encrypt(
         {
@@ -1439,10 +1439,10 @@ export class adminRepository {
       for (const certificate of result) {
         if (certificate.refAgreementPath) {
           try {
-            const fileBuffer = await viewFile(certificate.refAgreementPath);
+            // const fileBuffer = await viewFile(certificate.refAgreementPath);
             certificate.refAgreementPath = {
               filename: path.basename(certificate.refAgreementPath),
-              content: fileBuffer.toString("base64"),
+              // content: fileBuffer.toString("base64"),
               contentType: "application/pdf",
             };
           } catch (error) {
