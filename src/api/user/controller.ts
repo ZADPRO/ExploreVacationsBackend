@@ -23,9 +23,10 @@ export class userController {
       // const decodedToken ={
       //   id:52
       // }
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.tourBookingV1(request.payload
@@ -58,9 +59,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
      
       let entity;
 
@@ -94,9 +96,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.uploadCertificateV1(request.payload
         , decodedToken
@@ -128,9 +131,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.uploadPassportV1(request.payload
         , decodedToken
@@ -162,9 +166,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.userCarBookingV1(request.payload
@@ -355,9 +360,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.uploadMapV1(request.payload,decodedToken);
@@ -388,9 +394,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.deleteMapV1(request.payload,decodedToken);
@@ -670,9 +677,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       console.log('decodedToken', decodedToken)
       let entity;
 
@@ -704,9 +712,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.UpdateprofileDataV1(request.payload,decodedToken );
@@ -739,9 +748,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.tourBookingHistoryV1(request.payload,decodedToken);
@@ -772,9 +782,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.carBookingHistoryV1(request.payload,decodedToken);
@@ -805,9 +816,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.carParkingHistoryV1(request.payload,decodedToken);
@@ -899,9 +911,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.addUserAddressV1(request.payload,decodedToken);
@@ -932,9 +945,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.carParkingBookingV1(request.payload,decodedToken);
@@ -965,9 +979,10 @@ export class userController {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.checkofferV1(request.payload,decodedToken);
@@ -990,16 +1005,17 @@ export class userController {
         .code(500);
     }
   };
-   public extraKMcharges = async (
+  public extraKMcharges = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
 
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
 
       entity = await this.resolver.extraKMchargesV1(request.payload,decodedToken);
@@ -1011,6 +1027,39 @@ export class userController {
 
     } catch (error) {
       logger.error("Error in extra KM charges", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public checkTourPrice = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info(`GET URL REQ => ${request.url.href}`);
+
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
+      let entity;
+
+      entity = await this.resolver.checkTourPriceV1(request.payload,decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+
+    } catch (error) {
+      logger.error("Error in checkTourPrices", error);
       return response
         .response({
           success: false,

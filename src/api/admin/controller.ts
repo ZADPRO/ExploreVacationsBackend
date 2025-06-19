@@ -46,6 +46,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listTourBookingsV1(
@@ -78,6 +80,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listCarBookingsV1(
@@ -110,6 +114,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listCustomizeTourBookingsV1(
@@ -142,6 +148,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listParkingBookingsV1(
@@ -174,6 +182,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listAuditPageV1(
@@ -206,6 +216,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.addEmployeeV1(request.payload, decodedToken);
@@ -235,6 +247,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.uploadEmployeeImageV1(
@@ -267,6 +281,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.deleteEmployeeImageV1(
@@ -299,6 +315,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.updateEmployeeV1(
@@ -323,6 +341,40 @@ export class adminController {
         .code(500);
     }
   };
+  public updateEmployeeProfile = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info(`GET URL REQ => ${request.url.href}`);
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
+      };
+      let entity;
+      entity = await this.resolver.updateEmployeeProfileV1(
+        request.payload,
+        decodedToken
+      );
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+    } catch (error) {
+      logger.error("Error in update Employee profile ", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
   public listEmployees = async (
     request: any,
     response: Hapi.ResponseToolkit
@@ -331,6 +383,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listEmployeesV1(
@@ -363,6 +417,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.getEmployeeV1(request.payload, decodedToken);
@@ -392,6 +448,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.deleteEmployeeV1(
@@ -424,6 +482,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listTransactionTypeV1(
@@ -456,6 +516,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listUserTypeV1(
@@ -488,6 +550,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.dashBoardV1(request.payload, decodedToken);
@@ -517,6 +581,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.deleteCarBookingsV1(
@@ -549,6 +615,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.deleteTourBookingsV1(
@@ -581,6 +649,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.deleteCustomizeTourBookingsV1(
@@ -613,6 +683,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.deleteCarParkingBookingsV1(
@@ -645,6 +717,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.listUserDataV1(
@@ -677,6 +751,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.getUserDataV1(request.payload, decodedToken);
@@ -706,6 +782,8 @@ export class adminController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.viewCarAgreementV1(request.payload, decodedToken);
@@ -716,6 +794,99 @@ export class adminController {
       return response.response(entity).code(200); // Bad Request if failed
     } catch (error) {
       logger.error("Error in  viewCarAgreement", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public deleteAudit = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info(`GET URL REQ => ${request.url.href}`);
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
+      };
+      let entity;
+      entity = await this.resolver.deleteAuditV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+    } catch (error) {
+      logger.error("Error in  deleteAudit", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public deleteUsers = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info(`GET URL REQ => ${request.url.href}`);
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
+      };
+      let entity;
+      entity = await this.resolver.deleteUsersV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+    } catch (error) {
+      logger.error("Error in  deleteUsers", error);
+      return response
+        .response({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        })
+        .code(500);
+    }
+  };
+  public employeeProfile = async (
+    request: any,
+    response: Hapi.ResponseToolkit
+  ): Promise<any> => {
+    logger.info(`GET URL REQ => ${request.url.href}`);
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
+      };
+      let entity;
+      entity = await this.resolver.employeeProfileV1(request.payload, decodedToken);
+
+      if (entity.success) {
+        return response.response(entity).code(201); // Created
+      }
+      return response.response(entity).code(200); // Bad Request if failed
+    } catch (error) {
+      logger.error("Error in  employeeProfile", error);
       return response
         .response({
           success: false,

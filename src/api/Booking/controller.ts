@@ -19,6 +19,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -53,10 +55,9 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
       };
-
       let entity;
-
       entity = await this.resolver.approveCarBookingV1(
         request.payload,
         decodedToken
@@ -87,6 +88,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
       let entity;
       entity = await this.resolver.approveCustomizeTourBookingV1(
@@ -119,6 +122,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -153,6 +158,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -187,6 +194,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -221,6 +230,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -255,6 +266,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -289,6 +302,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -323,6 +338,8 @@ export class bookingController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -359,6 +376,8 @@ export class bookingController {
       try {
         const decodedToken = {
           id: request.plugins.token.id,
+                  roleId: request.plugins.token.roleId, // Add this
+
         };
   
         const entity = await this.resolver.homeImageContentV1(
@@ -392,6 +411,8 @@ export class bookingController {
       try {
         const decodedToken = {
           id: request.plugins.token.id,
+                  roleId: request.plugins.token.roleId, // Add this
+
         };
   
         const entity = await this.resolver.updateContentV1(
@@ -425,6 +446,8 @@ export class bookingController {
       try {
         const decodedToken = {
           id: request.plugins.token.id,
+                  roleId: request.plugins.token.roleId, // Add this
+
         };
   
         const entity = await this.resolver.deletehomeImageContentV1(
@@ -458,6 +481,8 @@ export class bookingController {
       try {
         const decodedToken = {
           id: request.plugins.token.id,
+                  roleId: request.plugins.token.roleId, // Add this
+
         };
   
         let entity;
@@ -489,6 +514,8 @@ export class bookingController {
       try {
         const decodedToken = {
           id: request.plugins.token.id,
+                  roleId: request.plugins.token.roleId, // Add this
+
         };
   
         let entity;
@@ -520,6 +547,8 @@ export class bookingController {
       try {
         const decodedToken = {
           id: request.plugins.token.id,
+                  roleId: request.plugins.token.roleId, // Add this
+
         };
   
         let entity;
@@ -551,6 +580,8 @@ export class bookingController {
       try {
         const decodedToken = {
           id: request.plugins.token.id,
+                  roleId: request.plugins.token.roleId, // Add this
+
         };
   
         let entity;

@@ -47,7 +47,7 @@ import { any } from "@hapi/joi";
 export class settingsRepository {
   public async addDestinationV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -114,7 +114,7 @@ export class settingsRepository {
     tokenData: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokenData.id };
+        const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refDestinationId, refDestinationName } = userData;
@@ -194,7 +194,7 @@ export class settingsRepository {
     }
   }
   public async listDestinationV1(userData: any, tokenData: any): Promise<any> {
-    const token = { id: tokenData.id };
+        const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const destinationList = await executeQuery(listDestinationQuery);
@@ -228,7 +228,7 @@ export class settingsRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -301,7 +301,7 @@ export class settingsRepository {
 
   public async addLocationV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
 
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -399,7 +399,7 @@ export class settingsRepository {
   }
   public async updateLocationV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokenData.id };
+        const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -481,7 +481,7 @@ export class settingsRepository {
     }
   }
   public async listLocationV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listLocationQuery);
@@ -508,7 +508,7 @@ export class settingsRepository {
   }
   public async deleteLocationV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -582,7 +582,7 @@ export class settingsRepository {
 
   public async addCategoriesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -646,8 +646,7 @@ export class settingsRepository {
   }
   public async updateCategoriesV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
-
-    const token = { id: tokenData.id };
+        const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -729,7 +728,7 @@ export class settingsRepository {
     }
   }
   public async listCategoriesV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCategoryQuery);
@@ -756,7 +755,7 @@ export class settingsRepository {
   }
   public async deleteCategoriesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -829,7 +828,7 @@ export class settingsRepository {
 
   public async addActivitiesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -887,7 +886,7 @@ export class settingsRepository {
   }
   public async updateActivitiesV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokenData.id };
+        const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -962,7 +961,7 @@ export class settingsRepository {
     }
   }
   public async listActivitiesV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listActivitiesQuery);
@@ -990,7 +989,7 @@ export class settingsRepository {
   }
   public async deleteActivitiesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {

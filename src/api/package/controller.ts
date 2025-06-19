@@ -3,7 +3,7 @@ import * as Boom from "@hapi/boom";
 
 import logger from "../../helper/logger";
 
-import { decodeToken } from "../../helper/token"
+import { decodeToken } from "../../helper/token";
 import { PackageResolver } from "./resolver";
 
 export class packageController {
@@ -18,10 +18,11 @@ export class packageController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
-      
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
+
       let entity;
 
       entity = await this.resolver.addPackageV1(request.payload, decodedToken);
@@ -30,7 +31,6 @@ export class packageController {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in add package", error);
       return response
@@ -50,19 +50,22 @@ export class packageController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
-     
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
+
       let entity;
 
-      entity = await this.resolver.UpdatePackageV1(request.payload, decodedToken);
+      entity = await this.resolver.UpdatePackageV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in update package controller", error);
       return response
@@ -82,19 +85,22 @@ export class packageController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
-     
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
+
       let entity;
 
-      entity = await this.resolver.deletePackageV1(request.payload, decodedToken);
+      entity = await this.resolver.deletePackageV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in delete package controller", error);
       return response
@@ -113,17 +119,19 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       // const decodedToken ={
       //   id:1
       // }
       let entity;
       entity = await this.resolver.galleryUploadV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -148,15 +156,14 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.listPackageV1(
-        request.payload, decodedToken
-      );
+      entity = await this.resolver.listPackageV1(request.payload, decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -180,15 +187,14 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.deleteImageV1(
-        request.payload, decodedToken
-      );
+      entity = await this.resolver.deleteImageV1(request.payload, decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -208,20 +214,21 @@ export class packageController {
     }
   };
 
-
   public addTravalInclude = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.addTravalIncludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -246,14 +253,16 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.updateTravalIncludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -278,14 +287,16 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.deleteTravalIncludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -310,14 +321,16 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.listTravalIncludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -337,20 +350,22 @@ export class packageController {
         .code(500);
     }
   };
-  
+
   public addTravalExclude = async (
     request: any,
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.addTravalExcludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -375,14 +390,16 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.updateTravalExcludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -407,14 +424,16 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.deleteTravalExcludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -439,14 +458,16 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.listTravalExcludeV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -472,17 +493,19 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       // const decodedToken ={
       //   id:1
       // }
       let entity;
       entity = await this.resolver.uploadCoverImageV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -507,17 +530,19 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       // const decodedToken ={
       //   id:1
       // }
       let entity;
       entity = await this.resolver.deleteCoverImageV1(
-        request.payload, decodedToken
+        request.payload,
+        decodedToken
       );
 
       if (entity.success) {
@@ -542,19 +567,17 @@ export class packageController {
     response: Hapi.ResponseToolkit
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
-  
+
     try {
-      const decodedToken ={
-        
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       // const decodedToken ={
       //   id:1
       // }
       let entity;
-      entity = await this.resolver.getTourV1(
-        request.payload, decodedToken
-      );
+      entity = await this.resolver.getTourV1(request.payload, decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created

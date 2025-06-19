@@ -3,7 +3,7 @@ import * as Joi from "joi";
 export default {
   addCarGroup: {
     payload: Joi.object({
-      refCarGroupName: Joi.string().required(),
+      refCarGroupName: Joi.string().min(2).max(50).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -12,7 +12,7 @@ export default {
   updateCarGroup: {
     payload: Joi.object({
       refCarGroupId: Joi.number().integer().required(),
-      refCarGroupName: Joi.string().required(),
+      refCarGroupName: Joi.string().min(2).max(50).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

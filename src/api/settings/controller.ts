@@ -3,7 +3,7 @@ import * as Boom from "@hapi/boom";
 
 import logger from "../../helper/logger";
 
-import { decodeToken } from "../../helper/token"
+import { decodeToken } from "../../helper/token";
 import { settingsResolver } from "./resolver";
 
 export class settingsController {
@@ -19,17 +19,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.addDestinationV1(request.payload, decodedToken);
+      entity = await this.resolver.addDestinationV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in add Destination", error);
       return response
@@ -49,17 +52,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.UpdateDestinationV1(request.payload, decodedToken);
+      entity = await this.resolver.UpdateDestinationV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in update Destination", error);
       return response
@@ -79,17 +85,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.listDestinationV1(request.payload,decodedToken);
+      entity = await this.resolver.listDestinationV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in list Destination", error);
       return response
@@ -109,17 +118,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.DeleteDestinationV1(request.payload,decodedToken);
+      entity = await this.resolver.DeleteDestinationV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in delete Destination", error);
       return response
@@ -140,9 +152,10 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
       entity = await this.resolver.addLocationV1(request.payload, decodedToken);
 
@@ -150,7 +163,6 @@ export class settingsController {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in add location", error);
       return response
@@ -170,17 +182,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.updateLocationV1(request.payload, decodedToken);
+      entity = await this.resolver.updateLocationV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in update location", error);
       return response
@@ -200,17 +215,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.listLocationV1(request.payload, decodedToken);
+      entity = await this.resolver.listLocationV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in list location", error);
       return response
@@ -230,17 +248,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.deleteLocationV1(request.payload, decodedToken);
+      entity = await this.resolver.deleteLocationV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in delete location", error);
       return response
@@ -261,17 +282,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.addCategoriesV1(request.payload, decodedToken);
+      entity = await this.resolver.addCategoriesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in add category", error);
       return response
@@ -291,17 +315,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.updateCategoriesV1(request.payload, decodedToken);
+      entity = await this.resolver.updateCategoriesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in update category", error);
       return response
@@ -321,17 +348,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.listCategoriesV1(request.payload, decodedToken);
+      entity = await this.resolver.listCategoriesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in list category", error);
       return response
@@ -351,17 +381,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.deleteCategoriesV1(request.payload, decodedToken);
+      entity = await this.resolver.deleteCategoriesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in delete category", error);
       return response
@@ -382,17 +415,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.addActivitiesV1(request.payload, decodedToken);
+      entity = await this.resolver.addActivitiesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in add Activities", error);
       return response
@@ -412,17 +448,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.updateActivitiesV1(request.payload, decodedToken);
+      entity = await this.resolver.updateActivitiesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in update activities", error);
       return response
@@ -442,17 +481,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.listActivitiesV1(request.payload, decodedToken);
+      entity = await this.resolver.listActivitiesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in list activities", error);
       return response
@@ -472,17 +514,20 @@ export class settingsController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-      const decodedToken ={
-        id:request.plugins.token.id
-      }
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+      };
       let entity;
-      entity = await this.resolver.deleteActivitiesV1(request.payload, decodedToken);
+      entity = await this.resolver.deleteActivitiesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
       }
       return response.response(entity).code(200); // Bad Request if failed
-
     } catch (error) {
       logger.error("Error in delete activities", error);
       return response
@@ -496,7 +541,4 @@ export class settingsController {
         .code(500);
     }
   };
-
- 
-  
 }

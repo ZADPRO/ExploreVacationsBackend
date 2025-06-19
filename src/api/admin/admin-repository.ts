@@ -16,20 +16,25 @@ import {
   checkQuery,
   customizeTourResultQuery,
   dashBoardQuery,
+  deleteAuditQuery,
   deleteCarBookingsQuery,
   deleteCarParkingBookingsQuery,
   deleteCustomizeTourBookingsQuery,
   deleteEmployeeImageQuery,
   deleteEmployeesQuery,
   deleteTourBookingsQuery,
+  deleteUserDomainQuery,
+  deleteUserQuery,
   getDeletedEmployeeCountQuery,
   getDeletedEmployeeQuery,
+  getEmployeeProfileQuery,
   getEmployeeQuery,
   getEmployeesQuery,
   getLastEmployeeIdQuery,
   getUserdataQuery,
   insertUserDomainQuery,
   insertUserQuery,
+  listAllAuditPageQuery,
   listAuditPageQuery,
   listCarBookingAgreementQuery,
   listCarBookingsQuery,
@@ -43,6 +48,8 @@ import {
   parkingResultQuery,
   selectUserByLogin,
   tourResultQuery,
+  updatedomainDataQuery,
+  updateEmployeeProfileQuery,
   updateEmployeeQuery,
   updateHistoryQuery,
 } from "./query";
@@ -119,7 +126,8 @@ export class adminRepository {
       }
 
       // validPassword === true
-      const tokenData = { id: user.refUserId };
+      const tokenData = { id: user.refUserId, roleId: userTypeId };
+      console.log("tokenData", tokenData);
 
       const history = [
         1,
@@ -163,7 +171,8 @@ export class adminRepository {
     }
   }
   public async listTourBookingsV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
+
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listTourBookingsQuery);
@@ -190,11 +199,11 @@ export class adminRepository {
     }
   }
   public async listCarBookingsV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCarBookingsQuery);
-      console.log('result', result)
+      console.log("result", result);
 
       for (const certificate of result) {
         if (certificate.refAgreementPath) {
@@ -246,12 +255,11 @@ export class adminRepository {
       );
     }
   }
-
   public async listCustomizeTourBookingsV1(
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCustomizeTourBookingsQuery);
@@ -347,7 +355,7 @@ export class adminRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listParkingBookingsQuery);
@@ -374,47 +382,89 @@ export class adminRepository {
       );
     }
   }
+
+  // public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
+  //   const token = { id: tokendata.id, roleId: tokendata.roleId };
+  //   const tokens = generateTokenWithExpire(token, true);
+
+  //   try {
+  //     let result;
+
+  //     const { updatedAt } = userData;
+  //     const hasFilter = userData && updatedAt;
+
+  //     const date = updatedAt ? updatedAt : CurrentTime();
+
+  //     const TransactionTypeArray = Array.isArray(userData.TransactionType)
+  //       ? userData.TransactionType.map(Number)
+  //       : [];
+
+  //     if (!hasFilter) {
+  //       const result = await executeQuery(listAllAuditPageQuery);
+  //     } else {
+  //       const result = await executeQuery(listAuditPageQuery, [
+  //         date,
+  //         TransactionTypeArray,
+  //       ]);
+  //     }
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "listed audit page successfully",
+  //         token: tokens,
+  //         result: result,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     console.log("error line ----- 285", error);
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An unknown error occurred during listed audit bookings",
+  //         token: tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
+
   public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-      const { updatedAt } = userData;
+      const { updatedAt, TransactionType } = userData || {};
 
-      const date = updatedAt ? updatedAt : CurrentTime();
-
-      // const TransactionType = Array.isArray(userData.TransactionType)
-      //   ? `{${userData.TransactionType.join(",")}}`
-      //   : "{}";
-
-      // const result = await executeQuery(listAuditPageQuery, [
-      //   date,
-      //   [parseInt(TransactionType)], // ensure it's an integer array
-      // ]);
-      const TransactionTypeArray = Array.isArray(userData.TransactionType)
-        ? userData.TransactionType.map(Number)
+      const hasFilter =
+        !!updatedAt ||
+        (Array.isArray(TransactionType) && TransactionType.length > 0);
+      const date = updatedAt || CurrentTime();
+      const transactionTypeArray = Array.isArray(TransactionType)
+        ? TransactionType.map(Number)
         : [];
 
-      const result = await executeQuery(listAuditPageQuery, [
-        date,
-        TransactionTypeArray,
-      ]);
-      
+      const query = hasFilter ? listAuditPageQuery : listAllAuditPageQuery;
+      const params = hasFilter ? [date, transactionTypeArray] : [];
+
+      const result = await executeQuery(query, params);
+
       return encrypt(
         {
           success: true,
-          message: "listed audit page successfully",
+          message: "Listed audit page successfully",
           token: tokens,
-          result: result,
+          result,
         },
         true
       );
     } catch (error: unknown) {
-      console.log("error line ----- 285", error);
+      console.error("Error in listAuditPageV1:", error);
       return encrypt(
         {
           success: false,
-          message: "An unknown error occurred during listed audit bookings",
+          message: "An error occurred while listing audit page",
           token: tokens,
           error: String(error),
         },
@@ -422,11 +472,53 @@ export class adminRepository {
       );
     }
   }
+
+  // public async listAuditPageV1(userData: any, tokendata: any): Promise<any> {
+  //   const token = { id: tokendata.id, roleId: tokendata.roleId };
+  //   const tokens = generateTokenWithExpire(token, true);
+
+  //   try {
+  //     const { updatedAt } = userData;
+
+  //     const date = updatedAt ? updatedAt : CurrentTime();
+
+  //     const TransactionTypeArray = Array.isArray(userData.TransactionType)
+  //       ? userData.TransactionType.map(Number)
+  //       : [];
+
+  //     const result = await executeQuery(listAuditPageQuery, [
+  //       date,
+  //       TransactionTypeArray,
+  //     ]);
+
+  //     return encrypt(
+  //       {
+  //         success: true,
+  //         message: "listed audit page successfully",
+  //         token: tokens,
+  //         result: result,
+  //       },
+  //       true
+  //     );
+  //   } catch (error: unknown) {
+  //     console.log("error line ----- 285", error);
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An unknown error occurred during listed audit bookings",
+  //         token: tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   }
+  // }
+
   public async listTransactionTypeV1(
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listTransactionTypeQuery);
@@ -452,9 +544,10 @@ export class adminRepository {
       );
     }
   }
-  public async addEmployeeV1(userData: any, token_data?: any): Promise<any> {
+  public async addEmployeeV1(userData: any, token_data: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: token_data.id }; // Extract token ID
+    // const token = { id: token_data.id }; // Extract token ID
+    const token = { id: token_data.id, roleId: token_data.roleId };
 
     const tokens = generateTokenWithExpire(token, true);
     try {
@@ -635,7 +728,7 @@ export class adminRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
@@ -689,13 +782,11 @@ export class adminRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    console.log("userData", userData);
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
-      await client.query("BEGIN");
-
       const { refuserId } = userData;
       let filePath: string | null = null;
 
@@ -706,7 +797,6 @@ export class adminRepository {
         ]);
 
         if (!imageRecord || imageRecord.length === 0) {
-          await client.query("ROLLBACK");
           return encrypt(
             {
               success: false,
@@ -717,16 +807,14 @@ export class adminRepository {
           );
         }
 
-        filePath = imageRecord[0]?.refProfileImage;
-        console.log("filePath", filePath);
+        // filePath = imageRecord[0]?.refProfileImage;
 
         // Delete from DB
-        await client.query(deleteEmployeeImageQuery, [refuserId]);
       } else if (userData.filePath) {
         // Fallback path deletion
         filePath = userData.filePath;
+        console.log("filePath", filePath);
       } else {
-        await client.query("ROLLBACK");
         return encrypt(
           {
             success: false,
@@ -741,8 +829,6 @@ export class adminRepository {
         await deleteFile(filePath); // Delete file from local storage
       }
 
-      await client.query("COMMIT"); // Commit transaction
-
       return encrypt(
         {
           success: true,
@@ -752,8 +838,6 @@ export class adminRepository {
         true
       );
     } catch (error: unknown) {
-      await client.query("ROLLBACK");
-
       console.error("Error deleting Employee profile image:", error);
       return encrypt(
         {
@@ -765,14 +849,12 @@ export class adminRepository {
         },
         true
       );
-    } finally {
-      client.release();
     }
   }
 
   public async updateEmployeeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -845,7 +927,10 @@ export class adminRepository {
         CurrentTime(),
         tokendata.id,
       ];
-      await client.query(updateEmployeeQuery, updateParams);
+      const updateProfile = await client.query(
+        updateEmployeeQuery,
+        updateParams
+      );
 
       const historyParams = [
         50,
@@ -863,6 +948,7 @@ export class adminRepository {
           success: true,
           message: "Employee updated successfully",
           token: tokens,
+          updateProfile: updateProfile,
         },
         true
       );
@@ -883,8 +969,139 @@ export class adminRepository {
       client.release();
     }
   }
+  public async updateEmployeeProfileV1(
+    userData: any,
+    tokendata: any
+  ): Promise<any> {
+    const client: PoolClient = await getClient();
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      await client.query("BEGIN");
+
+      const {
+        refFName,
+        refLName,
+        refDOB,
+        refDesignation,
+        refQualification,
+        refProfileImage,
+        refMoblile,
+        refUserPassword,
+        refUserEmail,
+      } = userData;
+
+      const genHashedPassword = await bcrypt.hash(refUserPassword, 10);
+
+      const existingEmployeeRes = await client.query(getEmployeeQuery, [
+        tokendata.id,
+      ]);
+      const existingData = existingEmployeeRes.rows[0];
+
+      if (!existingData)
+        throw new Error(`Employee with ID ${tokendata.id} not found`);
+
+      const changes: string[] = [];
+
+      if (existingData.refFName !== refFName)
+        changes.push(`First Name: '${existingData.refFName}' : '${refFName}'`);
+
+      if (existingData.refLName !== refLName)
+        changes.push(`Last Name: '${existingData.refLName}' : '${refLName}'`);
+
+      if (existingData.refDOB !== refDOB)
+        changes.push(`DOB: '${existingData.refDOB}' : '${refDOB}'`);
+
+      if (existingData.refDesignation !== refDesignation)
+        changes.push(
+          `Designation: '${existingData.refDesignation}' : '${refDesignation}'`
+        );
+
+      if (existingData.refQualification !== refQualification)
+        changes.push(
+          `Qualification: '${existingData.refQualification}' : '${refQualification}'`
+        );
+
+      if (existingData.refProfileImage !== refProfileImage)
+        changes.push(`Profile Image changed`);
+
+      if (existingData.refMoblile !== refMoblile)
+        changes.push(`Mobile: '${existingData.refMoblile}' : '${refMoblile}'`);
+
+      const changeSummary = changes.length
+        ? `Updated Fields: ${changes.join(", ")}`
+        : "No changes detected";
+
+      const updateParams = [
+        tokendata.id,
+        refFName,
+        refLName,
+        refDOB,
+        refDesignation,
+        refQualification,
+        refProfileImage,
+        refMoblile,
+        // refUserTypeId,
+        CurrentTime(),
+        tokendata.id,
+      ];
+      const updateProfile = await client.query(
+        updateEmployeeProfileQuery,
+        updateParams
+      );
+
+      const updatedomain = [
+        refUserEmail,
+        refUserPassword,
+        genHashedPassword,
+        CurrentTime(),
+        tokendata.id,
+        tokendata.id,
+      ];
+      const domainData = await executeQuery(
+        updatedomainDataQuery,
+        updatedomain
+      );
+      const historyParams = [
+        65,
+        tokendata.id,
+        changeSummary,
+        CurrentTime(),
+        tokendata.id,
+      ];
+      await client.query(updateHistoryQuery, historyParams);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "Employee profile updated successfully",
+          token: tokens,
+          updateProfile: updateProfile,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      console.error("Error updating employee profile:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while updating the employee profile",
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
   public async listEmployeesV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listEmployeesQuery);
@@ -899,7 +1116,7 @@ export class adminRepository {
       //         contentType: "image/jpeg", // Change based on actual file type if necessary
       //       };
       //     } catch (err) {
-      //       console.error("Error reading image file for product ${product.productId}",err);
+      //       console.error("Error reading image file for product ",err);
       //       profile.refProfileImage = null; // Handle missing or unreadable files gracefully
       //     }
       //   }
@@ -926,7 +1143,7 @@ export class adminRepository {
     }
   }
   public async getEmployeeV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(getEmployeesQuery, [
@@ -943,10 +1160,7 @@ export class adminRepository {
               contentType: "image/jpeg", // Change based on actual file type if necessary
             };
           } catch (err) {
-            console.error(
-              "Error reading image file for product ${product.productId}",
-              err
-            );
+            console.error("Error reading image file for product ", err);
             profile.refProfileImage = null; // Handle missing or unreadable files gracefully
           }
         }
@@ -976,7 +1190,7 @@ export class adminRepository {
 
   public async deleteEmployeeV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1038,7 +1252,7 @@ export class adminRepository {
     }
   }
   public async listUserTypeV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listUserTypeQuery);
@@ -1064,11 +1278,11 @@ export class adminRepository {
     }
   }
   public async dashBoardV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const dashBoard: any = await executeQuery(dashBoardQuery);
-      console.log('dashBoard', dashBoard)
+      console.log("dashBoard", dashBoard);
 
       return encrypt(
         {
@@ -1096,7 +1310,7 @@ export class adminRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1165,7 +1379,7 @@ export class adminRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1234,7 +1448,7 @@ export class adminRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1304,7 +1518,7 @@ export class adminRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1358,7 +1572,7 @@ export class adminRepository {
     }
   }
   public async listUserDataV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1388,7 +1602,7 @@ export class adminRepository {
     }
   }
   public async getUserDataV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1429,12 +1643,14 @@ export class adminRepository {
   }
 
   public async viewCarAgreementV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
-    console.log('userData', userData)
+    console.log("userData", userData);
     try {
-      const result = await executeQuery(listCarBookingAgreementQuery,[userData.refuserId]);
-      console.log('result', result)
+      const result = await executeQuery(listCarBookingAgreementQuery, [
+        userData.refuserId,
+      ]);
+      console.log("result", result);
 
       for (const certificate of result) {
         if (certificate.refAgreementPath) {
@@ -1479,6 +1695,154 @@ export class adminRepository {
         {
           success: false,
           message: "An unknown error occurred during listed car bookings",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async deleteAuditV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const { transId } = userData;
+      const result: any = await executeQuery(deleteAuditQuery, [
+        transId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      if (result.rowCount === 0) {
+        return encrypt(
+          {
+            success: false,
+            message: "audit not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "audit deleted successfully",
+          token: tokens,
+          deletedData: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error deleting audit", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the audit",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async deleteUsersV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const { userId } = userData;
+      const result: any = await executeQuery(deleteUserQuery, [
+        userId,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      const result2: any = await executeQuery(deleteUserDomainQuery, [userId]);
+
+      if (result.rowCount === 0) {
+        return encrypt(
+          {
+            success: false,
+            message: "user not found or already deleted",
+            token: tokens,
+          },
+          true
+        );
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "user deleted successfully",
+          token: tokens,
+          deletedData: result, // Return deleted record for reference
+          result2: result2,
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error deleting user", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred while deleting the user",
+          token: tokens,
+          error: String(error),
+        },
+        true
+      );
+    }
+  }
+  public async employeeProfileV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const result = await executeQuery(getEmployeeProfileQuery, [
+        tokendata.id,
+      ]);
+
+      const { refProfileImage } = result[0];
+
+      for (const image of result) {
+        if (image.refProfileImage) {
+          try {
+            const fileBuffer = await fs.promises.readFile(
+              image.refProfileImage
+            );
+            image.refProfileImage = {
+              filepath: refProfileImage,
+              filename: path.basename(image.refProfileImage),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Adjust if needed
+            };
+          } catch (error) {
+            console.error("Error reading image file:", error);
+            image.refProfileImage = null; // Handle missing/unreadable files
+          }
+        }
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "get User data deleted successfully",
+          token: tokens,
+          result: result, // Return deleted record for reference
+        },
+        true
+      );
+    } catch (error: unknown) {
+      console.error("Error in get user data", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred get the user data",
           token: tokens,
           error: String(error),
         },

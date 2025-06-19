@@ -376,48 +376,19 @@ export interface AdminCarBookingMailData {
 // };
 
 export const generateCarBookingEmailContent = (data: any): string => {
+  console.log('data', data)
 
   let firstName,
     email,
     mobile,
-    bookingId,
     pickupAddress,
     dropAddress,
     pickupDate,
-    vehicleType,
-    carCategory,
     adults,
     children,
     infants,
     otherRequirements,
     price;
-
-  if (Array.isArray(data) && data.length > 0 && data[0]) {
-    const bookingData = data[0]; // Extract the first element for easier access
-    firstName = bookingData.refUserName;
-    email = bookingData.refUserMail;
-    mobile = bookingData.refUserMobile;
-    bookingId = bookingData.refCarCustId;
-    console.log('bookingId', bookingId)
-    pickupAddress = bookingData.refPickupAddress;
-    dropAddress = bookingData.refSubmissionAddress;
-    pickupDate = bookingData.refPickupDate;
-    vehicleType = bookingData.refVehicleTypeName;
-    console.log('vehicleType', vehicleType)
-    carCategory = bookingData.refCarTypeName;
-    console.log('carCategory', carCategory)
-    adults = bookingData.refAdultCount;
-    children = bookingData.refChildrenCount;
-    infants = bookingData.refInfants;
-    otherRequirements = bookingData.refOtherRequirements || "N/A";
-    price = bookingData.refCarPrice;
-    console.log('price', price)
-
-  } else {
-
-    console.error("No valid data found:", data);
-  }
-
   return `
     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto; border: 1px solid #dcdcdc; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden;">
       <div style="background-color: #007BFF; color: white; padding: 20px; text-align: center;">
@@ -427,19 +398,16 @@ export const generateCarBookingEmailContent = (data: any): string => {
       <div style="padding: 30px; background-color: #f7f9fc;">
         <h3 style="color: #007BFF;">Customer Information</h3>
         <table style="width: 100%; font-size: 15px; color: #333;">
-          <tr><td><strong>Name:</strong></td><td>${firstName}</td></tr>
-          <tr><td><strong>Email:</strong></td><td>${email}</td></tr>
-          <tr><td><strong>Mobile:</strong></td><td>${mobile}</td></tr>
+          <tr><td><strong>Name:</strong></td><td>${data[0].refUserFname}</td></tr>
+          <tr><td><strong>Email:</strong></td><td>${data[0].refUserMail}</td></tr>
+          <tr><td><strong>Mobile:</strong></td><td>${data[0].refUserMobile}</td></tr>
+          <tr><td><strong>Address:</strong></td><td>${data[0].refUserAddress}</td></tr>
         </table>
         <h3 style="color: #007BFF; margin-top: 25px;">Booking Details</h3>
         <table style="width: 100%; font-size: 15px; color: #333;">
-          <tr><td><strong>Pickup Address:</strong></td><td>${pickupAddress}</td></tr>
-          <tr><td><strong>Drop Address:</strong></td><td>${dropAddress}</td></tr>
-          <tr><td><strong>Pickup Date:</strong></td><td>${pickupDate}</td></tr>
-          <tr><td><strong>Adults:</strong></td><td>${adults}</td></tr>
-          <tr><td><strong>Children:</strong></td><td>${children}</td></tr>
-          <tr><td><strong>Infants:</strong></td><td>${infants}</td></tr>
-          <tr><td><strong>Other Requirements:</strong></td><td>${otherRequirements}</td></tr>
+          <tr><td><strong>Pickup Date:</strong></td><td>${data[0].refPickupDate}</td></tr>
+          <tr><td><strong>Drop Date:</strong></td><td>${data[0].refDropDate}</td></tr>
+          <tr><td><strong>Other Requirements:</strong></td><td>${data[0].refOtherRequirements}</td></tr>
         </table>
        <p style="margin-top: 30px; font-size: 16px; color: #333;">Please follow up with the customer to confirm and finalize the booking.</p>
 

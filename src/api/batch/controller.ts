@@ -19,7 +19,10 @@ export class batchController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
+
       }
       let entity;
       entity = await this.resolver.sendTourRemV1(request.payload,decodedToken);
@@ -49,7 +52,9 @@ export class batchController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.sendCarRemV1(request.payload,decodedToken);
@@ -79,7 +84,9 @@ export class batchController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.sendCustomizeTourRemV1(request.payload,decodedToken);
@@ -109,7 +116,9 @@ export class batchController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.sendParkingRemV1(request.payload,decodedToken);

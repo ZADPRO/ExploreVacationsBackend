@@ -25,7 +25,7 @@ import { generateflightBookingEmailContent } from "../../helper/mailcontent";
 
 export class flightRepository {
   public async flightBookingV1(userData?: any, tokendata?: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -111,7 +111,7 @@ export class flightRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -146,7 +146,7 @@ export class flightRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -179,13 +179,13 @@ export class flightRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
       const result = await executeQuery(deleteflightBookingQuery, [
         userData.flightBookingId,
-        CurrentTime,
+        CurrentTime(),
         tokendata.id,
       ]);
 

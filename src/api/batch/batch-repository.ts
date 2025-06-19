@@ -30,15 +30,15 @@ import { sendCarRemainder,
 
 export class BatchRepository {
   public async sendTourRemV1(tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const getData = await executeQuery(getTourData, []);
+      const getData = await executeQuery(getTourData);
       if (getData.length > 0) {
         for (let i = 0; i < getData.length; i++) {
           const main = async () => {
             const mailOptions = {
-              to: getData[i].refCtEmail,
+              to: getData[i].refUserMail,
               subject: "📅 Tour Reminder – Explore Vacations",
               html: sendTourRemainder(
                 getData[i].refUserName,
@@ -76,7 +76,7 @@ export class BatchRepository {
     }
   }
   public async sendCarRemV1(tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCarData, []);
@@ -84,7 +84,7 @@ export class BatchRepository {
         for (let i = 0; i < getData.length; i++) {
           const main = async () => {
             const mailOptions = {
-              to: getData[i].refCtEmail,
+              to: getData[i].refUserMail,
               subject: "🚗 Car Reminder – Explore Vacations",
               html: sendCarRemainder(
                 getData[i].refUserName,
@@ -121,7 +121,7 @@ export class BatchRepository {
     }
   }
   public async sendCustomizeTourRemV1(tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCustomizeTourRemData, []);
@@ -129,7 +129,7 @@ export class BatchRepository {
         for (let i = 0; i < getData.length; i++) {
           const main = async () => {
             const mailOptions = {
-              to: getData[i].refCtEmail,
+              to: getData[i].refUserMail,
               subject: "🌍 Customize Tour Reminder – Explore Vacations",
               html: sendCustomizeTourRemainder(
                 getData[i].refUserName,
@@ -165,7 +165,7 @@ export class BatchRepository {
     }
   }
   public async sendParkingRemV1(tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const getData = await executeQuery(getCarParkingRemData, []);
@@ -173,7 +173,7 @@ export class BatchRepository {
         for (let i = 0; i < getData.length; i++) {
           const main = async () => {
             const mailOptions = {
-              to: getData[i].refCtEmail,
+              to: getData[i].refUserEmail,
               subject: "🌍 Customize Tour Reminder – Explore Vacations",
               html: sendParkingRemainder(
                 getData[i].refFName,

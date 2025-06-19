@@ -39,15 +39,20 @@ import {
   insertUserQuery,
   listallTourQuery,
   listAssociateAirportQuery,
+  listCarGroupQuery,
   listCarParkingByIdQuery,
   listCarParkingQuery,
   listCarParkingTypeQuery,
   listCarsQuery,
+  listCarTypeQuery,
   listDestinationQuery,
+  listfilteredCarsQuery,
+  listfilteredTourQuery,
   listOtherTourQuery,
   listParkingTypeQuery,
   listTourBrochureQuery,
   listTourQuery,
+  listVehicleTypeQuery,
   offercheckQuery,
   profileDataQuery,
   updateAddressDataQuery,
@@ -75,8 +80,114 @@ import { sendEmail } from "../../helper/mail";
 import { cli } from "winston/lib/winston/config";
 
 export class userRepository {
+  // public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
+  //   const token = { id: tokendata.id, roleId: tokendata.roleId };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   const client: PoolClient = await getClient();
+
+  //   try {
+  //     await client.query("BEGIN");
+  //     const {
+  //       refPackageId,
+  //       refUserName,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refPickupDate,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refInfants,
+  //       refOtherRequirements,
+  //       refApplyOffers,
+  //       refCouponCode,
+  //       transactionId
+  //     } = userData;
+  //     // 💥 Validate coupon if offer applied
+  //     if (refApplyOffers === true) {
+  //       if (!refCouponCode) {
+  //         throw new Error("Coupon code is required when offer is applied.");
+  //       }
+  //       console.log("tokendata.id", tokendata.id);
+
+  //       // 🔍 Check if coupon code is valid
+  //       const offerCheckRes: any = await client.query(offercheckQuery, [
+  //         refCouponCode,
+  //         tokendata.id,
+  //       ]);
+
+  //       console.log("offerCheckRes", offerCheckRes);
+
+  //       if (offerCheckRes.rows.length === 0) {
+  //         throw new Error("You are not supposed to use this coupon code.");
+  //       }
+
+  //       const applyOffers = refApplyOffers === true;
+  //       const couponCode = applyOffers ? refCouponCode : null;
+
+  //       const Result = await client.query(addTourBookingQuery, [
+  //         refPackageId,
+  //         refUserName,
+  //         refUserMail,
+  //         refUserMobile,
+  //         refPickupDate,
+  //         refAdultCount,
+  //         refChildrenCount,
+  //         refInfants,
+  //         refOtherRequirements,
+  //         // refAgreementPath,
+  //         applyOffers,
+  //         couponCode,
+  //         transactionId,
+  //         CurrentTime(),
+  //         tokendata.id,
+  //         tokendata.id,
+  //       ]);
+  //       const main = async () => {
+  //         const adminMail = {
+  //           to: "indumathi123indumathi@gmail.com",
+  //           subject: "New Tour Booking Received",
+  //           html: generateTourBookingEmailContent(Result),
+  //         };
+
+  //         try {
+  //           sendEmail(adminMail);
+  //         } catch (error) {
+  //           console.log("Error in sending the Mail for Admin", error);
+  //         }
+  //       };
+  //       main().catch(console.error);
+
+  //       await client.query("COMMIT");
+
+  //       return encrypt(
+  //         {
+  //           success: true,
+  //           message: "tour booking successfully",
+  //           token: tokens,
+  //           Data: Result.rows[0],
+  //         },
+  //         true
+  //       );
+  //     }
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK");
+  //     console.error("Error tour booking:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while tour booking",
+  //         token: tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+
   public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -84,125 +195,109 @@ export class userRepository {
       await client.query("BEGIN");
       const {
         refPackageId,
-        refUserName,
+        refUserFname,
+        refUserLname,
         refUserMail,
         refUserMobile,
         refPickupDate,
         refAdultCount,
         refChildrenCount,
         refInfants,
+        refSingleRoom,
+        refTwinRoom,
+        refTripleRoom,
+        refVaccinationCertificate,
         refOtherRequirements,
-        // refAgreementPath,
+        refPassPort,
+        refAgreementPath,
         refApplyOffers,
         refCouponCode,
         transactionId,
       } = userData;
-      // 💥 Validate coupon if offer applied
+
+      // If offers applied, validate coupon
       if (refApplyOffers === true) {
         if (!refCouponCode) {
           throw new Error("Coupon code is required when offer is applied.");
         }
-        console.log("tokendata.id", tokendata.id);
 
-        // 🔍 Check if coupon code is valid
         const offerCheckRes: any = await client.query(offercheckQuery, [
           refCouponCode,
           tokendata.id,
         ]);
 
-        console.log("offerCheckRes", offerCheckRes);
-
         if (offerCheckRes.rows.length === 0) {
           throw new Error("You are not supposed to use this coupon code.");
         }
-
-        // // Get package price
-        // const getPackagePrice = await executeQuery(getPackagePriceQuery, [
-        //   refPackageId,
-        // ]);
-        // console.log("getPackagePrice", getPackagePrice);
-
-        // if (!getPackagePrice || getPackagePrice.length === 0) {
-        //   throw new Error("Package price not found.");
-        // }
-
-        // const { refTourPrice } = getPackagePrice[0];
-
-        // // Extract offer details
-        // const { refOfferType, refOfferValue, refCoupon } =
-        //   offerCheckRes.rows[0] ?? {};
-
-        // // Validate offer details
-        // if (!refOfferType || typeof refOfferValue !== "number") {
-        //   throw new Error("Invalid offer details.");
-        // }
-
-        // let totalAmount: number;
-
-        // // Calculate total based on offer type
-        // if (refOfferType === "percentage") {
-        //   totalAmount = refTourPrice - (refTourPrice * refOfferValue) / 100;
-        // } else if (refOfferType === "flat") {
-        //   totalAmount = refTourPrice - refOfferValue;
-        // } else {
-        //   throw new Error("No valid offers matched.");
-        // }
-
-        // // Ensure totalAmount is not negative
-        // if (totalAmount < 0) totalAmount = 0;
-
-        // console.log("Total amount after offer:", totalAmount);
-
-        // You can now use totalAmount for further processing, e.g., storing or responding
-
-        const applyOffers = refApplyOffers === true;
-        const couponCode = applyOffers ? refCouponCode : null;
-
-        const Result = await client.query(addTourBookingQuery, [
-          refPackageId,
-          refUserName,
-          refUserMail,
-          refUserMobile,
-          refPickupDate,
-          refAdultCount,
-          refChildrenCount,
-          refInfants,
-          refOtherRequirements,
-          // refAgreementPath,
-          applyOffers,
-          couponCode,
-          transactionId,
-          CurrentTime(),
-          tokendata.id,
-          tokendata.id,
-        ]);
-        const main = async () => {
-          const adminMail = {
-            to: "indumathi123indumathi@gmail.com",
-            subject: "New Tour Booking Received",
-            html: generateTourBookingEmailContent(Result),
-          };
-
-          try {
-            sendEmail(adminMail);
-          } catch (error) {
-            console.log("Error in sending the Mail for Admin", error);
-          }
-        };
-        main().catch(console.error);
-
-        await client.query("COMMIT");
-
-        return encrypt(
-          {
-            success: true,
-            message: "tour booking successfully",
-            token: tokens,
-            Data: Result.rows[0],
-          },
-          true
-        );
       }
+
+      const applyOffers = refApplyOffers === true;
+      const couponCode = applyOffers ? refCouponCode : null;
+
+      // Get package price regardless of offer
+      const getPackagePrice = await executeQuery(getPackagePriceQuery, [
+        refPackageId,
+      ]);
+      const { refTourPrice } = getPackagePrice[0];
+
+      const totalAmount =
+        Number(refTourPrice) *
+        (Number(refAdultCount) + Number(refChildrenCount));
+
+      const Result = await client.query(addTourBookingQuery, [
+        refPackageId,
+        refUserFname,
+        refUserLname,
+        refUserMail,
+        refUserMobile,
+        refPickupDate,
+        refAdultCount,
+        refChildrenCount,
+        refInfants,
+        refSingleRoom,
+        refTwinRoom,
+        refTripleRoom,
+        refVaccinationCertificate,
+        refOtherRequirements,
+        refPassPort,
+        tokendata.id,
+        refAgreementPath,
+        applyOffers,
+        couponCode,
+        transactionId,
+        totalAmount,
+        CurrentTime(),
+        tokendata.id,
+      ]);
+
+      // Send admin mail async (non-blocking)
+      const main = async () => {
+        const adminMail = {
+          to: "indumathi123indumathi@gmail.com",
+          subject: "New Tour Booking Received",
+          html: generateTourBookingEmailContent(Result),
+        };
+
+        try {
+          sendEmail(adminMail);
+        } catch (error) {
+          console.log("Error in sending the Mail for Admin", error);
+        }
+      };
+      main().catch(console.error);
+
+      await client.query("COMMIT");
+
+      return encrypt(
+        {
+          success: true,
+          message: "tour booking successfully",
+          token: tokens,
+          Data: Result.rows[0],
+          totalAmount: totalAmount,
+        },
+        true
+      );
     } catch (error: unknown) {
       await client.query("ROLLBACK");
       console.error("Error tour booking:", error);
@@ -221,11 +316,141 @@ export class userRepository {
     }
   }
 
+  // public async tourBookingV1(userData?: any, tokendata?: any): Promise<any> {
+  //   const token = { id: tokendata.id, roleId: tokendata.roleId };
+  //   const tokens = generateTokenWithExpire(token, true);
+  //   const client: PoolClient = await getClient();
+
+  //   try {
+  //     await client.query("BEGIN");
+  //     const {
+  //       refPackageId,
+  //       refUserFname,
+  //       refUserLname,
+  //       refUserMail,
+  //       refUserMobile,
+  //       refPickupDate,
+  //       refAdultCount,
+  //       refChildrenCount,
+  //       refInfants,
+  //       refSingleRoom,
+  //       refTwinRoom,
+  //       refTripleRoom,
+  //       refVaccinationCertificate,
+  //       refOtherRequirements,
+  //       refPassPort,
+  //       refAgreementPath,
+  //       refApplyOffers,
+  //       refCouponCode,
+  //       transactionId,
+  //     } = userData;
+  //     // 💥 Validate coupon if offer applied
+  //     if (refApplyOffers === true) {
+  //       if (!refCouponCode) {
+  //         throw new Error("Coupon code is required when offer is applied.");
+  //       }
+  //       console.log("tokendata.id", tokendata.id);
+
+  //       // 🔍 Check if coupon code is valid
+  //       const offerCheckRes: any = await client.query(offercheckQuery, [
+  //         refCouponCode,
+  //         tokendata.id,
+  //       ]);
+
+  //       console.log("offerCheckRes", offerCheckRes);
+
+  //       if (offerCheckRes.rows.length === 0) {
+  //         throw new Error("You are not supposed to use this coupon code.");
+  //       }
+
+  //       const applyOffers = refApplyOffers === true;
+  //       const couponCode = applyOffers ? refCouponCode : null;
+
+  //       const getPackagePrice = await executeQuery(getPackagePriceQuery, [
+  //         refPackageId,
+  //       ]);
+  //       const { refTourPrice } = getPackagePrice[0];
+
+  //       const totalAmount =
+  //         Number(refTourPrice) *
+  //         (Number(refAdultCount) + Number(refChildrenCount));
+
+  //       const Result = await client.query(addTourBookingQuery, [
+  //         refPackageId,
+  //         refUserFname,
+  //         refUserLname,
+  //         refUserMail,
+  //         refUserMobile,
+  //         refPickupDate,
+  //         refAdultCount,
+  //         refChildrenCount,
+  //         refInfants,
+  //         refSingleRoom,
+  //         refTwinRoom,
+  //         refTripleRoom,
+  //         refVaccinationCertificate,
+  //         refOtherRequirements,
+  //         refPassPort,
+  //         tokendata.id,
+  //         refAgreementPath,
+  //         applyOffers,
+  //         couponCode,
+  //         transactionId,
+  //         totalAmount,
+  //         CurrentTime(),
+  //         tokendata.id,
+  //       ]);
+  //       const main = async () => {
+  //         const adminMail = {
+  //           to: "indumathi123indumathi@gmail.com",
+  //           subject: "New Tour Booking Received",
+  //           html: generateTourBookingEmailContent(Result),
+  //         };
+
+  //         try {
+  //           sendEmail(adminMail);
+  //         } catch (error) {
+  //           console.log("Error in sending the Mail for Admin", error);
+  //         }
+  //       };
+  //       main().catch(console.error);
+
+  //       await client.query("COMMIT");
+
+  //       return encrypt(
+  //         {
+  //           success: true,
+  //           message: "tour booking successfully",
+  //           token: tokens,
+  //           Data: Result.rows[0],
+  //           totalAmount:totalAmount
+  //         },
+  //         true
+  //       );
+  //     }
+  //   } catch (error: unknown) {
+  //     await client.query("ROLLBACK");
+  //     console.error("Error tour booking:", error);
+
+  //     return encrypt(
+  //       {
+  //         success: false,
+  //         message: "An error occurred while tour booking",
+  //         token: tokens,
+  //         error: String(error),
+  //       },
+  //       true
+  //     );
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+
   public async customizeBookingV1(
     userData?: any,
     tokendata?: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -442,7 +667,7 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
@@ -494,7 +719,7 @@ export class userRepository {
   }
   public async uploadPassportV1(userData: any, tokendata: any): Promise<any> {
     console.log("userData", userData);
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
@@ -546,7 +771,7 @@ export class userRepository {
   }
 
   public async userCarBookingV1(userData?: any, tokendata?: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -554,15 +779,13 @@ export class userRepository {
       await client.query("BEGIN"); // Start transaction
       const {
         refCarsId,
-        refUserName,
+        refUserFname,
+        refUserLname,
         refUserMail,
         refUserMobile,
-        refPickupAddress,
-        refSubmissionAddress,
+        refUserAddress,
         refPickupDate,
-        refAdultCount,
-        refChildrenCount,
-        refInfants,
+        refDropDate,
         refOtherRequirements,
         refDriverName,
         refDriverAge,
@@ -582,15 +805,13 @@ export class userRepository {
       // Insert booking data
       const Result: any = await client.query(addCarBookingQuery, [
         refCarsId,
-        refUserName,
+        refUserFname,
+        refUserLname,
         refUserMail,
         refUserMobile,
-        refPickupAddress,
-        refSubmissionAddress,
+        refUserAddress,
         refPickupDate,
-        refAdultCount,
-        refChildrenCount,
-        refInfants,
+        refDropDate,
         refFormDetails,
         refOtherRequirements,
         refAgreementPath,
@@ -604,31 +825,17 @@ export class userRepository {
 
       //way 1
 
-      const daysLeft = Math.ceil(
-        (new Date(refPickupDate).getTime() -
-          new Date(CurrentTime()).getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-      const getCarName: any = await executeQuery(getcarNameQuery, [refCarsId]);
+      // const daysLeft = Math.ceil(
+      //   (new Date(refPickupDate).getTime() -
+      //     new Date(CurrentTime()).getTime()) /
+      //     (1000 * 60 * 60 * 24)
+      // );
 
-      const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
-        getCarName[0];
+      const getCarName = await executeQuery(getcarNameQuery, [refCarsId]);
 
-      const userMailData = {
-        daysLeft: daysLeft,
-        refPickupDate: refPickupDate,
-        refUserName: refUserName,
-        refCarTypeName: refCarTypeName,
-        refVehicleTypeName: refVehicleTypeName,
-        refCarCustId: refCarCustId,
-        refCarPrice: refCarPrice,
-      };
-
-      // const adminMail = {
-      //   to: "rac_booking@explorevacations.ch",
-      //   subject: "New car Booking Received",
-      //   html: generateCarBookingEmailContent(Result),
-      // };
+      // const { refCarTypeName, refVehicleTypeName, refCarCustId, refCarPrice } =
+      //   getCarName[0];
+      // console.log("getCarName[0]", getCarName[0]);
 
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -640,6 +847,7 @@ export class userRepository {
 
       const mailoption = {
         from: process.env.EMAILID,
+        // to: "indumathi123indumathi@gmail.com",
         to: "rac_booking@explorevacations.ch",
         subject: "New car Booking Received",
         html: generateCarBookingEmailContent(Result.rows),
@@ -690,9 +898,8 @@ export class userRepository {
       const { refPackageId } = userData;
 
       // Step 1: Execute Queries
-      const result1 = await executeQuery(listTourQuery, [refPackageId]);
 
-      const result2 = await executeQuery(listOtherTourQuery, [refPackageId]);
+      const result1 = await executeQuery(listTourQuery, [refPackageId]);
 
       for (const image of result1) {
         // Handle gallery images
@@ -757,8 +964,40 @@ export class userRepository {
   }
   public async getAllTourV1(userData: any, tokendata: any): Promise<any> {
     try {
-      const result1 = await executeQuery(listallTourQuery);
+      let result1;
+      const getDurationInDays = (fromDate: string, toDate: string): number => {
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+        const diff = Math.ceil(
+          (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        return diff;
+      };
 
+      const hasFilter =
+        userData &&
+        userData.fromdate &&
+        userData.todate &&
+        userData.refPersonCount &&
+        userData.refDesignationId;
+
+      if (!hasFilter) {
+        // No filters provided, list all tours
+        result1 = await executeQuery(listallTourQuery);
+      } else {
+        // Filters provided, run filtered query
+        const durationDays = getDurationInDays(
+          userData.fromdate,
+          userData.todate
+        );
+        console.log("durationDays", durationDays);
+
+        result1 = await executeQuery(listfilteredTourQuery, [
+          userData.refDesignationId,
+          userData.refPersonCount,
+          durationDays,
+        ]);
+      }
       for (const image of result1) {
         // Handle gallery images
         const galleryValue = image["refGallery"];
@@ -925,7 +1164,7 @@ export class userRepository {
     }
   }
   public async uploadMapV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
@@ -976,7 +1215,7 @@ export class userRepository {
     }
   }
   public async deleteMapV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       let filePath: string | any;
@@ -1043,25 +1282,22 @@ export class userRepository {
   }
   public async getAllCarV1(userData: any, tokendata: any): Promise<any> {
     try {
-      const { refCarTypeId } = userData;
-      const result = await executeQuery(listCarsQuery, [refCarTypeId]);
+      let result;
+      const hasFilter =
+        userData &&
+        userData.refCarTypeId &&
+        userData.refVehicleTypeId &&
+        userData.refPersonCount;
 
-      // for (const image of result) {
-      //   if (image.refCarPath) {
-      //     try {
-      //       const fileBuffer = await viewFile(image.refCarPath);
-      //       image.refCarPath = {
-      //         filename: path.basename(image.refCarPath),
-      //         content: fileBuffer.toString("base64"),
-      //         contentType: "image/jpeg", // Adjust if needed
-      //       };
-
-      //     } catch (error) {
-      //       console.error("Error reading image file:", error);
-      //       image.refCarPath = null; // Handle missing/unreadable files
-      //     }
-      //   }
-      // }
+      if (!hasFilter) {
+        result = await executeQuery(listCarsQuery, [userData.refCarTypeId]);
+      } else {
+        result = await executeQuery(listfilteredCarsQuery, [
+          userData.refCarTypeId,
+          userData.refVehicleTypeId,
+          userData.refPersonCount,
+        ]);
+      }
 
       for (const image of result) {
         if (image.refCarPath) {
@@ -1102,32 +1338,32 @@ export class userRepository {
       // const result2 = await executeQuery(getOtherCarsQuery, [refCarsId]);
       // console.log("result2", result2);
 
-      // for (const image of result1) {
-      //   if (image.refCarPath) {
-      //     try {
-      //       const fileBuffer = await viewFile(image.refCarPath);
-      //       image.refCarPath = {
-      //         filename: path.basename(image.refCarPath),
-      //         content: fileBuffer.toString("base64"),
-      //         contentType: "image/jpeg", // Adjust if needed
-      //       };
-      //     } catch (error) {
-      //       console.error("Error reading image file:", error);
-      //       image.refCarPath = null; // Handle missing/unreadable files
-      //     }
-      //   }
-      // }
-
       for (const image of result1) {
         if (image.refCarPath) {
           try {
-            image.refCarPath = path.basename(image.refCarPath);
+            const fileBuffer = await viewFile(image.refCarPath);
+            image.refCarPath = {
+              filename: path.basename(image.refCarPath),
+              content: fileBuffer.toString("base64"),
+              contentType: "image/jpeg", // Adjust if needed
+            };
           } catch (error) {
-            console.error("Error extracting filename from refCarPath:", error);
-            image.refCarPath = null;
+            console.error("Error reading image file:", error);
+            image.refCarPath = null; // Handle missing/unreadable files
           }
         }
       }
+
+      // for (const image of result1) {
+      //   if (image.refCarPath) {
+      //     try {
+      //       image.refCarPath = path.basename(image.refCarPath);
+      //     } catch (error) {
+      //       console.error("Error extracting filename from refCarPath:", error);
+      //       image.refCarPath = null;
+      //     }
+      //   }
+      // }
 
       return encrypt(
         {
@@ -1152,12 +1388,18 @@ export class userRepository {
   public async listDestinationV1(userData: any, tokendata: any): Promise<any> {
     try {
       const result = await executeQuery(listDestinationQuery);
+      const result1 = await executeQuery(listVehicleTypeQuery);
+      const result2 = await executeQuery(listCarTypeQuery);
+      const result3 = await executeQuery(listCarGroupQuery);
 
       return encrypt(
         {
           success: true,
           message: "listed destination successfully",
           Details: result,
+          VehicleType: result1,
+          carType:result2,
+          carGroup:result3
         },
         true
       );
@@ -1448,7 +1690,7 @@ export class userRepository {
     }
   }
   public async profileDataV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+    const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
       const profileData = await executeQuery(profileDataQuery, [tokendata.id]);
@@ -1478,7 +1720,7 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+    const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
       const {
@@ -1552,7 +1794,7 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+    const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
       const tourBookingresult = await executeQuery(
@@ -1586,7 +1828,7 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+    const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
       const CarBookingresult = await executeQuery(userCarBookingHistoryQuery, [
@@ -1625,7 +1867,7 @@ export class userRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+    const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     try {
       const CarParkingBookingresult = await executeQuery(
@@ -1708,7 +1950,7 @@ export class userRepository {
     }
   }
   public async addUserAddressV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+    const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
     try {
@@ -1766,7 +2008,7 @@ export class userRepository {
     userData?: any,
     tokendata?: any
   ): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+    const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
     try {
@@ -1896,7 +2138,7 @@ export class userRepository {
     }
   }
   public async checkofferV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -1928,10 +2170,7 @@ export class userRepository {
       // }
 
       const { refTourPrice } = getPackagePrice[0];
-      console.log("refTourPrice", refTourPrice);
       const { refOfferType, refOfferValue } = offerCheckRes.rows[0] ?? {};
-      console.log("refOfferType", refOfferType);
-      console.log("refOfferValue", refOfferValue);
 
       // if (!refOfferType || typeof refOfferValue !== "string") {
       //   throw new Error("Invalid offer details.");
@@ -1976,18 +2215,16 @@ export class userRepository {
       client.release();
     }
   }
-  //   public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-
+  // public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
   //   try {
   //     const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
   //       userData;
+  //     console.log("userData", userData);
 
-  //     let kmPrice = 0;
+  //     let kmPrice =0;
   //     let formDetailsPrice = 0;
+  //     let refCarPrice = 0;
 
-  //     // Optional: Process form details if provided
   //     if (Array.isArray(refFormDetails) && refFormDetails.length > 0) {
   //       const refFormDetailsIds = refFormDetails.map(
   //         (item: any) => item.refFormDetailsId
@@ -1995,31 +2232,36 @@ export class userRepository {
   //       const getFormData = await executeQuery(getFormDataQuery, [
   //         refFormDetailsIds,
   //       ]);
-  //       formDetailsPrice = getFormData.reduce(
-  //         (sum: number, item: any) => sum + Number(item.refPrice),
-  //         0
-  //       );
+  //       console.log('getFormData', getFormData)
+  //       if (getFormData && getFormData.length > 0) {
+  //         formDetailsPrice = getFormData.reduce(
+  //           (sum: number, item: any) => sum + Number(item.refPrice),
+  //           0
+  //         );
+  //       }
   //     }
-
-  //     // Optional: Process extra KM charges if needed
-  //     // if (isExtraKMneeded === true) {
-  //     //   const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
-  //     //   const {refExtraKMcharges, refCarPrice } = getCarPrice[0];
-  //     //   const extraKmCharge = Number(refExtraKMcharges);
-  //     //   const extraKm = Number(refExtraKm);
-  //     //   kmPrice = extraKmCharge * extraKm;
-  //     // }
-  //     let refCarPrice = 0;
 
   //     if (isExtraKMneeded === true) {
   //       const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
+  //       if (!getCarPrice || getCarPrice.length === 0) {
+  //         throw new Error("Car price not found");
+  //       }
   //       const { refExtraKMcharges, refCarPrice: carPrice } = getCarPrice[0];
   //       const extraKmCharge = Number(refExtraKMcharges);
-  //       const extraKm = Number(refExtraKm); // ⚠️ See next point
+  //       const extraKm = Number(refExtraKm);
+  //       if (!Number.isFinite(extraKmCharge) || !Number.isFinite(extraKm)) {
+  //         throw new Error("Invalid KM charge or extra KM value");
+  //       }
   //       kmPrice = extraKmCharge * extraKm;
+  //       console.log("kmPrice", kmPrice);
   //       refCarPrice = Number(carPrice);
   //     }
+  //     console.log("refCarPrice", refCarPrice);
+
   //     const totalAmount = kmPrice + formDetailsPrice + refCarPrice;
+  //     console.log("totalAmount", totalAmount);
+  //     const token = { id: tokendata.id, roleId: tokendata.roleId };
+  //     const tokens = generateTokenWithExpire(token, true);
 
   //     return encrypt(
   //       {
@@ -2035,6 +2277,8 @@ export class userRepository {
   //       true
   //     );
   //   } catch (error: unknown) {
+  //     const token = { id: tokendata.id, roleId: tokendata.roleId };
+  //     const tokens = generateTokenWithExpire(token, true);
   //     console.log("error", error);
   //     return encrypt(
   //       {
@@ -2048,6 +2292,9 @@ export class userRepository {
   //   }
   // }
   public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const tokens = generateTokenWithExpire(token, true);
+
     try {
       const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
         userData;
@@ -2057,44 +2304,59 @@ export class userRepository {
       let formDetailsPrice = 0;
       let refCarPrice = 0;
 
+      // 1. Calculate formDetailsPrice
       if (Array.isArray(refFormDetails) && refFormDetails.length > 0) {
         const refFormDetailsIds = refFormDetails.map(
           (item: any) => item.refFormDetailsId
         );
+
         const getFormData = await executeQuery(getFormDataQuery, [
           refFormDetailsIds,
         ]);
+        console.log("getFormData:", getFormData);
+
         if (getFormData && getFormData.length > 0) {
-          formDetailsPrice = getFormData.reduce(
+          const validFormData = getFormData.filter(
+            (item: any) =>
+              !item.isDelete &&
+              item.refPrice != null &&
+              !isNaN(Number(item.refPrice))
+          );
+
+          formDetailsPrice = validFormData.reduce(
             (sum: number, item: any) => sum + Number(item.refPrice),
             0
           );
-          console.log("formDetailsPrice", formDetailsPrice);
+
+          console.log("formDetailsPrice:", formDetailsPrice);
         }
       }
+      const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
+      if (!getCarPrice || getCarPrice.length === 0) {
+        throw new Error("Car price not found for given car ID");
+      }
 
-      if (isExtraKMneeded === true) {
-        const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
-        if (!getCarPrice || getCarPrice.length === 0) {
-          throw new Error("Car price not found");
-        }
-        const { refExtraKMcharges, refCarPrice: carPrice } = getCarPrice[0];
-        const extraKmCharge = Number(refExtraKMcharges);
-        console.log("extraKmCharge", extraKmCharge);
-        const extraKm = Number(refExtraKm);
+      const { refExtraKMcharges, refCarPrice: carPrice } = getCarPrice[0];
+      refCarPrice = Number(carPrice ?? 0); // ✅ Always set this
+
+      if (isExtraKMneeded) {
+        const extraKmCharge = Number(refExtraKMcharges ?? 0);
+        const extraKm = Number(refExtraKm ?? 0);
+
         if (!Number.isFinite(extraKmCharge) || !Number.isFinite(extraKm)) {
           throw new Error("Invalid KM charge or extra KM value");
         }
+
         kmPrice = extraKmCharge * extraKm;
-        console.log("kmPrice", kmPrice);
-        refCarPrice = Number(carPrice);
+
+        console.log("formDetailsPrice:", formDetailsPrice);
+        console.log("extraKmCharge:", extraKmCharge);
+        console.log("extraKm:", extraKm);
+        console.log("kmPrice:", kmPrice);
       }
-      console.log("refCarPrice", refCarPrice);
 
       const totalAmount = kmPrice + formDetailsPrice + refCarPrice;
-      console.log("totalAmount", totalAmount);
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
+      console.log("totalAmount:", totalAmount);
 
       return encrypt(
         {
@@ -2103,6 +2365,7 @@ export class userRepository {
           result: {
             kmPrice,
             formDetailsPrice,
+            refCarPrice,
             totalAmount,
           },
           token: tokens,
@@ -2110,9 +2373,45 @@ export class userRepository {
         true
       );
     } catch (error: unknown) {
-      const token = { id: tokendata.id };
-      const tokens = generateTokenWithExpire(token, true);
-      console.log("error", error);
+      console.error("extraKMchargesV1 error:", error);
+
+      return encrypt(
+        {
+          success: false,
+          message: "An error occurred during listed amount calculation",
+          error: String(error),
+          token: tokens,
+        },
+        true
+      );
+    }
+  }
+
+  public async checkTourPriceV1(userData: any, tokendata: any): Promise<any> {
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const tokens = generateTokenWithExpire(token, true);
+
+    try {
+      const { refPackageId, refAdultCount, refChildrenCount } = userData;
+
+      const getPackagePrice = await executeQuery(getPackagePriceQuery, [
+        refPackageId,
+      ]);
+      const { refTourPrice } = getPackagePrice[0];
+      const totalAmount =
+        Number(refTourPrice) *
+        (Number(refAdultCount) + Number(refChildrenCount));
+
+      return encrypt(
+        {
+          success: true,
+          message: "Listed amount calculated successfully",
+          totalAmount: totalAmount,
+          token: tokens,
+        },
+        true
+      );
+    } catch (error: unknown) {
       return encrypt(
         {
           success: false,
@@ -2124,74 +2423,4 @@ export class userRepository {
       );
     }
   }
-
-  // public async extraKMchargesV1(userData: any, tokendata: any): Promise<any> {
-  //   const token = { id: tokendata.id };
-  //   const tokens = generateTokenWithExpire(token, true);
-
-  //   try {
-  //     const { isExtraKMneeded, refExtraKm, refCarsId, refFormDetails } =
-  //       userData;
-
-  //     // Extract form detail IDs
-  //     const refFormDetailsIds = refFormDetails.map(
-  //       (item: any) => item.refFormDetailsId
-  //     );
-
-  //     // Get form detail prices from DB
-  //     const getFormData = await executeQuery(getFormDataQuery, [
-  //       refFormDetailsIds,
-  //     ]);
-
-  //     // Sum form prices
-  //     const formDetailsPrice = getFormData.reduce(
-  //       (sum: number, item: any) => sum + Number(item.refPrice),
-  //       0
-  //     );
-
-  //     // Get car base price and extra KM charges
-  //     const getCarPrice = await executeQuery(getCarPriceQuery, [refCarsId]);
-  //     const { refCarPrice, refExtraKMcharges } = getCarPrice[0];
-  //     console.log("refCarPrice", refCarPrice);
-
-  //     if (!isExtraKMneeded) {
-  //       throw new Error("Extra KM not needed");
-  //     }
-
-  //     // Ensure numeric values
-  //     const carPrice = Number(refCarPrice);
-  //     const extraKmCharge = Number(refExtraKMcharges);
-  //     const extraKm = Number(refExtraKm);
-
-  //     // Calculate extra km price
-  //     const kmPrice = extraKmCharge * extraKm;
-
-  //     // Total = base + extra km + form details
-  //     const totalAmount = carPrice + kmPrice + formDetailsPrice;
-  //     return encrypt(
-  //       {
-  //         success: true,
-  //         message: "Listed amount calculated successfully",
-  //         result: {
-  //           kmPrice,
-  //           formDetailsPrice,
-  //           totalAmount,
-  //         },
-  //         token: tokens,
-  //       },
-  //       false
-  //     );
-  //   } catch (error: unknown) {
-  //     console.log("error", error);
-  //     return encrypt(
-  //       {
-  //         success: false,
-  //         message: "An unknown error occurred during listed amount calculation",
-  //         error: String(error),
-  //         token: tokens,
-  //       },
-  //       true
-  //     );
-  //   }
-  // }
 }

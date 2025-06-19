@@ -45,9 +45,11 @@ import {
 import { sendEmail } from "../../helper/mail";
 
 export class partnerRepository {
-  public async addPartnersV1(userData: any, token_data?: any): Promise<any> {
+  public async addPartnersV1(userData: any, token_data: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: token_data.id }; // Extract token ID
+    // const token = { id: token_data.id }; // Extract token ID
+        const token = { id: token_data.id, roleId: token_data.roleId };
+
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -194,7 +196,7 @@ export class partnerRepository {
   }
   public async updatePartnerV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -282,7 +284,7 @@ export class partnerRepository {
     }
   }
   public async getPartnersV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -312,7 +314,7 @@ export class partnerRepository {
     }
   }
   public async listPartnersV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -343,7 +345,7 @@ export class partnerRepository {
   }
   public async deletePartnersV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -406,7 +408,7 @@ export class partnerRepository {
   }
 
   public async addOffersV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+        const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
     try {
@@ -461,7 +463,7 @@ export class partnerRepository {
     }
   }
   public async updateOffersV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id }; // Extract token ID
+        const token = { id: tokendata.id, roleId: tokendata.roleId }; // Extract token ID
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
     try {
@@ -519,7 +521,7 @@ export class partnerRepository {
   }
   public async deleteOffersV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -577,7 +579,7 @@ export class partnerRepository {
     }
   }
   public async listOffersV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -607,7 +609,7 @@ export class partnerRepository {
     }
   }
   public async getOffersV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -637,7 +639,7 @@ export class partnerRepository {
     }
   }
   public async applyCouponV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {

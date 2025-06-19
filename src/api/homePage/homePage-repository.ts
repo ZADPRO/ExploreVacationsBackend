@@ -79,7 +79,7 @@ export class homePageRepository {
 
   public async homeImageContentV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -145,7 +145,7 @@ export class homePageRepository {
   public async updateContentV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
 
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -212,7 +212,7 @@ export class homePageRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -276,7 +276,7 @@ export class homePageRepository {
     }
   }
   public async uploadImagesV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
@@ -335,7 +335,7 @@ export class homePageRepository {
     }
   }
   public async deletehomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       let filePath: string | any;
@@ -398,7 +398,7 @@ export class homePageRepository {
     }
   }
   public async listhomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -427,7 +427,7 @@ export class homePageRepository {
     }
   }
   public async getHomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -456,7 +456,7 @@ export class homePageRepository {
     }
   }
   public async listhomeImageUserSideV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
+    //     const token = { id: tokendata.id, roleId: tokendata.roleId };
     // const tokens = generateTokenWithExpire(token, true);
 
     try {

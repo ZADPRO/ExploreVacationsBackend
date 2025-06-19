@@ -15,8 +15,8 @@ export class flightRoutes implements IRoute {
           path: "/api/v1/flightRoutes/flightBooking",
           config: {
             pre: [{ method: validateToken, assign: "token" }],
-            // validate: validate.flightBooking,
             handler: controller.flightBooking,
+            validate: validate.flightBooking,
             description: "flightBooking",
             tags: ["api", "Users"],
             auth: false,

@@ -34,13 +34,13 @@ export default {
 
   addEmployee: {
     payload: Joi.object({
-      refFName: Joi.string().required(),
-      refLName: Joi.string().required(),
+      refFName: Joi.string().min(2).max(30).required(),
+      refLName: Joi.string().min(1).max(30).required(),
       refDOB:Joi.string().required(),
-      refDesignation: Joi.string().required(),
-      refQualification: Joi.string().required(),
+      refDesignation: Joi.string().max(50).required(),
+      refQualification: Joi.string().max(50).required(),
       refProfileImage: Joi.string().optional(),
-      refMoblile: Joi.string().required(),
+      refMoblile: Joi.string().min(5).max(18).required(),
       refUserTypeId:  Joi.array().items(Joi.string()).required(),
       refUserEmail: Joi.string().email().required(),
     }),
@@ -68,10 +68,27 @@ export default {
       refLName: Joi.string().min(1).max(50).required(),
       refDOB: Joi.string().required(),
       refDesignation: Joi.string().required(),
-      refQualification: Joi.string().required(),
+      refQualification: Joi.string().max(50).required(),
       refProfileImage: Joi.string().optional().allow(null, ""),
-      refMoblile: Joi.string().required(),
+      refMoblile: Joi.string().min(5).max(12).required(),
       refUserTypeId: Joi.array().items(Joi.string()).required()
+    }),
+    headers: Joi.object({
+      authorization: Joi.string().optional(),
+    }).unknown(),
+  },
+
+  updateEmployeeProfile: {
+    payload: Joi.object({
+      refFName: Joi.string().min(2).max(50).required(),
+      refLName: Joi.string().min(1).max(50).required(),
+      refDOB: Joi.string().required(),
+      refDesignation: Joi.string().max(12).required(),
+      refQualification: Joi.string().max(12).required(),
+      refProfileImage: Joi.string().optional().allow(null, ""),
+      refMoblile: Joi.string().min(5).max(12).required(),
+      refUserEmail: Joi.string().required(),
+      refUserPassword: Joi.string().min(5).max(8).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),

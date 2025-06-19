@@ -21,6 +21,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -52,6 +54,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -86,6 +90,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -120,6 +126,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -188,6 +196,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -222,8 +232,9 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
-      };
+                        roleId: request.plugins.token.roleId, // Add this
 
+      };
       let entity;
 
       entity = await this.resolver.deleteOfflineCarBookingV1(
@@ -324,6 +335,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -358,6 +371,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;
@@ -392,6 +407,8 @@ export class newCarsController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       let entity;

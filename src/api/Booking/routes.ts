@@ -15,6 +15,7 @@ export class bookingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.approveTourBooking,
+            // validate: validate.approveTourBooking,
             description: "approve Tour Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -26,6 +27,7 @@ export class bookingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.approveCarBooking,
+            // validate: validate.approveCarBooking,
             description: "approve Car Booking",
             tags: ["api", "Users"],
             auth: false,
@@ -48,6 +50,7 @@ export class bookingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.approveParkingBooking,
+            // validate: validate.approveParkingBooking,
             description: "approveParkingBooking",
             tags: ["api", "Users"],
             auth: false,
@@ -224,6 +227,7 @@ export class bookingRoutes implements IRoute {
           config: {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.getHomeImage,
+            
             description: "getHomeImage",
             tags: ["api", "Users"],
             auth: false,

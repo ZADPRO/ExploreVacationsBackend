@@ -92,7 +92,7 @@ RETURNING
 
 export const staffNotificationCountQuery = `
 SELECT
-  COUNT(*) AS "unReadNotifications"
+COUNT(*) AS "unReadNotifications"
 FROM
   public."refNotifications" rn
 WHERE
@@ -103,7 +103,9 @@ WHERE
     )::INTEGER[]
   )
   AND rn."isDelete" IS NOT true
-  AND rn."refReadStatus" IS null
+  AND (
+    rn."refReadStatus"::text != 'Read'::text OR rn."refReadStatus" IS NULL
+  );
 `;
 
 // export const readNotificationQuery =`
@@ -191,10 +193,13 @@ FROM
     )::INTEGER[]
   )
 WHERE
-  n."refReadStatus" IS null 
+  "refReadStatus" IS null
   AND n."isDelete" IS NOT true
   AND $1::INTEGER = ANY (
-    string_to_array(regexp_replace(n."refUserTypeId", '[{}]', '', 'g'), ',')::INTEGER[]
+    string_to_array(
+      regexp_replace(n."refUserTypeId", '[{}]', '', 'g'),
+      ','
+    )::INTEGER[]
   )
 GROUP BY
   n."refNotificationsId"

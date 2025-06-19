@@ -89,7 +89,7 @@ export class newCarsRoutes implements IRoute {
             pre: [{ method: validateToken, assign: "token" }],
             handler: controller.deleteOfflineCarBooking,
             // validate: validate.deleteOfflineCarBooking,
-            description: "deleteOfflineCarBooking",
+            description: "delete Offline CarBooking",
             tags: ["api", "Users"],
             auth: false,
           },

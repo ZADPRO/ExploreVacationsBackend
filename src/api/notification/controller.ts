@@ -19,7 +19,9 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addNotificationsV1(request.payload,decodedToken);
@@ -49,7 +51,9 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.updateNotificationsV1(request.payload,decodedToken);
@@ -79,7 +83,9 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.listNotificationsV1(request.payload,decodedToken);
@@ -109,7 +115,9 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.getNotificationsV1(request.payload,decodedToken);
@@ -139,7 +147,9 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.deleteNotificationsV1(request.payload,decodedToken);
@@ -169,7 +179,9 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.staffNotificationCountV1(request.payload,decodedToken);
@@ -199,8 +211,11 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+
       }
+      console.log('decodedToken', decodedToken)
       let entity;
       entity = await this.resolver.staffNotificationsV1(request.payload,decodedToken);
 
@@ -229,7 +244,9 @@ export class notificationController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.updateReadStatusV1(request.payload,decodedToken);

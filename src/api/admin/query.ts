@@ -32,7 +32,6 @@ FROM
 WHERE
   (
     rd."refUserEmail" = $1
-    OR rd."refUsername" = $1
   )
   AND u."isDelete" IS NOT true
 GROUP BY
@@ -240,7 +239,8 @@ WITH
       urt."refuserId",
       urt."refAgreementPath",
       urt."refStatus",
-      urt."refUserName",
+      urt."refUserFname",
+      urt."refUserLname",
       urt."refUserMail",
       urt."refUserMobile",
       urt."refPickupDate",
@@ -395,7 +395,7 @@ FROM
 ORDER BY
   b."refPackageId",
   b."userTourBookingId";
-   `;
+     `;
 
 export const listCarBookingsQuery = `
 SELECT DISTINCT ON (rcb."userCarBookingId")
@@ -486,18 +486,32 @@ GROUP BY
   u."refuserId",
   ud."refUserDomId"
   `;
-export const listAuditPageQuery = `SELECT
+export const listAuditPageQuery = `
+SELECT
   th.*,
   td."refTransactionHistory",
   ut."refUserType"
 FROM
   public."refTxnHistory" th
   INNER JOIN public."refTransactionTable" td ON CAST(th."refTransactionHistoryId" AS INTEGER) = td."refTransactionHistoryId"
-  INNER JOIN public."refUserType" ut ON CAST (th."updatedBy" AS INTEGER) = ut."refUserTypeId"
+  INNER JOIN public."refUserType" ut ON CAST(th."updatedBy" AS INTEGER) = ut."refUserTypeId"
 WHERE
-  (th."updatedAt"::DATE = TO_DATE($1, 'DD/MM/YYYY')) AND
-  th."refTransactionHistoryId" = ANY($2::integer[]);
+  (th."updatedAt"::DATE = TO_DATE($1, 'DD/MM/YYYY'))
+  AND th."refTransactionHistoryId" = ANY ($2::integer[]) AND 
+  th."isDelete" IS NOT true;
+`;
 
+export const listAllAuditPageQuery = `
+SELECT
+  th.*,
+  td."refTransactionHistory",
+  ut."refUserType"
+FROM
+  public."refTxnHistory" th
+  INNER JOIN public."refTransactionTable" td ON CAST(th."refTransactionHistoryId" AS INTEGER) = td."refTransactionHistoryId"
+  INNER JOIN public."refUserType" ut ON CAST(th."updatedBy" AS INTEGER) = ut."refUserTypeId"
+WHERE
+  th."isDelete" IS NOT true;
 `;
 
 export const listTransactionTypeQuery = `SELECT
@@ -581,6 +595,39 @@ WHERE
 RETURNING
   *;
   `;
+
+export const updateEmployeeProfileQuery = `
+UPDATE
+  public."users" 
+SET
+  "refFName" = $2,
+  "refLName" = $3,
+  "refDOB" = $4,
+  "refDesignation" = $5,
+  "refQualification" = $6,
+  "refProfileImage" =$7,
+  "refMoblile" = $8,
+  "updatedAt" = $9,
+  "updatedBy" = $10
+WHERE
+  "refuserId" = $1
+RETURNING
+  *;
+  `;
+export const updatedomainDataQuery = `
+UPDATE
+  public."refUserDomain"
+SET
+  "refUserEmail" = $1,
+  "refUserPassword" = $2,
+  "refUserHashedPassword" = $3,
+  "updatedAt" = $4,
+  "updatedBy" = $5
+   WHERE "refUserId" = $6
+RETURNING
+  *;
+  `;
+
 export const getEmployeeQuery = `
 SELECT
   *
@@ -818,7 +865,8 @@ WITH
     SELECT
       rp."refTourCustID",
       urt."userTourBookingId",
-      urt."refUserName",
+      urt."refUserFname",
+      urt."refUserLname",
       urt."refUserMail",
       urt."refUserMobile",
       urt."refPickupDate",
@@ -971,7 +1019,8 @@ FROM
   LEFT JOIN excludes e ON b."refPackageId" = e."refPackageId"
 ORDER BY
   b."refPackageId",
-  b."userTourBookingId";`;
+  b."userTourBookingId";
+  `;
 
 export const carResultQuery = `
 SELECT
@@ -1055,5 +1104,51 @@ FROM
 WHERE
   rcb."refuserId" = $1
   AND rcb."isDelete" IS NOT true;
-`
-;
+`;
+
+export const deleteAuditQuery = `
+UPDATE
+  public."refTxnHistory"
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "transId" = $1
+RETURNING
+  *;
+`;
+
+export const deleteUserQuery = `
+UPDATE public.users
+SET
+  "isDelete" = true,
+  "deletedAt" = $2,
+  "deletedBy" = $3
+WHERE
+  "refuserId" = $1
+  RETURNING *;
+`;
+
+export const deleteUserDomainQuery = `
+UPDATE public."refUserDomain"
+SET
+  "isDelete" = true
+WHERE
+  "refUserId" = $1;
+`;
+
+
+export const getEmployeeProfileQuery = `
+SELECT
+  u.*,
+  ud."refUserEmail",
+  ud."refUserHashedPassword",
+  ud."refUsername"
+FROM
+  public."users" u
+  LEFT JOIN public."refUserDomain" ud ON CAST(ud."refUserId" AS INTEGER) = u."refuserId"
+WHERE
+  u."refuserId" = $1
+  AND u."isDelete" IS NOT true
+`;

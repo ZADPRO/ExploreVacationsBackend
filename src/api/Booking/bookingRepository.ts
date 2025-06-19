@@ -43,19 +43,19 @@ export class bookingRepository {
     tokendata: any,
     pdfBase64: string
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(approveTourBookingQuery, [
-        userData.userId,
+        userData.userTourBookingId,
       ]);
 
       const mailResult: any = await executeQuery(getUserdataTourQuery, [
-        userData.userId,
+        userData.userTourBookingId,
       ]);
       const {
         refPickupDate,
-        refUserName,
+        refUserFname,
         refUserMail,
         refPackageName,
         refTourCustID,
@@ -74,7 +74,7 @@ export class bookingRepository {
               <h2 style="margin: 0;">Explore Vacations</h2>
             </div>
             <div style="padding: 30px;">
-              <h3 style="color: #007bff;">Hi ${refUserName},</h3>
+              <h3 style="color: #007bff;">Hi ${refUserFname},</h3>
               <p>🎉 Great news! Your tour <strong>"${refPackageName}"</strong> has been successfully booked.</p>
               <p><strong>Tour Code:</strong> ${refTourCustID}</p>
               <p>Your adventure begins on <strong>${refPickupDate}</strong>.</p>
@@ -133,36 +133,32 @@ export class bookingRepository {
     tokendata: any,
     pdfBase64: string
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    console.log('userData', userData)
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(approveCarBookingQuery, [
-        userData.userId,
+        userData.userCarBookingId
       ]);
 
-      const mailResult: any = await executeQuery(getUserdataCarQuery, [
-        userData.userId,
+      const mailResult = await executeQuery(getUserdataCarQuery, [
+        userData.userCarBookingId
       ]);
-      console.log("mailResult", mailResult);
+      console.log('mailResult', mailResult)
+      console.log("mailResult", mailResult[0]);
+
       const {
         refPickupDate,
-        refUserName,
+        refDropDate,
+        refUserFname,
+        refUserLname,
         refUserMail,
-        refCarCustID,
-        refPickupAddress,
+        refUserMobile,
         refCarTypeName,
-        refVehicleTypeName,
-        refCarPrice,
+        refVehicleTypeName
       } = mailResult[0];
-
-      // 2. User confirmation email with countdown
-      const daysLeft = Math.ceil(
-        (new Date(refPickupDate).getTime() -
-          new Date(CurrentTime()).getTime()) /
-          (1000 * 60 * 60 * 24)
-      );
-
-      // Convert Base64 to Buffer
+      
+      console.log('refPickupDate', refPickupDate)
       const pdfBuffer = Buffer.from(userData.pdfBase64, "base64");
 
       const main1 = async () => {
@@ -170,56 +166,48 @@ export class bookingRepository {
           to: refUserMail,
           subject: "🚗 Car Booking Confirmed",
           html: `
-               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-      <div style="background-color:rgba(0, 123, 255, 0.66); padding: 20px; color: white; text-align: center;">
-      <h1 style="margin: 0;">Explore Vacations</h1>
-      <p style="margin: 0;">Ride into comfort 🚗</p>
-    </div>
-    <div style="padding: 30px; background-color: #f9f9f9;">
-      <h2 style="color: #007BFF;">Hello ${refUserName} 👋</h2>
-      <p style="font-size: 16px; color: #333;">Your car booking has been <strong>successfully received</strong>.</p>
+               <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2 style="color: #4CAF50;">Thank You For Choosing Explore Vacations</h2>
+      
+      <h3 style="margin-top: 30px;">Reservation Details</h3>
+      <table style="border-collapse: collapse; width: 100%; margin-top: 10px;">
+        <tbody>
+          <tr>
+            <td style="padding: 8px; font-weight: bold;">Name:</td>
+            <td style="padding: 8px;">${refUserFname}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold;">Phone:</td>
+            <td style="padding: 8px;">${refUserMobile}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold;">Pickup Date:</td>
+            <td style="padding: 8px;">${refPickupDate}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold;">Drop Date:</td>
+            <td style="padding: 8px;">${refDropDate}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold;">Reservation Taken:</td>
+            <td style="padding: 8px;">${CurrentTime()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold;">Vehicle Type:</td>
+            <td style="padding: 8px;">${refVehicleTypeName} (${refCarTypeName})</td>
+          </tr>
 
-      <table style="width: 100%; margin-top: 20px; font-size: 15px; color: #444;">
-        <tr>
-          <td style="padding: 8px 0;"><strong>🆔 Booking ID:</strong></td>
-          <td style="padding: 8px 0;">${refCarCustID}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>🚘 Vehicle Type:</strong></td>
-          <td style="padding: 8px 0;">${refVehicleTypeName}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>🏷️ Car Category:</strong></td>
-          <td style="padding: 8px 0;">${refCarTypeName}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>📅 Pickup Address:</strong></td>
-          <td style="padding: 8px 0;">${refPickupAddress}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>📅 Pickup Date:</strong></td>
-          <td style="padding: 8px 0;">${refPickupDate}</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>⏳ Days Left:</strong></td>
-          <td style="padding: 8px 0;">${daysLeft} day(s)</td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 0;"><strong>💰 Price:</strong></td>
-          <td style="padding: 8px 0;">₹${refCarPrice}</td>
-        </tr>
+          <tr>
+            <td style="padding: 8px; font-weight: bold;">Payment Status:</td>
+            <td style="padding: 8px; color: green;"><strong>Paid</strong></td>
+          </tr>
+        </tbody>
       </table>
 
-      <p style="margin-top: 25px; font-size: 16px; color: #333;">
-        Our team will contact you soon to finalize your ride details.
-      </p>
-      
-      <p style="margin-top: 30px; font-size: 16px; color: #007BFF;"><strong>Thank you for choosing Explore Vacations! 😊</strong></p>
+      <p style="margin-top: 30px;">We look forward to serving you with a comfortable journey!</p>
+
+      <p>Warm Regards,<br/>Explore Vacations Team</p>
     </div>
-    <div style="background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 14px;">
-      &copy; ${CurrentTime()} Explore Vacations. All rights reserved.
-    </div>
-  </div>
              `,
           attachments: [
             {
@@ -231,7 +219,7 @@ export class bookingRepository {
         };
 
         try {
-          sendEmail(userMail);
+         await sendEmail(userMail);
         } catch (error) {
           console.log("Error in sending the Mail for User", error);
         }
@@ -267,7 +255,7 @@ export class bookingRepository {
   ): Promise<any> {
     console.log("userData", userData);
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN"); // Start transaction
@@ -275,14 +263,12 @@ export class bookingRepository {
       const result = await client.query(approveCustomizeBookingQuery, [
         userData.userId,
       ]);
-      console.log('result', result)
-      const mailResult: any = await executeQuery
-      
-      (
-        getUserdataCustomizeTourQuery,[userData.userId
-        ]
+      console.log("result", result);
+      const mailResult: any = await executeQuery(
+        getUserdataCustomizeTourQuery,
+        [userData.userId]
       );
-      console.log('mailResult', mailResult)
+      console.log("mailResult", mailResult);
       const {
         refUserName,
         refUserMail,
@@ -393,15 +379,15 @@ export class bookingRepository {
     tokendata: any,
     pdfBase64: string
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(approveParkingBookingQuery, [
-        userData.userId,
+        userData.carParkingBookingId,
       ]);
 
       const mailResult: any = await executeQuery(getUserdataParkingQuery, [
-        userData.userId,
+        userData.carParkingBookingId,
       ]);
       const {
         travelStartDate,
@@ -434,7 +420,7 @@ export class bookingRepository {
           to: refUserEmail,
           subject: "✅ Your CarParking Has Been Booked!",
           html: ` <div style="font-family: Arial, sans-serif; background-color: #f4f8fb; padding: 20px; color: #333;">
-    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+       <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
       <div style="background-color: #007bff; color: #ffffff; padding: 20px; text-align: center;">
         <h1>🚗 Booking Confirmed!</h1>
         <p>Thanks for choosing <strong>Explore Vacations</strong></p>
@@ -479,7 +465,6 @@ export class bookingRepository {
             },
           ],
         };
-
         try {
           sendEmail(adminMail);
         } catch (error) {
@@ -514,7 +499,7 @@ export class bookingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
@@ -568,7 +553,7 @@ export class bookingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
@@ -622,7 +607,7 @@ export class bookingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the PDF file from userData
@@ -677,7 +662,7 @@ export class bookingRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -759,7 +744,7 @@ export class bookingRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -841,7 +826,7 @@ export class bookingRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -922,7 +907,7 @@ export class bookingRepository {
   // -------------------------------------------------------------------------------------------------------------------------------------
   public async homeImageContentV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -990,7 +975,7 @@ export class bookingRepository {
   public async updateContentV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
 
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -1059,18 +1044,20 @@ export class bookingRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
       await client.query("BEGIN"); // Start transaction
 
       const { refHomePageId } = userData;
+      console.log('userData', userData)
       const result = await client.query(deleteHomeImageContentQuery, [
         refHomePageId,
         CurrentTime(),
         tokendata.id,
       ]);
+      console.log('result', result)
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -1123,7 +1110,7 @@ export class bookingRepository {
     }
   }
   public async uploadImagesV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
@@ -1181,7 +1168,7 @@ export class bookingRepository {
     }
   }
   public async deletehomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       let filePath: string | any;
@@ -1244,7 +1231,7 @@ export class bookingRepository {
     }
   }
   public async listhomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1260,10 +1247,7 @@ export class bookingRepository {
               contentType: "image/jpeg", // Change based on actual file type if necessary
             };
           } catch (err) {
-            console.error(
-              "Error reading image file for product ${product.productId}",
-              err
-            );
+            console.error("Error reading image file for product", err);
             profile.homePageImage = null; // Handle missing or unreadable files gracefully
           }
         }
@@ -1293,7 +1277,7 @@ export class bookingRepository {
     }
   }
   public async getHomeImageV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1311,10 +1295,7 @@ export class bookingRepository {
               contentType: "image/jpeg", // Change based on actual file type if necessary
             };
           } catch (err) {
-            console.error(
-              "Error reading image file for product ${product.productId}",
-              err
-            );
+            console.error("Error reading image file for product", err);
             profile.homePageImage = null; // Handle missing or unreadable files gracefully
           }
         }
@@ -1346,7 +1327,7 @@ export class bookingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    // const token = { id: tokendata.id };
+    //     const token = { id: tokendata.id, roleId: tokendata.roleId };
     // const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -1361,10 +1342,7 @@ export class bookingRepository {
               contentType: "image/jpeg", // Change based on actual file type if necessary
             };
           } catch (err) {
-            console.error(
-              "Error reading image file for product ${product.productId}",
-              err
-            );
+            console.error("Error reading image file for product", err);
             profile.homePageImage = null; // Handle missing or unreadable files gracefully
           }
         }

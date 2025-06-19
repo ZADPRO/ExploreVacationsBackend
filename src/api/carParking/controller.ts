@@ -19,7 +19,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addCarParkingV1(request.payload,decodedToken);
@@ -49,7 +51,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.uploadParkingImageV1(request.payload,decodedToken);
@@ -79,7 +83,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.deleteParkingImageV1(request.payload,decodedToken);
@@ -109,7 +115,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.updateCarParkingV1(request.payload,decodedToken);
@@ -139,7 +147,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.listCarParkingV1(request.payload,decodedToken);
@@ -169,7 +179,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.getCarParkingV1(request.payload
@@ -201,7 +213,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.deleteCarParkingV1(request.payload,decodedToken);
@@ -231,7 +245,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.getCarParkingTypeV1(request.payload,decodedToken);
@@ -265,7 +281,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addServiceFeaturesV1(request.payload,decodedToken);
@@ -295,7 +313,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.updateServiceFeaturesV1(request.payload,decodedToken);
@@ -325,7 +345,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.listServiceFeaturesV1(request.payload,decodedToken);
@@ -355,7 +377,9 @@ export class carParkingController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.deleteServiceFeaturesV1(request.payload,decodedToken);

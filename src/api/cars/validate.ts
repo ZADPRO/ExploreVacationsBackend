@@ -3,7 +3,7 @@ import * as Joi from "joi";
 export default {
   addVehicle: {
     payload: Joi.object({
-      refVehicleTypeName: Joi.string().required(),
+      refVehicleTypeName: Joi.string().min(2).max(100).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -12,7 +12,7 @@ export default {
   updateVehicle: {
     payload: Joi.object({
       refVehicleTypeId: Joi.number().integer().required(),
-      refVehicleTypeName: Joi.string().required(),
+      refVehicleTypeName: Joi.string().min(2).max(100).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -31,7 +31,7 @@ export default {
       refBenifitsName: Joi.array()
         .items(
           Joi.object({
-            refBenifitsName: Joi.string().required(),
+            refBenifitsName: Joi.string().min(2).max(100).required(),
           })
         )
         .required(),
@@ -43,7 +43,7 @@ export default {
   updateBenifits: {
     payload: Joi.object({
       refBenifitsId: Joi.number().integer().required(),
-      refBenifitsName: Joi.string().required(),
+      refBenifitsName: Joi.string().min(2).max(100).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -62,7 +62,7 @@ export default {
       refIncludeName: Joi.array()
         .items(
           Joi.object({
-            refIncludeName: Joi.string().required(),
+            refIncludeName: Joi.string().min(2).max(100).required(),
           })
         )
         .required(),
@@ -74,7 +74,7 @@ export default {
   updateInclude: {
     payload: Joi.object({
       refIncludeId: Joi.number().integer().required(),
-      refIncludeName: Joi.string().required(),
+      refIncludeName: Joi.string().min(2).max(100).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -93,7 +93,7 @@ export default {
       refExcludeName: Joi.array()
         .items(
           Joi.object({
-            refExcludeName: Joi.string().required(),
+            refExcludeName: Joi.string().min(2).max(100).required(),
           })
         )
         .required(),
@@ -105,7 +105,7 @@ export default {
   UpdateExclude: {
     payload: Joi.object({
       refExcludeId: Joi.number().integer().required(),
-      refExcludeName: Joi.string().required(),
+      refExcludeName: Joi.string().min(2).max(100).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -121,7 +121,7 @@ export default {
   },
   addDriverDetails: {
     payload: Joi.object({
-      refDriverName: Joi.string().required(),
+      refDriverName: Joi.string().min(2).max(30).required(),
       refDriverAge: Joi.number().integer().required(),
       refDriverMail: Joi.string().email().required(),
       refDriverMobile: Joi.string()
@@ -160,8 +160,8 @@ export default {
   },
   addFormDetails: {
     payload: Joi.object({
-      refFormDetails: Joi.string().required(),
-      refPrice: Joi.string().required(),
+      refFormDetails: Joi.string().min(2).max(100).required(),
+      refPrice: Joi.string().pattern(/^\d+$/).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -170,8 +170,8 @@ export default {
   updateFormDetails: {
     payload: Joi.object({
       refFormDetailsId: Joi.number().integer().required(),
-      refFormDetails: Joi.string().required(),
-      refPrice: Joi.string().required(),
+      refFormDetails: Joi.string().min(2).max(100).required(),
+      refPrice: Joi.string().pattern(/^\d+$/).required(),
     }),
     headers: Joi.object({
       authorization: Joi.string().optional(),
@@ -215,22 +215,22 @@ export default {
   addCars: {
     payload: Joi.object({
       refVehicleTypeId: Joi.number().required(),
-      refPersonCount: Joi.string().required(), // string digits
-      refBag: Joi.string().required(), // string digits
+      refPersonCount: Joi.string().pattern(/^\d+$/).required(), // string digits
+      refBag: Joi.string().pattern(/^\d+$/).required(), // string digits
       refCarGroupId: Joi.number().required(),
-      refFuelType: Joi.string().required(),
-      refcarManufactureYear: Joi.string().required(),
-      refMileage: Joi.string().required(), // e.g. "18 km/l"
-      refTrasmissionType: Joi.string().required(),
-      refFuleLimit: Joi.string().required(),
-      refOtherRequirements: Joi.string().required(),
+      refFuelType: Joi.string().min(2).max(30).required(),
+      refcarManufactureYear: Joi.string().pattern(/^\d+$/).required(),
+      refMileage: Joi.string().min(2).max(50).required(), // e.g. "18 km/l"
+      refTrasmissionType: Joi.string().min(2).max(50).required(),
+      refFuleLimit: Joi.string().min(2).max(50).required(),
+      refOtherRequirements: Joi.string().min(2).max(500).required(),
       refrefRentalAgreement: Joi.string().required(),
-      refFuelPolicy: Joi.string().required(),
+      refFuelPolicy: Joi.string().min(2).max(50).required(),
       refPaymentTerms: Joi.string().required(),
       carImagePath: Joi.string().required(),
-      refCarPrice: Joi.string().required(), // string number
+      refCarPrice: Joi.string().pattern(/^\d+$/).required(), // string number
       refCarTypeId: Joi.number().required(),
-      refExtraKMcharges: Joi.string().required(),
+      refExtraKMcharges: Joi.string().pattern(/^\d+$/).required(),
       refBenifits: Joi.array().items(Joi.string()).required(),
       refInclude: Joi.array().items(Joi.string()).required(),
       refExclude: Joi.array().items(Joi.string()).required(),
@@ -246,20 +246,20 @@ export default {
       refCarsId: Joi.number().integer().required(),
       refVehicleTypeId: Joi.number().integer().required(),
       refCarTypeId: Joi.number().integer().required(),
-      refPersonCount: Joi.string().required(),
-      refBag: Joi.string().required(),
+      refPersonCount: Joi.string().pattern(/^\d+$/).required(),
+      refBag: Joi.string().pattern(/^\d+$/).required(),
       refCarGroupId: Joi.number().required(),
-      refFuelType: Joi.string().required(),
-      refcarManufactureYear: Joi.string().required(),
-      refMileage: Joi.string().required(),
-      refTrasmissionType: Joi.string().required(),
-      refFuleLimit: Joi.string().required(),
-      refOtherRequirements: Joi.string().required(),
+      refFuelType: Joi.string().min(2).max(50).required(),
+      refcarManufactureYear: Joi.string().pattern(/^\d+$/).required(),
+      refMileage: Joi.string().min(2).max(50).required(),
+      refTrasmissionType: Joi.string().min(2).max(50).required(),
+      refFuleLimit: Joi.string().min(2).max(50).required(),
+      refOtherRequirements: Joi.string().min(2).max(500).required(),
       refrefRentalAgreement: Joi.string().required(),
       refFuelPolicy: Joi.string().required(),
       refPaymentTerms: Joi.string().required(),
-      refCarPrice: Joi.string().required(),
-      refExtraKMcharges: Joi.string().required(),
+      refCarPrice: Joi.string().pattern(/^\d+$/).required(),
+      refExtraKMcharges: Joi.string().pattern(/^\d+$/).required(),
       refBenifits: Joi.array().items(Joi.string()).required(),
       refInclude: Joi.array().items(Joi.string()).required(),
       refExclude: Joi.array().items(Joi.string()).required(),

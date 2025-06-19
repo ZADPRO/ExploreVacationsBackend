@@ -19,7 +19,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -51,7 +53,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -83,7 +87,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -115,7 +121,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -148,7 +156,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -180,7 +190,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -211,7 +223,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -243,7 +257,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -276,7 +292,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addIncludeV1(request.payload, decodedToken);
@@ -306,7 +324,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.updateIncludeV1(request.payload, decodedToken);
@@ -336,7 +356,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -368,7 +390,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -401,7 +425,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addExcludeV1(request.payload, decodedToken);
@@ -431,7 +457,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
       // const decodedToken ={
       //   id:1
@@ -464,7 +492,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -496,7 +526,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -529,7 +561,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addDriverDetailsV1(request.payload, decodedToken);
@@ -559,7 +593,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.updateDriverDetailsV1(request.payload, decodedToken);
@@ -589,7 +625,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.listDriverDetailsV1(request.payload, decodedToken);
@@ -620,6 +658,9 @@ export class carsController {
     try {
       const decodedToken ={
         id:request.plugins.token.id
+        ,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.deleteDriverDetailsV1(request.payload, decodedToken);
@@ -673,6 +714,7 @@ export class carsController {
   //       .code(500);
   //   }
   // };
+  
   public addFormDetails = async (
     request: any,
     response: Hapi.ResponseToolkit
@@ -680,7 +722,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addFormDetailsV1(request.payload, decodedToken);
@@ -710,7 +754,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       // const decodedToken ={
       //   id:1
@@ -743,7 +789,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -775,7 +823,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
      
       let entity;
@@ -808,7 +858,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.addCarsV1(request.payload, decodedToken);
@@ -838,7 +890,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.uploadCarsV1(request.payload, decodedToken);
@@ -868,7 +922,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.deleteCarImageV1(request.payload, decodedToken);
@@ -898,7 +954,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.updateCarsV1(request.payload, decodedToken);
@@ -928,7 +986,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.listCarsV1(request.payload, decodedToken);
@@ -958,7 +1018,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.getCarsV1(request.payload, decodedToken);
@@ -988,7 +1050,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.deleteCarsV1(request.payload, decodedToken);
@@ -1018,7 +1082,9 @@ export class carsController {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
       const decodedToken ={
-        id:request.plugins.token.id
+        id:request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       }
       let entity;
       entity = await this.resolver.getCarTypeV1(request.payload, decodedToken);

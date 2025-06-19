@@ -42,7 +42,7 @@ export class carParkingRepository {
   public async addCarParkingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
     // const refuserId = tokendata.id;
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN"); // Start transaction
@@ -157,7 +157,7 @@ export class carParkingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
@@ -211,7 +211,7 @@ export class carParkingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       let filePath: string | any;
@@ -278,7 +278,7 @@ export class carParkingRepository {
   }
   public async updateCarParkingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -479,7 +479,7 @@ export class carParkingRepository {
     }
   }
   public async listCarParkingV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCarParkingQuery);
@@ -505,7 +505,7 @@ export class carParkingRepository {
     }
   }
   public async getCarParkingV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refCarParkingId } = userData;
@@ -564,7 +564,7 @@ export class carParkingRepository {
   }
   public async deleteCarParkingV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -624,7 +624,7 @@ export class carParkingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result1 = await executeQuery(getCarParkingTypeQuery);
@@ -657,7 +657,7 @@ export class carParkingRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -752,7 +752,7 @@ export class carParkingRepository {
     tokenData: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokenData.id };
+        const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -845,7 +845,7 @@ export class carParkingRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listServiceFeaturesQuery);
@@ -875,7 +875,7 @@ export class carParkingRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -908,7 +908,7 @@ export class carParkingRepository {
 
       // Insert delete action into history
       const history = [
-        31,
+        66,
         tokendata.id,
         `${getdeletedFeature} Feature deleted succesfully`,
         CurrentTime(),

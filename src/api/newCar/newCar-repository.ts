@@ -43,7 +43,7 @@ import { generateCarBookingEmailContent } from "../../helper/mailcontent";
 export class newCarsRepository {
   public async addCarGroupV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -104,7 +104,7 @@ export class newCarsRepository {
   }
   public async updateCarGroupV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokenData.id };
+        const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -184,7 +184,7 @@ export class newCarsRepository {
   }
   public async deleteCarGroupV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -253,7 +253,7 @@ export class newCarsRepository {
     }
   }
   public async listCarGroupV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCarGroupQuery);
@@ -283,7 +283,7 @@ export class newCarsRepository {
     userData?: any,
     tokendata?: any
   ): Promise<any> {
-    // const token = { id: tokendata.id };
+    //     const token = { id: tokendata.id, roleId: tokendata.roleId };
     // const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -381,7 +381,7 @@ export class newCarsRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listOfflineCarBookingQuery);
@@ -412,7 +412,7 @@ export class newCarsRepository {
     tokendata: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -481,7 +481,7 @@ export class newCarsRepository {
     }
   }
   public async uploadPassportV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
+    //     const token = { id: tokendata.id, roleId: tokendata.roleId };
     // const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
@@ -539,7 +539,7 @@ export class newCarsRepository {
     }
   }
   public async uploadLicenseV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
+    //     const token = { id: tokendata.id, roleId: tokendata.roleId };
     // const tokens = generateTokenWithExpire(token, true);
     try {
       // Extract the image from userData
@@ -597,7 +597,7 @@ export class newCarsRepository {
     }
   }
   public async deletePassportV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
+    //     const token = { id: tokendata.id, roleId: tokendata.roleId };
     // const tokens = generateTokenWithExpire(token, true);
     try {
       let filePath: string | any;
@@ -660,7 +660,7 @@ export class newCarsRepository {
     }
   }
   public async deleteLicenseV1(userData: any, tokendata: any): Promise<any> {
-    // const token = { id: tokendata.id };
+    //     const token = { id: tokendata.id, roleId: tokendata.roleId };
     // const tokens = generateTokenWithExpire(token, true);
     try {
       let filePath: string | any;
@@ -723,7 +723,7 @@ export class newCarsRepository {
     }
   }
   public async viewCertificatesV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(getOfflineCarBookingQuery, [

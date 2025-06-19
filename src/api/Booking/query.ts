@@ -4,7 +4,7 @@ UPDATE
 SET
   "refStatus" = 'Approved'
 WHERE
-  "refuserId" = $1
+  "userTourBookingId" = $1
   RETURNING *;
   `;
 
@@ -16,7 +16,7 @@ FROM
   public."userTourBooking" ub
   LEFT JOIN public."refPackage" rp ON CAST (rp."refPackageId" AS INTEGER) = ub."refPackageId"
 WHERE
-  ub."refuserId" = $1 
+  ub."userTourBookingId" = $1
 
 `;
 export const approveCarBookingQuery = `
@@ -25,19 +25,25 @@ UPDATE
 SET
   "refStatus" = 'Approved'
 WHERE
-  "refuserId" = $1
+  "userCarBookingId" = $1
   RETURNING *;
 `;
 
 export const getUserdataCarQuery = `
 SELECT
   cb.*,
-  ct.*
+  ct.*,
+  vt."refVehicleTypeName",
+  cc."refCarTypeName"
 FROM
   public."userCarBooking" cb
   LEFT JOIN public."refCarsTable" ct ON CAST(ct."refCarsId" AS INTEGER) = cb."refCarsId"
+  LEFT JOIN public."refVehicleType" vt ON CAST(vt."refVehicleTypeId" AS INTEGER) = ct."refVehicleTypeId"
+  LEFT JOIN public."refCarType" cc ON CAST(cc."refCarTypeId" AS INTEGER) = ct."refCarTypeId"
 WHERE
-  cb."refuserId" = $1
+  cb."userCarBookingId" = $1
+  ORDER BY 
+  cb."userCarBookingId" DESC
 `;
 
 export const approveCustomizeBookingQuery = `

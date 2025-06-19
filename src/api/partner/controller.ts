@@ -20,6 +20,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
 
       let entity;
@@ -51,6 +52,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
       entity = await this.resolver.updatePartnerV1(
@@ -83,6 +85,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
       entity = await this.resolver.getPartnersV1(request.payload, decodedToken);
@@ -112,6 +115,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
       entity = await this.resolver.deletePartnersV1(
@@ -144,6 +148,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
       entity = await this.resolver.listPartnersV1(
@@ -176,6 +181,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
       entity = await this.resolver.addOffersV1(request.payload, decodedToken);
@@ -205,6 +211,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
       entity = await this.resolver.updateOffersV1(
@@ -237,6 +244,7 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
       entity = await this.resolver.deleteOffersV1(
@@ -269,12 +277,10 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
-      entity = await this.resolver.listOffersV1(
-        request.payload,
-        decodedToken
-      );
+      entity = await this.resolver.listOffersV1(request.payload, decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -301,12 +307,10 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
-      entity = await this.resolver.applyCouponV1(
-        request.payload,
-        decodedToken
-      );
+      entity = await this.resolver.applyCouponV1(request.payload, decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -333,12 +337,10 @@ export class partnerController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId, // Add this
       };
       let entity;
-      entity = await this.resolver.getOffersV1(
-        request.payload,
-        decodedToken
-      );
+      entity = await this.resolver.getOffersV1(request.payload, decodedToken);
 
       if (entity.success) {
         return response.response(entity).code(201); // Created

@@ -20,6 +20,8 @@ export class flightController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       const entity = await this.resolver.flightBookingV1(
@@ -53,6 +55,8 @@ export class flightController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       const entity = await this.resolver.userflightBookingHistoryV1(
@@ -86,7 +90,10 @@ export class flightController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
+
 
       const entity = await this.resolver.listFlightBookingV1(
         request.payload,
@@ -119,6 +126,8 @@ export class flightController {
     try {
       const decodedToken = {
         id: request.plugins.token.id,
+                        roleId: request.plugins.token.roleId, // Add this
+
       };
 
       const entity = await this.resolver.deleteFlightBookingV1(

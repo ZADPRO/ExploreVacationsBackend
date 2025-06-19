@@ -36,24 +36,55 @@ export const addTourBookingQuery = `
 INSERT INTO
   public."userTourBooking" (
     "refPackageId",
-    "refUserName",
+    "refUserFname",
+    "refUserLname",
     "refUserMail",
     "refUserMobile",
     "refPickupDate",
     "refAdultCount",
     "refChildrenCount",
     "refInfants",
+    "refSingleRoom",
+    "refTwinRoom",
+    "refTripleRoom",
+    "refVaccinationCertificate",
     "refOtherRequirements",
+    "refPassPort",
+    "refuserId",
+    "refAgreementPath",
     "refApplyOffers",
     "refCouponCode",
     "transactionId",
+    "totalAmount",
     "createdAt",
-    "createdBy",
-    "refuserId"
-    
+    "createdBy"
   )
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+  (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    $7,
+    $8,
+    $9,
+    $10,
+    $11,
+    $12,
+    $13,
+    $14,
+    $15,
+    $16,
+    $17,
+    $18,
+    $19,
+    $20,
+    $21,
+    $22,
+    $23
+  )
 RETURNING
   *;
 `;
@@ -97,26 +128,24 @@ export const addcustomizeBookingQuery = `
 export const addCarBookingQuery = `
  INSERT INTO public."userCarBooking" (
         "refCarsId",
-        "refUserName", 
+        "refUserFname", 
+        "refUserLname",
         "refUserMail", 
         "refUserMobile", 
-        "refPickupAddress", 
-        "refSubmissionAddress", 
+        "refUserAddress", 
         "refPickupDate", 
-        "refAdultCount", 
-        "refChildrenCount", 
-        "refInfants", 
-        "refOtherRequirements", 
+        "refDropDate",
         "refFormDetails",
+        "refOtherRequirements", 
         "refAgreementPath",
-        "paymentId",
+        "transactionId",
         "isExtraKMneeded",
         "refExtraKm",
         "createdAt", 
         "createdBy",
         "refuserId"
     ) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) 
     RETURNING *;
 `;
 
@@ -640,40 +669,116 @@ ORDER BY
   "refPackageId"; 
   `;
 
-// export const addTravalDataQuery = `INSERT INTO
-//   public."refTravalData" (
-//     "refPackageId",
-//     "refItinary",
-//     "refItinaryMapPath",
-//     "refTravalInclude",
-//     "refTravalExclude",
-//     "refOtherRequirements",
-//     "createdAt",
-//     "createdBy",
-//     "isDelete"
-//   )
-// VALUES
-//   ($1, $2, $3, $4, $5, $6, $7, $8, false)
-// RETURNING
-//   *;
-// `;
-
-// export const updateTravalDataQuery = `UPDATE
-//   public."refTravalData"
-// SET
-//   "refPackageId" = $2,
-//   "refItinary" = $3,
-//   "refItinaryMapPath" = $4,
-//   "refTravalInclude" = $5,
-//   "refTravalExclude" = $6,
-//   "refSpecialNotes" = $7,
-//   "updatedAt" = $8,
-//   "updatedBy" = $9
-// WHERE
-//   "refTravalDataId" = $1
-// RETURNING
-//   *;
-// `;
+export const listfilteredTourQuery = `
+ WITH
+  base AS (
+    SELECT
+      rp."refCategoryId",
+      rp."refPackageId",
+      rp."refPackageName",
+      rp."refLocation",
+      rp."refActivity",
+      rp."refDesignationId",
+      rp."refDurationIday",
+      rp."refDurationINight",
+      rp."refGroupSize",
+      rp."refTourCode",
+      rp."refTourPrice",
+      rp."refSeasonalPrice",
+      rp."refCoverImage",
+      rtd."refTravalDataId",
+      rtd."refItinary",
+      rtd."refItinaryMapPath",
+      rtd."refTravalInclude",
+      rtd."refTravalExclude",
+      rtd."refSpecialNotes",
+      rtd."refTravalOverView",
+      rd."refDestinationName",
+      rc."refCategoryName"
+    FROM
+      public."refPackage" rp
+      LEFT JOIN public."refTravalData" rtd ON CAST(rtd."refPackageId" AS INTEGER) = rp."refPackageId"
+      LEFT JOIN public."refDestination" rd ON CAST(rd."refDestinationId" AS INTEGER) = rp."refDesignationId"
+      LEFT JOIN public."refCategory" rc ON CAST(rc."refCategoryId" AS INTEGER) = rp."refCategoryId"
+    WHERE
+      rp."isDelete" IS NOT true
+      AND rd."refDestinationId" = $1
+      AND rp."refGroupSize"::integer >= $2
+      AND $3::integer <= rp."refDurationIday"::integer
+  ),
+  final AS (
+    SELECT
+      b.*,
+      (
+        SELECT
+          ARRAY_AGG(DISTINCT rl."refLocationName")
+        FROM
+          public."refLocation" rl
+        WHERE
+          CAST(rl."refLocationId" AS INTEGER) = ANY (
+            string_to_array(
+              regexp_replace(b."refLocation", '[{}]', '', 'g'),
+              ','
+            )::INTEGER[]
+          )
+      ) AS "refLocationName",
+      (
+        SELECT
+          ARRAY_AGG(DISTINCT rg."refGallery")
+        FROM
+          public."refGallery" rg
+        WHERE
+          CAST(rg."refPackageId" AS INTEGER) = b."refPackageId"
+      ) AS "refGallery",
+      (
+        SELECT
+          ARRAY_AGG(DISTINCT ra."refActivitiesName")
+        FROM
+          public."refActivities" ra
+        WHERE
+          CAST(ra."refActivitiesId" AS INTEGER) = ANY (
+            string_to_array(
+              regexp_replace(b."refActivity", '[{}]', '', 'g'),
+              ','
+            )::INTEGER[]
+          )
+      ) AS "Activity",
+      (
+        SELECT
+          ARRAY_AGG(DISTINCT ti."refTravalInclude")
+        FROM
+          public."refTravalInclude" ti
+        WHERE
+          CAST(ti."refTravalIncludeId" AS INTEGER) = ANY (
+            string_to_array(
+              regexp_replace(b."refTravalInclude", '[{}]', '', 'g'),
+              ','
+            )::INTEGER[]
+          )
+      ) AS "travalInclude",
+      (
+        SELECT
+          ARRAY_AGG(DISTINCT te."refTravalExclude")
+        FROM
+          public."refTravalExclude" te
+        WHERE
+          CAST(te."refTravalExcludeId" AS INTEGER) = ANY (
+            string_to_array(
+              regexp_replace(b."refTravalExclude", '[{}]', '', 'g'),
+              ','
+            )::INTEGER[]
+          )
+      ) AS "travalExclude"
+    FROM
+      base b
+  )
+SELECT
+  *
+FROM
+  final
+ORDER BY
+  "refPackageId";
+  `;
 
 export const listCarsQuery = `
 SELECT
@@ -701,130 +806,46 @@ FROM
 WHERE
   rc."isDelete" IS NOT true
   AND rc."refCarTypeId" = $1;
-     
   `;
 
-// export const getCarsByIdQuery = `
-//  WITH
-//   "carData" AS (
-//     SELECT
-//       rvt."refVehicleTypeId",
-//       rvt."refVehicleTypeName",
-//       rc."refPersonCount",
-//       rc."refBagCount",
-//       rc."refFuelType",
-//       rc."refcarManufactureYear",
-//       rc."refMileage",
-//       rc."refTrasmissionType",
-//       rc."refFuleLimit",
-//       rc."refCarPath",
-//       rc."refCarPrice",
-//       rc."refOtherRequirements",
-//       rc."refInclude",
-//       rc."refExclude",
-//       rc."refFormDetails",
-//       tc."refRentalAgreement",
-//       tc."refPaymentTerms",
-//       tc."refFuelPolicy",
-//       ARRAY_AGG(rb."refBenifitsName") AS "refBenifitsName"
-//     FROM
-//       public."refCarsTable" rc
-//       LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
-//       LEFT JOIN public."refTermsAndConditions" tc ON CAST(tc."refCarsId" AS INTEGER) = rc."refCarsId"
-//       LEFT JOIN public."refBenifits" rb ON CAST(rb."refBenifitsId" AS INTEGER) = ANY (
-//         string_to_array(
-//           regexp_replace(rc."refBenifits", '[{}]', '', 'g'),
-//           ','
-//         )::INTEGER[]
-//       )
-//     WHERE
-//       rc."isDelete" IS NOT true
-//       AND rc."refCarsId" = $1
-//     GROUP BY
-//       rc."refCarsId",
-//       rvt."refVehicleTypeName",
-//       rc."refPersonCount",
-//       rc."refBagCount",
-//       rc."refFuelType",
-//       rc."refcarManufactureYear",
-//       rc."refMileage",
-//       rc."refTrasmissionType",
-//       rc."refFuleLimit",
-//       rc."refCarPath",
-//       rc."refCarPrice",
-//       rc."refOtherRequirements",
-//       tc."refRentalAgreement",
-//       tc."refPaymentTerms",
-//       tc."refFuelPolicy",
-//       tc."refPaymentTerms",
-//       rvt."refVehicleTypeId"
-//   )
-// SELECT
-//   cd."refVehicleTypeId",
-//   cd."refVehicleTypeName",
-//   cd."refPersonCount",
-//   cd."refBagCount",
-//   cd."refFuelType",
-//   cd."refcarManufactureYear",
-//   cd."refMileage",
-//   cd."refTrasmissionType",
-//   cd."refFuleLimit",
-//   cd."refCarPath",
-//   cd."refCarPrice",
-//   cd."refOtherRequirements",
-//   ARRAY_AGG(DISTINCT ri."refIncludeName") AS "refIncludeName",
-//   ARRAY_AGG(DISTINCT re."refExcludeName") AS "refExcludeName",
-//   ARRAY_AGG(DISTINCT fd."refFormDetails") AS "refFormDetails",
-//   cd."refRentalAgreement",
-//   cd."refPaymentTerms",
-//   cd."refFuelPolicy",
-//   cd."refPaymentTerms"
-// FROM
-//   "carData" cd
-//   LEFT JOIN public."refInclude" ri ON CAST(ri."refIncludeId" AS INTEGER) = ANY (
-//     string_to_array(
-//       regexp_replace(cd."refInclude", '[{}]', '', 'g'),
-//       ','
-//     )::INTEGER[]
-//   )
-//   LEFT JOIN public."refExclude" re ON CAST(re."refExcludeId" AS INTEGER) = ANY (
-//     string_to_array(
-//       regexp_replace(cd."refExclude", '[{}]', '', 'g'),
-//       ','
-//     )::INTEGER[]
-//   )
-//   LEFT JOIN public."refFormDetails" fd ON CAST(fd."refFormDetailsId" AS INTEGER) = ANY (
-//     string_to_array(
-//       regexp_replace(cd."refFormDetails", '[{}]', '', 'g'),
-//       ','
-//     )::INTEGER[]
-//   )
-// GROUP BY
-//   cd."refVehicleTypeName",
-//   cd."refPersonCount",
-//   cd."refBagCount",
-//   cd."refFuelType",
-//   cd."refcarManufactureYear",
-//   cd."refMileage",
-//   cd."refTrasmissionType",
-//   cd."refFuleLimit",
-//   cd."refCarPath",
-//   cd."refCarPrice",
-//   cd."refOtherRequirements",
-//   cd."refRentalAgreement",
-//   cd."refPaymentTerms",
-//   cd."refFuelPolicy",
-//   cd."refPaymentTerms",
-//   cd."refVehicleTypeId";
-// `;
-export const getCarsByIdQuery = `
+export const listfilteredCarsQuery = `
+SELECT
+  rc."refCarsId",
+  rvt."refVehicleTypeName",
+  ct."refCarTypeName",
+  rc."refExtraKMcharges",
+  rc."refCarCustId",
+  rc."refPersonCount",
+  rc."refBagCount",
+  rc."refFuelType",
+  rc."refcarManufactureYear",
+  rc."refMileage",
+  rc."refTrasmissionType",
+  rc."refFuleLimit",
+  rc."refCarPath",
+  rc."refCarPrice",
+  rc."refCarTypeId",
+  cg."refCarGroupName"
+FROM
+  public."refCarsTable" rc
+  LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+  LEFT JOIN public."refCarType" ct ON CAST(ct."refCarTypeId" AS INTEGER) = rc."refCarTypeId"
+  LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = rc."refCarGroupId"
+WHERE
+  rc."isDelete" IS NOT true
+  AND rc."refCarTypeId" = $1
+  AND rvt."refVehicleTypeId" = $2
+  AND rc."refPersonCount"::integer >= $3;
+  `;
 
+
+export const getCarsByIdQuery = `
 WITH "carData" AS (
   SELECT
     cg."refCarGroupName",
     rvt."refVehicleTypeId",
     rvt."refVehicleTypeName",
-  rc."refExtraKMcharges",
+    rc."refExtraKMcharges",
     rc."refPersonCount",
     rc."refBagCount",
     rc."refFuelType",
@@ -878,11 +899,11 @@ WITH "carData" AS (
     tc."refRentalAgreement",
     tc."refPaymentTerms",
     tc."refFuelPolicy",
-  rc."refExtraKMcharges"
+    rc."refExtraKMcharges"
 )
 
 SELECT
-cd."refExtraKMcharges",
+  cd."refExtraKMcharges",
   cd."refVehicleTypeId",
   cd."refVehicleTypeName",
   cd."refPersonCount",
@@ -906,7 +927,7 @@ cd."refExtraKMcharges",
       'refFormDetails', fd."refFormDetails",
       'refPrice', fd."refPrice"
     )
-  ) AS "refFormDetails",
+  ) FILTER (WHERE fd."isDelete" IS NOT true) AS "refFormDetails",
   cd."refRentalAgreement",
   cd."refPaymentTerms",
   cd."refFuelPolicy",
@@ -944,50 +965,134 @@ GROUP BY
   cd."refBenifitsName",
   cd."refExtraKMcharges";
       `;
+// export const getCarsByIdQuery = `
 
-// export const listCarParkingQuery = `
+// WITH "carData" AS (
+//   SELECT
+//     cg."refCarGroupName",
+//     rvt."refVehicleTypeId",
+//     rvt."refVehicleTypeName",
+//   rc."refExtraKMcharges",
+//     rc."refPersonCount",
+//     rc."refBagCount",
+//     rc."refFuelType",
+//     rc."refcarManufactureYear",
+//     rc."refMileage",
+//     rc."refTrasmissionType",
+//     rc."refFuleLimit",
+//     rc."refCarPath",
+//     rc."refCarPrice",
+//     rc."refOtherRequirements",
+//     rc."refInclude",
+//     rc."refExclude",
+//     rc."refFormDetails",
+//     rc."refCarTypeId",
+//     ct."refCarTypeName",
+//     tc."refRentalAgreement",
+//     tc."refPaymentTerms",
+//     tc."refFuelPolicy",
+//     ARRAY_AGG(rb."refBenifitsName") AS "refBenifitsName"
+//   FROM
+//     public."refCarsTable" rc
+//     LEFT JOIN public."refVehicleType" rvt ON CAST(rvt."refVehicleTypeId" AS INTEGER) = rc."refVehicleTypeId"
+//     LEFT JOIN public."refTermsAndConditions" tc ON CAST(tc."refCarsId" AS INTEGER) = rc."refCarsId"
+//     LEFT JOIN public."refCarType" ct ON CAST(ct."refCarTypeId" AS INTEGER) = rc."refCarTypeId"
+//     LEFT JOIN public."refCarGroup" cg ON CAST(cg."refCarGroupId" AS INTEGER) = rc."refCarGroupId"
+//     LEFT JOIN public."refBenifits" rb ON CAST(rb."refBenifitsId" AS INTEGER) = ANY (
+//       string_to_array(regexp_replace(rc."refBenifits", '[{}]', '', 'g'), ',')::INTEGER[]
+//     )
+//   WHERE
+//     rc."isDelete" IS NOT true
+//     AND rc."refCarsId" = $1
+//   GROUP BY
+//     cg."refCarGroupName",
+//     rvt."refVehicleTypeId",
+//     rvt."refVehicleTypeName",
+//     rc."refPersonCount",
+//     rc."refBagCount",
+//     rc."refFuelType",
+//     rc."refcarManufactureYear",
+//     rc."refMileage",
+//     rc."refTrasmissionType",
+//     rc."refFuleLimit",
+//     rc."refCarPath",
+//     rc."refCarPrice",
+//     rc."refOtherRequirements",
+//     rc."refInclude",
+//     rc."refExclude",
+//     rc."refFormDetails",
+//     rc."refCarTypeId",
+//     ct."refCarTypeName",
+//     tc."refRentalAgreement",
+//     tc."refPaymentTerms",
+//     tc."refFuelPolicy",
+//   rc."refExtraKMcharges"
+// )
+
 // SELECT
-//   cp.*,
-//   pt."refParkingTypeName",
-//   cpt."refCarParkingTypeName",
-//   cpb."travelStartDate",
-//   cpb."travelEndDate",
-//   array_agg(DISTINCT rf."refServiceFeatures") AS "ServiceFeaturesList"
+// cd."refExtraKMcharges",
+//   cd."refVehicleTypeId",
+//   cd."refVehicleTypeName",
+//   cd."refPersonCount",
+//   cd."refBagCount",
+//   cd."refFuelType",
+//   cd."refcarManufactureYear",
+//   cd."refMileage",
+//   cd."refTrasmissionType",
+//   cd."refFuleLimit",
+//   cd."refCarPath",
+//   cd."refCarPrice",
+//   cd."refOtherRequirements",
+//   cd."refCarTypeId",
+//   cd."refCarTypeName",
+//   cd."refCarGroupName",
+//   ARRAY_AGG(DISTINCT ri."refIncludeName") AS "refIncludeName",
+//   ARRAY_AGG(DISTINCT re."refExcludeName") AS "refExcludeName",
+//   jsonb_agg(
+//     DISTINCT jsonb_build_object(
+//       'refFormDetailsId', fd."refFormDetailsId",
+//       'refFormDetails', fd."refFormDetails",
+//       'refPrice', fd."refPrice"
+//     )
+//   ) AS "refFormDetails",
+//   cd."refRentalAgreement",
+//   cd."refPaymentTerms",
+//   cd."refFuelPolicy",
+//   cd."refBenifitsName"
 // FROM
-//   public."refCarParkingTable" AS cp
-//   LEFT JOIN public."refParkingType" pt ON pt."refParkingTypeId" = cp."refParkingTypeId"
-//   LEFT JOIN public."userCarParkingBooking" cpb ON cpb."refCarParkingId" = cp."refCarParkingId"
-//   LEFT JOIN public."refCarParkingType" cpt ON cpt."refCarParkingTypeId" = cp."refCarParkingTypeId"
-//   LEFT JOIN public."refServiceFeatures" rf ON rf."refServiceFeaturesId" = ANY (
-//     string_to_array(
-//       regexp_replace(cp."ServiceFeatures", '[{}]', '', 'g'),
-//       ','
-//     )::int[]
+//   "carData" cd
+//   LEFT JOIN public."refInclude" ri ON CAST(ri."refIncludeId" AS INTEGER) = ANY (
+//     string_to_array(regexp_replace(cd."refInclude", '[{}]', '', 'g'), ',')::INTEGER[]
 //   )
-// WHERE
-//   $1::TEXT BETWEEN cp."MinimumBookingDuration" AND cp."MaximumBookingDuration"
-//   AND NOT (
-//     cpb."travelStartDate" <= $2::TEXT
-//     AND cpb."travelEndDate" >= $1::TEXT
+//   LEFT JOIN public."refExclude" re ON CAST(re."refExcludeId" AS INTEGER) = ANY (
+//     string_to_array(regexp_replace(cd."refExclude", '[{}]', '', 'g'), ',')::INTEGER[]
 //   )
-//   AND cp."refAssociatedAirport" = $3
-//   AND cp."refCarParkingTypeId" = $4
-//   AND cp."refParkingTypeId" = $5
-//   AND cp."isDelete" IS NOT true
+//   LEFT JOIN public."refFormDetails" fd ON CAST(fd."refFormDetailsId" AS INTEGER) = ANY (
+//     string_to_array(regexp_replace(cd."refFormDetails", '[{}]', '', 'g'), ',')::INTEGER[]
+//   )
 // GROUP BY
-//   cp."refCarParkingId",
-//   cp."MinimumBookingDuration",
-//   cp."MaximumBookingDuration",
-//   cp."refParkingTypeId",
-//   cp."refCarParkingTypeId",
-//   cp."refAssociatedAirport",
-//   cp."isDelete",
-//   pt."refParkingTypeName",
-//   cpt."refCarParkingTypeName",
-//   cpb."travelStartDate",
-//   cpb."travelEndDate"
+//   cd."refVehicleTypeId",
+//   cd."refVehicleTypeName",
+//   cd."refPersonCount",
+//   cd."refBagCount",
+//   cd."refFuelType",
+//   cd."refcarManufactureYear",
+//   cd."refMileage",
+//   cd."refTrasmissionType",
+//   cd."refFuleLimit",
+//   cd."refCarPath",
+//   cd."refCarPrice",
+//   cd."refOtherRequirements",
+//   cd."refCarTypeId",
+//   cd."refCarTypeName",
+//   cd."refCarGroupName",
+//   cd."refRentalAgreement",
+//   cd."refPaymentTerms",
+//   cd."refFuelPolicy",
+//   cd."refBenifitsName",
+//   cd."refExtraKMcharges";
+//       `;
 
-// `;
 
 export const listCarParkingQuery = `
 SELECT DISTINCT
@@ -1081,6 +1186,30 @@ FROM
 
 export const listDestinationQuery = `SELECT * FROM public."refDestination" WHERE "isDelete" IS NOT true
         `;
+
+export const listVehicleTypeQuery = `
+SELECT
+  *
+FROM
+  public."refVehicleType"
+WHERE
+  "isDelete" IS NOT true        `;
+
+export const listCarTypeQuery = `
+SELECT
+  *
+FROM
+  public."refCarType"
+WHERE
+  "isDelete" IS NOT true       `;
+
+export const listCarGroupQuery = `
+SELECT
+  *
+FROM
+  public."refCarGroup"
+WHERE
+  "isDelete" IS NOT true      `;
 
 export const getImageRecordQuery = `
 SELECT
@@ -1584,5 +1713,5 @@ SELECT
 FROM
   public."refFormDetails"
 WHERE
-  "refFormDetailsId" = ANY ($1::int[]);
+  "refFormDetailsId" = ANY($1::int[]) ;
 `;

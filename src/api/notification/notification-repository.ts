@@ -24,7 +24,7 @@ import {
 
 export class notificationRepository {
   public async addNotificationsV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refSubject, refDescription, refNotes } = userData;
@@ -79,7 +79,7 @@ export class notificationRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refNotificationsId, refSubject, refDescription, refNotes } =
@@ -125,7 +125,7 @@ export class notificationRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const Result = await executeQuery(listNotificationQuery);
@@ -154,7 +154,7 @@ export class notificationRepository {
     }
   }
   public async getNotificationsV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const Result = await executeQuery(getNotificationQuery, [
@@ -185,7 +185,7 @@ export class notificationRepository {
     }
   }
   public async deleteNotificationsV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const Result = await executeQuery(deleteNotificationQuery, [
@@ -221,11 +221,12 @@ export class notificationRepository {
   //--------------------------------------------------------------------------------------------------------
 
   public async staffNotificationCountV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
+        console.log('token', token)
     const tokens = generateTokenWithExpire(token, true);
     try {
 
-      const Result = await executeQuery(staffNotificationCountQuery, [tokendata.id]);
+      const Result = await executeQuery(staffNotificationCountQuery,[tokendata.roleId[0]]);
       console.log('Result', Result)
    
       return encrypt(
@@ -252,11 +253,17 @@ export class notificationRepository {
     }
   }
   public async staffNotificationsV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    console.log('token', token)
     const tokens = generateTokenWithExpire(token, true);
     try {
-      const Result1 = await executeQuery(readNotificationQuery,[tokendata.id]);
-      const Result2 = await executeQuery(unreadNotificationQuery,[tokendata.id])
+      
+      // const Result1 = await executeQuery(readNotificationQuery,[tokendata.id]);
+      const Result1 = await executeQuery(readNotificationQuery, [tokendata.roleId[0]]);
+
+      console.log('Result1', Result1)
+      const Result2 = await executeQuery(unreadNotificationQuery,[tokendata.roleId[0]])
+      console.log('Result2', Result2)
       return encrypt(
         {
           success: true,
@@ -282,7 +289,7 @@ export class notificationRepository {
     }
   }
   public async updateReadStatusV1(userData: any, tokendata: any): Promise<any> {
-    const token = { id: tokendata.id };
+        const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const readResult = await executeQuery(updateReadStatusQuery,[userData.refNotificationsId]);

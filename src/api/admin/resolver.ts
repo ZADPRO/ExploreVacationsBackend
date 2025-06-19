@@ -35,6 +35,9 @@ export class adminResolver {
   public async updateEmployeeV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.adminRepository.updateEmployeeV1(user_data, token_data, domain_code);
   }
+  public async updateEmployeeProfileV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.updateEmployeeProfileV1(user_data, token_data, domain_code);
+  }
   public async deleteEmployeeImageV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.adminRepository.deleteEmployeeImageV1(user_data, token_data, domain_code);
   }
@@ -76,5 +79,14 @@ export class adminResolver {
   }
   public async viewCarAgreementV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
     return await this.adminRepository.viewCarAgreementV1(user_data, token_data, domain_code);
+  }
+  public async deleteAuditV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.deleteAuditV1(user_data, token_data, domain_code);
+  }
+  public async deleteUsersV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.deleteUsersV1(user_data, token_data, domain_code);
+  }
+  public async employeeProfileV1(user_data: any, token_data: any, domain_code: any,): Promise<any> {
+    return await this.adminRepository.employeeProfileV1(user_data, token_data, domain_code);
   }
 }

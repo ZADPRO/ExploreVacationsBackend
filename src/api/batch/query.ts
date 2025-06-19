@@ -6,7 +6,8 @@ FROM
   JOIN public."users" u ON CAST(u."refuserId" AS INTEGER) = ut."refuserId"
 WHERE
   to_char(ut."refPickupDate"::date, 'YYYY-MM-DD') = to_char(CURRENT_DATE::TIMESTAMP, 'YYYY-MM-DD');
-`;
+
+  `;
 
 export const getCarData = `
 SELECT
