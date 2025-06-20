@@ -273,7 +273,7 @@ export class userRepository {
       // Send admin mail async (non-blocking)
       const main = async () => {
         const adminMail = {
-          to: "indumathi123indumathi@gmail.com",
+          to: "tours_booking@explorevacations.ch",
           subject: "New Tour Booking Received",
           html: generateTourBookingEmailContent(Result),
         };
