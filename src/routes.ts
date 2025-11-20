@@ -13,6 +13,8 @@ import { homePageRoutes } from "./api/homePage/routes";
 import { partnerRoutes } from "./api/partner/routes";
 import { flightRoutes } from "./api/flightBooking/routes";
 import { newCarsRoutes } from "./api/newCar/routes";
+import { googleAPIRoutes } from "./api/googleApi/routes";
+import { transferRoutes } from "./api/transfermodule/routes";
 
 export default class Router {
   public static async loadRoutes(server: Hapi.Server): Promise<any> {
@@ -30,5 +32,7 @@ export default class Router {
     await new partnerRoutes().register(server);
     await new flightRoutes().register(server);
     await new newCarsRoutes().register(server);
+    await new googleAPIRoutes().register(server);
+    await new transferRoutes().register(server);
   }
 }

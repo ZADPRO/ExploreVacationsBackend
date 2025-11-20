@@ -40,11 +40,10 @@ export const storeFile = async (
   uploadType: number // Renamed from `path` to `uploadType` for clarity
 ): Promise<string> => {
   let uploadDir: string;
-  
+
   console.log("uploadType", uploadType);
   // Determine the directory based on the uploadType value
   if (uploadType === 1) {
-
     uploadDir = path.join(process.cwd(), "./src/assets/gallery");
   } else if (uploadType === 2) {
     uploadDir = path.join(process.cwd(), "./src/assets/cars");

@@ -47,7 +47,7 @@ import { any } from "@hapi/joi";
 export class settingsRepository {
   public async addDestinationV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -114,13 +114,13 @@ export class settingsRepository {
     tokenData: any
   ): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokenData.id, roleId: tokenData.roleId };
+    const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const { refDestinationId, refDestinationName } = userData;
 
       const checkResult = await executeQuery(checkQuery, [refDestinationId]);
-      
+
       if (checkResult[0]?.count == 0) {
         return encrypt(
           {
@@ -132,7 +132,7 @@ export class settingsRepository {
         );
       }
       const check: any = await executeQuery(checkDestinationQuery, [
-        refDestinationName
+        refDestinationName,
       ]);
 
       const count = Number(check[0]?.count || 0); // safely convert to number
@@ -169,9 +169,8 @@ export class settingsRepository {
         {
           success: true,
           message: "Destination updated successfully",
-          result:updateDestination,
+          result: updateDestination,
           token: tokens,
-        
         },
         true
       );
@@ -194,7 +193,7 @@ export class settingsRepository {
     }
   }
   public async listDestinationV1(userData: any, tokenData: any): Promise<any> {
-        const token = { id: tokenData.id, roleId: tokenData.roleId };
+    const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const destinationList = await executeQuery(listDestinationQuery);
@@ -228,7 +227,7 @@ export class settingsRepository {
     userData: any,
     tokendata: any
   ): Promise<any> {
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     const client: PoolClient = await getClient();
 
@@ -301,14 +300,13 @@ export class settingsRepository {
 
   public async addLocationV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
 
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
 
       const { locations, refDestinationId } = userData; // Assuming the payload will have an array of locations
-   
 
       if (!Array.isArray(locations) || locations.length === 0) {
         return encrypt(
@@ -328,12 +326,11 @@ export class settingsRepository {
           continue;
         }
         const duplicateCheck: any = await client.query(checkduplicateQuery, [
-          refLocation
+          refLocation,
         ]);
 
         // const count = Number(duplicateCheck[0]?.count || 0); // safely convert to number
         const count = Number(duplicateCheck.rows[0]?.count || 0);
-
 
         if (count > 0) {
           throw new Error(
@@ -349,7 +346,6 @@ export class settingsRepository {
         ]);
 
         resultArray.push(result);
-    
       }
 
       const history = [
@@ -399,7 +395,7 @@ export class settingsRepository {
   }
   public async updateLocationV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokenData.id, roleId: tokenData.roleId };
+    const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -481,7 +477,7 @@ export class settingsRepository {
     }
   }
   public async listLocationV1(userData: any, tokendata: any): Promise<any> {
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listLocationQuery);
@@ -508,7 +504,7 @@ export class settingsRepository {
   }
   public async deleteLocationV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -521,7 +517,6 @@ export class settingsRepository {
         CurrentTime(),
         tokendata.id,
       ]);
-
 
       if (result.rowCount === 0) {
         await client.query("ROLLBACK");
@@ -582,7 +577,7 @@ export class settingsRepository {
 
   public async addCategoriesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -592,16 +587,15 @@ export class settingsRepository {
       const userResult = await client.query(addCategoryQuery, [
         refCategory,
         CurrentTime(),
-        tokendata.id
+        tokendata.id,
       ]);
 
       const check: any = await executeQuery(checkDuplicateCategoryQuery, [
-        refCategory
+        refCategory,
       ]);
-  
+
       // const count = Number(check[0]?.count || 0); // safely convert to number
       const count = Number(check[0]?.count || 0);
-
 
       if (count > 0) {
         throw new Error(
@@ -646,7 +640,7 @@ export class settingsRepository {
   }
   public async updateCategoriesV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokenData.id, roleId: tokenData.roleId };
+    const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -673,7 +667,6 @@ export class settingsRepository {
       // console.log("check", check.rows[0].count);
       // const count = Number(check.rows[0].count || 0); // safely convert to number
       const count = Number(check.count || 0); // safely convert to number
-
 
       if (count > 0) {
         throw new Error(
@@ -728,7 +721,7 @@ export class settingsRepository {
     }
   }
   public async listCategoriesV1(userData: any, tokendata: any): Promise<any> {
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listCategoryQuery);
@@ -755,7 +748,7 @@ export class settingsRepository {
   }
   public async deleteCategoriesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
@@ -828,7 +821,7 @@ export class settingsRepository {
 
   public async addActivitiesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -886,7 +879,7 @@ export class settingsRepository {
   }
   public async updateActivitiesV1(userData: any, tokenData: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokenData.id, roleId: tokenData.roleId };
+    const token = { id: tokenData.id, roleId: tokenData.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       await client.query("BEGIN");
@@ -961,7 +954,7 @@ export class settingsRepository {
     }
   }
   public async listActivitiesV1(userData: any, tokendata: any): Promise<any> {
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
     try {
       const result = await executeQuery(listActivitiesQuery);
@@ -989,7 +982,7 @@ export class settingsRepository {
   }
   public async deleteActivitiesV1(userData: any, tokendata: any): Promise<any> {
     const client: PoolClient = await getClient();
-        const token = { id: tokendata.id, roleId: tokendata.roleId };
+    const token = { id: tokendata.id, roleId: tokendata.roleId };
     const tokens = generateTokenWithExpire(token, true);
 
     try {
