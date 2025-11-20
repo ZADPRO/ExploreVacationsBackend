@@ -5,6 +5,7 @@ import { generateTokenWithExpire } from "../../helper/token";
 import { CurrentTime } from "../../helper/common";
 import { storeFile, viewFile } from "../../helper/storage";
 import path from "path";
+import logger from "../../helper/logger";
 
 export class transferRepository {
   // CREATE
@@ -493,40 +494,50 @@ export class transferRepository {
     }
   }
 
-  // CAR BADGES
-  public async addBadge(data: any, user: any): Promise<any> {
+  public async addBadge(data: any, tokenData: any): Promise<any> {
+    logger.info("[Badge] Add Request:", data);
+
     const client = await getClient();
-    const tokens = generateTokenWithExpire({ id: user.id }, true);
+    const token = generateTokenWithExpire(tokenData, true);
 
     try {
       await client.query("BEGIN");
 
       const query = `
-        INSERT INTO "TransferCarBadges" 
-        ("badgeName", "badgeColorCode", "createdAt", "createdBy", "isDelete")
-        VALUES ($1, $2, $3, $4, false)
-        RETURNING *;
-      `;
+      INSERT INTO "TransferCarBadges"
+      ("badgeName", "badgeColorCode", "createdAt", "createdBy", "updatedAt", "updatedBy", "isDelete")
+      VALUES ($1, $2, $3, $4, $3, $4, false)
+      RETURNING *;
+    `;
 
-      const values = [
-        data.badgeName,
-        data.badgeColorCode,
-        CurrentTime(),
-        user.id,
-      ];
+      const now = CurrentTime();
+
+      const values = [data.badgeName, data.badgeColorCode, now, tokenData.id];
 
       const result = await client.query(query, values);
 
       await client.query("COMMIT");
       return encrypt(
-        { success: true, data: result.rows[0], token: tokens },
+        {
+          success: true,
+          message: "Badge added successfully",
+          data: result.rows[0],
+          token: token,
+        },
         true
       );
     } catch (err: any) {
       await client.query("ROLLBACK");
+      logger.error("Add Badge Error:", err);
+
       return encrypt(
-        { success: false, message: err.message, token: tokens },
-        false
+        {
+          success: false,
+          message: "Error adding badge",
+          error: String(err),
+          token: token,
+        },
+        true
       );
     } finally {
       client.release();
@@ -534,55 +545,125 @@ export class transferRepository {
   }
 
   // READ
-  public async getBadges(): Promise<any> {
-    const query = `SELECT * FROM "TransferCarBadges" WHERE "isDelete" = false ORDER BY id DESC`;
+  public async getBadges(tokenData: any): Promise<any> {
+    logger.info("[Badge] Fetching all badges");
+
+    const token = generateTokenWithExpire(tokenData, true);
+
+    const query = `
+    SELECT *
+    FROM "TransferCarBadges"
+    WHERE "isDelete" = false
+    ORDER BY id DESC;
+  `;
+
     const result = await executeQuery(query, []);
-    return { success: true, data: result };
+
+    return encrypt(
+      {
+        success: true,
+        message: "Badges fetched successfully",
+        data: result,
+        token: token,
+      },
+      true
+    );
   }
 
   // UPDATE
-  public async updateBadge(id: number, data: any, user: any): Promise<any> {
+  public async updateBadge(
+    id: number,
+    data: any,
+    tokenData: any
+  ): Promise<any> {
+    logger.info(`[Badge] Update ID=${id}`, data);
+
+    const token = generateTokenWithExpire(tokenData, true);
+
     const query = `
-      UPDATE "TransferCarBadges"
-      SET 
-        "badgeName" = $1,
+    UPDATE "TransferCarBadges"
+    SET "badgeName" = $1,
         "badgeColorCode" = $2,
         "updatedAt" = $3,
         "updatedBy" = $4
-      WHERE id = $5
-      RETURNING *;
-    `;
+    WHERE id = $5 AND "isDelete" = false
+    RETURNING *;
+  `;
 
     const values = [
       data.badgeName,
       data.badgeColorCode,
       CurrentTime(),
-      user.id,
+      tokenData.id,
       id,
     ];
 
-    const result = await executeQuery(query, values);
-    return { success: true, data: result[0] };
+    try {
+      const result = await executeQuery(query, values);
+
+      if (result.length === 0) {
+        return encrypt(
+          { success: false, message: "Badge not found", token },
+          true
+        );
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "Badge updated successfully",
+          data: result[0],
+          token,
+        },
+        true
+      );
+    } catch (err: any) {
+      logger.error("Update Badge Error:", err);
+
+      return encrypt({ success: false, message: err.message, token }, true);
+    }
   }
 
-  // DELETE (soft delete)
-  public async deleteBadge(id: number, user: any): Promise<any> {
+  // DELETE
+  public async deleteBadge(id: number, tokenData: any): Promise<any> {
+    logger.info(`[Badge] Delete ID=${id}`);
+
+    const token = generateTokenWithExpire(tokenData, true);
+
     const query = `
-      UPDATE "TransferCarBadges"
-      SET "isDelete" = true,
-          "updatedAt" = $1,
-          "updatedBy" = $2
-      WHERE id = $3
-      RETURNING *;
-    `;
+    UPDATE "TransferCarBadges"
+    SET "isDelete" = true,
+        "updatedAt" = $1,
+        "updatedBy" = $2
+    WHERE id = $3
+    RETURNING *;
+  `;
 
-    const values = [CurrentTime(), user.id, id];
-    const result = await executeQuery(query, values);
+    const values = [CurrentTime(), tokenData.id, id];
 
-    return {
-      success: true,
-      message: "Badge deleted successfully",
-      data: result[0],
-    };
+    try {
+      const result = await executeQuery(query, values);
+
+      if (!result.length) {
+        return encrypt(
+          { success: false, message: "Badge not found", token },
+          true
+        );
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "Badge deleted successfully",
+          data: result[0],
+          token,
+        },
+        true
+      );
+    } catch (err: any) {
+      logger.error("Delete Badge Error:", err);
+
+      return encrypt({ success: false, message: err.message, token }, true);
+    }
   }
 }

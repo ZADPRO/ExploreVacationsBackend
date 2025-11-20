@@ -134,6 +134,7 @@ export class transferRoutes implements IRoute {
           method: "GET",
           path: "/api/v1/carBadges",
           config: {
+            pre: [{ method: validateToken, assign: "token" }],
             handler: controller.getBadges,
             description: "Get Car Badges",
             tags: ["api", "CarBadges"],

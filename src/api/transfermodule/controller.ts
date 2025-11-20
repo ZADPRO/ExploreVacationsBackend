@@ -268,35 +268,84 @@ export class TransferController {
 
   // CAR BADGES CONTROLLER
   public addBadge = async (request: any, h: Hapi.ResponseToolkit) => {
-    logger.info(`Add Badge => ${request.url.href}`);
+    logger.info(`[CarBadge] Add Badge => ${request.url.href}`);
 
     try {
-      const user = { id: request.plugins.token.id };
-      const result = await this.repository.addBadge(request.payload, user);
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId,
+      };
+
+      const result = await this.repository.addBadge(
+        request.payload,
+        decodedToken
+      );
+
       return h.response(result).code(result.success ? 201 : 200);
     } catch (err: any) {
+      logger.error("[CarBadge] Add Badge Error =>", err);
       return h.response({ success: false, message: err.message }).code(500);
     }
   };
 
   public getBadges = async (request: any, h: Hapi.ResponseToolkit) => {
-    const result = await this.repository.getBadges();
-    return h.response(result).code(200);
+    logger.info(`[CarBadge] Get Badges => ${request.url.href}`);
+
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId,
+      };
+
+      const result = await this.repository.getBadges(decodedToken);
+      return h.response(result).code(200);
+    } catch (err: any) {
+      logger.error("[CarBadge] Get Badges Error =>", err);
+      return h.response({ success: false, message: err.message }).code(500);
+    }
   };
 
   public updateBadge = async (request: any, h: Hapi.ResponseToolkit) => {
-    const user = { id: request.plugins.token.id };
-    const id = request.params.id;
+    logger.info(`[CarBadge] Update Badge => ${request.url.href}`);
 
-    const result = await this.repository.updateBadge(id, request.payload, user);
-    return h.response(result).code(200);
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId,
+      };
+
+      const id = Number(request.params.id);
+
+      const result = await this.repository.updateBadge(
+        id,
+        request.payload,
+        decodedToken
+      );
+
+      return h.response(result).code(200);
+    } catch (err: any) {
+      logger.error("[CarBadge] Update Badge Error =>", err);
+      return h.response({ success: false, message: err.message }).code(500);
+    }
   };
 
   public deleteBadge = async (request: any, h: Hapi.ResponseToolkit) => {
-    const user = { id: request.plugins.token.id };
-    const id = request.params.id;
+    logger.info(`[CarBadge] Delete Badge => ${request.url.href}`);
 
-    const result = await this.repository.deleteBadge(id, user);
-    return h.response(result).code(200);
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId,
+      };
+
+      const id = Number(request.params.id);
+
+      const result = await this.repository.deleteBadge(id, decodedToken);
+
+      return h.response(result).code(200);
+    } catch (err: any) {
+      logger.error("[CarBadge] Delete Badge Error =>", err);
+      return h.response({ success: false, message: err.message }).code(500);
+    }
   };
 }
