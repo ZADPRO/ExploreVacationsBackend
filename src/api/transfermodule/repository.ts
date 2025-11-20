@@ -6,6 +6,7 @@ import { CurrentTime } from "../../helper/common";
 import { storeFile, viewFile } from "../../helper/storage";
 import path from "path";
 import logger from "../../helper/logger";
+import fs from "fs";
 
 export class transferRepository {
   // CREATE
@@ -362,19 +363,38 @@ export class transferRepository {
 
     try {
       const query = `
-        SELECT * FROM "TransferCars"
-        WHERE "isDelete" = false
-        ORDER BY id DESC;
-      `;
+      SELECT * FROM "TransferCars"
+      WHERE "isDelete" = false
+      ORDER BY id DESC;
+    `;
 
       const result = await client.query(query);
-      console.log("\n\n\nresult", result.rows);
+
+      const cars = [];
+
+      for (const car of result.rows) {
+        let base64Image = "";
+
+        try {
+          const buffer = fs.readFileSync(car.car_image); // read file
+          base64Image = `data:image/jpeg;base64,${buffer.toString("base64")}`;
+        } catch (e) {
+          console.log("Image read error:", e);
+          base64Image = "";
+        }
+
+        cars.push({
+          ...car,
+          car_image_base64: base64Image,
+        });
+      }
 
       return encrypt(
         {
           success: true,
           message: "Cars fetched successfully",
-          data: result.rows,
+          data: cars,
+          token: token,
         },
         true
       );
@@ -435,7 +455,12 @@ export class transferRepository {
       }
 
       return encrypt(
-        { success: true, message: "Car updated", data: result.rows[0] },
+        {
+          success: true,
+          message: "Car updated",
+          data: result.rows[0],
+          token: token,
+        },
         true
       );
     } catch (err) {
@@ -484,6 +509,7 @@ export class transferRepository {
           success: true,
           message: "Car deleted successfully",
           data: result.rows[0],
+          token: token,
         },
         true
       );
