@@ -229,7 +229,7 @@ export class transferRepository {
           data: result.rows[0],
           token: tokens,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       console.log("error", error);
@@ -281,7 +281,7 @@ export class transferRepository {
           filePath: filePath,
           files: storedFiles,
         },
-        false
+        true
       );
     } catch (error) {
       console.error("Error occurred:", error);
@@ -307,14 +307,14 @@ export class transferRepository {
       const now = CurrentTime();
 
       const insertQuery = `
-        INSERT INTO "TransferCars"
-          (car_name, car_brand, car_image, price, passengers, luggage,
-           manufacturer_year, mileage, description, car_badges, car_services,
-           "createdAt", "createdBy", "updatedAt", "updatedBy", "isDelete")
-        VALUES
-          ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$12,$13,false)
-        RETURNING *;
-      `;
+      INSERT INTO "TransferCars"
+        (car_name, car_brand, car_image, price, passengers, luggage,
+         manufacturer_year, mileage, description, car_badges, car_services,
+         "specialPrice", "createdAt", "createdBy", "updatedAt", "updatedBy", "isDelete")
+      VALUES
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$13,$14,false)
+      RETURNING *;
+    `;
 
       const result = await client.query(insertQuery, [
         data.car_name,
@@ -326,8 +326,9 @@ export class transferRepository {
         data.manufacturer_year,
         data.mileage,
         data.description,
-        data.car_badges, // comma-separated text from frontend
-        data.car_services, // comma-separated text from frontend
+        data.car_badges,
+        data.car_services,
+        data.specialPrice ?? null, // NEW FIELD
         now,
         tokenData.id,
       ]);
@@ -388,6 +389,7 @@ export class transferRepository {
   }
 
   // UPDATE
+  // UPDATE
   public async updateCar(id: number, data: any, tokenData: any): Promise<any> {
     const client = await getClient();
     const token = generateTokenWithExpire(tokenData, true);
@@ -398,14 +400,15 @@ export class transferRepository {
       const now = CurrentTime();
 
       const updateQuery = `
-        UPDATE "TransferCars"
-        SET car_name=$1, car_brand=$2, car_image=$3, price=$4,
-            passengers=$5, luggage=$6, manufacturer_year=$7, mileage=$8,
-            description=$9, car_badges=$10, car_services=$11,
-            "updatedAt"=$12, "updatedBy"=$13
-        WHERE id=$14 AND "isDelete" = false
-        RETURNING *;
-      `;
+      UPDATE "TransferCars"
+      SET car_name=$1, car_brand=$2, car_image=$3, price=$4,
+          passengers=$5, luggage=$6, manufacturer_year=$7, mileage=$8,
+          description=$9, car_badges=$10, car_services=$11,
+          "specialPrice"=$12,
+          "updatedAt"=$13, "updatedBy"=$14
+      WHERE id=$15 AND "isDelete" = false
+      RETURNING *;
+    `;
 
       const result = await client.query(updateQuery, [
         data.car_name,
@@ -419,6 +422,7 @@ export class transferRepository {
         data.description,
         data.car_badges,
         data.car_services,
+        data.specialPrice ?? null, // NEW FIELD
         now,
         tokenData.id,
         id,
@@ -494,6 +498,7 @@ export class transferRepository {
     }
   }
 
+  // CAR BADGES
   public async addBadge(data: any, tokenData: any): Promise<any> {
     logger.info("[Badge] Add Request:", data);
 

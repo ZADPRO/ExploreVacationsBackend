@@ -1,0 +1,267 @@
+2025-11-18 12:16:34 [info]: ✅ MinIO client initialized for Bulk Image Upload
+2025-11-18 12:16:34 [info]: ✅ MINIO credentials loaded from .env
+2025-11-18 12:16:34 [error]: 🔑 MINIO_ACCESS_KEY: %sHFcE****
+2025-11-18 12:16:34 [info]: 🔐 MINIO_SECRET_KEY: %sDFJ7****
+2025-11-18 12:16:34 [info]: 🌐 MinIO Endpoint: %stest-zad.brightoncloudtech.com:443
+2025-11-18 12:16:34 [info]: 🔒 Use SSL: %vtrue
+2025-11-18 12:16:34 [info]: ✅ MinIO client initialized successfully
+2025-11-18 12:17:46 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:17:46 [error]: ❌ Missing Token in request header
+2025-11-18 12:20:53 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:20:53 [error]: ❌ Missing Token in request header
+2025-11-18 12:20:53 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:20:53 [error]: ❌ Missing Token in request header
+2025-11-18 12:20:53 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:20:53 [error]: ❌ Missing Token in request header
+2025-11-18 12:20:53 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:20:53 [error]: ❌ Missing Token in request header
+2025-11-18 12:20:53 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:20:53 [error]: ❌ Missing Token in request header
+2025-11-18 12:20:59 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:20:59 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:03 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:03 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:07 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:07 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:10 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:10 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:12 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:12 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:12 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:12 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:12 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:12 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:15 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:15 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:22 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:22 [info]: ✂️ Stripping Bearer prefix
+2025-11-18 12:21:22 [info]: 📜 Final Token String: null
+2025-11-18 12:21:22 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:22 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:22 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:22 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:22 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:22 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:28 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:28 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:28 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:28 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:28 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:28 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:28 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:28 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:29 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:29 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:31 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:31 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:31 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:31 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:31 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:31 [error]: ❌ Missing Token in request header
+2025-11-18 12:21:31 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:21:31 [error]: ❌ Missing Token in request header
+2025-11-18 12:22:11 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:22:11 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:22:11 [info]: ✂️ Stripping Bearer prefix
+2025-11-18 12:22:11 [info]: 📜 Final Token String: null
+2025-11-18 12:22:11 [error]: ❌ Missing Token in request header
+2025-11-18 12:22:11 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:22:11 [error]: ❌ Missing Token in request header
+2025-11-18 12:22:11 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:22:11 [error]: ❌ Missing Token in request header
+2025-11-18 12:23:02 [info]: 
+
+Admin Login Controller -> 
+================
+2025-11-18 12:23:02 [info]: 
+
+User Details -----> 
+
+01SnehalayaTesting
+2025-11-18 12:23:02 [info]: Database query values ---> {3 Z02ADM0001 2 Snehalayaa Testing 01  0 01SnehalayaTesting 9876567898 thirukumara2003@gmail.com 01Sn7898 $2a$10$3ZjOxT4pqHe1K909Lp.z0uqq9kIJWUg3kepkNUErmio7Hxcc7PzzG}
+2025-11-18 12:23:02 [info]: Hashed Password$2a$10$3ZjOxT4pqHe1K909Lp.z0uqq9kIJWUg3kepkNUErmio7Hxcc7PzzG
+2025-11-18 12:23:02 [warning]: 
+
+Password checking => true
+2025-11-18 12:23:02 [info]: Login service - Logged Successfully for Username : 01SnehalayaTesting
+2025-11-18 12:23:02 [info]: 🔑 Creating JWT token...
+2025-11-18 12:23:02 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 12:23:02 [info]: 
+
+
+Token Testing --------->eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:02 [info]: Response for controller -> {true Logged in Successfully 0xc000148f20 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY }
+2025-11-18 12:23:07 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:23:07 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:07 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T12:23:07+05:30
+2025-11-18 12:23:07 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:07 [info]: ✅ Token valid for user ID: 3
+2025-11-18 12:23:07 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 12:23:07 [info]: 
+
+
+GetAllInitialCategoriesController Invoked
+2025-11-18 12:23:07 [info]: 🔍 Context Data: id=3, roleId=2, branchId=0
+2025-11-18 12:23:07 [info]: 🛠️ GetAllInitialCategoriesService invoked
+2025-11-18 12:23:07 [info]: ✅ Retrieved 5 initial categories from DB
+2025-11-18 12:23:07 [info]: Initial Categories fetched: count = 5
+2025-11-18 12:23:07 [info]: 🔑 Creating JWT token...
+2025-11-18 12:23:07 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 12:23:07 [info]: ✅ Sending response with initial category list
+
+
+2025-11-18 12:23:07 [info]: 
+=================================================================
+
+2025-11-18 12:23:07 [info]: ✅ DB connection closed
+2025-11-18 12:23:07 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 12:23:12 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:23:12 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:12 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T12:23:12+05:30
+2025-11-18 12:23:12 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:12 [info]: ✅ Token valid for user ID: 3
+2025-11-18 12:23:12 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 12:23:12 [info]: 
+
+📥 GetAllCategoriesController invoked
+2025-11-18 12:23:12 [info]: 🔍 Context Data: id=3, roleId=2, branchId=0
+2025-11-18 12:23:12 [info]: 📦 Fetching all categories from DB
+2025-11-18 12:23:12 [info]: 🛠️ GetAllCategoriesService invoked
+2025-11-18 12:23:12 [info]: ✅ Retrieved 5 categories from DB
+2025-11-18 12:23:12 [info]: 📊 Categories fetched: count = 5
+2025-11-18 12:23:12 [info]: 🔑 Creating JWT token...
+2025-11-18 12:23:12 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 12:23:12 [info]: ✅ Sending response with category list
+
+
+2025-11-18 12:23:12 [info]: 
+=================================================================
+
+2025-11-18 12:23:12 [info]: ✅ DB connection closed
+2025-11-18 12:23:12 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 12:23:15 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:23:15 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:15 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T12:23:15+05:30
+2025-11-18 12:23:15 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:15 [info]: ✅ Token valid for user ID: 3
+2025-11-18 12:23:15 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 12:23:15 [info]: Get All SubCategories Controller invoked
+2025-11-18 12:23:15 [info]: Fetched subcategories: [{1 CHETTINAD COTTON 1 COTTON 001 true 2025-11-14 15:07:06 Admin  } {2 JAIPUR COTTON 1 COTTON 002 true 2025-11-14 15:07:23 Admin  } {3 MANGALAGIRI COTTON 1 COTTON 003 true 2025-11-14 15:07:50 Admin  } {4 GADWAL COTTON 1 COTTON 004 true 2025-11-14 15:08:07 Admin  } {5 IKKAT COTTON  1 COTTON 005 true 2025-11-14 15:08:56 Admin  } {6 KANJIVARAM  2 SILK 006 true 2025-11-14 15:09:48 Admin  } {7 IKKAT  2 SILK 007 true 2025-11-14 15:10:30 Admin  } {8 GADWAL  2 SILK 008 true 2025-11-14 15:10:45 Admin  } {9 TISSUE  2 SILK 009 true 2025-11-14 15:11:11 Admin  } {10 TRADITONAL 2 SILK 010 true 2025-11-14 15:11:25 Admin  } {11 PRINTED  3 TUSSAR 011 true 2025-11-14 15:11:47 Admin  } {12 EMBROIDERY  3 TUSSAR 012 true 2025-11-14 15:12:01 Admin  } {13 HAND PAINTED 3 TUSSAR 013 true 2025-11-14 15:12:24 Admin  } {14 SEMI 3 TUSSAR 014 true 2025-11-14 15:12:33 Admin  } {15 KUPPADAM 4 SILK COTTON 015 true 2025-11-14 15:13:13 Admin  } {16 KORVAI 4 SILK COTTON 016 true 2025-11-14 15:13:33 Admin  } {17 MAHESHWARI 4 SILK COTTON 017 true 2025-11-14 15:13:58 Admin 2025-11-14 15:15:13 Admin} {18 MANGALAGIRI 4 SILK COTTON 018 true 2025-11-14 15:14:14 Admin  } {19 VENKATAGIRI 4 SILK COTTON 019 true 2025-11-14 15:14:35 Admin  } {20 MULBERRY 4 SILK COTTON 020 true 2025-11-14 15:19:18 Admin  } {21 MUNGA SILK 4 SILK COTTON 021 true 2025-11-14 15:19:51 Admin  } {22 DOLA 5 FANCY 022 true 2025-11-14 15:20:10 Admin  } {23 SEMI RAW 5 FANCY 023 true 2025-11-14 15:20:21 Admin  } {24 CHIFFON 5 FANCY 024 true 2025-11-14 15:20:30 Admin  } {25 MODAL 5 FANCY 025 true 2025-11-14 15:20:53 Admin  } {26 DUPION 5 FANCY 026 true 2025-11-14 15:21:08 Admin  } {27 KORA 5 FANCY 027 true 2025-11-14 15:21:18 Admin  }]
+2025-11-18 12:23:15 [info]: 🔑 Creating JWT token...
+2025-11-18 12:23:15 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 12:23:15 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 12:23:23 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:23:23 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:23 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:23:23 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T12:23:23+05:30
+2025-11-18 12:23:23 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:23 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T12:23:23+05:30
+2025-11-18 12:23:23 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:23 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:23 [info]: ✅ Token valid for user ID: 3
+2025-11-18 12:23:23 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 12:23:23 [info]: 
+
+📥 GetAllCategoriesController invoked
+2025-11-18 12:23:23 [info]: 🔍 Context Data: id=3, roleId=2, branchId=0
+2025-11-18 12:23:23 [info]: 🔐 JWT Middleware invoked
+2025-11-18 12:23:23 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:23 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T12:23:23+05:30
+2025-11-18 12:23:23 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 12:23:23 [info]: ✅ Token valid for user ID: 3
+2025-11-18 12:23:23 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 12:23:23 [info]: 
+
+📥 GetNewBranchWithFloorController invoked
+2025-11-18 12:23:23 [info]: 🔍 Context Data: id=3 (float64), roleId=2 (string), branchId=0 (float64)
+2025-11-18 12:23:23 [info]: ✅ Token valid for user ID: 3
+2025-11-18 12:23:23 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 12:23:23 [info]: Get All SubCategories Controller invoked
+2025-11-18 12:23:23 [info]: 📦 Fetching branch with floors from DB
+2025-11-18 12:23:23 [info]: 🛠️ GetBranchWithFloorsService invoked
+2025-11-18 12:23:23 [info]: 📦 Fetching all categories from DB
+2025-11-18 12:23:23 [info]: 📦 Executing query to fetch branches with floors and sections
+2025-11-18 12:23:23 [info]: 🛠️ GetAllCategoriesService invoked
+2025-11-18 12:23:23 [info]: ✅ Query executed successfully, fetched 8 rows
+2025-11-18 12:23:23 [info]: 🏢 Creating new branch: ID=1, Name=Coimbatore Branch
+2025-11-18 12:23:23 [info]:   🏬 Adding new floor: ID=13, Name=Ground Floor (BranchID=1)
+2025-11-18 12:23:23 [info]:     📂 Adding section: ID=22, Name=Fancy Section (FloorID=13)
+2025-11-18 12:23:23 [info]:     📂 Adding section: ID=23, Name=Kids Section (FloorID=13)
+2025-11-18 12:23:23 [info]:     📂 Adding section: ID=21, Name=Marriage Section (FloorID=13)
+2025-11-18 12:23:23 [info]:   🏬 Adding new floor: ID=18, Name=Ground Floor (BranchID=1)
+2025-11-18 12:23:23 [info]:     📂 Adding section: ID=30, Name=Silk Section (FloorID=18)
+2025-11-18 12:23:23 [info]: 🏢 Creating new branch: ID=2, Name=Ware House
+2025-11-18 12:23:23 [info]:   🏬 Adding new floor: ID=14, Name=Ground Floor (BranchID=2)
+2025-11-18 12:23:23 [info]:     📂 Adding section: ID=24, Name=Kids Section (FloorID=14)
+2025-11-18 12:23:23 [info]:     📂 Adding section: ID=25, Name=Fancy Section (FloorID=14)
+2025-11-18 12:23:23 [info]: 🏢 Creating new branch: ID=3, Name=Chennai Branch
+2025-11-18 12:23:23 [info]: ⚠️ No floor found for BranchID=3
+2025-11-18 12:23:23 [info]: 🏢 Creating new branch: ID=4, Name=Shopify
+2025-11-18 12:23:23 [info]: ⚠️ No floor found for BranchID=4
+2025-11-18 12:23:23 [info]: ✅ Successfully built response with 4 branches
+2025-11-18 12:23:23 [info]: 🔑 Creating JWT token...
+2025-11-18 12:23:23 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 12:23:23 [info]: ✅ DB connection closed
+2025-11-18 12:23:23 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 12:23:23 [info]: ✅ Retrieved 5 categories from DB
+2025-11-18 12:23:23 [info]: 📊 Categories fetched: count = 5
+2025-11-18 12:23:23 [info]: 🔑 Creating JWT token...
+2025-11-18 12:23:23 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 12:23:23 [info]: ✅ Sending response with category list
+
+
+2025-11-18 12:23:23 [info]: 
+=================================================================
+
+2025-11-18 12:23:23 [info]: Fetched subcategories: [{1 CHETTINAD COTTON 1 COTTON 001 true 2025-11-14 15:07:06 Admin  } {2 JAIPUR COTTON 1 COTTON 002 true 2025-11-14 15:07:23 Admin  } {3 MANGALAGIRI COTTON 1 COTTON 003 true 2025-11-14 15:07:50 Admin  } {4 GADWAL COTTON 1 COTTON 004 true 2025-11-14 15:08:07 Admin  } {5 IKKAT COTTON  1 COTTON 005 true 2025-11-14 15:08:56 Admin  } {6 KANJIVARAM  2 SILK 006 true 2025-11-14 15:09:48 Admin  } {7 IKKAT  2 SILK 007 true 2025-11-14 15:10:30 Admin  } {8 GADWAL  2 SILK 008 true 2025-11-14 15:10:45 Admin  } {9 TISSUE  2 SILK 009 true 2025-11-14 15:11:11 Admin  } {10 TRADITONAL 2 SILK 010 true 2025-11-14 15:11:25 Admin  } {11 PRINTED  3 TUSSAR 011 true 2025-11-14 15:11:47 Admin  } {12 EMBROIDERY  3 TUSSAR 012 true 2025-11-14 15:12:01 Admin  } {13 HAND PAINTED 3 TUSSAR 013 true 2025-11-14 15:12:24 Admin  } {14 SEMI 3 TUSSAR 014 true 2025-11-14 15:12:33 Admin  } {15 KUPPADAM 4 SILK COTTON 015 true 2025-11-14 15:13:13 Admin  } {16 KORVAI 4 SILK COTTON 016 true 2025-11-14 15:13:33 Admin  } {17 MAHESHWARI 4 SILK COTTON 017 true 2025-11-14 15:13:58 Admin 2025-11-14 15:15:13 Admin} {18 MANGALAGIRI 4 SILK COTTON 018 true 2025-11-14 15:14:14 Admin  } {19 VENKATAGIRI 4 SILK COTTON 019 true 2025-11-14 15:14:35 Admin  } {20 MULBERRY 4 SILK COTTON 020 true 2025-11-14 15:19:18 Admin  } {21 MUNGA SILK 4 SILK COTTON 021 true 2025-11-14 15:19:51 Admin  } {22 DOLA 5 FANCY 022 true 2025-11-14 15:20:10 Admin  } {23 SEMI RAW 5 FANCY 023 true 2025-11-14 15:20:21 Admin  } {24 CHIFFON 5 FANCY 024 true 2025-11-14 15:20:30 Admin  } {25 MODAL 5 FANCY 025 true 2025-11-14 15:20:53 Admin  } {26 DUPION 5 FANCY 026 true 2025-11-14 15:21:08 Admin  } {27 KORA 5 FANCY 027 true 2025-11-14 15:21:18 Admin  }]
+2025-11-18 12:23:23 [info]: 🔑 Creating JWT token...
+2025-11-18 12:23:23 [info]: ✅ DB connection closed
+2025-11-18 12:23:23 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 12:23:23 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 12:23:23 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 13:02:22 [info]: 🔐 JWT Middleware invoked
+2025-11-18 13:02:22 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 13:02:22 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T13:02:22+05:30
+2025-11-18 13:02:22 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 13:02:22 [info]: ✅ Token valid for user ID: 3
+2025-11-18 13:02:22 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 13:02:22 [info]: Create Employee Controller
+2025-11-18 13:02:22 [info]: 🔑 Creating JWT token...
+2025-11-18 13:02:22 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 13:02:22 [info]: Fetched all employees successfully
+2025-11-18 13:02:22 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 13:02:31 [info]: 🔐 JWT Middleware invoked
+2025-11-18 13:02:31 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 13:02:31 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T13:02:31+05:30
+2025-11-18 13:02:31 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 13:02:31 [info]: ✅ Token valid for user ID: 3
+2025-11-18 13:02:31 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 13:02:31 [info]: 
+
+📥 GetAllCategoriesController invoked
+2025-11-18 13:02:31 [info]: 🔍 Context Data: id=3, roleId=2, branchId=0
+2025-11-18 13:02:31 [info]: 📦 Fetching all categories from DB
+2025-11-18 13:02:31 [info]: 🛠️ GetAllCategoriesService invoked
+2025-11-18 13:02:31 [info]: ✅ Retrieved 5 categories from DB
+2025-11-18 13:02:31 [info]: 📊 Categories fetched: count = 5
+2025-11-18 13:02:31 [info]: 🔑 Creating JWT token...
+2025-11-18 13:02:31 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 13:02:31 [info]: ✅ Sending response with category list
+
+
+2025-11-18 13:02:31 [info]: 
+=================================================================
+
+2025-11-18 13:02:31 [info]: ✅ DB connection closed
+2025-11-18 13:02:31 [info]: ➡️ Passed JWT middleware successfully
+2025-11-18 13:02:37 [info]: 🔐 JWT Middleware invoked
+2025-11-18 13:02:37 [info]: 📜 Final Token String: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 13:02:37 [info]: 📝 Token Claims Extracted [Pre-Validation] -> id=3, roleId=2, branchId=0, time=2025-11-18T13:02:37+05:30
+2025-11-18 13:02:37 [info]: 🔍 Validating JWT token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJicmFuY2hJZCI6MCwiZXhwIjoxNzYzNTM1MTgyLCJpZCI6Mywicm9sZUlkIjoiMiJ9.VqmltZFvzNflz_mKAReDiwkygrjQLYf1MbfR3hTplmY
+2025-11-18 13:02:37 [info]: ✅ Token valid for user ID: 3
+2025-11-18 13:02:37 [info]: ✅ Setting claims in context: id=3, roleId=2, branchId=0
+2025-11-18 13:02:37 [info]: Get All SubCategories Controller invoked
+2025-11-18 13:02:37 [info]: Fetched subcategories: [{1 CHETTINAD COTTON 1 COTTON 001 true 2025-11-14 15:07:06 Admin  } {2 JAIPUR COTTON 1 COTTON 002 true 2025-11-14 15:07:23 Admin  } {3 MANGALAGIRI COTTON 1 COTTON 003 true 2025-11-14 15:07:50 Admin  } {4 GADWAL COTTON 1 COTTON 004 true 2025-11-14 15:08:07 Admin  } {5 IKKAT COTTON  1 COTTON 005 true 2025-11-14 15:08:56 Admin  } {6 KANJIVARAM  2 SILK 006 true 2025-11-14 15:09:48 Admin  } {7 IKKAT  2 SILK 007 true 2025-11-14 15:10:30 Admin  } {8 GADWAL  2 SILK 008 true 2025-11-14 15:10:45 Admin  } {9 TISSUE  2 SILK 009 true 2025-11-14 15:11:11 Admin  } {10 TRADITONAL 2 SILK 010 true 2025-11-14 15:11:25 Admin  } {11 PRINTED  3 TUSSAR 011 true 2025-11-14 15:11:47 Admin  } {12 EMBROIDERY  3 TUSSAR 012 true 2025-11-14 15:12:01 Admin  } {13 HAND PAINTED 3 TUSSAR 013 true 2025-11-14 15:12:24 Admin  } {14 SEMI 3 TUSSAR 014 true 2025-11-14 15:12:33 Admin  } {15 KUPPADAM 4 SILK COTTON 015 true 2025-11-14 15:13:13 Admin  } {16 KORVAI 4 SILK COTTON 016 true 2025-11-14 15:13:33 Admin  } {17 MAHESHWARI 4 SILK COTTON 017 true 2025-11-14 15:13:58 Admin 2025-11-14 15:15:13 Admin} {18 MANGALAGIRI 4 SILK COTTON 018 true 2025-11-14 15:14:14 Admin  } {19 VENKATAGIRI 4 SILK COTTON 019 true 2025-11-14 15:14:35 Admin  } {20 MULBERRY 4 SILK COTTON 020 true 2025-11-14 15:19:18 Admin  } {21 MUNGA SILK 4 SILK COTTON 021 true 2025-11-14 15:19:51 Admin  } {22 DOLA 5 FANCY 022 true 2025-11-14 15:20:10 Admin  } {23 SEMI RAW 5 FANCY 023 true 2025-11-14 15:20:21 Admin  } {24 CHIFFON 5 FANCY 024 true 2025-11-14 15:20:30 Admin  } {25 MODAL 5 FANCY 025 true 2025-11-14 15:20:53 Admin  } {26 DUPION 5 FANCY 026 true 2025-11-14 15:21:08 Admin  } {27 KORA 5 FANCY 027 true 2025-11-14 15:21:18 Admin  }]
+2025-11-18 13:02:37 [info]: 🔑 Creating JWT token...
+2025-11-18 13:02:37 [info]: ✅ Token created successfully for userId=3, roleId=2, branchId=0
+2025-11-18 13:02:37 [info]: ➡️ Passed JWT middleware successfully
