@@ -6,6 +6,7 @@ import { CurrentTime } from "../../helper/common";
 import { storeFile, viewFile } from "../../helper/storage";
 import path from "path";
 import logger from "../../helper/logger";
+import fs from "fs";
 
 export class transferRepository {
   // CREATE
@@ -229,7 +230,7 @@ export class transferRepository {
           data: result.rows[0],
           token: tokens,
         },
-        false
+        true
       );
     } catch (error: unknown) {
       console.log("error", error);
@@ -281,7 +282,7 @@ export class transferRepository {
           filePath: filePath,
           files: storedFiles,
         },
-        false
+        true
       );
     } catch (error) {
       console.error("Error occurred:", error);
@@ -307,14 +308,14 @@ export class transferRepository {
       const now = CurrentTime();
 
       const insertQuery = `
-        INSERT INTO "TransferCars"
-          (car_name, car_brand, car_image, price, passengers, luggage,
-           manufacturer_year, mileage, description, car_badges, car_services,
-           "createdAt", "createdBy", "updatedAt", "updatedBy", "isDelete")
-        VALUES
-          ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$12,$13,false)
-        RETURNING *;
-      `;
+      INSERT INTO "TransferCars"
+        (car_name, car_brand, car_image, price, passengers, luggage,
+         manufacturer_year, mileage, description, car_badges, car_services,
+         "specialPrice", "createdAt", "createdBy", "updatedAt", "updatedBy", "isDelete")
+      VALUES
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$13,$14,false)
+      RETURNING *;
+    `;
 
       const result = await client.query(insertQuery, [
         data.car_name,
@@ -326,8 +327,9 @@ export class transferRepository {
         data.manufacturer_year,
         data.mileage,
         data.description,
-        data.car_badges, // comma-separated text from frontend
-        data.car_services, // comma-separated text from frontend
+        data.car_badges,
+        data.car_services,
+        data.specialPrice ?? null, // NEW FIELD
         now,
         tokenData.id,
       ]);
@@ -361,19 +363,38 @@ export class transferRepository {
 
     try {
       const query = `
-        SELECT * FROM "TransferCars"
-        WHERE "isDelete" = false
-        ORDER BY id DESC;
-      `;
+      SELECT * FROM "TransferCars"
+      WHERE "isDelete" = false
+      ORDER BY id DESC;
+    `;
 
       const result = await client.query(query);
-      console.log("\n\n\nresult", result.rows);
+
+      const cars = [];
+
+      for (const car of result.rows) {
+        let base64Image = "";
+
+        try {
+          const buffer = fs.readFileSync(car.car_image); // read file
+          base64Image = `data:image/jpeg;base64,${buffer.toString("base64")}`;
+        } catch (e) {
+          console.log("Image read error:", e);
+          base64Image = "";
+        }
+
+        cars.push({
+          ...car,
+          car_image_base64: base64Image,
+        });
+      }
 
       return encrypt(
         {
           success: true,
           message: "Cars fetched successfully",
-          data: result.rows,
+          data: cars,
+          token: token,
         },
         true
       );
@@ -388,6 +409,7 @@ export class transferRepository {
   }
 
   // UPDATE
+  // UPDATE
   public async updateCar(id: number, data: any, tokenData: any): Promise<any> {
     const client = await getClient();
     const token = generateTokenWithExpire(tokenData, true);
@@ -398,14 +420,15 @@ export class transferRepository {
       const now = CurrentTime();
 
       const updateQuery = `
-        UPDATE "TransferCars"
-        SET car_name=$1, car_brand=$2, car_image=$3, price=$4,
-            passengers=$5, luggage=$6, manufacturer_year=$7, mileage=$8,
-            description=$9, car_badges=$10, car_services=$11,
-            "updatedAt"=$12, "updatedBy"=$13
-        WHERE id=$14 AND "isDelete" = false
-        RETURNING *;
-      `;
+      UPDATE "TransferCars"
+      SET car_name=$1, car_brand=$2, car_image=$3, price=$4,
+          passengers=$5, luggage=$6, manufacturer_year=$7, mileage=$8,
+          description=$9, car_badges=$10, car_services=$11,
+          "specialPrice"=$12,
+          "updatedAt"=$13, "updatedBy"=$14
+      WHERE id=$15 AND "isDelete" = false
+      RETURNING *;
+    `;
 
       const result = await client.query(updateQuery, [
         data.car_name,
@@ -419,6 +442,7 @@ export class transferRepository {
         data.description,
         data.car_badges,
         data.car_services,
+        data.specialPrice ?? null, // NEW FIELD
         now,
         tokenData.id,
         id,
@@ -431,7 +455,12 @@ export class transferRepository {
       }
 
       return encrypt(
-        { success: true, message: "Car updated", data: result.rows[0] },
+        {
+          success: true,
+          message: "Car updated",
+          data: result.rows[0],
+          token: token,
+        },
         true
       );
     } catch (err) {
@@ -480,6 +509,7 @@ export class transferRepository {
           success: true,
           message: "Car deleted successfully",
           data: result.rows[0],
+          token: token,
         },
         true
       );
@@ -494,6 +524,7 @@ export class transferRepository {
     }
   }
 
+  // CAR BADGES
   public async addBadge(data: any, tokenData: any): Promise<any> {
     logger.info("[Badge] Add Request:", data);
 
