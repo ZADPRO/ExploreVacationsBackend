@@ -17,7 +17,9 @@ export class GoogleAPIRepo {
       )}&components=country:ch&key=${GOOGLE_API_KEY}`;
 
       const autoRes = await axios.get(autoURL);
+      console.log("autoRes", autoRes);
       const autoData: any = autoRes.data;
+      console.log("autoData", autoData);
 
       const predictions = autoData?.predictions || [];
       const results: any[] = [];
@@ -27,9 +29,12 @@ export class GoogleAPIRepo {
 
         const detailURL = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_API_KEY}`;
         const detailRes = await axios.get(detailURL);
+        console.log("detailRes", detailRes);
 
         const detailData: any = detailRes.data;
+        console.log("detailData", detailData);
         const loc = detailData?.result?.geometry?.location;
+        console.log("loc", loc);
 
         if (!loc) continue;
 
@@ -38,15 +43,19 @@ export class GoogleAPIRepo {
 
         // Extract postal code from address components
         const addressComponents = detailData?.result?.address_components || [];
+        console.log("addressComponents", addressComponents);
         const postalComponent = addressComponents.find((comp: any) =>
           comp.types.includes("postal_code")
         );
         const postalCode = postalComponent ? postalComponent.long_name : null;
+        console.log("postalCode", postalCode);
 
         // Zürich polygon check
         const point = turf.point([lng, lat]);
+        console.log("point", point);
         const isInside = turf.booleanPointInPolygon(point, zurichPolygon);
         if (!isInside) continue;
+        console.log("isInside", isInside);
 
         // Push with postalCode included
         results.push({

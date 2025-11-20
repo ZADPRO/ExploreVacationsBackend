@@ -14,31 +14,31 @@
 //     request: any,
 //     response: Hapi.ResponseToolkit
 //   ): Promise<any> => {
-  //     logger.info(`GET URL REQ => ${request.url.href}`);
+//     logger.info(`GET URL REQ => ${request.url.href}`);
 //     try {
 //       const decodedToken = {
-  //         id: request.plugins.token.id,
+//         id: request.plugins.token.id,
 //       };
 
 //       let entity;
 
 //       entity = await this.resolver.uploadHomeImagesV1(
-  //         request.payload,
-  //         decodedToken
-  //       );
+//         request.payload,
+//         decodedToken
+//       );
 
 //       if (entity.success) {
 //         return response.response(entity).code(201); // Created
 //       }
 //       return response.response(entity).code(200); // Bad Request if failed
 //     } catch (error) {
-  //       logger.error("Error in upload Home Images", error);
-  //       return response
-  //         .response({
-    //           success: false,
-    //           message:
-    //             error instanceof Error
-    //               ? error.message
+//       logger.error("Error in upload Home Images", error);
+//       return response
+//         .response({
+//           success: false,
+//           message:
+//             error instanceof Error
+//               ? error.message
 //               : "An unknown error occurred",
 //         })
 //         .code(500);
@@ -124,7 +124,7 @@ export class homePageController {
         .code(500);
     }
   };
- 
+
   public homeImageContent = async (
     request: any,
     response: Hapi.ResponseToolkit
@@ -236,7 +236,10 @@ export class homePageController {
 
       let entity;
 
-      entity = await this.resolver.uploadImagesV1(request.payload, decodedToken);
+      entity = await this.resolver.uploadImagesV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -267,7 +270,10 @@ export class homePageController {
 
       let entity;
 
-      entity = await this.resolver.deletehomeImageV1(request.payload, decodedToken);
+      entity = await this.resolver.deletehomeImageV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -298,7 +304,10 @@ export class homePageController {
 
       let entity;
 
-      entity = await this.resolver.listhomeImageV1(request.payload, decodedToken);
+      entity = await this.resolver.listhomeImageV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -329,7 +338,10 @@ export class homePageController {
 
       let entity;
 
-      entity = await this.resolver.getHomeImageV1(request.payload, decodedToken);
+      entity = await this.resolver.getHomeImageV1(
+        request.payload,
+        decodedToken
+      );
 
       if (entity.success) {
         return response.response(entity).code(201); // Created
@@ -354,7 +366,6 @@ export class homePageController {
   ): Promise<any> => {
     logger.info(`GET URL REQ => ${request.url.href}`);
     try {
-   
       let entity;
 
       entity = await this.resolver.listhomeImageUserSideV1(request.payload);
