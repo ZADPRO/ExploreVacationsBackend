@@ -66,7 +66,7 @@ export class transferRoutes implements IRoute {
             tags: ["api", "HomePage"],
             auth: false,
             payload: {
-              maxBytes: 10485760,
+              maxBytes: 41943040,
               output: "stream",
               parse: true,
               multipart: true,
