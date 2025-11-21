@@ -19,6 +19,17 @@ export class googleAPIRoutes implements IRoute {
             auth: false,
           },
         },
+        {
+          method: "POST",
+          path: "/api/v1/calculateDistance",
+          config: {
+            // pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.calculateDistance,
+            description: "Validate Zurich Address",
+            tags: ["api", "Address"],
+            auth: false,
+          },
+        },
       ]);
       resolve(true);
     });

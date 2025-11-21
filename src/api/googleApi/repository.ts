@@ -6,6 +6,17 @@ const zurichPolygon = require("../../helper/zurich.geo.json");
 
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_BACKEND_KEY;
 
+interface DistanceMatrixResponse {
+  status: string;
+  rows: {
+    elements: {
+      status: string;
+      distance: { text: string; value: number };
+      duration: { text: string; value: number };
+    }[];
+  }[];
+}
+
 export class GoogleAPIRepo {
   public async getSuggestionsService(query: string): Promise<any> {
     try {
@@ -127,6 +138,59 @@ export class GoogleAPIRepo {
         insideZurich: false,
         message: "Error validating address",
         error: String(error),
+      };
+    }
+  }
+
+  // NEW SERVICE
+  public async calculateDistanceService(from: any, to: any): Promise<any> {
+    try {
+      const origin = `${from.lat},${from.lng}`;
+      console.log("\n\norigin", origin);
+      const destination = `${to.lat},${to.lng}`;
+      console.log("\n\ndestination", destination);
+
+      const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&units=metric&key=${GOOGLE_API_KEY}`;
+      console.log("\n\nurl", url);
+
+      const response = await axios.get<any>(url);
+      console.log("\n\nresponse", response);
+      const data = response.data;
+      console.log("data", data);
+
+      if (data.status !== "OK" || !data.rows.length) {
+        return { success: false, message: "Distance calculation failed" };
+      }
+
+      const element = data.rows[0].elements[0];
+      console.log("element", element);
+      if (element.status !== "OK") {
+        return { success: false, message: "Invalid addresses" };
+      }
+
+      const distanceMeters = element.distance.value;
+      console.log("distanceMeters", distanceMeters);
+      const distanceKm = distanceMeters / 1000;
+      const durationText = element.duration.text;
+
+      // PRICE CALCULATION
+      const price = distanceKm * 50;
+      console.log("price", price);
+
+      return {
+        success: true,
+        from,
+        to,
+        distanceKm: parseFloat(distanceKm.toFixed(2)),
+        duration: durationText,
+        priceCHF: parseFloat(price.toFixed(2)),
+      };
+    } catch (err) {
+      console.log("err", err);
+      return {
+        success: false,
+        message: "Error calculating distance",
+        error: String(err),
       };
     }
   }
