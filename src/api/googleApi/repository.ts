@@ -6,17 +6,6 @@ const zurichPolygon = require("../../helper/zurich.geo.json");
 
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_BACKEND_KEY;
 
-interface DistanceMatrixResponse {
-  status: string;
-  rows: {
-    elements: {
-      status: string;
-      distance: { text: string; value: number };
-      duration: { text: string; value: number };
-    }[];
-  }[];
-}
-
 export class GoogleAPIRepo {
   public async getSuggestionsService(query: string): Promise<any> {
     try {
@@ -183,7 +172,7 @@ export class GoogleAPIRepo {
         to,
         distanceKm: parseFloat(distanceKm.toFixed(2)),
         duration: durationText,
-        priceCHF: parseFloat(price.toFixed(2)),
+        // priceCHF: parseFloat(price.toFixed(2)),
       };
     } catch (err) {
       console.log("err", err);
