@@ -373,4 +373,166 @@ export class TransferController {
       return h.response({ success: false, message: error.message }).code(500);
     }
   };
+
+  // CREATE BOOKING
+  public createBookingController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const token = request.plugins.token;
+      const result = await this.repository.createBooking(
+        request.payload,
+        token.id
+      );
+      return h.response(result).code(200);
+    } catch (error: any) {
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  // GET SINGLE BOOKING
+  public getBookingByIdController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const result = await this.repository.getBookingById(request.params.id);
+      return h.response(result).code(200);
+    } catch (error: any) {
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  // GET ALL BOOKINGS
+  public getAllBookingsController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const result = await this.repository.getAllBookings();
+      return h.response(result).code(200);
+    } catch (error: any) {
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  // DELETE (Soft Delete)
+  public deleteBookingController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const token = request.plugins.token;
+      const result = await this.repository.deleteBooking(
+        request.params.id,
+        token.id
+      );
+      return h.response(result).code(200);
+    } catch (error: any) {
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  // CREATE
+  public addDriverController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const entity = await this.repository.addDriver(request.payload);
+      return h.response(entity).code(200);
+    } catch (error: any) {
+      logger.error("Error creating driver", error);
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  // GET ALL
+  public getDriversController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const entity = await this.repository.getDrivers();
+      return h.response(entity).code(200);
+    } catch (error: any) {
+      logger.error("Error fetching drivers", error);
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  // UPDATE
+  public updateDriverController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const id = request.params.id;
+      const entity = await this.repository.updateDriver(id, request.payload);
+      return h.response(entity).code(200);
+    } catch (error: any) {
+      logger.error("Error updating driver", error);
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  // DELETE
+  public deleteDriverController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    try {
+      const id = request.params.id;
+      const entity = await this.repository.deleteDriver(id);
+      return h.response(entity).code(200);
+    } catch (error: any) {
+      logger.error("Error deleting driver", error);
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  public allocateDriverController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    logger.info("Allocate Driver API Hit");
+
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId,
+      };
+
+      const entity = await this.repository.allocateDriver(
+        request.payload,
+        decodedToken
+      );
+
+      return h.response(entity).code(200);
+    } catch (error: any) {
+      logger.error("Error allocating driver", error);
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
+
+  public getBookingsWithDriverController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    logger.info("Get Bookings With Drivers API Hit");
+
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId,
+      };
+
+      const entity = await this.repository.getBookingsWithDriver(decodedToken);
+      return h.response(entity).code(200);
+    } catch (error: any) {
+      logger.error("Error fetching bookings with drivers", error);
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
 }

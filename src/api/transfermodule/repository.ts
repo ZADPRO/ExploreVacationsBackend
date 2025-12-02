@@ -781,4 +781,440 @@ export class transferRepository {
       client.release();
     }
   }
+
+  // CREATE BOOKING
+  public async createBooking(data: any, userId: any) {
+    const client = await getClient();
+
+    try {
+      const q = `
+        INSERT INTO transferbookings (
+          out_from_name, out_from_placeid, out_from_lat, out_from_lng, out_from_postalcode,
+          out_to_name, out_to_placeid, out_to_lat, out_to_lng, out_to_postalcode,
+          out_date, out_time, out_passengers, out_estimatedarrival, out_distance,
+
+          return_from_name, return_from_placeid, return_from_lat, return_from_lng, return_from_postalcode,
+          return_to_name, return_to_placeid, return_to_lat, return_to_lng, return_to_postalcode,
+          return_date, return_time, return_passengers, return_estimatedarrival, return_distance,
+
+          vehicle_id, vehicle_type, vehicle_brand, vehicle_capacity, vehicle_passengers,
+          vehicle_luggage, vehicle_price, vehicle_image, vehicle_mileage, vehicle_badges, vehicle_services,
+
+          extra_flightnumber, extra_childseat, extra_drivernotesoutward, extra_drivernotesreturn,
+
+          passenger_firstname, passenger_lastname, passenger_email, passenger_mobile,
+          passenger_emailnotifications, passenger_smsnotifications,
+
+          createdat, createdby
+        )
+        VALUES (
+          $1,$2,$3,$4,$5,
+          $6,$7,$8,$9,$10,
+          $11,$12,$13,$14,$15,
+
+          $16,$17,$18,$19,$20,
+          $21,$22,$23,$24,$25,
+          $26,$27,$28,$29,$30,
+
+          $31,$32,$33,$34,$35,
+          $36,$37,$38,$39,$40,$41,
+
+          $42,$43,$44,$45,
+
+          $46,$47,$48,$49,$50,$51,
+
+          NOW(), $52
+        )
+        RETURNING id;
+      `;
+
+      const params = [
+        // OUTBOUND
+        data.outbound.from.name,
+        data.outbound.from.placeId,
+        String(data.outbound.from.lat),
+        String(data.outbound.from.lng),
+        data.outbound.from.postalCode,
+
+        data.outbound.to.name,
+        data.outbound.to.placeId,
+        String(data.outbound.to.lat),
+        String(data.outbound.to.lng),
+        data.outbound.to.postalCode,
+
+        data.outbound.date,
+        data.outbound.time,
+        String(data.outbound.passengers),
+        data.outbound.estimatedArrival,
+        data.outbound.distance,
+
+        // RETURN
+        data.return?.from?.name || null,
+        data.return?.from?.placeId || null,
+        data.return?.from?.lat?.toString() || null,
+        data.return?.from?.lng?.toString() || null,
+        data.return?.from?.postalCode || null,
+
+        data.return?.to?.name || null,
+        data.return?.to?.placeId || null,
+        data.return?.to?.lat?.toString() || null,
+        data.return?.to?.lng?.toString() || null,
+        data.return?.to?.postalCode || null,
+
+        data.return?.date || null,
+        data.return?.time || null,
+        data.return?.passengers?.toString() || null,
+        data.return?.estimatedArrival || null,
+        data.return?.distance || null,
+
+        // VEHICLE
+        data.selectedVehicle.id,
+        data.selectedVehicle.type,
+        data.selectedVehicle.brand,
+        data.selectedVehicle.capacity,
+        String(data.selectedVehicle.passengers),
+
+        String(data.selectedVehicle.luggage),
+        String(data.selectedVehicle.price),
+        data.selectedVehicle.image,
+        data.selectedVehicle.mileage,
+        data.selectedVehicle.badges,
+        data.selectedVehicle.services,
+
+        // EXTRAS
+        data.extras.flightNumber,
+        data.extras.childSeat,
+        data.extras.driverNotesOutward,
+        data.extras.driverNotesReturn,
+
+        // PASSENGER
+        data.passenger.firstName,
+        data.passenger.lastName,
+        data.passenger.email,
+        data.passenger.mobile,
+        data.passenger.emailNotifications,
+        data.passenger.smsNotifications,
+
+        // AUDIT
+        userId,
+      ];
+
+      const result = await client.query(q, params);
+      return { success: true, id: result.rows[0].id };
+    } catch (err) {
+      console.error("❌ Create Booking Error", err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  // GET BOOKING BY ID
+  public async getBookingById(id: any) {
+    const client = await getClient();
+
+    try {
+      const q = `
+        SELECT * FROM transferbookings
+        WHERE id = $1 AND isdeleted = false;
+      `;
+      const result = await client.query(q, [id]);
+      return { success: true, data: result.rows[0] || null };
+    } finally {
+      client.release();
+    }
+  }
+
+  // GET ALL BOOKINGS
+  public async getAllBookings() {
+    const client = await getClient();
+
+    try {
+      const q = `
+        SELECT * FROM transferbookings
+        WHERE isdeleted = false
+        ORDER BY id DESC;
+      `;
+      const result = await client.query(q);
+      return { success: true, data: result.rows };
+    } finally {
+      client.release();
+    }
+  }
+
+  // DELETE BOOKING (SOFT DELETE)
+  public async deleteBooking(id: any, userId: any) {
+    const client = await getClient();
+
+    try {
+      const q = `
+        UPDATE transferbookings
+        SET isdeleted = true,
+            updatedat = NOW(),
+            updatedby = $2
+        WHERE id = $1;
+      `;
+
+      await client.query(q, [id, userId]);
+
+      return { success: true, message: "Booking soft-deleted" };
+    } finally {
+      client.release();
+    }
+  }
+
+  // ➕ CREATE DRIVER
+  public async addDriver(data: any) {
+    const client = await getClient();
+    try {
+      const now = CurrentTime();
+
+      const query = `
+        INSERT INTO "transferDrivers"
+        (
+          reffirstlastname, refdob, refnationality, refaddress, refphonewhatsapp,
+          refemail, refdrivinglicensecategory, refdrivinglicensenumber,
+          refdrivinglicenseexpirydate, refissuingcountry,
+          refidpassportnumber, refidpassportexpirydate,
+          refemploymenttype, refstartdate, refnotes,
+          createdat, createdby, updatedat, updatedby
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
+        RETURNING *;
+      `;
+
+      const params = [
+        data.refFirstLastName,
+        data.refDOB,
+        data.refNationality,
+        data.refAddress,
+        data.refPhoneWhatsApp,
+        data.refEmail,
+        data.refDrivingLicenseCategory,
+        data.refDrivingLicenseNumber,
+        data.refDrivingLicenseExpiryDate,
+        data.refIssuingCountry,
+        data.refIDPassportNumber,
+        data.refIDPassportExpiryDate,
+        data.refEmploymentType,
+        data.refStartDate,
+        data.refNotes,
+        now,
+        data.createdBy || "system",
+        now,
+        data.createdBy || "system",
+      ];
+
+      const result = await client.query(query, params);
+
+      return encrypt(
+        {
+          success: true,
+          message: "Driver added successfully",
+          data: result.rows[0],
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
+  // 📥 GET DRIVERS
+  public async getDrivers() {
+    const client = await getClient();
+    try {
+      const query = `SELECT * FROM "transferDrivers" WHERE isdeleted = false ORDER BY id DESC`;
+      const result = await client.query(query);
+
+      return encrypt(
+        {
+          success: true,
+          data: result.rows,
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
+  // ✏ UPDATE DRIVER
+  public async updateDriver(id: string, data: any) {
+    const client = await getClient();
+    try {
+      const now = CurrentTime();
+
+      const query = `
+        UPDATE "transferDrivers"
+        SET
+          reffirstlastname=$1, refdob=$2, refnationality=$3, refaddress=$4,
+          refphonewhatsapp=$5, refemail=$6, refdrivinglicensecategory=$7,
+          refdrivinglicensenumber=$8, refdrivinglicenseexpirydate=$9,
+          refissuingcountry=$10, refidpassportnumber=$11,
+          refidpassportexpirydate=$12, refemploymenttype=$13, refstartdate=$14,
+          refnotes=$15, updatedat=$16, updatedby=$17
+        WHERE id=$18
+        RETURNING *;
+      `;
+
+      const params = [
+        data.refFirstLastName,
+        data.refDOB,
+        data.refNationality,
+        data.refAddress,
+        data.refPhoneWhatsApp,
+        data.refEmail,
+        data.refDrivingLicenseCategory,
+        data.refDrivingLicenseNumber,
+        data.refDrivingLicenseExpiryDate,
+        data.refIssuingCountry,
+        data.refIDPassportNumber,
+        data.refIDPassportExpiryDate,
+        data.refEmploymentType,
+        data.refStartDate,
+        data.refNotes,
+        now,
+        data.updatedBy || "system",
+        id,
+      ];
+
+      const result = await client.query(query, params);
+
+      return encrypt(
+        {
+          success: true,
+          message: "Driver updated successfully",
+          data: result.rows[0],
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
+  // ❌ DELETE DRIVER
+  public async deleteDriver(id: string) {
+    const client = await getClient();
+    try {
+      const query = `
+        UPDATE "transferDrivers"
+        SET isdeleted = true
+        WHERE id = $1
+        RETURNING *;
+      `;
+
+      const result = await client.query(query, [id]);
+
+      return encrypt(
+        {
+          success: true,
+          message: "Driver deleted successfully",
+          data: result.rows[0],
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
+  public async allocateDriver(data: any, tokenData: any) {
+    const client = await getClient();
+    const token = generateTokenWithExpire(tokenData, true);
+
+    const { transferId, driverId } = data;
+    const now = CurrentTime();
+
+    try {
+      const query = `
+      INSERT INTO "TransferDriverMap"
+        (transfer_id, driver_id, status, created_at, updated_at)
+      VALUES ($1, $2, 'ACTIVE', $3, $3)
+      RETURNING *;
+    `;
+
+      const result = await client.query(query, [transferId, driverId, now]);
+
+      return encrypt(
+        {
+          success: true,
+          message: "Driver allocated successfully",
+          data: result.rows[0],
+          token: token,
+        },
+        true
+      );
+    } catch (err) {
+      return encrypt(
+        {
+          success: false,
+          message: "Error allocating driver",
+          error: String(err),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
+
+  public async getBookingsWithDriver(tokenData: any) {
+    const client = await getClient();
+    const token = generateTokenWithExpire(tokenData, true);
+
+    try {
+      const query = `
+      SELECT 
+        tb.*, 
+
+        td.id AS driver_id,
+        td.reffirstlastname AS driver_name,
+        td.refphonewhatsapp AS driver_phone,
+        td.refemail AS driver_email,
+        td.refdrivinglicensecategory AS driver_license_category,
+
+        tdm.id AS map_id,
+        tdm.status AS map_status,
+        tdm.created_at AS map_created_at,
+        tdm.updated_at AS map_updated_at
+
+      FROM transferbookings tb
+
+      LEFT JOIN "TransferDriverMap" tdm
+        ON tb.id = tdm.transfer_id
+
+      LEFT JOIN "transferDrivers" td
+        ON tdm.driver_id = td.id
+
+      WHERE tb.isdeleted = false
+
+      ORDER BY tb.id DESC;
+    `;
+
+      const result = await client.query(query);
+
+      return encrypt(
+        {
+          success: true,
+          message: "Bookings with driver data fetched successfully",
+          data: result.rows,
+          token: token,
+        },
+        true
+      );
+    } catch (err) {
+      return encrypt(
+        {
+          success: false,
+          message: "Error fetching bookings with drivers",
+          error: String(err),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
 }

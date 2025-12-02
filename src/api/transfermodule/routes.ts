@@ -177,6 +177,135 @@ export class transferRoutes implements IRoute {
             payload: { parse: true, allow: "application/json" },
           },
         },
+
+        // TRANSFER BOOKINGS ROUTES
+        {
+          method: "POST",
+          path: "/api/v1/transferBookings/create",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.createBookingController,
+            description: "Create new transfer booking",
+            tags: ["api", "TransferBookings"],
+            auth: false,
+            payload: { parse: true, allow: "application/json" },
+          },
+        },
+
+        {
+          method: "GET",
+          path: "/api/v1/transferBookings/{id}",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getBookingByIdController,
+            description: "Get booking by ID",
+            tags: ["api", "TransferBookings"],
+            auth: false,
+          },
+        },
+
+        {
+          method: "GET",
+          path: "/api/v1/transferBookings",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getAllBookingsController,
+            description: "Get all bookings",
+            tags: ["api", "TransferBookings"],
+            auth: false,
+          },
+        },
+
+        {
+          method: "DELETE",
+          path: "/api/v1/transferBookings/{id}",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteBookingController,
+            description: "Soft delete a booking",
+            tags: ["api", "TransferBookings"],
+            auth: false,
+          },
+        },
+
+        // ➕ CREATE DRIVER
+        {
+          method: "POST",
+          path: "/api/v1/transfers/addDriver",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.addDriverController,
+            description: "Add new transfer driver",
+            tags: ["api", "TransferDrivers"],
+            auth: false,
+            payload: { parse: true, allow: "application/json" },
+          },
+        },
+
+        // 📥 GET ALL DRIVERS
+        {
+          method: "GET",
+          path: "/api/v1/transfers/getDrivers",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getDriversController,
+            description: "Get all transfer drivers",
+            tags: ["api", "TransferDrivers"],
+            auth: false,
+          },
+        },
+
+        // ✏ UPDATE DRIVER
+        {
+          method: "PUT",
+          path: "/api/v1/transfers/update/{id}",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.updateDriverController,
+            description: "Update transfer driver",
+            tags: ["api", "TransferDrivers"],
+            auth: false,
+            payload: { parse: true, allow: "application/json" },
+          },
+        },
+
+        // ❌ DELETE DRIVER
+        {
+          method: "DELETE",
+          path: "/api/v1/transfers/delete/{id}",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.deleteDriverController,
+            description: "Delete transfer driver",
+            tags: ["api", "TransferDrivers"],
+            auth: false,
+          },
+        },
+
+        {
+          method: "POST",
+          path: "/api/v1/transfers/allocateDriver",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.allocateDriverController,
+            description: "Allocate driver to a transfer",
+            tags: ["api", "TransferDriverMap"],
+            auth: false,
+            payload: { parse: true, allow: "application/json" },
+          },
+        },
+
+        {
+          method: "GET",
+          path: "/api/v1/transferBookings/withDriver",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getBookingsWithDriverController,
+            description: "Get all bookings with driver map data",
+            tags: ["api", "TransferDriverMap"],
+            auth: false,
+          },
+        },
       ]);
 
       resolve(true);
