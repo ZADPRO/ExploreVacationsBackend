@@ -147,14 +147,14 @@ export class paymentRepository {
     const token = { id: tokendata.id };
     const tokens = generateTokenWithExpire(token, true);
     const payrexx = new Payrexx(
-      "karmacuisines",
-      "p9d4TdHGnkujeNx2T90jaygculBt9Q"
+      "explorevacationsag",
+      "vqdTdCezHYCNEzgFcRsPz4PwvYvZPV"
     );
     try {
       const uniqueId = getSystemTimestamp();
-      console.log('uniqueId/', uniqueId)
+      console.log("uniqueId/", uniqueId);
       const { totalAmount, userEmail, firstname, purpose } = userData;
-      console.log('userData', userData)
+      console.log("userData", userData);
       // Send payment request to Payrexx
       const result = await payrexx.post("Gateway", {
         amount: totalAmount * 100,

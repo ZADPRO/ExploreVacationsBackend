@@ -163,6 +163,20 @@ export class transferRoutes implements IRoute {
             auth: false,
           },
         },
+
+        // AVAILABLE CARS - USER SIDE
+        {
+          method: "POST",
+          path: "/api/v1/transferRoutes/availableCars",
+          config: {
+            pre: [{ method: validateToken, assign: "token" }],
+            handler: controller.getAvailableCarsController,
+            description: "Get available transfer cars by date & passenger",
+            tags: ["api", "TransferCars"],
+            auth: false,
+            payload: { parse: true, allow: "application/json" },
+          },
+        },
       ]);
 
       resolve(true);

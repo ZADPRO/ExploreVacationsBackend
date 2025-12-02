@@ -697,4 +697,88 @@ export class transferRepository {
       return encrypt({ success: false, message: err.message, token }, true);
     }
   }
+
+  public async getAvailableCars(data: any, tokenData: any): Promise<any> {
+    const client = await getClient();
+    const token = generateTokenWithExpire(tokenData, true);
+
+    const { passengers, pickupDate, returnDate } = data;
+
+    try {
+      const now = CurrentTime();
+
+      // 1️⃣ Get all cars that match passenger capacity
+      const carQuery = `
+      SELECT * FROM "TransferCars"
+      WHERE "isDelete" = false
+      AND CAST(passengers AS INTEGER) >= $1
+      ORDER BY id DESC;
+    `;
+
+      const carsResult = await client.query(carQuery, [passengers]);
+      const allCars = carsResult.rows;
+
+      const availableCars: any[] = [];
+
+      // 2️⃣ Loop each car → check if already booked
+      for (const car of allCars) {
+        const bookingQuery = `
+        SELECT * FROM "TransferBookings"
+        WHERE "isDelete" = false
+        AND "carId" = $1
+        AND (
+            ($2 <= "returnFrom_lat"::text OR $2 <= "pickupDate")
+            AND
+            ($3 >= "pickupDate")
+        );
+      `;
+
+        const bookingResult = await client.query(bookingQuery, [
+          car.id,
+          pickupDate,
+          returnDate,
+        ]);
+
+        // If car has bookings → skip
+        if (bookingResult.rows.length > 0) {
+          continue;
+        }
+
+        // 3️⃣ Read car image as base64
+        let base64Image = "";
+        try {
+          const buffer = fs.readFileSync(car.car_image);
+          base64Image = `data:image/jpeg;base64,${buffer.toString("base64")}`;
+        } catch (e) {
+          base64Image = "";
+        }
+
+        availableCars.push({
+          ...car,
+          car_image_base64: base64Image,
+        });
+      }
+
+      return encrypt(
+        {
+          success: true,
+          message: "Available cars fetched successfully",
+          data: availableCars,
+          token: token,
+        },
+        true
+      );
+    } catch (err) {
+      return encrypt(
+        {
+          success: false,
+          message: "Error fetching available cars",
+          error: String(err),
+        },
+        true
+      );
+    } finally {
+      client.release();
+    }
+  }
 }

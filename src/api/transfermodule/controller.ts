@@ -348,4 +348,29 @@ export class TransferController {
       return h.response({ success: false, message: err.message }).code(500);
     }
   };
+
+  // CHECK AVAILABLE CARS
+  public getAvailableCarsController = async (
+    request: any,
+    h: Hapi.ResponseToolkit
+  ) => {
+    logger.info(`Get Available Cars => ${request.url.href}`);
+
+    try {
+      const decodedToken = {
+        id: request.plugins.token.id,
+        roleId: request.plugins.token.roleId,
+      };
+
+      const entity = await this.repository.getAvailableCars(
+        request.payload,
+        decodedToken
+      );
+
+      return h.response(entity).code(200);
+    } catch (error: any) {
+      logger.error("Error fetching available cars", error);
+      return h.response({ success: false, message: error.message }).code(500);
+    }
+  };
 }
